@@ -1,5 +1,7 @@
+
 import React from 'react';
 import Logo from './Logo';
+// FIX: Corrected import path
 import { ProjectData } from '../types';
 
 interface WelcomeScreenProps {
@@ -33,7 +35,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
 
         {/* Right Side - Actions */}
         <div className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Get Started</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Get Started</h2>
+          <p className="text-sm text-gray-500 mb-6">This is a free tool for WyreStorm partners. All features are enabled and accessible.</p>
           <div className="flex flex-col gap-4 mb-8">
             <div>
               <button

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { UserProfile } from '../types';
+import { UserProfile, Currency } from '../types';
+import { CURRENCY_OPTIONS } from '../constants';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, initialProfile }) => {
-  const [profile, setProfile] = useState<UserProfile>({ name: '', company: '', email: '', logoUrl: '' });
+  const [profile, setProfile] = useState<UserProfile>({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP' });
 
   useEffect(() => {
     if (initialProfile) {
@@ -17,7 +18,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
     }
   }, [initialProfile, isOpen]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProfile(p => ({ ...p, [name]: value }));
   };
@@ -58,6 +59,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Contact Email</label>
             <input type="email" id="email" name="email" value={profile.email} onChange={handleChange} className="mt-1 w-full p-2 border border-gray-300 rounded-md"/>
+          </div>
+           <div>
+            <label htmlFor="currency" className="block text-sm font-medium text-gray-700">Default Currency</label>
+            <select id="currency" name="currency" value={profile.currency} onChange={handleChange} className="mt-1 w-full p-2 border border-gray-300 rounded-md">
+              {Object.entries(CURRENCY_OPTIONS).map(([code, { name }]) => (
+                <option key={code} value={code}>{name} ({code})</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Company Logo</label>

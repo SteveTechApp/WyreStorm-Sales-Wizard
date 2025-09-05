@@ -1,247 +1,250 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { ProjectData, Proposal, UserProfile, RoomData, createDefaultRoomData, Currency } from './types';
+import { generateProposal, parseCustomerNotes, generateRoomTemplate } from './services/geminiService';
 import WelcomeScreen from './components/WelcomeScreen';
+import ProjectSetupScreen from './components/ProjectSetupScreen';
 import ProjectBuilder from './components/ProjectBuilder';
 import ProposalDisplay from './components/ProposalDisplay';
 import LoadingSpinner from './components/LoadingSpinner';
 import Header from './components/Header';
-import AgentInputForm from './components/AgentInputForm';
-// FIX: Renamed FormData to RoomData to avoid conflict with the built-in FormData type.
-import { ProjectData, Proposal, RoomData, IO_Device, UserProfile } from './types';
-import { generateProposal, parseUserNotes, generateRoomTemplate } from './services/geminiService';
 import ProfileModal from './components/ProfileModal';
+import AgentInputForm from './components/AgentInputForm';
 
-type AppState = 'welcome' | 'agent' | 'builder' | 'loading' | 'proposal';
+type View = 'welcome' | 'setup' | 'agent-input' | 'builder' | 'generating' | 'proposal' | 'error';
+export type UnitSystem = 'imperial' | 'metric';
 
 const App: React.FC = () => {
-  const [appState, setAppState] = useState<AppState>('welcome');
-  const [currentProject, setCurrentProject] = useState<ProjectData | null>(null);
-  const [generatedProposal, setGeneratedProposal] = useState<Proposal | null>(null);
-  const [loadingMessage, setLoadingMessage] = useState('Generating Proposal...');
-  const [savedProjects, setSavedProjects] = useState<ProjectData[]>([]);
+  const [view, setView] = useState<View>('welcome');
+  const [projectData, setProjectData] = useState<ProjectData | null>(null);
+  const [proposal, setProposal] = useState<Proposal | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [savedProjects, setSavedProjects] = useState<ProjectData[]>([]);
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>('imperial');
+  const [error, setError] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState('Generating Proposal...');
 
-  // Load saved projects and profile from localStorage on initial render
+
   useEffect(() => {
+    // Load saved data from localStorage on initial render
     try {
-      const projectsJson = localStorage.getItem('av_ai_projects');
-      if (projectsJson) {
-        setSavedProjects(JSON.parse(projectsJson));
+      const savedProfile = localStorage.getItem('userProfile');
+      if (savedProfile) {
+        // Ensure currency has a default value if loading an old profile
+        const profile = JSON.parse(savedProfile);
+        if (!profile.currency) {
+          profile.currency = 'GBP';
+        }
+        setUserProfile(profile);
+      } else {
+        // Set a default profile if none exists
+        setUserProfile({ name: '', company: 'Your Company', email: '', logoUrl: '', currency: 'GBP' });
       }
-      const profileJson = localStorage.getItem('av_ai_user_profile');
-      if (profileJson) {
-        setUserProfile(JSON.parse(profileJson));
-      }
-    } catch (error) {
-      console.error("Failed to load data from localStorage", error);
+
+      const savedProjectsData = localStorage.getItem('savedProjects');
+      if (savedProjectsData) setSavedProjects(JSON.parse(savedProjectsData));
+    } catch (e) {
+      console.error("Failed to load data from localStorage", e);
     }
   }, []);
 
-  const createNewProject = async (firstRoomType: string) => {
-    setLoadingMessage('Creating Project Template...');
-    setAppState('loading');
-    try {
-      const roomTemplate = await generateRoomTemplate(firstRoomType);
-      // FIX: Renamed FormData to RoomData to avoid conflict with the built-in FormData type.
-      const newRoom: RoomData = {
-        ...roomTemplate,
-        id: uuidv4(),
-        // FIX: The `id` property is now added to each I/O device, which is expected by the `IO_Device` type.
-        // The properties on `roomTemplate` are now correctly accessed.
-        videoInputs: roomTemplate.videoInputs.map(d => ({ ...d, id: uuidv4() })),
-        videoOutputs: roomTemplate.videoOutputs.map(d => ({ ...d, id: uuidv4() })),
-        audioInputs: roomTemplate.audioInputs.map(d => ({ ...d, id: uuidv4() })),
-        audioOutputs: roomTemplate.audioOutputs.map(d => ({ ...d, id: uuidv4() })),
-      };
-      const newProject: ProjectData = {
-        projectId: uuidv4(),
-        projectName: 'New AV Project',
-        lastSaved: new Date().toISOString(),
-        rooms: [newRoom],
-      };
-      setCurrentProject(newProject);
-      setAppState('builder');
-    } catch (error) {
-      console.error("Failed to create new project with template", error);
-      // Fallback to a blank project
-      const blankProject: ProjectData = {
-        projectId: uuidv4(),
-        projectName: 'New AV Project',
-        lastSaved: new Date().toISOString(),
-        rooms: [],
-      };
-      setCurrentProject(blankProject);
-      setAppState('builder');
+  const saveUserProfile = (profile: UserProfile) => {
+    setUserProfile(profile);
+    localStorage.setItem('userProfile', JSON.stringify(profile));
+  };
+
+  const saveProject = useCallback((data: ProjectData) => {
+    const updatedData = { ...data, lastSaved: new Date().toISOString() };
+    setSavedProjects(prev => {
+      const existingIndex = prev.findIndex(p => p.projectId === updatedData.projectId);
+      const newProjects = [...prev];
+      if (existingIndex > -1) {
+        newProjects[existingIndex] = updatedData;
+      } else {
+        newProjects.push(updatedData);
+      }
+      localStorage.setItem('savedProjects', JSON.stringify(newProjects));
+      return newProjects;
+    });
+    setProjectData(updatedData);
+  }, []);
+
+  const loadProject = (projectId: string) => {
+    const projectToLoad = savedProjects.find(p => p.projectId === projectId);
+    if (projectToLoad) {
+      setProjectData(projectToLoad);
+      setView('builder');
     }
   };
+
+  const deleteProject = (projectId: string) => {
+    const newProjects = savedProjects.filter(p => p.projectId !== projectId);
+    setSavedProjects(newProjects);
+    localStorage.setItem('savedProjects', JSON.stringify(newProjects));
+  };
+
+  const handleNewProject = () => {
+    setProjectData(null);
+    setProposal(null);
+    setView('welcome');
+  };
+
+  const handleStartSetup = () => setView('setup');
+  const handleStartAgent = () => setView('agent-input');
+  const handleBackToWelcome = () => setView('welcome');
   
-  const handleStartFromQuestionnaire = () => {
-    // For simplicity, we start with a default room type. A setup screen could be added here.
-    createNewProject('Medium Conference Room');
-  }
+  const handleProjectSetupSubmit = async ({ projectName, clientName, coverImage, rooms }: { projectName: string; clientName: string; coverImage: string; rooms: Record<string, number> }) => {
+      setLoadingMessage('Creating Project Templates...');
+      setView('generating');
+      setError(null);
+      try {
+          const roomPromises = Object.entries(rooms).flatMap(([roomType, quantity]) =>
+              Array.from({ length: quantity }, () => generateRoomTemplate(roomType, 'Standard'))
+          );
 
-  const handleStartFromAgent = () => {
-    setAppState('agent');
-  }
+          const results = await Promise.allSettled(roomPromises);
 
-  const handleParseNotes = async (notes: string) => {
-    setLoadingMessage('Analyzing Customer Notes...');
-    setAppState('loading');
+          const successfulRooms: RoomData[] = [];
+          results.forEach((result, i) => {
+              if (result.status === 'fulfilled') {
+                  const newRoom: RoomData = { ...result.value, id: uuidv4() };
+                   // Add unique suffix if room name already exists
+                  let counter = 1;
+                  let potentialName = newRoom.roomName;
+                  while (successfulRooms.some(r => r.roomName === potentialName)) {
+                      counter++;
+                      potentialName = `${newRoom.roomName} ${counter}`;
+                  }
+                  newRoom.roomName = potentialName;
+                  successfulRooms.push(newRoom);
+              } else {
+                  console.error(`Failed to generate template for room ${i}:`, result.reason);
+              }
+          });
+          
+           if (successfulRooms.length === 0) {
+              throw new Error("The AI failed to generate any room templates. Please try again.");
+           }
+
+          const newProject: ProjectData = {
+              projectId: uuidv4(),
+              projectName,
+              clientName,
+              coverImage,
+              rooms: successfulRooms,
+              lastSaved: new Date().toISOString(),
+          };
+          setProjectData(newProject);
+          setView('builder');
+      } catch (e: any) {
+          console.error("Failed to setup project:", e);
+          setError(e.message || "An unexpected error occurred during project setup.");
+          setView('error');
+      }
+  };
+  
+  const handleAgentSubmit = async (text: string) => {
+    setView('generating');
+    setError(null);
     try {
-        const roomTemplates = await parseUserNotes(notes);
-        // FIX: Renamed FormData to RoomData to avoid conflict with the built-in FormData type.
-        const newRooms: RoomData[] = roomTemplates.map(template => ({
-            ...template,
-            id: uuidv4(),
-            // FIX: The `id` property is now added to each I/O device, which is expected by the `IO_Device` type.
-            // The properties on `template` are now correctly accessed.
-            videoInputs: (template.videoInputs || []).map((d: Omit<IO_Device, 'id'>) => ({...d, id: uuidv4()})),
-            videoOutputs: (template.videoOutputs || []).map((d: Omit<IO_Device, 'id'>) => ({...d, id: uuidv4()})),
-            audioInputs: (template.audioInputs || []).map((d: Omit<IO_Device, 'id'>) => ({...d, id: uuidv4()})),
-            audioOutputs: (template.audioOutputs || []).map((d: Omit<IO_Device, 'id'>) => ({...d, id: uuidv4()})),
-        }));
+        const parsedData = await parseCustomerNotes(text);
+        
+        const sanitizedRooms = (parsedData.rooms || []).map(partialRoom => {
+            const fullRoom = {
+                ...createDefaultRoomData(partialRoom.roomType || 'Conference Room', partialRoom.roomName || 'Unnamed Room'),
+                ...partialRoom,
+            };
+            fullRoom.videoInputs = (fullRoom.videoInputs || []).map(io => ({ ...createDefaultRoomData('','').videoInputs[0], ...io, id: uuidv4() }));
+            fullRoom.videoOutputs = (fullRoom.videoOutputs || []).map(io => ({ ...createDefaultRoomData('','').videoOutputs[0], ...io, id: uuidv4() }));
+            
+            return fullRoom;
+        });
+
+        const finalRooms = sanitizedRooms.length > 0 ? sanitizedRooms : [createDefaultRoomData('Conference Room', 'Conference Room 1')];
 
         const newProject: ProjectData = {
             projectId: uuidv4(),
-            projectName: 'New Project from Notes',
+            projectName: parsedData.projectName || `Project from Notes ${new Date().toLocaleDateString()}`,
+            clientName: parsedData.clientName || '',
+            coverImage: '',
+            rooms: finalRooms,
             lastSaved: new Date().toISOString(),
-            rooms: newRooms.length > 0 ? newRooms : [],
         };
-        setCurrentProject(newProject);
-        setAppState('builder');
-    } catch (error) {
-        console.error("Failed to parse notes", error);
-        alert("Could not analyze the notes. Please try again or start with a template.");
-        setAppState('welcome');
+        setProjectData(newProject);
+        setView('builder');
+    } catch (e: any) {
+        console.error("Failed to parse notes:", e);
+        setError("The AI failed to understand the provided notes. Please try rephrasing or use the questionnaire.");
+        setView('error');
     }
   };
 
-  const handleGenerateProposal = async (projectData: ProjectData) => {
-    if (!userProfile?.company) {
-        alert("Please complete your company profile before generating a proposal.");
-        setIsProfileModalOpen(true);
-        return;
-    }
-    setCurrentProject(projectData);
-    setLoadingMessage('Generating AI Proposal...');
-    setAppState('loading');
+  const handleGenerateProposal = async (data: ProjectData) => {
+    saveProject(data);
+    setLoadingMessage("Generating Proposal...");
+    setView('generating');
+    setError(null);
     try {
-      const proposal = await generateProposal(projectData, userProfile);
-      setGeneratedProposal(proposal);
-      setAppState('proposal');
-    } catch (error) {
-      console.error("Failed to generate proposal", error);
-      alert("An error occurred while generating the proposal. Please check the console and try again.");
-      setAppState('builder');
-    }
-  };
-
-  const handleSaveProject = (projectData: ProjectData) => {
-    const updatedProject = { ...projectData, lastSaved: new Date().toISOString() };
-    setCurrentProject(updatedProject);
-    const existingIndex = savedProjects.findIndex(p => p.projectId === updatedProject.projectId);
-    let newSavedProjects;
-    if (existingIndex > -1) {
-      newSavedProjects = [...savedProjects];
-      newSavedProjects[existingIndex] = updatedProject;
-    } else {
-      newSavedProjects = [...savedProjects, updatedProject];
-    }
-    setSavedProjects(newSavedProjects);
-    localStorage.setItem('av_ai_projects', JSON.stringify(newSavedProjects));
-    alert('Project Saved!');
-  };
-
-  const handleLoadProject = (projectId: string) => {
-    const projectToLoad = savedProjects.find(p => p.projectId === projectId);
-    if (projectToLoad) {
-      setCurrentProject(projectToLoad);
-      setAppState('builder');
+      // Pass the entire userProfile object, which includes the currency.
+      const generatedProposal = await generateProposal(data, userProfile, unitSystem);
+      setProposal(generatedProposal);
+      setView('proposal');
+    } catch (e: any) {
+      console.error("Failed to generate proposal:", e);
+      setError("The AI failed to generate a proposal from the provided data. Please review your project configuration and try again.");
+      setView('error');
     }
   };
   
-  const handleDeleteProject = (projectId: string) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
-        const newSavedProjects = savedProjects.filter(p => p.projectId !== projectId);
-        setSavedProjects(newSavedProjects);
-        localStorage.setItem('av_ai_projects', JSON.stringify(newSavedProjects));
-    }
-  };
-  
-  const handleSaveProfile = (profile: UserProfile) => {
-    setUserProfile(profile);
-    localStorage.setItem('av_ai_user_profile', JSON.stringify(profile));
-  };
-
-  const handleBackToBuilder = () => {
-    setGeneratedProposal(null);
-    setAppState('builder');
-  };
-  
-  const handleNewProject = () => {
-    setCurrentProject(null);
-    setGeneratedProposal(null);
-    setAppState('welcome');
-  }
-
   const renderContent = () => {
-    switch (appState) {
+    switch (view) {
       case 'welcome':
-        return <WelcomeScreen 
-                    onStart={handleStartFromQuestionnaire} 
-                    onStartAgent={handleStartFromAgent}
-                    savedProjects={savedProjects}
-                    onLoadProject={handleLoadProject}
-                    onDeleteProject={handleDeleteProject}
-                />;
-      case 'agent':
-        return <AgentInputForm onSubmit={handleParseNotes} onBack={() => setAppState('welcome')} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
+      case 'setup':
+        return <ProjectSetupScreen onSubmit={handleProjectSetupSubmit} onBack={handleBackToWelcome} defaultProjectName={`New Project ${new Date().toLocaleDateString()}`} />;
+      case 'agent-input':
+        return <AgentInputForm onSubmit={handleAgentSubmit} onBack={handleBackToWelcome} />;
       case 'builder':
-        if (currentProject) {
-          return <ProjectBuilder 
-                    initialData={currentProject} 
-                    onSubmit={handleGenerateProposal} 
-                    onSaveProject={handleSaveProject}
-                 />;
-        }
-        // This case handles initialization, e.g. after a project is loaded but before builder renders
-        return <LoadingSpinner message="Loading Project..." />;
-      case 'loading':
+        if (projectData) return <ProjectBuilder initialData={projectData} onSubmit={handleGenerateProposal} onSaveProject={saveProject} unitSystem={unitSystem} />;
+        return null;
+      case 'generating':
         return <LoadingSpinner message={loadingMessage} />;
       case 'proposal':
-        if (generatedProposal && currentProject) {
-          return <ProposalDisplay 
-                    proposal={generatedProposal} 
-                    projectName={currentProject.projectName} 
-                    onBack={handleBackToBuilder} 
-                 />;
-        }
-        // Fallback if state is inconsistent
-        handleNewProject();
-        return <LoadingSpinner />;
+        if (proposal && projectData) return <ProposalDisplay proposal={proposal} projectData={projectData} userProfile={userProfile} unitSystem={unitSystem} />;
+        return null;
+      case 'error':
+        return (
+          <div className="text-center p-8 bg-white rounded-lg border border-red-200 shadow-md">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">An Error Occurred</h2>
+            <p className="text-gray-700 mb-6">{error}</p>
+            <button onClick={() => setView('builder')} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-6 rounded-lg">
+              Back to Project
+            </button>
+          </div>
+        );
       default:
-        return <WelcomeScreen 
-                  onStart={handleStartFromQuestionnaire} 
-                  onStartAgent={handleStartFromAgent}
-                  savedProjects={savedProjects}
-                  onLoadProject={handleLoadProject}
-                  onDeleteProject={handleDeleteProject}
-              />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
     }
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans">
-      <Header onNewProject={handleNewProject} onShowProfile={() => setIsProfileModalOpen(true)} userProfile={userProfile} />
-      <main className="p-4 md:p-8 flex items-start justify-center">
+    <div className="bg-gray-100 min-h-screen flex flex-col font-sans">
+      <Header
+        onNewProject={handleNewProject}
+        onShowProfile={() => setIsProfileModalOpen(true)}
+        userProfile={userProfile}
+        unitSystem={unitSystem}
+        onUnitSystemChange={setUnitSystem}
+        onProfileChange={saveUserProfile} // Pass the save function to the header for the applet
+      />
+      <main className="flex-grow flex items-center justify-center p-4 sm:p-6">
         {renderContent()}
       </main>
-      <ProfileModal 
+      <ProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
-        onSave={handleSaveProfile}
+        onSave={saveUserProfile}
         initialProfile={userProfile}
       />
     </div>

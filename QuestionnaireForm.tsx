@@ -1,8 +1,10 @@
 
 
-import React, { useMemo, useState } from 'react';
+
+import React, { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { FormData, IO_Device } from './types';
+// FIX: Corrected import path and changed FormData to RoomData for consistency.
+import { RoomData, IO_Device } from './types';
 import {
   VIDEO_INPUT_TYPES,
   VIDEO_OUTPUT_TYPES,
@@ -11,7 +13,7 @@ import {
   BUDGET_OPTIONS,
   COMMON_FEATURES,
   ROOM_SPECIFIC_FEATURES,
-  // Fix: Replaced non-existent ROOM_SCALE_OPTIONS with the correct ROOM_COMPLEXITY_OPTIONS.
+  // FIX: Replaced non-existent ROOM_SCALE_OPTIONS with the correct ROOM_COMPLEXITY_OPTIONS and corrected import path.
   ROOM_COMPLEXITY_OPTIONS,
   SCALE_SPECIFIC_FEATURES,
   CONTROL_SYSTEM_OPTIONS,
@@ -23,19 +25,26 @@ import {
   ENVIRONMENTAL_CONSIDERATIONS,
   ROOM_DIMENSION_DEFAULTS,
 } from './constants';
+// FIX: Corrected import path for Tabs component.
 import Tabs from './components/Tabs';
+import { UnitSystem } from './App';
 
 interface QuestionnaireFormProps {
-  formData: FormData;
-  onChange: (data: FormData) => void;
+  // FIX: Changed type from FormData to RoomData.
+  formData: RoomData;
+  // FIX: Changed type from FormData to RoomData.
+  onChange: (data: RoomData) => void;
+  // FIX: Added unitSystem prop to handle unit conversions.
+  unitSystem: UnitSystem;
 }
 
-type IO_Section = keyof Pick<FormData, 'videoInputs' | 'videoOutputs' | 'audioInputs' | 'audioOutputs'>;
+// FIX: Changed type from FormData to RoomData.
+type IO_Section = keyof Pick<RoomData, 'videoInputs' | 'videoOutputs' | 'audioInputs' | 'audioOutputs'>;
 
-const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChange }) => {
+const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChange, unitSystem }) => {
 
   const showAdvancedAudio = useMemo(() => 
-    // Fix: Replaced property `roomScale` with `roomComplexity` and corrected the values to match the available options.
+    // FIX: Replaced property `roomScale` with `roomComplexity` and corrected the values to match the available options.
     ['High', 'Complex / Multi-Zone'].includes(formData.roomComplexity),
     [formData.roomComplexity]
   );
@@ -43,20 +52,20 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    // Fix: Replaced property check for `roomScale` with `roomComplexity`.
+    // FIX: Replaced property check for `roomScale` with `roomComplexity`.
     if (name === 'roomComplexity') {
       const newRoomType = formData.roomType;
-      // Fix: Renamed variable to `newRoomComplexity` for clarity.
+      // FIX: Renamed variable to `newRoomComplexity` for clarity.
       const newRoomComplexity = value;
 
       const newAvailableFeatures = [...new Set([
         ...COMMON_FEATURES, 
         ...(ROOM_SPECIFIC_FEATURES[newRoomType] || []),
-        // Fix: Used `newRoomComplexity` to access scale-specific features.
+        // FIX: Used `newRoomComplexity` to access scale-specific features.
         ...(SCALE_SPECIFIC_FEATURES[newRoomComplexity] || [])
       ])];
       
-      // Fix: Used `newRoomComplexity` to access dimension defaults.
+      // FIX: Used `newRoomComplexity` to access dimension defaults.
       const dimensionDefaults = ROOM_DIMENSION_DEFAULTS[newRoomType]?.[newRoomComplexity];
 
       const updatedData = {
@@ -111,6 +120,8 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
         cableType: CABLE_TYPES[0],
         terminationPoint: TERMINATION_POINTS[0],
         distance: 25,
+        // FIX: The IO_Device type requires the `ioType` property. This property is derived from the section name (e.g., 'videoInputs' becomes 'videoInput').
+        ioType: section.slice(0, -1) as IO_Device['ioType'],
     };
     onChange({ ...formData, [section]: [...formData[section], newItem] });
   };
@@ -124,13 +135,16 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
 
   const availableFeatures = useMemo(() => {
     const specificRoom = ROOM_SPECIFIC_FEATURES[formData.roomType] || [];
-    // Fix: Replaced property `roomScale` with `roomComplexity`.
+    // FIX: Replaced property `roomScale` with `roomComplexity`.
     const specificScale = SCALE_SPECIFIC_FEATURES[formData.roomComplexity] || [];
     const allPossibleFeatures = [...new Set([...COMMON_FEATURES, ...specificRoom, ...specificScale, ...formData.features])];
     return allPossibleFeatures.sort();
-    // Fix: Replaced `roomScale` with `roomComplexity` in the dependency array.
+    // FIX: Replaced `roomScale` with `roomComplexity` in the dependency array.
   }, [formData.roomType, formData.roomComplexity, formData.features]);
 
+  // FIX: Use unitSystem prop to determine distance unit label.
+  const distanceUnit = unitSystem === 'imperial' ? 'ft' : 'm';
+  
   const renderIOSection = (title: string, section: IO_Section, typeOptions: string[]) => (
     <div>
       <h3 className="text-lg font-semibold text-gray-700 mb-4">{title}</h3>
@@ -140,8 +154,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
           <button
             type="button"
             onClick={() => removeArrayItem(section, item.id)}
-            className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-1 disabled:text-gray-300 disabled:cursor-not-allowed"
-            disabled={formData[section].length <= 0}
+            className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-1"
             aria-label={`Remove ${title.slice(0,-1)} ${index+1}`}
           >
             &#10005;
@@ -172,7 +185,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
                 </select>
             </div>
             <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Distance to Rack (ft)</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{`Distance to Rack (${distanceUnit})`}</label>
                 <input type="number" min="0" value={item.distance} onChange={e => handleArrayChange(section, item.id, 'distance', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md text-sm"/>
             </div>
           </div>
@@ -211,20 +224,20 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                    <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-1">Length (ft)</label>
+                    <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-1">{`Length (${distanceUnit})`}</label>
                     <input type="number" name="length" value={formData.roomDimensions.length} onChange={handleDimensionChange} className="w-full p-2 border border-gray-300 rounded-md"/>
                 </div>
                 <div>
-                    <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-1">Width (ft)</label>
+                    <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-1">{`Width (${distanceUnit})`}</label>
                     <input type="number" name="width" value={formData.roomDimensions.width} onChange={handleDimensionChange} className="w-full p-2 border border-gray-300 rounded-md"/>
                 </div>
                 <div>
-                    <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">Height (ft)</label>
+                    <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">{`Height (${distanceUnit})`}</label>
                     <input type="number" name="height" value={formData.roomDimensions.height} onChange={handleDimensionChange} className="w-full p-2 border border-gray-300 rounded-md"/>
                 </div>
               </div>
               <div>
-                {/* Fix: Updated label, name, and value to use `roomComplexity`. */}
+                {/* FIX: Updated label, name, and value to use `roomComplexity`. */}
                 <label htmlFor="roomComplexity" className="block text-sm font-medium text-gray-700 mb-1">Room Complexity</label>
                 <select name="roomComplexity" value={formData.roomComplexity} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
                   {ROOM_COMPLEXITY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -354,7 +367,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg animate-fade-in h-full">
+    <div className="bg-white p-6 rounded-lg animate-fade-in h-full flex flex-col">
         <Tabs tabs={TABS} />
     </div>
   );
