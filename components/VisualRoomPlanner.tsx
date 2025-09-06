@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { RoomData, UnitSystem, IO_Device } from '../types';
 import { DEVICE_PALETTE, DeviceIconData } from './DeviceIcons';
+import { CONNECTION_TYPES, CABLE_TYPES, TERMINATION_POINTS } from '../constants';
 
 interface VisualRoomPlannerProps {
   roomData: RoomData;
@@ -13,6 +14,9 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
   const [editingDevice, setEditingDevice] = useState<IO_Device | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const rackPosition = { x: 2, y: 50 }; // Rack position in %
+  
+  // State for customizable grid spacing
+  const [gridSpacing, setGridSpacing] = useState(unitSystem === 'imperial' ? 2 : 1); // Default to 2 ft or 1 m
 
   const allDevices = useMemo(() => [
     ...roomData.videoInputs,
@@ -20,9 +24,28 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
     ...roomData.audioInputs,
     ...roomData.audioOutputs,
   ], [roomData]);
+  
+  const { length, width } = roomData.roomDimensions;
+  
+  // Dynamically generate CSS for grid lines based on spacing and room dimensions
+  const gridStyle = useMemo(() => {
+    if (gridSpacing <= 0 || !length || !width) {
+        return {};
+    }
+    const verticalSpacingPercent = (gridSpacing / width) * 100;
+    const horizontalSpacingPercent = (gridSpacing / length) * 100;
+    
+    return {
+        backgroundSize: `${verticalSpacingPercent}% ${horizontalSpacingPercent}%`,
+        backgroundImage: `
+            linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+        `,
+    };
+  }, [gridSpacing, length, width]);
+
 
   const calculateDistance = useCallback((x: number, y: number) => {
-    const { length, width } = roomData.roomDimensions;
     if (!length || !width) return 0;
     
     const dx = (x - rackPosition.x) / 100 * width;
@@ -30,7 +53,7 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
     
     const rawDistance = Math.sqrt(dx * dx + dy * dy);
     return parseFloat(rawDistance.toFixed(1));
-  }, [roomData.roomDimensions, rackPosition]);
+  }, [length, width, rackPosition]);
 
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -53,27 +76,18 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
       distance: calculateDistance(x, y),
       x: parseFloat(x.toFixed(2)),
       y: parseFloat(y.toFixed(2)),
-      cableType: 'CAT6a Shielded', // Sensible default
-      terminationPoint: 'Wall Plate', // Sensible default
+      connectionType: 'HDMI',
+      cableType: 'CAT6a Shielded',
+      terminationPoint: 'Wall Plate',
+      notes: '',
     };
-
-    const newName = prompt(`Enter a name for the new ${deviceIconData.defaultName}:`, newDevice.name);
-    if (newName) {
-      newDevice.name = newName;
-    } else {
-      return; // User cancelled
-    }
     
+    const targetArrayKey = `${newDevice.ioType}s` as keyof RoomData;
+
     onChange({
       ...roomData,
-      [newDevice.ioType === 'videoInput' ? 'videoInputs' : 
-       newDevice.ioType === 'videoOutput' ? 'videoOutputs' :
-       newDevice.ioType === 'audioInput' ? 'audioInputs' : 'audioOutputs'
-      ]: [
-        ...roomData[newDevice.ioType === 'videoInput' ? 'videoInputs' :
-                   newDevice.ioType === 'videoOutput' ? 'videoOutputs' :
-                   newDevice.ioType === 'audioInput' ? 'audioInputs' : 'audioOutputs'
-                  ],
+      [targetArrayKey]: [
+        ...(roomData[targetArrayKey] as IO_Device[]),
         newDevice
       ]
     });
@@ -81,69 +95,83 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
   };
   
-  const handleDeviceUpdate = (updatedDevice: IO_Device) => {
+  const handleDeviceUpdate = () => {
+     if (!editingDevice) return;
+     const targetArrayKey = `${editingDevice.ioType}s` as keyof RoomData;
      onChange({
       ...roomData,
-      [updatedDevice.ioType === 'videoInput' ? 'videoInputs' : 
-       updatedDevice.ioType === 'videoOutput' ? 'videoOutputs' :
-       updatedDevice.ioType === 'audioInput' ? 'audioInputs' : 'audioOutputs'
-      ]: roomData[updatedDevice.ioType === 'videoInput' ? 'videoInputs' :
-                   updatedDevice.ioType === 'videoOutput' ? 'videoOutputs' :
-                   updatedDevice.ioType === 'audioInput' ? 'audioInputs' : 'audioOutputs'
-                  ].map(d => d.id === updatedDevice.id ? updatedDevice : d)
+      [targetArrayKey]: (roomData[targetArrayKey] as IO_Device[]).map(d => d.id === editingDevice.id ? editingDevice : d)
     });
     setEditingDevice(null);
   };
   
-  const handleDeviceDelete = (deviceToDelete: IO_Device) => {
-    if (window.confirm(`Are you sure you want to delete "${deviceToDelete.name}"?`)) {
+  const handleDeviceDelete = () => {
+    if (!editingDevice) return;
+    if (window.confirm(`Are you sure you want to delete "${editingDevice.name}"?`)) {
+        const targetArrayKey = `${editingDevice.ioType}s` as keyof RoomData;
         onChange({
             ...roomData,
-            [deviceToDelete.ioType === 'videoInput' ? 'videoInputs' : 
-            deviceToDelete.ioType === 'videoOutput' ? 'videoOutputs' :
-            deviceToDelete.ioType === 'audioInput' ? 'audioInputs' : 'audioOutputs'
-            ]: roomData[deviceToDelete.ioType === 'videoInput' ? 'videoInputs' :
-                        deviceToDelete.ioType === 'videoOutput' ? 'videoOutputs' :
-                        deviceToDelete.ioType === 'audioInput' ? 'audioInputs' : 'audioOutputs'
-                        ].filter(d => d.id !== deviceToDelete.id)
+            [targetArrayKey]: (roomData[targetArrayKey] as IO_Device[]).filter(d => d.id !== editingDevice.id)
         });
     }
     setEditingDevice(null);
   };
 
-  const aspectRatio = roomData.roomDimensions.width / roomData.roomDimensions.length;
+  const aspectRatio = width / length;
 
   return (
     <div className="flex gap-4 h-[calc(100vh-350px)]">
-      {/* Device Palette */}
-      <div className="w-48 bg-gray-50 border border-gray-200 rounded-md p-2 flex-shrink-0">
-        <h3 className="text-sm font-semibold text-gray-600 mb-2 px-2">Device Palette</h3>
-        <p className="text-xs text-gray-500 mb-3 px-2">Drag icons onto the grid.</p>
-        <div className="space-y-1">
-          {DEVICE_PALETTE.map(device => (
-            <div
-              key={device.type}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData('application/json', JSON.stringify(device));
-              }}
-              className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-200 cursor-grab"
-            >
-              <div className="w-6 h-6">{device.icon}</div>
-              <span className="text-xs font-medium text-gray-700">{device.defaultName}</span>
+      {/* Sidebar Controls */}
+      <div className="w-48 flex-shrink-0 flex flex-col gap-4">
+        {/* Device Palette */}
+        <div className="bg-gray-50 border border-gray-200 rounded-md p-2">
+            <h3 className="text-sm font-semibold text-gray-600 mb-2 px-2">Device Palette</h3>
+            <p className="text-xs text-gray-500 mb-3 px-2">Drag icons onto the grid.</p>
+            <div className="space-y-1">
+            {DEVICE_PALETTE.map(device => (
+                <div
+                key={device.type}
+                draggable
+                onDragStart={(e) => {
+                    e.dataTransfer.setData('application/json', JSON.stringify(device));
+                }}
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-200 cursor-grab"
+                >
+                <div className="w-6 h-6">{device.icon}</div>
+                <span className="text-xs font-medium text-gray-700">{device.defaultName}</span>
+                </div>
+            ))}
             </div>
-          ))}
+        </div>
+        
+        {/* Grid Controls */}
+        <div className="bg-gray-50 border border-gray-200 rounded-md p-2">
+            <h3 className="text-sm font-semibold text-gray-600 mb-2 px-2">Grid Controls</h3>
+            <div className="px-2 space-y-2">
+                <div>
+                    <label htmlFor="grid-spacing" className="block text-xs font-medium text-gray-500">Spacing ({unitSystem === 'imperial' ? 'ft' : 'm'})</label>
+                    <input
+                        id="grid-spacing"
+                        type="number"
+                        value={gridSpacing}
+                        onChange={(e) => setGridSpacing(Math.max(1, Number(e.target.value)))}
+                        min="1"
+                        className="w-full p-1 border border-gray-300 rounded-md text-sm mt-1"
+                    />
+                </div>
+            </div>
         </div>
       </div>
 
       {/* Grid */}
-      <div className="flex-grow bg-white border border-dashed border-gray-300 rounded-md relative" ref={gridRef} onDrop={handleDrop} onDragOver={handleDragOver} style={{ aspectRatio: isNaN(aspectRatio) ? '4/3' : `${aspectRatio}` }}>
-        <div className="absolute top-2 left-2 text-xs text-gray-400 font-semibold">{`${roomData.roomDimensions.width}${unitSystem === 'imperial' ? 'ft' : 'm'} x ${roomData.roomDimensions.length}${unitSystem === 'imperial' ? 'ft' : 'm'}`}</div>
+      <div className="flex-grow bg-white border border-dashed border-gray-300 rounded-md relative" ref={gridRef} onDrop={handleDrop} onDragOver={handleDragOver} style={{ aspectRatio: isNaN(aspectRatio) || !isFinite(aspectRatio) ? '1.33' : `${aspectRatio}`, ...gridStyle }}>
+        <div className="absolute top-2 left-2 text-xs text-gray-400 font-semibold">{`${width}${unitSystem === 'imperial' ? 'ft' : 'm'} x ${length}${unitSystem === 'imperial' ? 'ft' : 'm'}`}</div>
         
         {/* Rack */}
-        <div className="absolute w-8 h-12 bg-gray-700 text-white flex items-center justify-center rounded text-xs font-bold" style={{ left: `${rackPosition.x}%`, top: `${rackPosition.y}%`, transform: 'translate(-50%, -50%)' }}>RACK</div>
+        <div className="absolute w-8 h-12 bg-gray-700 text-white flex items-center justify-center rounded text-xs font-bold" style={{ left: `${rackPosition.x}%`, top: `${rackPosition.y}%`, transform: 'translate(-50%, -50%)' }} title="Equipment Rack">RACK</div>
 
         {/* Devices */}
         {allDevices.map(device => (
@@ -153,8 +181,9 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
                 className="absolute flex flex-col items-center cursor-pointer group"
                 style={{ left: `${device.x}%`, top: `${device.y}%`, transform: 'translate(-50%, -50%)' }}
                 onClick={() => setEditingDevice(device)}
+                title={`Edit ${device.name}`}
               >
-                <div className="w-8 h-8 p-1 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-8 h-8 p-1 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     {DEVICE_PALETTE.find(p => p.type === device.type)?.icon}
                 </div>
                 <div className="mt-1 px-1.5 py-0.5 bg-blue-500 text-white text-[10px] rounded-full whitespace-nowrap">{device.name}</div>
@@ -168,24 +197,63 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
       {/* Editing Modal */}
       {editingDevice && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-20" onClick={() => setEditingDevice(null)}>
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold mb-4">Edit Device</h3>
-            <div className="space-y-3">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold mb-4">Edit Device: {editingDevice.type}</h3>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-3">
               <div>
-                <label className="text-sm font-medium">Name</label>
+                <label className="text-sm font-medium text-gray-700">Name</label>
                 <input 
                   type="text" 
                   value={editingDevice.name} 
                   onChange={(e) => setEditingDevice({...editingDevice, name: e.target.value})}
-                  className="w-full p-2 border rounded-md mt-1"
+                  className="w-full p-2 border border-gray-300 rounded-md mt-1"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">Connection Type</label>
+                <select
+                    value={editingDevice.connectionType}
+                    onChange={(e) => setEditingDevice({...editingDevice, connectionType: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md mt-1"
+                >
+                    {CONNECTION_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">Cable Type</label>
+                <select
+                    value={editingDevice.cableType}
+                    onChange={(e) => setEditingDevice({...editingDevice, cableType: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md mt-1"
+                >
+                    {CABLE_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">Termination Point</label>
+                <select
+                    value={editingDevice.terminationPoint}
+                    onChange={(e) => setEditingDevice({...editingDevice, terminationPoint: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md mt-1"
+                >
+                    {TERMINATION_POINTS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <textarea 
+                  value={editingDevice.notes} 
+                  onChange={(e) => setEditingDevice({...editingDevice, notes: e.target.value})}
+                  className="w-full p-2 border border-gray-300 rounded-md mt-1 h-20"
+                  placeholder="e.g., Connects to main lectern"
                 />
               </div>
             </div>
             <div className="mt-6 flex justify-between">
-              <button onClick={() => handleDeviceDelete(editingDevice)} className="text-sm text-red-600 hover:underline">Delete Device</button>
+              <button onClick={handleDeviceDelete} className="text-sm text-red-600 hover:underline font-medium py-2 px-4 rounded-md hover:bg-red-50">Delete Device</button>
               <div>
-                <button onClick={() => setEditingDevice(null)} className="text-sm mr-2 px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Cancel</button>
-                <button onClick={() => handleDeviceUpdate(editingDevice)} className="text-sm px-4 py-2 rounded-md bg-[#008A3A] text-white hover:bg-[#00732f]">Save</button>
+                <button onClick={() => setEditingDevice(null)} className="text-sm mr-2 px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 font-medium">Cancel</button>
+                <button onClick={handleDeviceUpdate} className="text-sm px-4 py-2 rounded-md bg-[#008A3A] text-white hover:bg-[#00732f] font-bold">Save</button>
               </div>
             </div>
           </div>

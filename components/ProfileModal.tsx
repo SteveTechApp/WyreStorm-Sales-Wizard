@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserProfile, Currency } from '../types';
+import { UserProfile } from '../types';
 import { CURRENCY_OPTIONS } from '../constants';
 
 interface ProfileModalProps {
@@ -10,17 +10,18 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, initialProfile }) => {
-  const [profile, setProfile] = useState<UserProfile>({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP' });
+  const [profile, setProfile] = useState<UserProfile>({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
 
   useEffect(() => {
     if (initialProfile) {
-      setProfile(initialProfile);
+      // Ensure unitSystem has a default if loading an old profile without it
+      setProfile({ unitSystem: 'imperial', ...initialProfile });
     }
   }, [initialProfile, isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setProfile(p => ({ ...p, [name]: value }));
+    setProfile(p => ({ ...p, [name]: value as any }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +67,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
               {Object.entries(CURRENCY_OPTIONS).map(([code, { name }]) => (
                 <option key={code} value={code}>{name} ({code})</option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="unitSystem" className="block text-sm font-medium text-gray-700">Measurement Units</label>
+            <select id="unitSystem" name="unitSystem" value={profile.unitSystem} onChange={handleChange} className="mt-1 w-full p-2 border border-gray-300 rounded-md">
+              <option value="imperial">Imperial (ft)</option>
+              <option value="metric">Metric (m)</option>
             </select>
           </div>
           <div>

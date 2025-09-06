@@ -1,24 +1,34 @@
 import { Currency } from './types';
 
-export const ROOM_TYPES: string[] = [
-  'Huddle Room',
-  'Small Conference Room',
-  'Medium Conference Room',
-  'Large Conference Room',
-  'Boardroom',
-  'Training Room',
-  'Auditorium',
-  'Classroom',
-  'Collaboration Space',
-  'Executive Office',
-  'Control Room',
+export const PRIMARY_USE_OPTIONS: string[] = [
+  'Presentation', // One-to-many, e.g., lecture hall
+  'Collaboration', // Interactive, e.g., conference room
+  'Unified Communications', // Primarily for video calls
+  'Training / Classroom',
+  'Command & Control', // Video walls, monitoring
   'Digital Signage',
 ];
 
 export const DESIGN_TIER_OPTIONS: string[] = [
-    'Standard',
-    'Advanced',
-    'Showcase (Upsell)',
+    'Bronze',
+    'Silver',
+    'Gold',
+];
+
+// FIX: Added ROOM_TYPES constant to be used for room creation, resolving import errors.
+export const ROOM_TYPES: string[] = [
+    'Huddle Room',
+    'Small Conference Room',
+    'Medium Conference Room',
+    'Large Conference Room',
+    'Boardroom',
+    'Training Room',
+    'Auditorium',
+    'Classroom',
+    'Collaboration Space',
+    'Executive Office',
+    'Control Room',
+    'Digital Signage',
 ];
 
 export const ROOM_COMPLEXITY_OPTIONS: string[] = [
@@ -46,6 +56,22 @@ export const CONTROL_SYSTEM_OPTIONS: string[] = [
 ];
 
 // I/O & Cabling Constants
+
+export const CONNECTION_TYPES: string[] = [
+  'HDMI',
+  'DisplayPort',
+  'USB-C',
+  'VGA',
+  'SDI',
+  'XLR',
+  '3.5mm Jack',
+  'RCA',
+  'Dante',
+  'AV over IP',
+  'HDBaseT',
+  'Wireless Casting',
+  'Speaker Wire',
+];
 
 export const VIDEO_INPUT_TYPES: string[] = [
   'HDMI',

@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import Logo from './Logo';
 // FIX: Corrected import path
@@ -30,13 +31,13 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
           <h1 className="text-3xl lg:text-4xl font-extrabold mt-6 mb-2" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.2)' }}>
             AI Sales Assistant
           </h1>
-          <p className="text-green-100 text-lg">Generate Expert AV Proposals Instantly</p>
+          <p className="text-green-100 text-lg">Build Expert AV Proposals in Minutes.</p>
         </div>
 
         {/* Right Side - Actions */}
         <div className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Get Started</h2>
-          <p className="text-sm text-gray-500 mb-6">This is a free tool for WyreStorm partners. All features are enabled and accessible.</p>
+          <p className="text-sm text-gray-500 mb-6">Start with our guided questionnaire or upload your client's notes to begin.</p>
           <div className="flex flex-col gap-4 mb-8">
             <div>
               <button

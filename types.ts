@@ -11,20 +11,23 @@ export interface UserProfile {
   email: string;
   logoUrl: string; // base64 data URL
   currency: Currency;
+  unitSystem: UnitSystem;
 }
 
 // Represents a single input or output device
 export interface IO_Device {
   id: string;
   name: string;
-  type: string; // e.g., 'HDMI', 'Display'
+  type: string; // The role of the device, e.g., 'Display', 'Laptop Input'
+  connectionType: string; // The physical connection, e.g., 'HDMI', 'XLR'
   cableType: string;
   terminationPoint: string;
   distance: number;
-  // New fields for the visual planner
-  x?: number; // Position on the grid
-  y?: number; // Position on the grid
+  notes: string;
   ioType: 'videoInput' | 'videoOutput' | 'audioInput' | 'audioOutput';
+  // FIX: Add optional properties for visual planner coordinates
+  x?: number; // Visual planner X coordinate (%)
+  y?: number; // Visual planner Y coordinate (%)
 }
 
 // Represents the dimensions of a room
@@ -48,6 +51,9 @@ export interface RoomData {
   roomComplexity: string; // e.g., 'Standard'
   roomDimensions: RoomDimensions;
   primaryUse: string;
+  functionalityStatement: string;
+  maxParticipants: number;
+  maxDisplays: number;
   videoInputs: IO_Device[];
   videoOutputs: IO_Device[];
   audioInputs: IO_Device[];
@@ -142,6 +148,29 @@ export interface DesignFeedbackItem {
   text: string;
 }
 
+export interface SolutionVisualization {
+  solutionTitle: string;
+  solutionPhilosophy: string;
+  heroProducts: string[]; // Array of product SKUs
+  simpleDiagram: string; // MermaidJS syntax
+}
+
+export interface RoomWizardAnswers {
+    roomName: string;
+    primaryUse: string;
+    participantCount: string;
+    displayCount: number;
+    needsWirelessPresentation: boolean;
+    needsBYOM: boolean;
+    needsKVM: boolean;
+}
+
+export interface SuggestedConfiguration {
+    roomType: string;
+    designTier: 'Bronze' | 'Silver' | 'Gold';
+    reasoning: string;
+}
+
 
 export const createDefaultRoomData = (roomType: string, roomName: string): RoomData => ({
   id: uuidv4(),
@@ -150,6 +179,9 @@ export const createDefaultRoomData = (roomType: string, roomName: string): RoomD
   roomComplexity: 'Standard',
   roomDimensions: { length: 20, width: 15, height: 9 },
   primaryUse: '',
+  functionalityStatement: '',
+  maxParticipants: 10,
+  maxDisplays: 2,
   videoInputs: [],
   videoOutputs: [],
   audioInputs: [],

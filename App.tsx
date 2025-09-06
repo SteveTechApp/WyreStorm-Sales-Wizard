@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ProjectData, Proposal, UserProfile, RoomData, createDefaultRoomData, Currency } from './types';
+import { ProjectData, Proposal, UserProfile, RoomData, createDefaultRoomData, Currency, IO_Device } from './types';
 import { generateProposal, parseCustomerNotes, generateRoomTemplate } from './services/geminiService';
 import WelcomeScreen from './components/WelcomeScreen';
 import ProjectSetupScreen from './components/ProjectSetupScreen';
@@ -21,7 +21,6 @@ const App: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [savedProjects, setSavedProjects] = useState<ProjectData[]>([]);
-  const [unitSystem, setUnitSystem] = useState<UnitSystem>('imperial');
   const [error, setError] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState('Generating Proposal...');
 
@@ -36,10 +35,13 @@ const App: React.FC = () => {
         if (!profile.currency) {
           profile.currency = 'GBP';
         }
+        if (!profile.unitSystem) {
+          profile.unitSystem = 'imperial';
+        }
         setUserProfile(profile);
       } else {
         // Set a default profile if none exists
-        setUserProfile({ name: '', company: 'Your Company', email: '', logoUrl: '', currency: 'GBP' });
+        setUserProfile({ name: '', company: 'Your Company', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
       }
 
       const savedProjectsData = localStorage.getItem('savedProjects');
@@ -94,45 +96,63 @@ const App: React.FC = () => {
   const handleStartAgent = () => setView('agent-input');
   const handleBackToWelcome = () => setView('welcome');
   
-  const handleProjectSetupSubmit = async ({ projectName, clientName, coverImage, rooms }: { projectName: string; clientName: string; coverImage: string; rooms: Record<string, number> }) => {
+  const handleProjectSetupSubmit = async ({ projectName, clientName, coverImage, rooms }: { projectName: string; clientName: string; coverImage: string; rooms: { roomType: string; designTier: string }[] }) => {
       setLoadingMessage('Creating Project Templates...');
       setView('generating');
       setError(null);
       try {
-          const roomPromises = Object.entries(rooms).flatMap(([roomType, quantity]) =>
-              Array.from({ length: quantity }, () => generateRoomTemplate(roomType, 'Standard'))
+          const aiRoomRequests = rooms.filter(r => r.designTier !== 'Manual');
+          const manualRoomRequests = rooms.filter(r => r.designTier === 'Manual');
+
+          const aiRoomPromises = aiRoomRequests.map(room => 
+            generateRoomTemplate(room.roomType, room.designTier)
           );
 
-          const results = await Promise.allSettled(roomPromises);
+          const results = await Promise.allSettled(aiRoomPromises);
+          
+          const generatedRooms: RoomData[] = [];
 
-          const successfulRooms: RoomData[] = [];
+          // Process AI-generated rooms
           results.forEach((result, i) => {
               if (result.status === 'fulfilled') {
                   const newRoom: RoomData = { ...result.value, id: uuidv4() };
-                   // Add unique suffix if room name already exists
-                  let counter = 1;
-                  let potentialName = newRoom.roomName;
-                  while (successfulRooms.some(r => r.roomName === potentialName)) {
-                      counter++;
-                      potentialName = `${newRoom.roomName} ${counter}`;
-                  }
-                  newRoom.roomName = potentialName;
-                  successfulRooms.push(newRoom);
+                  generatedRooms.push(newRoom);
               } else {
-                  console.error(`Failed to generate template for room ${i}:`, result.reason);
+                  console.error(`Failed to generate template for AI room ${aiRoomRequests[i].roomType}:`, result.reason);
               }
           });
+
+          // Process manually-added rooms
+          manualRoomRequests.forEach(room => {
+              // Use the roomType for the initial roomName
+              const newRoom = createDefaultRoomData(room.roomType, room.roomType);
+              generatedRooms.push(newRoom);
+          });
           
-           if (successfulRooms.length === 0) {
-              throw new Error("The AI failed to generate any room templates. Please try again.");
+           if (generatedRooms.length === 0) {
+              throw new Error("Failed to generate or create any room templates. Please try again.");
            }
+
+          // Handle unique naming for ALL rooms together to prevent conflicts
+          const finalRooms: RoomData[] = [];
+          generatedRooms.forEach(newRoom => {
+              let counter = 1;
+              let potentialName = newRoom.roomName;
+              while (finalRooms.some(r => r.roomName === potentialName)) {
+                  counter++;
+                  const baseName = newRoom.roomName.replace(/ \d+$/, '');
+                  potentialName = `${baseName} ${counter}`;
+              }
+              newRoom.roomName = potentialName;
+              finalRooms.push(newRoom);
+          });
 
           const newProject: ProjectData = {
               projectId: uuidv4(),
               projectName,
               clientName,
               coverImage,
-              rooms: successfulRooms,
+              rooms: finalRooms,
               lastSaved: new Date().toISOString(),
           };
           setProjectData(newProject);
@@ -150,13 +170,27 @@ const App: React.FC = () => {
     try {
         const parsedData = await parseCustomerNotes(text);
         
+        const completeIO = (io: Partial<IO_Device>, ioType: IO_Device['ioType']): IO_Device => ({
+          name: 'Unnamed Device',
+          type: 'Unknown',
+          connectionType: 'HDMI',
+          cableType: 'CAT6a Shielded',
+          terminationPoint: 'Wall Plate',
+          distance: 25,
+          notes: 'Auto-generated from notes.',
+          ...io, // Overwrite defaults with data from AI
+          id: uuidv4(),
+          ioType: ioType,
+        });
+
         const sanitizedRooms = (parsedData.rooms || []).map(partialRoom => {
             const fullRoom = {
                 ...createDefaultRoomData(partialRoom.roomType || 'Conference Room', partialRoom.roomName || 'Unnamed Room'),
                 ...partialRoom,
             };
-            fullRoom.videoInputs = (fullRoom.videoInputs || []).map(io => ({ ...createDefaultRoomData('','').videoInputs[0], ...io, id: uuidv4() }));
-            fullRoom.videoOutputs = (fullRoom.videoOutputs || []).map(io => ({ ...createDefaultRoomData('','').videoOutputs[0], ...io, id: uuidv4() }));
+            
+            fullRoom.videoInputs = (partialRoom.videoInputs || []).map(io => completeIO(io, 'videoInput'));
+            fullRoom.videoOutputs = (partialRoom.videoOutputs || []).map(io => completeIO(io, 'videoOutput'));
             
             return fullRoom;
         });
@@ -187,7 +221,7 @@ const App: React.FC = () => {
     setError(null);
     try {
       // Pass the entire userProfile object, which includes the currency.
-      const generatedProposal = await generateProposal(data, userProfile, unitSystem);
+      const generatedProposal = await generateProposal(data, userProfile, userProfile?.unitSystem || 'imperial');
       setProposal(generatedProposal);
       setView('proposal');
     } catch (e: any) {
@@ -202,24 +236,49 @@ const App: React.FC = () => {
       case 'welcome':
         return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
       case 'setup':
-        return <ProjectSetupScreen onSubmit={handleProjectSetupSubmit} onBack={handleBackToWelcome} defaultProjectName={`New Project ${new Date().toLocaleDateString()}`} />;
+        return <ProjectSetupScreen 
+                  onSubmit={handleProjectSetupSubmit} 
+                  onBack={handleBackToWelcome} 
+                  defaultProjectName={`New Project ${new Date().toLocaleDateString()}`}
+                  userProfile={userProfile}
+                />;
       case 'agent-input':
         return <AgentInputForm onSubmit={handleAgentSubmit} onBack={handleBackToWelcome} />;
       case 'builder':
-        if (projectData) return <ProjectBuilder initialData={projectData} onSubmit={handleGenerateProposal} onSaveProject={saveProject} unitSystem={unitSystem} />;
+        if (projectData && userProfile) return <ProjectBuilder initialData={projectData} onSubmit={handleGenerateProposal} onSaveProject={saveProject} unitSystem={userProfile.unitSystem} />;
         return null;
       case 'generating':
         return <LoadingSpinner message={loadingMessage} />;
       case 'proposal':
-        if (proposal && projectData) return <ProposalDisplay proposal={proposal} projectData={projectData} userProfile={userProfile} unitSystem={unitSystem} />;
+        if (proposal && projectData && userProfile) return <ProposalDisplay proposal={proposal} projectData={projectData} userProfile={userProfile} unitSystem={userProfile.unitSystem} />;
         return null;
       case 'error':
         return (
-          <div className="text-center p-8 bg-white rounded-lg border border-red-200 shadow-md">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">An Error Occurred</h2>
-            <p className="text-gray-700 mb-6">{error}</p>
-            <button onClick={() => setView('builder')} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-6 rounded-lg">
-              Back to Project
+          <div className="text-center p-8 bg-white rounded-lg border border-red-200 shadow-lg w-full max-w-2xl mx-auto animate-fade-in">
+            <div className="flex justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-red-600 mb-3">An Error Occurred</h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+
+            {error && error.toLowerCase().includes('proposal') && (
+                <div className="text-left bg-red-50 p-4 rounded-md border border-red-200 mb-6">
+                    <h3 className="font-semibold text-red-800 mb-2">What to check:</h3>
+                    <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
+                        <li><strong>Incomplete Data:</strong> Ensure each room has a name, dimensions, and at least one input or output defined.</li>
+                        <li><strong>Network Connection:</strong> Verify that you are connected to the internet.</li>
+                        <li><strong>AI Service:</strong> The service may be temporarily unavailable. Please wait a moment before trying again.</li>
+                    </ul>
+                </div>
+            )}
+
+            <button 
+              onClick={() => projectData ? setView('builder') : setView('welcome')} 
+              className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-6 rounded-lg transition-transform transform hover:scale-105"
+            >
+              {projectData ? 'Back to Project' : 'Back to Home'}
             </button>
           </div>
         );
@@ -234,9 +293,6 @@ const App: React.FC = () => {
         onNewProject={handleNewProject}
         onShowProfile={() => setIsProfileModalOpen(true)}
         userProfile={userProfile}
-        unitSystem={unitSystem}
-        onUnitSystemChange={setUnitSystem}
-        onProfileChange={saveUserProfile} // Pass the save function to the header for the applet
       />
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6">
         {renderContent()}

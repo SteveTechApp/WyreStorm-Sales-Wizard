@@ -1,6 +1,3 @@
-
-
-
 import React, { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // FIX: Corrected import path and changed FormData to RoomData for consistency.
@@ -117,9 +114,12 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
         id: uuidv4(),
         name: `New ${section.slice(0, -1)}`,
         type: typeOptionsMap[section][0],
+// FIX: Add missing properties `connectionType` and `notes` to the new IO_Device object to satisfy the IO_Device interface. This resolves a TypeScript error where the object was missing required fields.
+        connectionType: 'HDMI',
         cableType: CABLE_TYPES[0],
         terminationPoint: TERMINATION_POINTS[0],
         distance: 25,
+        notes: '',
         // FIX: The IO_Device type requires the `ioType` property. This property is derived from the section name (e.g., 'videoInputs' becomes 'videoInput').
         ioType: section.slice(0, -1) as IO_Device['ioType'],
     };
@@ -237,11 +237,15 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
                 </div>
               </div>
               <div>
-                {/* FIX: Updated label, name, and value to use `roomComplexity`. */}
-                <label htmlFor="roomComplexity" className="block text-sm font-medium text-gray-700 mb-1">Room Complexity</label>
-                <select name="roomComplexity" value={formData.roomComplexity} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                  {ROOM_COMPLEXITY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </select>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Room Complexity</label>
+                <div className="flex flex-wrap gap-2">
+                    {ROOM_COMPLEXITY_OPTIONS.map(opt => (
+                        <label key={opt} className="cursor-pointer">
+                            <input type="radio" name="roomComplexity" value={opt} checked={formData.roomComplexity === opt} onChange={handleChange} className="sr-only peer" />
+                            <div className="px-3 py-2 border rounded-md text-sm font-medium transition-colors bg-white text-gray-700 border-gray-300 peer-checked:bg-[#008A3A] peer-checked:text-white peer-checked:border-[#008A3A]">{opt}</div>
+                        </label>
+                    ))}
+                </div>
               </div>
             </div>
           </div>
@@ -350,10 +354,15 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">Budget</label>
-                        <select name="budget" value={formData.budget} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                            {BUDGET_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                        </select>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Budget</label>
+                        <div className="flex flex-wrap gap-2">
+                            {BUDGET_OPTIONS.map(opt => (
+                                <label key={opt} className="cursor-pointer">
+                                    <input type="radio" name="budget" value={opt} checked={formData.budget === opt} onChange={handleChange} className="sr-only peer" />
+                                    <div className="px-3 py-2 border rounded-md text-sm font-medium transition-colors bg-white text-gray-700 border-gray-300 peer-checked:bg-[#008A3A] peer-checked:text-white peer-checked:border-[#008A3A]">{opt}</div>
+                                </label>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 
