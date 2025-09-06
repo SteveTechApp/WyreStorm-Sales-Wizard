@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ProjectData, Proposal, UserProfile, UnitSystem, RoomData, Currency, CustomCostItem, DesignFeedbackItem, Product } from '../types';
 import { productDatabase } from '../components/productDatabase';
@@ -122,11 +123,8 @@ export const generateProposal = async (data: ProjectData, userProfile: UserProfi
         - Sum the converted dealer prices to get \`hardwareDealerTotal\`.
         - Sum the converted MSRP prices to get \`hardwareMsrpTotal\`.
         - Calculate \`laborTotal\` by summing all hours from your installation plan and multiplying by the average labor rate from all rooms.
-        // FIX: Replaced invalid template literals that were causing compilation errors. These are instructions for the AI, not JavaScript variables.
         - **Analyze \`projectCosts\`:** For each string in the \`projectCosts\` arrays (e.g., 'Project Management (15%)'), create a line item in \`pricing.customCostItems\`. If it's a percentage, calculate it based on the \`hardwareDealerTotal\`. If it's a service (e.g., 'CAD/Visio Design'), create a reasonable, industry-standard estimated cost based on the project size.
-        // FIX: Replaced invalid template literals that were causing compilation errors. These are instructions for the AI, not JavaScript variables.
         - **Consolidate \`customCosts\`:** Add any pre-defined \`customCosts\` from the room data to the \`pricing.customCostItems\` array.
-        // FIX: Replaced invalid template literals that were causing compilation errors. These are instructions for the AI, not JavaScript variables.
         - Sum all items in \`pricing.customCostItems\` to get the \`customCostsTotal\`.
         - Calculate \`grandTotal\` = \`hardwareDealerTotal\` + \`laborTotal\` + \`customCostsTotal\`.
         - Ensure all pricing fields are valid numbers.
@@ -137,7 +135,6 @@ export const generateProposal = async (data: ProjectData, userProfile: UserProfi
 
     6.  **Create System Diagram:** Generate a system diagram using MermaidJS 'graph TD' syntax.
 
-    // FIX: Replaced invalid template literal that was causing a compilation error. This is an instruction for the AI, not a JavaScript variable.
     7.  **Generate Project Prerequisites:** Consolidate all unique 'siteRequirements' from all rooms into a single, comprehensive list in the \`siteRequirements\` field. This is critical for setting client expectations.
 
     **Output Format:**
@@ -255,7 +252,20 @@ export const parseCustomerNotes = async (text: string): Promise<Partial<ProjectD
     }
 };
 
-// FIX: Define schema for the generateRoomTemplate response
+// FIX: Define a reusable schema for IO_Device to avoid repetition and errors.
+const ioDeviceSchema = {
+    type: Type.OBJECT,
+    properties: {
+        name: { type: Type.STRING },
+        type: { type: Type.STRING },
+        cableType: { type: Type.STRING },
+        terminationPoint: { type: Type.STRING },
+        distance: { type: Type.NUMBER }
+    },
+    required: ['name', 'type', 'cableType', 'terminationPoint', 'distance']
+};
+
+// FIX: Define schema for the generateRoomTemplate response and fix empty object properties
 const roomDataSchema = {
     type: Type.OBJECT,
     properties: {
@@ -273,36 +283,10 @@ const roomDataSchema = {
         },
         primaryUse: { type: Type.STRING },
         features: { type: Type.ARRAY, items: { type: Type.STRING } },
-        videoInputs: {
-            type: Type.ARRAY,
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    name: { type: Type.STRING },
-                    type: { type: Type.STRING },
-                    cableType: { type: Type.STRING },
-                    terminationPoint: { type: Type.STRING },
-                    distance: { type: Type.NUMBER }
-                },
-                required: ['name', 'type', 'cableType', 'terminationPoint', 'distance']
-            }
-        },
-        videoOutputs: {
-            type: Type.ARRAY,
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    name: { type: Type.STRING },
-                    type: { type: Type.STRING },
-                    cableType: { type: Type.STRING },
-                    terminationPoint: { type: Type.STRING },
-                    distance: { type: Type.NUMBER }
-                },
-                required: ['name', 'type', 'cableType', 'terminationPoint', 'distance']
-            }
-        },
-        audioInputs: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: {} } },
-        audioOutputs: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: {} } },
+        videoInputs: { type: Type.ARRAY, items: ioDeviceSchema },
+        videoOutputs: { type: Type.ARRAY, items: ioDeviceSchema },
+        audioInputs: { type: Type.ARRAY, items: ioDeviceSchema }, // FIX: Used the detailed ioDeviceSchema
+        audioOutputs: { type: Type.ARRAY, items: ioDeviceSchema }, // FIX: Used the detailed ioDeviceSchema
         audioCoverageNotes: { type: Type.STRING },
         networkConnection: { type: Type.STRING },
         controlWiring: { type: Type.STRING },
@@ -313,7 +297,18 @@ const roomDataSchema = {
         additionalInfo: { type: Type.STRING },
         laborRate: { type: Type.NUMBER },
         projectCosts: { type: Type.ARRAY, items: { type: Type.STRING } },
-        customCosts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: {} } },
+        customCosts: { // FIX: Provided a full schema for CustomCostItem
+            type: Type.ARRAY, 
+            items: { 
+                type: Type.OBJECT, 
+                properties: {
+                    id: { type: Type.STRING },
+                    description: { type: Type.STRING },
+                    cost: { type: Type.NUMBER }
+                },
+                required: ['id', 'description', 'cost']
+            } 
+        },
         siteRequirements: { type: Type.ARRAY, items: { type: Type.STRING } }
     },
     required: [
