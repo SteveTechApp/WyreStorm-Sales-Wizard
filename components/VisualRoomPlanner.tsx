@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { RoomData, UnitSystem, IO_Device } from '../types';
 import { DEVICE_PALETTE, DeviceIconData } from './DeviceIcons';
-import { CONNECTION_TYPES, CABLE_TYPES, TERMINATION_POINTS } from '../constants';
+import { CONNECTION_TYPES, CABLE_TYPES, TERMINATION_POINTS, DEVICE_LOCATION_OPTIONS } from '../constants';
 
 interface VisualRoomPlannerProps {
   roomData: RoomData;
@@ -73,6 +73,7 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
       name: `New ${deviceIconData.defaultName}`,
       type: deviceIconData.type,
       ioType: deviceIconData.ioType,
+      location: deviceIconData.defaultLocation,
       distance: calculateDistance(x, y),
       x: parseFloat(x.toFixed(2)),
       y: parseFloat(y.toFixed(2)),
@@ -208,6 +209,16 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
                   onChange={(e) => setEditingDevice({...editingDevice, name: e.target.value})}
                   className="w-full p-2 border border-gray-300 rounded-md mt-1"
                 />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">Physical Location</label>
+                <select
+                    value={editingDevice.location}
+                    onChange={(e) => setEditingDevice({...editingDevice, location: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md mt-1"
+                >
+                    {DEVICE_LOCATION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Connection Type</label>

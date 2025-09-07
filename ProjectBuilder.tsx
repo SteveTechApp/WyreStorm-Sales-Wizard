@@ -1,8 +1,9 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // FIX: Upgraded component and corrected import paths for root file location.
-import { RoomData, ProjectData, UnitSystem, DesignFeedbackItem } from './types';
+import { RoomData, ProjectData, UnitSystem, DesignFeedbackItem, RoomWizardAnswers } from './types';
 import QuestionnaireForm from './components/QuestionnaireForm';
 import { generateRoomTemplate, reviewRoomDesign } from './services/geminiService';
 import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from './constants';
@@ -96,7 +97,15 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({ onSubmit, onSaveProject
   const handleSelectRoomTypeToAdd = async (roomType: string, designTier: string) => {
     setIsAddingRoom(true);
     try {
-        const templateResult = await generateRoomTemplate(roomType, designTier);
+        // FIX: Added a default wizardAnswers object to satisfy the function signature.
+        const defaultWizardAnswers: RoomWizardAnswers = {
+            roomName: `${designTier} ${roomType}`,
+            participantCount: 10,
+            primaryUse: 'General Presentation',
+            displayConfiguration: [{ type: 'display', quantity: 1 }],
+            features: ['Video Conferencing', 'Wireless Presentation'],
+        };
+        const templateResult = await generateRoomTemplate(roomType, designTier, defaultWizardAnswers);
         
         const newRoom: RoomData = { ...templateResult, id: uuidv4() };
         

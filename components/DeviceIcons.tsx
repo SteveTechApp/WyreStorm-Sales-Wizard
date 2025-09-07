@@ -7,6 +7,7 @@ export interface DeviceIconData {
   ioType: I_O_Type;
   icon: JSX.Element;
   defaultName: string;
+  defaultLocation: string;
 }
 
 // Simple SVG Icons for the palette
@@ -20,14 +21,14 @@ const WallPlateIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
 
 export const DEVICE_PALETTE: DeviceIconData[] = [
   // Video Outputs
-  { type: 'Display', ioType: 'videoOutput', icon: <DisplayIcon />, defaultName: 'Display' },
-  { type: 'Projector', ioType: 'videoOutput', icon: <ProjectorIcon />, defaultName: 'Projector' },
+  { type: 'Display', ioType: 'videoOutput', icon: <DisplayIcon />, defaultName: 'Display', defaultLocation: 'Wall Mounted' },
+  { type: 'Projector', ioType: 'videoOutput', icon: <ProjectorIcon />, defaultName: 'Projector', defaultLocation: 'Ceiling Mounted' },
   // Video Inputs
-  { type: 'Laptop Input', ioType: 'videoInput', icon: <LaptopIcon />, defaultName: 'Laptop Input' },
-  { type: 'Camera', ioType: 'videoInput', icon: <CameraIcon />, defaultName: 'Camera' },
-  { type: 'Wall Plate Input', ioType: 'videoInput', icon: <WallPlateIcon />, defaultName: 'Wall Plate' },
+  { type: 'Laptop Input', ioType: 'videoInput', icon: <LaptopIcon />, defaultName: 'Laptop Input', defaultLocation: 'Table/Desk' },
+  { type: 'Camera', ioType: 'videoInput', icon: <CameraIcon />, defaultName: 'Camera', defaultLocation: 'Wall Mounted' },
+  { type: 'Wall Plate Input', ioType: 'videoInput', icon: <WallPlateIcon />, defaultName: 'Wall Plate', defaultLocation: 'Wall Mounted' },
   // Audio Inputs
-  { type: 'Microphone', ioType: 'audioInput', icon: <MicIcon />, defaultName: 'Microphone' },
+  { type: 'Microphone', ioType: 'audioInput', icon: <MicIcon />, defaultName: 'Microphone', defaultLocation: 'Table/Desk' },
   // Audio Outputs
-  { type: 'Speaker', ioType: 'audioOutput', icon: <SpeakerIcon />, defaultName: 'Speaker' },
+  { type: 'Speaker', ioType: 'audioOutput', icon: <SpeakerIcon />, defaultName: 'Speaker', defaultLocation: 'Ceiling Mounted' },
 ];

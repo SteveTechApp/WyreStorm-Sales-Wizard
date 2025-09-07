@@ -1,40 +1,34 @@
-import { v4 as uuidv4 } from 'uuid';
-
-// The measurement system used for dimensions
 export type UnitSystem = 'imperial' | 'metric';
-export type Currency = 'GBP' | 'USD' | 'EUR';
+export type Currency = 'USD' | 'GBP' | 'EUR';
 
-// Defines a user's profile information
 export interface UserProfile {
   name: string;
   company: string;
   email: string;
-  logoUrl: string; // base64 data URL
+  logoUrl: string;
   currency: Currency;
   unitSystem: UnitSystem;
 }
 
-// Represents a single input or output device
 export interface IO_Device {
   id: string;
-  name: string;
-  type: string; // The role of the device, e.g., 'Display', 'Laptop Input'
-  connectionType: string; // The physical connection, e.g., 'HDMI', 'XLR'
+  name:string;
+  type: string;
+  ioType: 'videoInput' | 'videoOutput' | 'audioInput' | 'audioOutput';
+  connectionType: string;
+  location: string;
   cableType: string;
   terminationPoint: string;
   distance: number;
   notes: string;
-  ioType: 'videoInput' | 'videoOutput' | 'audioInput' | 'audioOutput';
-  // FIX: Add optional properties for visual planner coordinates
-  x?: number; // Visual planner X coordinate (%)
-  y?: number; // Visual planner Y coordinate (%)
+  x?: number;
+  y?: number;
 }
 
-// Represents the dimensions of a room
 export interface RoomDimensions {
-  length: number;
-  width: number;
-  height: number;
+    length: number;
+    width: number;
+    height: number;
 }
 
 export interface CustomCostItem {
@@ -43,13 +37,12 @@ export interface CustomCostItem {
   cost: number;
 }
 
-// All data related to a single room's configuration
 export interface RoomData {
-  id: string;
+  id:string;
   roomName: string;
-  roomType: string; // e.g., 'Conference Room'
-  roomComplexity: string; // e.g., 'Standard'
+  roomType: string;
   roomDimensions: RoomDimensions;
+  roomComplexity: string;
   primaryUse: string;
   functionalityStatement: string;
   maxParticipants: number;
@@ -59,6 +52,7 @@ export interface RoomData {
   audioInputs: IO_Device[];
   audioOutputs: IO_Device[];
   audioCoverageNotes: string;
+  cablingInfrastructureNotes: string;
   networkConnection: string;
   controlWiring: string;
   powerConsiderations: string;
@@ -67,24 +61,63 @@ export interface RoomData {
   preferredControlSystem: string;
   budget: string;
   additionalInfo: string;
-  // New fields for quoting
-  laborRate: number;
-  projectCosts: string[]; // e.g. ['Project Management', 'System Design']
-  customCosts: CustomCostItem[];
   siteRequirements: string[];
+  projectCosts: string[];
+  designTier?: string;
+  // New field for business justification on Silver/Gold tiers
+  businessJustification?: string;
 }
 
-// Represents the entire project, including all rooms
+export interface SuggestedConfiguration {
+  roomType: string;
+  designTier: string;
+  summary: string;
+  estimatedCost: string;
+  displayConfiguration: DisplayConfiguration[];
+  features: string[];
+}
+
+// New types for the Room Configurator Modal
+export interface RoomTierOption {
+    tier: 'Bronze' | 'Silver' | 'Gold';
+    estimatedCost: number;
+    roomData: Omit<RoomData, 'id'>;
+}
+
+export interface TieredRoomResponse {
+    bronze: RoomTierOption;
+    silver: RoomTierOption;
+    gold: RoomTierOption;
+}
+
+
+export interface DisplayConfiguration {
+    type: string;
+    quantity: number;
+}
+
+export interface RoomWizardAnswers {
+    roomName: string;
+    participantCount: number;
+    primaryUse: string;
+    displayConfiguration: DisplayConfiguration[];
+    features: string[];
+}
+
 export interface ProjectData {
   projectId: string;
   projectName: string;
   clientName: string;
-  coverImage: string; // base64 data URL
+  clientContactName: string;
+  clientContactEmail: string;
+  clientAddress: string;
+  coverImage: string;
   rooms: RoomData[];
-  lastSaved: string; // ISO date string
+  lastSaved: string;
+  // New field for overall project budget
+  projectBudget?: number;
 }
 
-// An item in the equipment list of a proposal
 export interface EquipmentItem {
   sku: string;
   name: string;
@@ -93,110 +126,109 @@ export interface EquipmentItem {
   dealerTotal: number;
   msrp: number;
   msrpTotal: number;
+  isCustom?: boolean;
 }
 
-// A single task in the installation plan
-export interface InstallationTaskSummary {
+export interface InstallationTaskItem {
   task: string;
   description: string;
   hours: number;
+  isCustom?: boolean;
 }
 
-// The pricing breakdown for the proposal
-export interface PricingSummary {
-  currency: Currency;
+export interface Pricing {
   hardwareDealerTotal: number;
   hardwareMsrpTotal: number;
   laborTotal: number;
-  customCostsTotal: number;
   grandTotal: number;
+  currency: Currency;
   customCostItems: CustomCostItem[];
 }
 
-// The final generated proposal object
+export interface DiagramNode {
+  id: string;
+  label: string;
+  type: string;
+  group: string;
+}
+
+export interface DiagramEdge {
+  from: string;
+  to: string;
+  label: string;
+  type: 'video' | 'audio' | 'control' | 'usb' | 'network';
+}
+
+export interface StructuredSystemDiagram {
+  nodes: DiagramNode[];
+  edges: DiagramEdge[];
+  groups: string[];
+}
+
+
 export interface Proposal {
   executiveSummary: string;
   scopeOfWork: string;
-  systemDiagram: string; // Mermaid diagram syntax
+  systemDiagram: StructuredSystemDiagram;
   equipmentList: EquipmentItem[];
-  installationPlan: InstallationTaskSummary[];
-  pricing: PricingSummary;
+  installationPlan: InstallationTaskItem[];
   siteRequirements: string[];
+  pricing: Pricing;
 }
 
-// A product from the WyreStorm database
 export interface Product {
-  sku: string;
-  name: string;
-  category: string;
-  description: string;
-  dealerPrice: number;
-  msrp: number;
-  tags: string[];
+    sku: string;
+    name: string;
+    category: string;
+    description: string;
+    dealerPrice: number;
+    msrp: number;
+    tags: string[];
 }
 
-// A standard installation task from the database
 export interface InstallationTask {
-  id: string;
-  name: string;
-  description: string;
-  estimatedHours: number;
+    id: string;
+    name: string;
+    description: string;
+    estimatedHours: number;
 }
 
 export interface DesignFeedbackItem {
-  type: 'Warning' | 'Suggestion' | 'Opportunity';
+  type: 'Warning' | 'Suggestion' | 'Opportunity' | 'Financial' | 'Insight';
   text: string;
 }
 
 export interface SolutionVisualization {
   solutionTitle: string;
   solutionPhilosophy: string;
-  heroProducts: string[]; // Array of product SKUs
-  simpleDiagram: string; // MermaidJS syntax
+  heroProducts: string[];
+  simpleDiagram: StructuredSystemDiagram;
 }
-
-export interface RoomWizardAnswers {
-    roomName: string;
-    primaryUse: string;
-    participantCount: string;
-    displayCount: number;
-    needsWirelessPresentation: boolean;
-    needsBYOM: boolean;
-    needsKVM: boolean;
-}
-
-export interface SuggestedConfiguration {
-    roomType: string;
-    designTier: 'Bronze' | 'Silver' | 'Gold';
-    reasoning: string;
-}
-
 
 export const createDefaultRoomData = (roomType: string, roomName: string): RoomData => ({
-  id: uuidv4(),
+  id: '',
   roomName: roomName,
   roomType: roomType,
-  roomComplexity: 'Standard',
   roomDimensions: { length: 20, width: 15, height: 9 },
+  roomComplexity: 'Standard',
   primaryUse: '',
   functionalityStatement: '',
   maxParticipants: 10,
-  maxDisplays: 2,
+  maxDisplays: 1,
   videoInputs: [],
   videoOutputs: [],
   audioInputs: [],
   audioOutputs: [],
   audioCoverageNotes: '',
-  networkConnection: 'Dedicated AV LAN',
-  controlWiring: 'IP Network (PoE)',
-  powerConsiderations: 'Standard Outlets Available',
-  environmentalConsiderations: 'Standard Office Environment',
+  cablingInfrastructureNotes: 'Standard routing through ceiling voids and wall cavities is assumed.',
+  networkConnection: 'Standard LAN',
+  controlWiring: 'Standard CAT6',
+  powerConsiderations: 'Standard Outlets',
+  environmentalConsiderations: 'Standard Office',
   features: [],
-  preferredControlSystem: 'No Preference',
-  budget: 'Standard',
+  preferredControlSystem: 'Any',
+  budget: 'Mid-Range',
   additionalInfo: '',
-  laborRate: 100, // Assuming a base rate that can be interpreted in any currency
-  projectCosts: ['Project Management (15%)', 'System Design & Engineering'],
-  customCosts: [],
-  siteRequirements: ["Client to provide network infrastructure (switches, cabling).", "Client to provide electrical outlets at all device locations."]
+  siteRequirements: [],
+  projectCosts: [],
 });

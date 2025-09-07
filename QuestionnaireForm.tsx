@@ -120,6 +120,8 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
         terminationPoint: TERMINATION_POINTS[0],
         distance: 25,
         notes: '',
+        // FIX: The IO_Device type requires the `location` property. Added a sensible default.
+        location: 'Table/Desk',
         // FIX: The IO_Device type requires the `ioType` property. This property is derived from the section name (e.g., 'videoInputs' becomes 'videoInput').
         ioType: section.slice(0, -1) as IO_Device['ioType'],
     };

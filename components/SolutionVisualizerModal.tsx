@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { SolutionVisualization, Product } from '../types';
 import LoadingSpinner from './LoadingSpinner';
-import MermaidDiagram from './MermaidDiagram';
+import SystemDiagram from './SystemDiagram';
 import { productDatabase } from './productDatabase';
 
 interface SolutionVisualizerModalProps {
@@ -60,7 +61,7 @@ const SolutionVisualizerModal: React.FC<SolutionVisualizerModalProps> = ({ isOpe
                 <div>
                      <h4 className="font-semibold text-gray-700 mb-2">Conceptual Diagram</h4>
                      <div className="border rounded-lg p-2 bg-gray-50/50">
-                        <MermaidDiagram chart={data.simpleDiagram} onNodeClick={() => {}} />
+                        <SystemDiagram diagram={data.simpleDiagram} />
                      </div>
                 </div>
             </div>

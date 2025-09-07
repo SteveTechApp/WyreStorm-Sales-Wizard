@@ -1,14 +1,18 @@
+
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { UserProfile } from '../types';
+import { UserProfile, RoomWizardAnswers } from '../types';
 import RoomWizard from './RoomWizard';
 
 interface ProjectSetupScreenProps {
   onSubmit: (data: { 
     projectName: string; 
     clientName: string; 
+    clientContactName: string;
+    clientContactEmail: string;
+    clientAddress: string;
     coverImage: string; 
-    rooms: { roomType: string; designTier: string }[] 
+    rooms: { roomType: string; designTier: string, wizardAnswers: RoomWizardAnswers }[] 
   }) => void;
   onBack: () => void;
   defaultProjectName: string;
@@ -20,21 +24,56 @@ interface RoomInstance {
     name: string;
     roomType: string;
     designTier: string;
+    wizardAnswers: RoomWizardAnswers;
 }
+
+const PROJECT_SCOPE_OPTIONS = [
+  { id: 'custom', label: 'Custom Project', description: 'Start with a blank slate and add rooms one by one.' },
+  { id: 'single', label: 'Single Room / POC', description: 'A single, focused space.' },
+  { id: 'small', label: 'Small Office (2-5 rooms)', description: 'A typical small business setup.' },
+  { id: 'medium', label: 'Medium Office (6-15 rooms)', description: 'Multiple floors or a larger department.' },
+  { id: 'large', label: 'Large Campus / Enterprise (>15 rooms)', description: 'Complex, multi-building deployment.' },
+];
+
+const SCOPE_ROOM_TEMPLATES: Record<string, {roomType: string, designTier: string, count: number}[]> = {
+    'single': [
+        { roomType: 'Conference Room', designTier: 'Silver', count: 1 },
+    ],
+    'small': [
+        { roomType: 'Conference Room', designTier: 'Silver', count: 1 },
+        { roomType: 'Huddle Room', designTier: 'Bronze', count: 2 },
+    ],
+    'medium': [
+        { roomType: 'Boardroom', designTier: 'Gold', count: 1 },
+        { roomType: 'Conference Room', designTier: 'Silver', count: 4 },
+        { roomType: 'Huddle Room', designTier: 'Bronze', count: 3 },
+    ],
+    'large': [
+         { roomType: 'Boardroom', designTier: 'Gold', count: 2 },
+         { roomType: 'Conference Room', designTier: 'Silver', count: 8 },
+         { roomType: 'Huddle Room', designTier: 'Bronze', count: 5 },
+         { roomType: 'Briefing Center', designTier: 'Gold', count: 1 },
+    ]
+};
 
 const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBack, defaultProjectName, userProfile }) => {
   const [projectName, setProjectName] = useState(defaultProjectName);
   const [clientName, setClientName] = useState('');
+  const [clientContactName, setClientContactName] = useState('');
+  const [clientContactEmail, setClientContactEmail] = useState('');
+  const [clientAddress, setClientAddress] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [rooms, setRooms] = useState<RoomInstance[]>([]);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [projectScope, setProjectScope] = useState<string>('custom');
 
-  const handleAddRoom = (name: string, roomType: string, designTier: string) => {
+  const handleAddRoom = (answers: RoomWizardAnswers, roomType: string, designTier: string) => {
     const newRoom: RoomInstance = {
       id: uuidv4(),
-      name,
+      name: answers.roomName,
       roomType,
-      designTier
+      designTier,
+      wizardAnswers: answers,
     };
     setRooms(prev => [...prev, newRoom]);
     setIsWizardOpen(false);
@@ -58,9 +97,8 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (rooms.length === 0) return;
-    // We only need roomType and designTier for the next step
-    const roomsToSubmit = rooms.map(({ roomType, designTier }) => ({ roomType, designTier }));
-    onSubmit({ projectName, clientName, coverImage, rooms: roomsToSubmit });
+    const roomsToSubmit = rooms.map(({ roomType, designTier, wizardAnswers }) => ({ roomType, designTier, wizardAnswers }));
+    onSubmit({ projectName, clientName, clientContactName, clientContactEmail, clientAddress, coverImage, rooms: roomsToSubmit });
   };
   
   const TIER_BADGE_STYLES: Record<string, string> = {
@@ -68,6 +106,42 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
       'Silver': 'bg-gray-200 text-gray-800 border-gray-300',
       'Gold': 'bg-amber-100 text-amber-800 border-amber-300',
   };
+  
+  const handleApplyScope = () => {
+    if (!projectScope || !SCOPE_ROOM_TEMPLATES[projectScope]) return;
+
+    const roomsToCreate = SCOPE_ROOM_TEMPLATES[projectScope];
+    const newRooms: RoomInstance[] = [];
+    roomsToCreate.forEach(template => {
+        for(let i=1; i <= template.count; i++) {
+             const roomName = template.count > 1 ? `${template.roomType} ${i}`: template.roomType;
+             const defaultWizardAnswers: RoomWizardAnswers = {
+                roomName,
+                participantCount: template.designTier === 'Bronze' ? 4 : template.designTier === 'Silver' ? 10 : 16,
+                primaryUse: 'Video Conferencing',
+                displayConfiguration: [{ type: 'Standard Display(s)', quantity: template.designTier === 'Bronze' ? 1 : (template.roomType === 'Boardroom' ? 2 : 1) }],
+                features: ['Video Conferencing', 'Wireless Presentation'],
+             };
+             newRooms.push({
+                 id: uuidv4(),
+                 name: roomName,
+                 roomType: template.roomType,
+                 designTier: template.designTier,
+                 wizardAnswers: defaultWizardAnswers,
+             });
+        }
+    });
+    setRooms(newRooms);
+  };
+
+  const handleScopeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newScope = e.target.value;
+      setProjectScope(newScope);
+      if (newScope === 'custom') {
+          setRooms([]);
+      }
+  };
+
 
   return (
     <>
@@ -86,12 +160,25 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
             <input type="text" id="projectName" value={projectName} onChange={e => setProjectName(e.target.value)} required className="w-full p-2 border border-gray-300 rounded-md" />
           </div>
           <div>
-            <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">Client Name (Optional)</label>
+            <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">Client Company Name (Optional)</label>
             <input type="text" id="clientName" value={clientName} onChange={e => setClientName(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
+          </div>
+          <div>
+            <label htmlFor="clientContactName" className="block text-sm font-medium text-gray-700 mb-1">Client Contact Name (Optional)</label>
+            <input type="text" id="clientContactName" value={clientContactName} onChange={e => setClientContactName(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
+          </div>
+           <div>
+            <label htmlFor="clientContactEmail" className="block text-sm font-medium text-gray-700 mb-1">Client Contact Email (Optional)</label>
+            <input type="email" id="clientContactEmail" value={clientContactEmail} onChange={e => setClientContactEmail(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" />
           </div>
         </div>
         
-         <div className="mb-8">
+         <div className="mb-6">
+            <label htmlFor="clientAddress" className="block text-sm font-medium text-gray-700 mb-1">Client Address (Optional)</label>
+            <textarea id="clientAddress" value={clientAddress} onChange={e => setClientAddress(e.target.value)} rows={2} className="w-full p-2 border border-gray-300 rounded-md" />
+        </div>
+
+         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image (Optional)</label>
           <div className="mt-1 flex items-center gap-4">
               <div className="w-24 h-16 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden border">
@@ -102,6 +189,27 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
               <input id="cover-image-upload" type="file" onChange={handleCoverImageChange} accept="image/*" className="hidden" />
               </label>
           </div>
+        </div>
+        
+        <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Choose a Starting Point</h3>
+            <p className="text-sm text-gray-500 mb-4">Start with a blank project or use an AI-suggestion to get a head start.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {PROJECT_SCOPE_OPTIONS.map(opt => (
+                    <label key={opt.id} className="cursor-pointer p-4 border rounded-lg has-[:checked]:bg-green-50 has-[:checked]:border-green-400 has-[:checked]:ring-1 has-[:checked]:ring-green-400">
+                        <input type="radio" name="projectScope" value={opt.id} checked={projectScope === opt.id} onChange={handleScopeChange} className="sr-only" />
+                        <span className="font-semibold text-gray-800 block">{opt.label}</span>
+                        <span className="text-xs text-gray-600">{opt.description}</span>
+                    </label>
+                ))}
+            </div>
+            {projectScope && projectScope !== 'custom' && (
+                <div className="text-center mt-4 p-3 bg-gray-100 rounded-md animate-fade-in-fast">
+                    <button type="button" onClick={handleApplyScope} className="text-sm font-semibold text-[#008A3A] hover:underline">
+                        Apply suggested room template for a '{PROJECT_SCOPE_OPTIONS.find(o => o.id === projectScope)?.label}'
+                    </button>
+                </div>
+            )}
         </div>
 
         <div className="bg-gray-50/50 p-4 rounded-lg border">
@@ -133,8 +241,12 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
               </ul>
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <p>Your project is empty.</p>
-                <p>Click "Add Room" to get started.</p>
+                <p>
+                    {projectScope === 'custom'
+                        ? 'Your custom project is empty. Click "+ Add Room" to begin.'
+                        : 'Your project is empty. Apply a scope template or click "+ Add Room".'
+                    }
+                </p>
               </div>
             )}
           </div>

@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-// FIX: Corrected import paths to be relative to the components directory.
-import { RoomData, ProjectData, IO_Device, UnitSystem, DesignFeedbackItem } from '../types';
+import { RoomData, ProjectData, IO_Device, UnitSystem, DesignFeedbackItem, RoomWizardAnswers } from '../types';
 import QuestionnaireForm from './QuestionnaireForm';
 import { generateRoomTemplate, reviewRoomDesign } from '../services/geminiService';
-import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from '../constants';
 import DesignReviewModal from './DesignReviewModal';
+import AddRoomModal from './AddRoomModal';
 
 interface ProjectBuilderProps {
   onSubmit: (data: ProjectData) => void;
@@ -14,57 +13,6 @@ interface ProjectBuilderProps {
   initialData: ProjectData;
   unitSystem: UnitSystem;
 }
-
-const AddRoomModal: React.FC<{
-    isOpen: boolean;
-    onClose: () => void;
-    onAdd: (roomType: string, designTier: string) => void;
-    isAdding: boolean;
-}> = ({ isOpen, onClose, onAdd, isAdding }) => {
-    const [roomType, setRoomType] = useState(ROOM_TYPES[0]);
-    const [designTier, setDesignTier] = useState(DESIGN_TIER_OPTIONS[0]);
-
-    if (!isOpen) return null;
-    
-    const handleAddClick = () => {
-        onAdd(roomType, designTier);
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4" onClick={e => e.stopPropagation()}>
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Add New Room</h2>
-                <p className="text-sm text-gray-500 mb-6">Select a room type and a design tier to get an AI-generated starting point.</p>
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="roomTypeSelect" className="block text-sm font-medium text-gray-700">Room Type</label>
-                        <select id="roomTypeSelect" value={roomType} onChange={e => setRoomType(e.target.value)} className="mt-1 w-full p-2 border border-gray-300 rounded-md">
-                            {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Design Tier (Inspire Me!)</label>
-                        <div className="mt-2 space-y-2">
-                           {DESIGN_TIER_OPTIONS.map(tier => (
-                               <label key={tier} className="flex items-center p-3 border rounded-md has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                                   <input type="radio" name="designTier" value={tier} checked={designTier === tier} onChange={() => setDesignTier(tier)} className="h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500" />
-                                   <span className="ml-3 text-sm font-medium text-gray-700">{tier}</span>
-                               </label>
-                           ))}
-                        </div>
-                    </div>
-                </div>
-                <div className="mt-6 flex justify-end gap-3">
-                    <button type="button" onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">Cancel</button>
-                    <button type="button" onClick={handleAddClick} disabled={isAdding} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md disabled:bg-gray-400">
-                        {isAdding ? 'Adding...' : 'Add Room'}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 
 const ProjectBuilder: React.FC<ProjectBuilderProps> = ({ onSubmit, onSaveProject, initialData, unitSystem }) => {
   const [projectData, setProjectData] = useState<ProjectData>(initialData);
@@ -92,25 +40,49 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({ onSubmit, onSaveProject
         rooms: pd.rooms.map(room => room.id === updatedRoomData.id ? updatedRoomData : room)
     }));
   };
+  
+  /**
+   * Centralized function to add a room to the project.
+   * Handles creating unique IDs, ensuring a unique room name, and updating state.
+   */
+  const addRoomToProject = (newRoomData: Omit<RoomData, 'id'>) => {
+    const newRoom: RoomData = { ...newRoomData, id: uuidv4() };
+
+    // Ensure room name is unique
+    let counter = 1;
+    let potentialName = newRoom.roomName;
+    const baseName = newRoom.roomName.replace(/ \(\d+\)$/, '').replace(/ \(Copy\)$/, '').trim();
+
+    while (projectData.rooms.some(r => r.roomName === potentialName)) {
+      counter++;
+      potentialName = `${baseName} (${counter})`;
+    }
+    newRoom.roomName = potentialName;
+    
+    // Ensure all nested I/O devices have unique IDs, which is important for duplication
+    const ioKeys: (keyof Pick<RoomData, 'videoInputs' | 'videoOutputs' | 'audioInputs' | 'audioOutputs'>)[] = ['videoInputs', 'videoOutputs', 'audioInputs', 'audioOutputs'];
+    ioKeys.forEach(key => {
+        if (newRoom[key]) {
+            newRoom[key] = newRoom[key].map((item: IO_Device) => ({...item, id: uuidv4()}));
+        }
+    });
+
+    setProjectData(pd => ({ ...pd, rooms: [...pd.rooms, newRoom]}));
+    setActiveRoomId(newRoom.id);
+  };
 
   const handleSelectRoomTypeToAdd = async (roomType: string, designTier: string) => {
     setIsAddingRoom(true);
     try {
-        const templateResult = await generateRoomTemplate(roomType, designTier);
-        
-        const newRoom: RoomData = { ...templateResult, id: uuidv4() };
-        
-        // Ensure name is unique
-        let counter = 1;
-        let potentialName = newRoom.roomName;
-        while (projectData.rooms.some(r => r.roomName === potentialName)) {
-            counter++;
-            potentialName = `${newRoom.roomName.replace(/ \d+$/, '')} ${counter}`;
-        }
-        newRoom.roomName = potentialName;
-
-        setProjectData(pd => ({ ...pd, rooms: [...pd.rooms, newRoom]}));
-        setActiveRoomId(newRoom.id);
+        const defaultWizardAnswers: RoomWizardAnswers = {
+            roomName: `${designTier} ${roomType}`,
+            participantCount: 10,
+            primaryUse: 'General Presentation',
+            displayConfiguration: [{ type: 'display', quantity: 1 }],
+            features: ['Video Conferencing', 'Wireless Presentation'],
+        };
+        const templateResult = await generateRoomTemplate(roomType, designTier, defaultWizardAnswers);
+        addRoomToProject(templateResult);
         setIsAddRoomModalOpen(false);
     } catch (error) {
         console.error("Failed to add AI-generated room", error);
@@ -123,15 +95,11 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({ onSubmit, onSaveProject
     const activeRoom = projectData.rooms.find(r => r.id === activeRoomId);
     if (!activeRoom) return;
 
-    const newRoom = JSON.parse(JSON.stringify(activeRoom));
-    newRoom.id = uuidv4();
-    newRoom.roomName = `${activeRoom.roomName} (Copy)`;
-    ['videoInputs', 'videoOutputs', 'audioInputs', 'audioOutputs'].forEach(key => {
-        (newRoom as any)[key].forEach((item: any) => item.id = uuidv4());
-    });
-
-    setProjectData(pd => ({...pd, rooms: [...pd.rooms, newRoom]}));
-    setActiveRoomId(newRoom.id);
+    // Create a deep copy, but omit the ID to be regenerated by the helper.
+    const { id, ...roomToCopy } = JSON.parse(JSON.stringify(activeRoom));
+    roomToCopy.roomName = `${activeRoom.roomName} (Copy)`;
+    
+    addRoomToProject(roomToCopy);
   };
 
   const handleRemoveRoom = (roomId: string) => {

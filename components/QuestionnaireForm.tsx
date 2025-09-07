@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { RoomData, UnitSystem } from '../types';
 import {
   BUDGET_OPTIONS,
@@ -8,6 +8,10 @@ import {
   ROOM_COMPLEXITY_OPTIONS,
   SCALE_SPECIFIC_FEATURES,
   CONTROL_SYSTEM_OPTIONS,
+  NETWORK_CONNECTION_OPTIONS,
+  CONTROL_WIRING_OPTIONS,
+  POWER_CONSIDERATIONS,
+  ENVIRONMENTAL_CONSIDERATIONS,
 } from '../constants';
 import Tabs from './Tabs';
 import VisualRoomPlanner from './VisualRoomPlanner'; // Import the new visual planner
@@ -19,10 +23,36 @@ interface QuestionnaireFormProps {
 }
 
 const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChange, unitSystem }) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const showAdvancedAudio = useMemo(() => 
+    ['High', 'Complex / Multi-Zone'].includes(formData.roomComplexity),
+    [formData.roomComplexity]
+  );
+
+  const validateField = (name: string, value: any): string => {
+    switch (name) {
+      case 'roomName':
+        return String(value).trim().length > 0 ? '' : 'Room Name is required.';
+      case 'primaryUse':
+        return String(value).trim().length > 0 ? '' : 'Primary Use Case is required.';
+      case 'length':
+      case 'width':
+      case 'height':
+      case 'maxParticipants':
+      case 'maxDisplays':
+        return Number(value) > 0 ? '' : 'Must be a positive number.';
+      default:
+        return '';
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const isNumber = type === 'number';
+    const processedValue = isNumber ? Number(value) : value;
+
+    setErrors(prev => ({ ...prev, [name]: validateField(name, processedValue) }));
     
     if (name === 'roomComplexity') {
       const newRoomType = formData.roomType;
@@ -34,15 +64,19 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
         features: formData.features.filter(f => newAvailableFeatures.includes(f)),
       });
     } else {
-      onChange({ ...formData, [name]: isNumber ? Number(value) : value });
+      onChange({ ...formData, [name]: processedValue });
     }
   };
 
   const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    const numValue = Number(value) || 0;
+
+    setErrors(prev => ({ ...prev, [name]: validateField(name, numValue) }));
+
     onChange({
       ...formData,
-      roomDimensions: { ...formData.roomDimensions, [name]: Number(value) || 0 },
+      roomDimensions: { ...formData.roomDimensions, [name]: numValue },
     });
   };
   
@@ -51,16 +85,6 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
     onChange({ ...formData, features: checked ? [...formData.features, value] : formData.features.filter(f => f !== value) });
   };
     
-  const handleProjectCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    onChange({ ...formData, projectCosts: checked ? [...formData.projectCosts, value] : formData.projectCosts.filter(f => f !== value) });
-  };
-  
-  const handleSiteRequirementChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    onChange({ ...formData, siteRequirements: checked ? [...formData.siteRequirements, value] : formData.siteRequirements.filter(f => f !== value) });
-  };
-  
   const handleKVMChange = (needsKVM: boolean) => {
     const isCurrentlyEnabled = formData.features.includes('KVM Control');
     if (needsKVM && !isCurrentlyEnabled) {
@@ -85,16 +109,32 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
       content: (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div><label htmlFor="roomName" className="block text-sm font-medium text-gray-700 mb-1">Room Name</label><input type="text" name="roomName" value={formData.roomName} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., Executive Boardroom"/></div>
+            <div>
+              <label htmlFor="roomName" className="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+              <input type="text" name="roomName" value={formData.roomName} onChange={handleChange} className={`w-full p-2 border ${errors.roomName ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., Executive Boardroom"/>
+              {errors.roomName && <p className="text-xs text-red-600 mt-1">{errors.roomName}</p>}
+            </div>
             <div><label htmlFor="roomType" className="block text-sm font-medium text-gray-700 mb-1">Room Type</label><div className="w-full p-2 border border-gray-200 rounded-md bg-gray-100 text-gray-700 font-medium cursor-not-allowed">{formData.roomType}</div></div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 bg-gray-50/50 border rounded-md">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Room Size & Scale</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div className="grid grid-cols-3 gap-4">
-                <div><label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-1">{`Length (${distanceUnit})`}</label><input type="number" name="length" value={formData.roomDimensions.length} onChange={handleDimensionChange} className="w-full p-2 border border-gray-300 rounded-md"/></div>
-                <div><label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-1">{`Width (${distanceUnit})`}</label><input type="number" name="width" value={formData.roomDimensions.width} onChange={handleDimensionChange} className="w-full p-2 border border-gray-300 rounded-md"/></div>
-                <div><label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">{`Height (${distanceUnit})`}</label><input type="number" name="height" value={formData.roomDimensions.height} onChange={handleDimensionChange} className="w-full p-2 border border-gray-300 rounded-md"/></div>
+                <div>
+                  <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-1">{`Length (${distanceUnit})`}</label>
+                  <input type="number" name="length" value={formData.roomDimensions.length} onChange={handleDimensionChange} className={`w-full p-2 border ${errors.length ? 'border-red-500' : 'border-gray-300'} rounded-md`}/>
+                  {errors.length && <p className="text-xs text-red-600 mt-1">{errors.length}</p>}
+                </div>
+                <div>
+                  <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-1">{`Width (${distanceUnit})`}</label>
+                  <input type="number" name="width" value={formData.roomDimensions.width} onChange={handleDimensionChange} className={`w-full p-2 border ${errors.width ? 'border-red-500' : 'border-gray-300'} rounded-md`}/>
+                  {errors.width && <p className="text-xs text-red-600 mt-1">{errors.width}</p>}
+                </div>
+                <div>
+                  <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">{`Height (${distanceUnit})`}</label>
+                  <input type="number" name="height" value={formData.roomDimensions.height} onChange={handleDimensionChange} className={`w-full p-2 border ${errors.height ? 'border-red-500' : 'border-gray-300'} rounded-md`}/>
+                  {errors.height && <p className="text-xs text-red-600 mt-1">{errors.height}</p>}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Room Complexity</label>
@@ -109,26 +149,30 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
               </div>
             </div>
           </div>
-          <div><label htmlFor="primaryUse" className="block text-sm font-medium text-gray-700 mb-1">Primary Use Case</label><input type="text" name="primaryUse" value={formData.primaryUse} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., Video conferencing with clients"/></div>
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Room Capacity</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="maxParticipants" className="block text-sm font-medium text-gray-700 mb-1">Max Participants</label>
-                <input type="number" name="maxParticipants" id="maxParticipants" value={formData.maxParticipants} onChange={handleChange} min="1" className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., 12"/>
-                <p className="text-xs text-gray-500 mt-1">The number of people the room should accommodate.</p>
-              </div>
-              <div>
-                <label htmlFor="maxDisplays" className="block text-sm font-medium text-gray-700 mb-1">Max Displays</label>
-                <input type="number" name="maxDisplays" id="maxDisplays" value={formData.maxDisplays} onChange={handleChange} min="1" className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., 2"/>
-                <p className="text-xs text-gray-500 mt-1">The number of primary screens or projectors.</p>
-              </div>
-            </div>
+          <div>
+            <label htmlFor="primaryUse" className="block text-sm font-medium text-gray-700 mb-1">Primary Use Case</label>
+            <input type="text" name="primaryUse" value={formData.primaryUse} onChange={handleChange} className={`w-full p-2 border ${errors.primaryUse ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., Video conferencing with clients"/>
+            {errors.primaryUse && <p className="text-xs text-red-600 mt-1">{errors.primaryUse}</p>}
           </div>
           <div>
             <label htmlFor="functionalityStatement" className="block text-sm font-medium text-gray-700 mb-1">Functionality Statement</label>
             <textarea name="functionalityStatement" id="functionalityStatement" value={formData.functionalityStatement} onChange={handleChange} rows={2} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., A simple presentation room with a single display and wired laptop input."/>
             <p className="text-xs text-gray-500 mt-1">A brief, client-facing summary of what this room is for. The AI will generate a starting point for you.</p>
+          </div>
+          <div className="space-y-4 p-4 bg-gray-50/50 border rounded-md">
+            <h3 className="text-lg font-semibold text-gray-700">Room Capacity</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="maxParticipants" className="block text-sm font-medium text-gray-700 mb-1">Max Participants</label>
+                <input type="number" name="maxParticipants" id="maxParticipants" value={formData.maxParticipants} onChange={handleChange} min="1" className={`w-full p-2 border ${errors.maxParticipants ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., 12"/>
+                {errors.maxParticipants && <p className="text-xs text-red-600 mt-1">{errors.maxParticipants}</p>}
+              </div>
+              <div>
+                <label htmlFor="maxDisplays" className="block text-sm font-medium text-gray-700 mb-1">Max Displays</label>
+                <input type="number" name="maxDisplays" id="maxDisplays" value={formData.maxDisplays} onChange={handleChange} min="1" className={`w-full p-2 border ${errors.maxDisplays ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., 2"/>
+                {errors.maxDisplays && <p className="text-xs text-red-600 mt-1">{errors.maxDisplays}</p>}
+              </div>
+            </div>
           </div>
         </div>
       ),
@@ -149,7 +193,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
            <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">KVM Control</h3>
-                <p className="text-sm text-gray-500 mb-3">Does this room require KVM (Keyboard, Video, Mouse) control of a remote PC, for example controlling a rack-mounted computer from a touch panel at the table?</p>
+                <p className="text-sm text-gray-500 mb-3">Does this room require KVM (Keyboard, Video, Mouse) control of a remote PC, for example controlling a rack-mounted computer from a meeting room or another connected space, where the user can select a (USB enabled) source device from inside or outside the room/space and use HDBT or AVoIP receiver/decoder that has USB connectivity to select it on the desired screen</p>
                 <div className="flex flex-wrap gap-2">
                     <label className="cursor-pointer">
                         <input type="radio" name="kvm" value="Yes" checked={formData.features.includes('KVM Control')} onChange={() => handleKVMChange(true)} className="sr-only peer" />
@@ -207,6 +251,64 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
               </div>
               <div><label htmlFor="additionalInfo" className="block text-sm font-medium text-gray-700 mb-1">Additional Information</label><textarea name="additionalInfo" value={formData.additionalInfo} onChange={handleChange} rows={4} className="w-full p-2 border border-gray-300 rounded-md" placeholder="Any other notes, constraints, or preferences..."></textarea></div>
            </div>
+      )
+    },
+    {
+      label: 'Infrastructure',
+      content: (
+        <div className="space-y-6">
+          <div className="p-4 bg-gray-50/50 border rounded-md">
+            <h3 className="text-lg font-semibold text-gray-700">Cabling & Site Notes</h3>
+            <p className="text-xs text-gray-500 mt-1 mb-2">Describe the physical cable pathways and any known infrastructure.</p>
+            <textarea 
+                name="cablingInfrastructureNotes" 
+                id="cablingInfrastructureNotes" 
+                value={formData.cablingInfrastructureNotes} 
+                onChange={handleChange} 
+                rows={3} 
+                className="w-full p-2 border border-gray-300 rounded-md" 
+                placeholder="e.g., Existing floor box under the main table with 2x power and 2x data. Conduit runs from floor box to rack location. Ceiling is solid, so wall drops are preferred for displays."
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="networkConnection" className="block text-sm font-medium text-gray-700 mb-1">Primary Network Connection</label>
+                <select name="networkConnection" value={formData.networkConnection} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                    {NETWORK_CONNECTION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="controlWiring" className="block text-sm font-medium text-gray-700 mb-1">Control System Wiring</label>
+                <select name="controlWiring" value={formData.controlWiring} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                    {CONTROL_WIRING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+          </div>
+          <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Power & Environmental</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="powerConsiderations" className="block text-sm font-medium text-gray-700 mb-1">Power Considerations</label>
+                    <select name="powerConsiderations" value={formData.powerConsiderations} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                        {POWER_CONSIDERATIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="environmentalConsiderations" className="block text-sm font-medium text-gray-700 mb-1">Environmental Factors</label>
+                    <select name="environmentalConsiderations" value={formData.environmentalConsiderations} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                        {ENVIRONMENTAL_CONSIDERATIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                    </select>
+                  </div>
+              </div>
+          </div>
+           {showAdvancedAudio && (
+            <div className="animate-fade-in pt-2">
+              <label htmlFor="audioCoverageNotes" className="block text-sm font-medium text-gray-700 mb-1">Audio Coverage Zones</label>
+               <p className="text-xs text-gray-500 mb-2">For this complex space, describe the different areas that need microphone pickup or speaker coverage.</p>
+              <textarea name="audioCoverageNotes" value={formData.audioCoverageNotes} onChange={handleChange} rows={3} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., Main seating area, presenter stage, overflow lobby..."></textarea>
+            </div>
+          )}
+        </div>
       )
     },
   ];
