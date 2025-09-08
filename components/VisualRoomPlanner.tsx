@@ -100,12 +100,41 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
   };
   
   const handleDeviceUpdate = () => {
-     if (!editingDevice) return;
-     const targetArrayKey = `${editingDevice.ioType}s` as keyof RoomData;
-     onChange({
-      ...roomData,
-      [targetArrayKey]: (roomData[targetArrayKey] as IO_Device[]).map(d => d.id === editingDevice.id ? editingDevice : d)
-    });
+    if (!editingDevice) return;
+
+    // Find original device to get its original ioType
+    const originalDevice = allDevices.find(d => d.id === editingDevice.id);
+    if (!originalDevice) {
+        console.error("Could not find original device to update.");
+        setEditingDevice(null);
+        return;
+    }
+
+    const originalIoType = originalDevice.ioType;
+    const newIoType = editingDevice.ioType;
+
+    const newRoomData = { ...roomData };
+
+    if (originalIoType === newIoType) {
+        // ioType is the same, just update the properties in its array
+        const targetArrayKey = `${newIoType}s` as keyof RoomData;
+        (newRoomData[targetArrayKey] as IO_Device[]) = 
+            (newRoomData[targetArrayKey] as IO_Device[]).map(d => d.id === editingDevice.id ? editingDevice : d);
+    } else {
+        // ioType has changed, we need to move the device between arrays
+        const originalArrayKey = `${originalIoType}s` as keyof RoomData;
+        const newArrayKey = `${newIoType}s` as keyof RoomData;
+        
+        // 1. Filter it out from the old array
+        (newRoomData[originalArrayKey] as IO_Device[]) = 
+            (newRoomData[originalArrayKey] as IO_Device[]).filter(d => d.id !== editingDevice.id);
+        
+        // 2. Add it to the new array
+        (newRoomData[newArrayKey] as IO_Device[]) = 
+            [...(newRoomData[newArrayKey] as IO_Device[]), editingDevice];
+    }
+
+    onChange(newRoomData);
     setEditingDevice(null);
   };
   
@@ -181,7 +210,7 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
               <div
                 className="absolute flex flex-col items-center cursor-pointer group"
                 style={{ left: `${device.x}%`, top: `${device.y}%`, transform: 'translate(-50%, -50%)' }}
-                onClick={() => setEditingDevice(device)}
+                onClick={() => setEditingDevice(JSON.parse(JSON.stringify(device)))} // Use a copy to avoid mutating state before save
                 title={`Edit ${device.name}`}
               >
                 <div className="w-8 h-8 p-1 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -209,6 +238,22 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
                   onChange={(e) => setEditingDevice({...editingDevice, name: e.target.value})}
                   className="w-full p-2 border border-gray-300 rounded-md mt-1"
                 />
+              </div>
+               <div>
+                <label className="text-sm font-medium text-gray-700">Type</label>
+                <select
+                    value={editingDevice.type}
+                    onChange={(e) => {
+                        const newType = e.target.value;
+                        const paletteEntry = DEVICE_PALETTE.find(p => p.type === newType);
+                        if (paletteEntry) {
+                            setEditingDevice({ ...editingDevice, type: newType, ioType: paletteEntry.ioType });
+                        }
+                    }}
+                    className="w-full p-2 border border-gray-300 rounded-md mt-1"
+                >
+                    {DEVICE_PALETTE.map(opt => <option key={opt.type} value={opt.type}>{opt.type}</option>)}
+                </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Physical Location</label>

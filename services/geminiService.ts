@@ -39,12 +39,14 @@ export const generateProposal = async (projectData: ProjectData, userProfile: Us
 
     await new Promise(res => setTimeout(res, 1000));
 
-    const mockEquipment: EquipmentItem[] = projectData.rooms.flatMap(room => 
-        productDatabase.slice(0, Math.max(1, (room.maxParticipants + room.maxDisplays) / 2)).map((p, i) => ({
+    const mockEquipment: EquipmentItem[] = projectData.rooms.flatMap(room => {
+        const participants = room.maxParticipants || 1;
+        const displays = room.maxDisplays || 1;
+        return productDatabase.slice(0, Math.max(1, (participants + displays) / 2)).map((p, i) => ({
             sku: p.sku, name: p.name, quantity: 1, dealerPrice: p.dealerPrice, dealerTotal: p.dealerPrice, msrp: p.msrp, msrpTotal: p.msrp,
-        }))
-    );
-    if (projectData.rooms.some(r => [...r.videoInputs, ...r.videoOutputs].some(d => d.distance > 33))) {
+        }));
+    });
+    if (projectData.rooms.some(r => [...(r.videoInputs || []), ...(r.videoOutputs || [])].some(d => d.distance > 33))) {
         mockEquipment.push({ sku: 'CAB-HAOC-15', name: 'WyreStorm 15m 8K HAOC Cable', quantity: 1, dealerPrice: 100, dealerTotal: 100, msrp: 200, msrpTotal: 200 });
     }
 
@@ -93,10 +95,14 @@ export const getProjectInsights = async (projectData: ProjectData): Promise<Desi
     const insights: DesignFeedbackItem[] = [];
     let hasFarDevice = false;
     projectData.rooms.forEach(room => {
-        if ([...room.videoInputs, ...room.videoOutputs].some(d => d.distance > 33)) {
+        const videoInputs = room.videoInputs || [];
+        const videoOutputs = room.videoOutputs || [];
+        const features = room.features || [];
+
+        if ([...videoInputs, ...videoOutputs].some(d => d.distance > 33)) {
             hasFarDevice = true;
         }
-        if (room.features.includes('Video Conferencing') && !room.videoInputs.some(d => d.type.toLowerCase().includes('camera'))) {
+        if (features.includes('Video Conferencing') && !videoInputs.some(d => d.type.toLowerCase().includes('camera'))) {
             insights.push({ type: 'Warning', text: `The '${room.roomName}' has Video Conferencing enabled but no camera is specified.` });
         }
     });
@@ -216,13 +222,17 @@ export const reviewRoomDesign = async (roomData: RoomData): Promise<DesignFeedba
     await new Promise(res => setTimeout(res, 1000));
 
     const feedback: DesignFeedbackItem[] = [];
-    if (roomData.features.includes('Video Conferencing') && !roomData.videoInputs.some(d => d.type.toLowerCase().includes('camera'))) {
+    const features = roomData.features || [];
+    const videoInputs = roomData.videoInputs || [];
+    const videoOutputs = roomData.videoOutputs || [];
+
+    if (features.includes('Video Conferencing') && !videoInputs.some(d => d.type.toLowerCase().includes('camera'))) {
         feedback.push({ type: 'Warning', text: 'Video Conferencing is a feature, but no camera is specified in the video inputs.' });
     }
-    if (roomData.videoOutputs.some(d => d.distance > 33)) {
+    if (videoOutputs.some(d => d.distance > 33)) {
         feedback.push({ type: 'Suggestion', text: `A video output is over 33ft away. Consider using an HDBaseT extender or HAOC cable for signal integrity.` });
     }
-    if (roomData.designTier === 'Gold' && !roomData.features.includes('Advanced Audio Processing')) {
+    if (roomData.designTier === 'Gold' && !features.includes('Advanced Audio Processing')) {
         feedback.push({ type: 'Opportunity', text: 'For a Gold-tier room, consider adding Advanced Audio Processing for a premium experience.' });
     }
     if (feedback.length === 0) {
