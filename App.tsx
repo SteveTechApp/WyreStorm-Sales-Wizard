@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ProjectData, Proposal, UserProfile, RoomData, IO_Device } from './types';
+import { ProjectData, Proposal, UserProfile, RoomData } from './types';
 import { generateProposal, parseCustomerNotes } from './services/geminiService';
 import WelcomeScreen from './components/WelcomeScreen';
+import ProjectSetupScreen from './components/ProjectSetupScreen';
 import DesignCoPilot from './components/DesignCoPilot';
 import ProposalDisplay from './components/ProposalDisplay';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -11,8 +12,21 @@ import Header from './components/Header';
 import ProfileModal from './components/ProfileModal';
 import AgentInputForm from './components/AgentInputForm';
 
-type View = 'welcome' | 'agent-input' | 'co-pilot' | 'generating' | 'proposal' | 'error';
+type View = 'welcome' | 'setup' | 'agent-input' | 'co-pilot' | 'generating' | 'proposal' | 'error';
 export type UnitSystem = 'imperial' | 'metric';
+
+// DTO for data passed from ProjectSetupScreen
+export interface ProjectSetupData {
+    projectName: string;
+    clientName: string;
+    clientContactName: string;
+    clientContactEmail: string;
+    clientAddress: string;
+    coverImage: string;
+    projectBudget?: number;
+    rooms: Omit<RoomData, 'id'>[];
+}
+
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('welcome');
@@ -84,21 +98,30 @@ const App: React.FC = () => {
     setView('welcome');
   };
 
-  const handleStartDesign = () => {
+  const handleStartSetup = () => {
+    setView('setup');
+  };
+
+  const handleCreateProject = (setupData: ProjectSetupData) => {
     const newProject: ProjectData = {
-        projectId: uuidv4(),
-        projectName: `New Project ${new Date().toLocaleDateString()}`,
-        clientName: '',
-        clientContactName: '',
-        clientContactEmail: '',
-        clientAddress: '',
-        coverImage: '',
-        rooms: [],
-        lastSaved: new Date().toISOString(),
+      projectId: uuidv4(),
+      projectName: setupData.projectName,
+      clientName: setupData.clientName,
+      clientContactName: setupData.clientContactName,
+      clientContactEmail: setupData.clientContactEmail,
+      clientAddress: setupData.clientAddress,
+      coverImage: setupData.coverImage,
+      projectBudget: setupData.projectBudget,
+      rooms: setupData.rooms.map(room => ({
+          ...room,
+          id: uuidv4()
+      })),
+      lastSaved: new Date().toISOString(),
     };
     setProjectData(newProject);
     setView('co-pilot');
   };
+
 
   const handleStartAgent = () => setView('agent-input');
   const handleBackToWelcome = () => setView('welcome');
@@ -152,7 +175,9 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (view) {
       case 'welcome':
-        return <WelcomeScreen onStart={handleStartDesign} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
+      case 'setup':
+        return <ProjectSetupScreen onSubmit={handleCreateProject} onBack={handleBackToWelcome} defaultProjectName={`New Project ${new Date().toLocaleDateString()}`} userProfile={userProfile} />;
       case 'agent-input':
         return <AgentInputForm onSubmit={handleAgentSubmit} onBack={handleBackToWelcome} />;
       case 'co-pilot':
@@ -177,7 +202,7 @@ const App: React.FC = () => {
           </div>
         );
       default:
-        return <WelcomeScreen onStart={handleStartDesign} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
     }
   };
 

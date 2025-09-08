@@ -6,6 +6,27 @@ export const CURRENCY_OPTIONS: Record<Currency, { name: string; symbol: string }
   'EUR': { name: 'Euro', symbol: '€' },
 };
 
+export const DESIGN_TIER_INFO = {
+  Bronze: {
+    title: 'Bronze Tier 🥉',
+    focus: 'Core functionality and value.',
+    goal: 'Meets essential requirements reliably and cost-effectively.',
+    hardware: 'Entry-level switchers, all-in-one video bars, basic connectivity.',
+  },
+  Silver: {
+    title: 'Silver Tier 🥈',
+    focus: 'The balanced, recommended standard.',
+    goal: 'Enhances collaboration with features like BYOM and wireless casting.',
+    hardware: 'Matrix switchers, PTZ cameras, multiple mics, USB-C docking.',
+  },
+  Gold: {
+    title: 'Gold Tier 🥇',
+    focus: 'A premium, seamless, future-proofed experience.',
+    goal: 'Creates a high-impact environment that impresses clients and empowers executives.',
+    hardware: 'High-end matrixes with DSPs, AV over IP, advanced control.',
+  },
+};
+
 export const ROOM_TYPES = [
   'Conference Room',
   'Huddle Room',
@@ -97,6 +118,10 @@ export const NETWORK_CONNECTION_OPTIONS = ['Standard LAN', 'Dedicated AV LAN', '
 export const CONTROL_WIRING_OPTIONS = ['Standard CAT6', 'RS-232', 'Cresnet/LAN'];
 export const POWER_CONSIDERATIONS = ['Standard Outlets', 'Dedicated Circuit', 'UPS Backup'];
 export const ENVIRONMENTAL_CONSIDERATIONS = ['Standard Office', 'High Ambient Light', 'Acoustically Treated'];
+
+export const NETWORK_SWITCH_MODELS = ['WyreStorm NHD Series', 'Cisco Catalyst Series', 'Netgear M4250 Series', 'Client Provided Switch', 'Unmanaged Switch (Not Recommended)'];
+export const IP_ADDRESSING_SCHEMES = ['DHCP', 'Static IP', 'Mixed DHCP/Static'];
+export const VLAN_CONFIGURATIONS = ['Single Flat Network', 'Dedicated AV VLAN', 'Corporate VLAN with QoS', 'Guest VLAN'];
 
 export const ROOM_DIMENSION_DEFAULTS: Record<string, Record<string, { length: number; width: number; height: number; }>> = {
     'Conference Room': {

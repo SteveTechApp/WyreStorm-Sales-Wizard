@@ -21,7 +21,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
             <button
               key={tab.label}
               // FIX: Added type="button" to prevent the button from submitting the parent form.
-              type="button" 
+              type="button"
               onClick={() => setActiveTab(index)}
               className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors
                 ${

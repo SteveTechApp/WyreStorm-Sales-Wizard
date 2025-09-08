@@ -12,6 +12,9 @@ import {
   CONTROL_WIRING_OPTIONS,
   POWER_CONSIDERATIONS,
   ENVIRONMENTAL_CONSIDERATIONS,
+  NETWORK_SWITCH_MODELS,
+  IP_ADDRESSING_SCHEMES,
+  VLAN_CONFIGURATIONS,
 } from '../constants';
 import Tabs from './Tabs';
 import VisualRoomPlanner from './VisualRoomPlanner'; // Import the new visual planner
@@ -284,6 +287,32 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
                 </select>
               </div>
           </div>
+           <div className="p-4 bg-gray-50/50 border rounded-md">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">AV over IP Settings</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     <div>
+                        <label htmlFor="networkSwitchModel" className="block text-sm font-medium text-gray-700 mb-1">Network Switch Model</label>
+                        <select name="networkSwitchModel" value={formData.networkSwitchModel || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                            <option value="">-- Select --</option>
+                            {NETWORK_SWITCH_MODELS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="ipAddressingScheme" className="block text-sm font-medium text-gray-700 mb-1">IP Addressing Scheme</label>
+                        <select name="ipAddressingScheme" value={formData.ipAddressingScheme || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                           <option value="">-- Select --</option>
+                           {IP_ADDRESSING_SCHEMES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
+                      </div>
+                       <div>
+                        <label htmlFor="vlanConfiguration" className="block text-sm font-medium text-gray-700 mb-1">VLAN Configuration</label>
+                        <select name="vlanConfiguration" value={formData.vlanConfiguration || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
+                           <option value="">-- Select --</option>
+                           {VLAN_CONFIGURATIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
+                      </div>
+                </div>
+           </div>
           <div>
               <h3 className="text-lg font-semibold text-gray-700 mb-2">Power & Environmental</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

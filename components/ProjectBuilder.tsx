@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { RoomData, ProjectData, IO_Device, UnitSystem, DesignFeedbackItem, RoomWizardAnswers } from '../types';
@@ -43,23 +42,25 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({ onSubmit, onSaveProject
   
   /**
    * Centralized function to add a room to the project.
-   * Handles creating unique IDs, ensuring a unique room name, and updating state.
+   * This consolidates all logic for creating a valid new room, including:
+   *  - Assigning a new unique ID to the room itself.
+   *  - Ensuring the room name is unique within the project.
+   *  - Assigning new unique IDs to all I/O devices (critical for duplication).
    */
   const addRoomToProject = (newRoomData: Omit<RoomData, 'id'>) => {
     const newRoom: RoomData = { ...newRoomData, id: uuidv4() };
 
-    // Ensure room name is unique
-    let counter = 1;
+    // First, ensure the room name is unique to avoid conflicts
     let potentialName = newRoom.roomName;
     const baseName = newRoom.roomName.replace(/ \(\d+\)$/, '').replace(/ \(Copy\)$/, '').trim();
-
+    let counter = 1;
     while (projectData.rooms.some(r => r.roomName === potentialName)) {
       counter++;
       potentialName = `${baseName} (${counter})`;
     }
     newRoom.roomName = potentialName;
     
-    // Ensure all nested I/O devices have unique IDs, which is important for duplication
+    // Then, ensure all nested I/O devices have new unique IDs. This is vital for the 'duplicate' feature.
     const ioKeys: (keyof Pick<RoomData, 'videoInputs' | 'videoOutputs' | 'audioInputs' | 'audioOutputs'>)[] = ['videoInputs', 'videoOutputs', 'audioInputs', 'audioOutputs'];
     ioKeys.forEach(key => {
         if (newRoom[key]) {
@@ -67,6 +68,7 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({ onSubmit, onSaveProject
         }
     });
 
+    // Finally, update the project state
     setProjectData(pd => ({ ...pd, rooms: [...pd.rooms, newRoom]}));
     setActiveRoomId(newRoom.id);
   };

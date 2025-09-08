@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { RoomWizardAnswers, SolutionVisualization, DisplayConfiguration, SuggestedConfiguration } from '../types';
+import { RoomWizardAnswers, SolutionVisualization, DisplayConfiguration, SuggestedConfiguration, RoomData } from '../types';
 import { ROOM_TYPES, DESIGN_TIER_OPTIONS, COMMON_FEATURES, ROOM_SPECIFIC_FEATURES, PRIMARY_USE_OPTIONS, DISPLAY_TYPE_OPTIONS } from '../constants';
 import { visualizeSolution, suggestRoomConfiguration } from '../services/geminiService';
 import SolutionVisualizerModal from './SolutionVisualizerModal';
@@ -10,9 +10,10 @@ interface RoomWizardProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (answers: RoomWizardAnswers, roomType: string, designTier: string) => void;
+  initialData?: RoomData | null;
 }
 
-const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
+const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd, initialData }) => {
   const [step, setStep] = useState(1);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestion, setSuggestion] = useState<SuggestedConfiguration | null>(null);
@@ -36,41 +37,48 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
   }, [roomType, features]);
 
   useEffect(() => {
-    // Reset state when modal is opened
     if (isOpen) {
-      setStep(1);
       setSuggestion(null);
       setIsSuggesting(false);
-      setRoomName('');
-      setParticipantCount(10);
-      setPrimaryUse(PRIMARY_USE_OPTIONS[0]);
-      setRoomType(ROOM_TYPES[0]);
-      setDesignTier(DESIGN_TIER_OPTIONS[1]);
-      setFeatures([]);
-      setDisplayConfiguration([{ type: DISPLAY_TYPE_OPTIONS[0].id, quantity: 1 }]);
+      
+      if (initialData) {
+        // Pre-populate Step 1 with existing data for a configuration run
+        setRoomName(initialData.roomName);
+        setParticipantCount(initialData.maxParticipants);
+        setPrimaryUse(initialData.primaryUse || PRIMARY_USE_OPTIONS[0]);
+        setRoomType(initialData.roomType);
+
+        // If it's a fully configured room, we can pre-populate Step 3 and jump there.
+        // Otherwise, we start at Step 1 to get suggestions for the placeholder.
+        if (initialData.functionalityStatement) {
+            setDesignTier(initialData.designTier || DESIGN_TIER_OPTIONS[1]);
+            setFeatures(initialData.features);
+            setDisplayConfiguration([{ type: DISPLAY_TYPE_OPTIONS[0].id, quantity: initialData.maxDisplays || 1 }]);
+            setStep(3);
+        } else {
+            setStep(1);
+        }
+      } else {
+        // This case is for creating a new room from scratch
+        setStep(1);
+        setRoomName('');
+        setParticipantCount(10);
+        setPrimaryUse(PRIMARY_USE_OPTIONS[0]);
+        setRoomType(ROOM_TYPES[0]);
+        setDesignTier(DESIGN_TIER_OPTIONS[1]);
+        setFeatures([]);
+        setDisplayConfiguration([{ type: DISPLAY_TYPE_OPTIONS[0].id, quantity: 1 }]);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, initialData]);
+
 
   const handleGetSuggestion = async () => {
     setIsSuggesting(true);
     setStep(2);
     try {
-        const result = await suggestRoomConfiguration({ participantCount, primaryUse });
+        const result = await suggestRoomConfiguration({ participantCount, primaryUse, roomType });
         setSuggestion(result);
-        // Populate form state with AI suggestions
-        setRoomType(result.roomType);
-        setDesignTier(result.designTier);
-        setFeatures(result.features);
-        // Map display labels from constants to ensure correct dropdown values
-        const suggestedDisplays = result.displayConfiguration.map(d => ({
-            ...d,
-            type: DISPLAY_TYPE_OPTIONS.find(opt => opt.label === d.type)?.id || d.type
-        }));
-        setDisplayConfiguration(suggestedDisplays);
-        
-        if (!roomName.trim()) {
-            setRoomName(`${result.designTier} ${result.roomType}`);
-        }
     } catch (e) {
         console.error("Failed to get suggestion:", e);
         setStep(1); // Go back to step 1 on error
@@ -78,6 +86,31 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
         setIsSuggesting(false);
     }
   };
+  
+  const handleAcceptSuggestion = () => {
+    if (!suggestion) return;
+    setRoomType(suggestion.roomType);
+    setDesignTier(suggestion.designTier);
+    setFeatures(suggestion.features);
+    const suggestedDisplays = suggestion.displayConfiguration.map(d => ({
+        ...d,
+        type: DISPLAY_TYPE_OPTIONS.find(opt => opt.label === d.type)?.id || d.type
+    }));
+    setDisplayConfiguration(suggestedDisplays);
+    setStep(3);
+  };
+
+  const handleConfigureManually = () => {
+    if (initialData) {
+        setRoomType(initialData.roomType); // Keep the placeholder's room type
+    }
+    setDesignTier(DESIGN_TIER_OPTIONS[1]);
+    setFeatures([]);
+    setDisplayConfiguration([{ type: DISPLAY_TYPE_OPTIONS[0].id, quantity: 1 }]);
+    setSuggestion(null); // Clear suggestion so summary doesn't show
+    setStep(3);
+  };
+
 
   const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -125,16 +158,37 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
     const answers: RoomWizardAnswers = { roomName, participantCount, primaryUse, displayConfiguration: finalDisplayConfig, features };
     onAdd(answers, roomType, designTier);
   };
+  
+  const submitButtonText = initialData ? 'Save Configuration' : 'Add Room to Project';
 
-  const renderStep1 = () => (
+  const renderStep1 = () => {
+    const wizardTitle = initialData ? `Step 1: Describe Needs for '${initialData.roomName}'` : 'Step 1: Define Your New Room';
+    return (
      <div className="space-y-6 animate-fade-in">
-        <h3 className="text-lg font-semibold text-gray-700">Step 1: Describe Your Needs</h3>
-        <p className="text-sm text-gray-500 -mt-4">Provide some basic details, and our AI will suggest a complete room configuration for you to refine.</p>
+        <h3 className="text-lg font-semibold text-gray-700">{wizardTitle}</h3>
+        <p className="text-sm text-gray-500 -mt-4">Provide basic details, and our AI will suggest a complete configuration for you to refine.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <div>
-                <label htmlFor="roomName" className="block text-sm font-medium text-gray-700 mb-1">Room Name (Optional)</label>
-                <input type="text" id="roomName" value={roomName} onChange={e => setRoomName(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g. Executive Boardroom" />
-            </div>
+            {initialData ? (
+                <>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                        <div className="w-full p-2 border border-gray-200 rounded-md bg-gray-100 text-gray-700 font-medium cursor-not-allowed">{roomType}</div>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div>
+                        <label htmlFor="roomName" className="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                        <input id="roomName" type="text" value={roomName} onChange={(e) => setRoomName(e.target.value)} placeholder="e.g., Main Conference Room" className="w-full p-2 border border-gray-300 rounded-md" required />
+                    </div>
+                    <div>
+                        <label htmlFor="roomType" className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                        <select id="roomType" value={roomType} onChange={(e) => setRoomType(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
+                            {ROOM_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
+                    </div>
+                </>
+            )}
             <div>
                 <label htmlFor="participantCount" className="block text-sm font-medium text-gray-700 mb-1">Max Participants</label>
                 <input id="participantCount" type="number" min="1" value={participantCount} onChange={(e) => setParticipantCount(Math.max(1, Number(e.target.value)))} className="w-full p-2 border border-gray-300 rounded-md" />
@@ -147,16 +201,48 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
             </select>
         </div>
      </div>
-  );
+    );
+  };
 
-  const renderStep2 = () => (
+  const renderStep2 = () => {
+    if (isSuggesting) {
+        return <div className="min-h-[250px] flex items-center justify-center"><LoadingSpinner message="Generating AI Configuration..." /></div>;
+    }
+
+    if (suggestion) {
+        return (
+            <div className="animate-fade-in">
+                <h3 className="text-lg font-semibold text-gray-700">Step 2: Review AI Suggestion</h3>
+                <p className="text-sm text-gray-500 mb-4">The AI has generated a starting point. Accept this to fine-tune it, or configure the room manually.</p>
+                
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
+                    <p><strong className="font-semibold text-gray-700 w-48 inline-block">Suggested Room Type:</strong> {suggestion.roomType}</p>
+                    <p><strong className="font-semibold text-gray-700 w-48 inline-block">Suggested Design Tier:</strong> {suggestion.designTier}</p>
+                    <p className="text-sm text-blue-800 italic pt-2 border-t mt-2">{suggestion.summary}</p>
+                </div>
+                
+                <div className="mt-6 flex justify-end gap-3">
+                    <button onClick={handleConfigureManually} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
+                        Configure Manually
+                    </button>
+                    <button onClick={handleAcceptSuggestion} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">
+                        Accept & Continue
+                    </button>
+                </div>
+            </div>
+        );
+    }
+    return null;
+  };
+
+  const renderStep3 = () => (
     <div className="animate-fade-in">
-        <h3 className="text-lg font-semibold text-gray-700">Step 2: AI Recommended Configuration</h3>
-        <p className="text-sm text-gray-500 -mt-1 mb-4">Here is our AI's suggestion. Feel free to adjust any setting.</p>
+        <h3 className="text-lg font-semibold text-gray-700">Step 3: Configure '{roomName}'</h3>
+        <p className="text-sm text-gray-500 -mt-1 mb-4">Adjust the details for your new room below.</p>
 
         {suggestion && (
             <div className="p-4 mb-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-bold text-blue-800 text-sm mb-1">AI Recommendation</h4>
+                <h4 className="font-bold text-blue-800 text-sm mb-1">AI Recommendation Baseline</h4>
                 <p className="text-xs text-blue-700">{suggestion.summary}</p>
             </div>
         )}
@@ -164,10 +250,9 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 max-h-[55vh] overflow-y-auto pr-3">
              {/* Row 1 */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
-                <select value={roomType} onChange={e => setRoomType(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md">
-                    {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                </select>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                <input type="text" value={roomName} onChange={e => setRoomName(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md bg-gray-100" readOnly/>
+                 <p className="text-xs text-gray-500 mt-1">{initialData ? 'Room name is set during project setup.' : 'Room name is defined in Step 1.'}</p>
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Design Tier</label>
@@ -230,17 +315,18 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onAdd }) => {
         <h2 className="text-2xl font-bold text-gray-800 mb-4">AI Room Wizard</h2>
         
         {step === 1 && renderStep1()}
-        {step === 2 && isSuggesting && <LoadingSpinner message="Generating AI Configuration..." />}
-        {step === 2 && !isSuggesting && renderStep2()}
+        {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
 
         <div className="mt-8 flex justify-between items-center">
             <div>
-                 {step > 1 && !isSuggesting && <button onClick={() => setStep(1)} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">Back</button>}
+                 {step === 2 && !isSuggesting && <button onClick={() => setStep(1)} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">Back</button>}
+                 {step === 3 && <button onClick={() => setStep(1)} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">Restart with AI</button>}
             </div>
-            <div>
+            <div className="flex items-center gap-3">
                 <button type="button" onClick={onClose} className="text-gray-600 font-medium py-2 px-4 rounded-md mr-2">Cancel</button>
                 {step === 1 && <button onClick={handleGetSuggestion} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">Get AI Suggestion</button>}
-                {step === 2 && !isSuggesting && <button onClick={handleSubmit} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">Add Room to Project</button>}
+                {step === 3 && <button onClick={handleSubmit} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">{submitButtonText}</button>}
             </div>
         </div>
 

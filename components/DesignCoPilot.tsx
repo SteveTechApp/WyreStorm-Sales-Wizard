@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ProjectData, RoomData, UserProfile, DesignFeedbackItem, TieredRoomResponse, Currency } from '../types';
-import { getProjectInsights } from '../services/geminiService';
-import { CURRENCY_OPTIONS, ROOM_TYPES } from '../constants';
+import { ProjectData, RoomData, UserProfile, DesignFeedbackItem, Currency, RoomWizardAnswers } from '../types';
+import { getProjectInsights, generateRoomTemplate } from '../services/geminiService';
+import { CURRENCY_OPTIONS } from '../constants';
 import AIInsightsPanel from './AIInsightsPanel';
-import RoomConfiguratorModal from './RoomConfiguratorModal';
+import RoomWizard from './RoomWizard';
 import QuestionnaireForm from './QuestionnaireForm';
+import RoomCard from './RoomCard';
 
 interface DesignCoPilotProps {
   initialData: ProjectData;
@@ -15,22 +16,31 @@ interface DesignCoPilotProps {
   userProfile: UserProfile;
 }
 
-const TIER_STYLES: Record<string, { bg: string; text: string; border: string; }> = {
-    'Bronze': { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-400' },
-    'Silver': { bg: 'bg-gray-200', text: 'text-gray-800', border: 'border-gray-400' },
-    'Gold': { bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-400' },
+const TIER_COST_ESTIMATES: Record<string, number> = {
+  'Bronze': 3500,
+  'Silver': 8000,
+  'Gold': 15000,
 };
 
 const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, onSaveProject, userProfile }) => {
   const [projectData, setProjectData] = useState<ProjectData>(initialData);
   const [insights, setInsights] = useState<DesignFeedbackItem[]>([]);
   const [isGettingInsights, setIsGettingInsights] = useState(false);
-  const [isConfiguratorOpen, setIsConfiguratorOpen] = useState(false);
-  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [configuringRoom, setConfiguringRoom] = useState<RoomData | null>(null);
   const [activeTab, setActiveTab] = useState<'canvas' | 'details'>('canvas');
   const [activeRoomIdForDetails, setActiveRoomIdForDetails] = useState<string | null>(initialData.rooms[0]?.id || null);
 
   const currencySymbol = useMemo(() => CURRENCY_OPTIONS[userProfile.currency as Currency]?.symbol || '$', [userProfile.currency]);
+
+  const estimatedHardwareCost = useMemo(() => {
+    return projectData.rooms.reduce((total, room) => {
+      if (room.designTier) {
+        return total + (TIER_COST_ESTIMATES[room.designTier] || 0);
+      }
+      return total;
+    }, 0);
+  }, [projectData.rooms]);
 
   const updateProjectData = (data: ProjectData) => {
     setProjectData(data);
@@ -62,13 +72,60 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
     updateProjectData(newData);
   };
   
-  const handleAddRoom = (roomData: Omit<RoomData, 'id'>) => {
-    const newRoom = { ...roomData, id: uuidv4() };
-    const newData = { ...projectData, rooms: [...projectData.rooms, newRoom] };
-    updateProjectData(newData);
-    setActiveRoomIdForDetails(newRoom.id);
-    setActiveTab('details');
+  const handleStartRoomConfiguration = (room: RoomData) => {
+    setConfiguringRoom(room);
+    setIsWizardOpen(true);
   };
+  
+  const handleStartAddRoom = () => {
+    setConfiguringRoom(null); // Explicitly set to null for "add" mode
+    setIsWizardOpen(true);
+  };
+
+  const handleRoomConfigurationComplete = async (answers: RoomWizardAnswers, roomType: string, designTier: string) => {
+    setIsWizardOpen(false); // Close modal immediately
+
+    try {
+        const template = await generateRoomTemplate(roomType, designTier, answers);
+
+        if (configuringRoom) {
+            // --- UPDATE EXISTING ROOM ---
+            const updatedRoom = { 
+                ...template, 
+                id: configuringRoom.id, 
+                roomName: configuringRoom.roomName,
+            };
+            const newData = { ...projectData, rooms: projectData.rooms.map(r => r.id === configuringRoom.id ? updatedRoom : r) };
+            updateProjectData(newData);
+        } else {
+            // --- ADD NEW ROOM ---
+            let potentialName = template.roomName;
+            if (!potentialName.trim()) {
+                potentialName = `New ${roomType}`;
+            }
+            const baseName = potentialName.trim();
+            let counter = 1;
+            while (projectData.rooms.some(r => r.roomName === potentialName)) {
+                counter++;
+                potentialName = `${baseName} (${counter})`;
+            }
+            template.roomName = potentialName;
+
+            const newRoom: RoomData = { ...template, id: uuidv4() };
+            const newData = { ...projectData, rooms: [...projectData.rooms, newRoom] };
+            
+            updateProjectData(newData);
+            // After adding, select the new room and switch to details view
+            setActiveRoomIdForDetails(newRoom.id);
+            setActiveTab('details');
+        }
+    } catch (error) {
+        console.error("Failed to process room configuration from wizard", error);
+    } finally {
+        setConfiguringRoom(null);
+    }
+  };
+
 
   const handleUpdateRoom = (updatedRoom: RoomData) => {
      const newData = { ...projectData, rooms: projectData.rooms.map(r => r.id === updatedRoom.id ? updatedRoom : r) };
@@ -96,19 +153,35 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
                 <label className="text-sm font-medium text-gray-600">Total Project Budget ({currencySymbol})</label>
                 <input type="number" placeholder="Enter budget..." value={projectData.projectBudget || ''} onChange={e => handleProjectChange('projectBudget', Number(e.target.value))} className="w-full p-2 border rounded mt-1"/>
             </div>
+            <div>
+                <label className="text-sm font-medium text-gray-600">Approx. Hardware Cost (WyreStorm only)</label>
+                <div className="w-full p-2 border rounded mt-1 bg-gray-100 font-semibold text-gray-800">
+                    {`${currencySymbol}${estimatedHardwareCost.toLocaleString()}`}
+                </div>
+            </div>
             <div className="flex-grow">
-                <h3 className="font-semibold text-gray-700">Rooms</h3>
-                <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-gray-700">Rooms ({projectData.rooms.length})</h3>
+                    <button onClick={handleStartAddRoom} className="text-sm font-medium text-[#008A3A] hover:underline">+ Add Room</button>
+                </div>
+                <div className="mt-2 space-y-2 max-h-48 overflow-y-auto pr-2">
                     {projectData.rooms.map(room => (
-                        <div key={room.id} onClick={() => { setActiveRoomIdForDetails(room.id); setActiveTab('details'); }} className={`p-2 rounded border cursor-pointer ${activeRoomIdForDetails === room.id && activeTab === 'details' ? 'bg-green-100 border-green-400' : 'bg-gray-50 hover:bg-gray-100'}`}>
-                            <p className="font-medium text-sm truncate">{room.roomName}</p>
-                            <p className="text-xs text-gray-500">{room.roomType} - {room.designTier}</p>
+                        <div 
+                            key={room.id} 
+                            onClick={() => { setActiveRoomIdForDetails(room.id); setActiveTab('details'); }} 
+                            className={`p-2 rounded border cursor-pointer transition-colors ${
+                                activeRoomIdForDetails === room.id 
+                                ? 'bg-green-100 border-green-400 font-medium' 
+                                : 'bg-gray-50 hover:bg-gray-100'
+                            }`}
+                        >
+                            <p className="text-sm truncate">{room.roomName}</p>
+                            <p className="text-xs text-gray-500">{room.roomType} - {room.designTier || 'Not Configured'}</p>
                         </div>
                     ))}
                 </div>
             </div>
             <div className="flex-shrink-0 space-y-2">
-                <button onClick={() => setIsConfiguratorOpen(true)} className="w-full bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">+ Add New Room</button>
                  <button onClick={() => onSaveProject(projectData)} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md">Save Project</button>
                 <button onClick={() => onSubmit(projectData)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md">Generate Final Proposal</button>
             </div>
@@ -124,32 +197,25 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
                 {activeTab === 'canvas' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {projectData.rooms.map(room => (
-                            <div key={room.id} className="bg-white p-4 rounded-lg border shadow-sm">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="font-bold text-gray-800">{room.roomName}</p>
-                                        <p className="text-sm text-gray-500">{room.roomType}</p>
-                                    </div>
-                                    <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${TIER_STYLES[room.designTier || 'Silver']?.bg} ${TIER_STYLES[room.designTier || 'Silver']?.text} ${TIER_STYLES[room.designTier || 'Silver']?.border}`}>{room.designTier}</span>
-                                </div>
-                                <p className="text-xs text-gray-600 mt-2 italic">{room.functionalityStatement}</p>
-                                <div className="mt-3 pt-3 border-t flex justify-between">
-                                    <button onClick={() => { setEditingRoomId(room.id); setIsConfiguratorOpen(true); }} className="text-xs font-semibold text-blue-600 hover:underline">Configure</button>
-                                    <button onClick={() => handleRemoveRoom(room.id)} className="text-xs font-semibold text-red-600 hover:underline">Remove</button>
-                                </div>
-                            </div>
+                            <RoomCard
+                                key={room.id}
+                                room={room}
+                                isActive={activeRoomIdForDetails === room.id}
+                                onSelect={() => {
+                                    setActiveRoomIdForDetails(room.id);
+                                    setActiveTab('details');
+                                }}
+                                onReconfigure={() => handleStartRoomConfiguration(room)}
+                                onRemove={() => handleRemoveRoom(room.id)}
+                            />
                         ))}
-                         <button onClick={() => setIsConfiguratorOpen(true)} className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-dashed hover:bg-gray-100 text-gray-500">
-                           <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                           Add Room
-                        </button>
                     </div>
                 )}
                  {activeTab === 'details' && activeRoomForDetails && (
                     <QuestionnaireForm key={activeRoomForDetails.id} formData={activeRoomForDetails} onChange={handleUpdateRoom} unitSystem={userProfile.unitSystem} />
                  )}
                  {activeTab === 'details' && !activeRoomForDetails && (
-                    <div className="text-center text-gray-500 pt-20">Select a room from the dashboard or add one to see its details.</div>
+                    <div className="text-center text-gray-500 pt-20">Select a room from the dashboard to see its details.</div>
                  )}
             </div>
         </div>
@@ -157,18 +223,12 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
         {/* Right Panel: AI Insights */}
         <AIInsightsPanel insights={insights} isLoading={isGettingInsights} onRefresh={() => refreshInsights(projectData)} />
       </div>
-
-      <RoomConfiguratorModal 
-        isOpen={isConfiguratorOpen}
-        onClose={() => { setIsConfiguratorOpen(false); setEditingRoomId(null); }}
-        onRoomConfigured={(roomData) => {
-            if(editingRoomId) {
-                handleUpdateRoom({ ...roomData, id: editingRoomId });
-            } else {
-                handleAddRoom(roomData);
-            }
-        }}
-        existingRoom={projectData.rooms.find(r => r.id === editingRoomId)}
+      
+      <RoomWizard
+        isOpen={isWizardOpen}
+        onClose={() => { setIsWizardOpen(false); setConfiguringRoom(null); }}
+        onAdd={handleRoomConfigurationComplete}
+        initialData={configuringRoom}
       />
     </>
   );

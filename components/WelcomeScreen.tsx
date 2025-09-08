@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Logo from './Logo';
 import { ProjectData } from '../types';
+import InfoModal from './InfoModal';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -12,6 +13,7 @@ interface WelcomeScreenProps {
 }
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, savedProjects, onLoadProject, onDeleteProject }) => {
+  const [modalContent, setModalContent] = useState<{ title: string; content: React.ReactNode } | null>(null);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString(undefined, {
@@ -20,7 +22,73 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
     });
   };
 
+  const getModalContent = (type: 'how' | 'tiers' | 'faq') => {
+    switch (type) {
+        case 'how':
+            return {
+                title: "How It Works",
+                content: (
+                    <>
+                        <p>This AI Sales Assistant is designed to streamline the creation of professional AV proposals. Here's the typical workflow:</p>
+                        <ul>
+                            <li><strong>Step 1: Project Setup.</strong> Start by either choosing a pre-defined project scope (like 'Small Office') to get a head start, or begin a custom project from scratch.</li>
+                            <li><strong>Step 2: Add & Configure Rooms.</strong> Use the AI Room Wizard to add rooms. Describe your client's needs, and the AI will suggest a complete configuration (including room type, design tier, features, and displays) for you to approve and refine.</li>
+                            <li><strong>Step 3: Review & Refine.</strong> Use the AI Design Co-Pilot dashboard to see your whole project. The AI will provide real-time insights—technical warnings, strategic suggestions, and even financial advice—as you work.</li>
+                            <li><strong>Step 4: Generate Proposal.</strong> Once you're happy with the design, click "Generate Proposal." The AI will compile all the room data into a comprehensive sales document, including an executive summary, scope of work, equipment list, and system diagram.</li>
+                        </ul>
+                    </>
+                )
+            };
+        case 'tiers':
+            return {
+                title: "Understanding Design Tiers",
+                content: (
+                    <>
+                        <p>The "Bronze, Silver, Gold" tiers provide a framework for discussing budget and functionality with your client. They are not rigid, but represent a design philosophy.</p>
+                        <h3>Bronze Tier 🥉</h3>
+                        <ul>
+                            <li><strong>Focus:</strong> Core functionality and value.</li>
+                            <li><strong>Goal:</strong> Meets the essential requirements of the space reliably and cost-effectively.</li>
+                            <li><strong>Typical Hardware:</strong> Entry-level switchers, all-in-one video bars, basic connectivity.</li>
+                        </ul>
+                        <h3>Silver Tier 🥈</h3>
+                        <ul>
+                            <li><strong>Focus:</strong> The balanced, recommended standard for modern collaboration.</li>
+                            <li><strong>Goal:</strong> Enhances user experience and flexibility with features like BYOM (Bring Your Own Meeting), wireless casting, and better audio.</li>
+                            <li><strong>Typical Hardware:</strong> More capable matrix switchers, PTZ cameras, multiple microphones, USB-C docking. This is the sweet spot for most corporate environments.</li>
+                        </ul>
+                        <h3>Gold Tier 🥇</h3>
+                        <ul>
+                            <li><strong>Focus:</strong> A premium, seamless, and future-proofed experience.</li>
+                            <li><strong>Goal:</strong> Creates a high-impact environment that impresses clients and empowers executives. Often includes advanced integration and automation.</li>
+                            <li><strong>Typical Hardware:</strong> High-end matrix switchers with DSPs, AV over IP distribution, advanced control systems, and integrated environmental controls (lighting/shades).</li>
+                        </ul>
+                    </>
+                )
+            };
+        case 'faq':
+            return {
+                title: "Frequently Asked Questions",
+                content: (
+                    <>
+                        <h4>Is my data saved?</h4>
+                        <p>Yes, all your project data and your user profile are saved directly in your web browser's local storage. No data is sent to a central server outside of the AI analysis calls.</p>
+                        <h4>Can I edit the final proposal?</h4>
+                        <p>Absolutely. The final proposal screen allows for full editing of equipment quantities and pricing, labor hours, and even the addition of custom line items. The AI-generated proposal is a starting point, not the final word.</p>
+                        <h4>How does the "Parse Client Notes" feature work?</h4>
+                        <p>You can copy/paste text from an email, an RFQ document, or your own meeting notes. The AI will read the text and attempt to extract key information like the project name, client details, and room requirements to give you a head start on the design.</p>
+                    </>
+                )
+            };
+        default: return null;
+    }
+  };
+
   return (
+    <>
+    <InfoModal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent?.title || ''}>
+        {modalContent?.content}
+    </InfoModal>
     <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden animate-fade-in w-full max-w-6xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-5">
         <div className="md:col-span-2 bg-[#006837] p-8 md:p-12 text-white flex flex-col justify-center items-center md:items-start text-center md:text-left">
@@ -29,6 +97,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
             AI Design Co-Pilot
           </h1>
           <p className="text-green-100 text-lg">Build Expert AV Proposals in Minutes.</p>
+           <div className="mt-8 border-t border-green-400/30 pt-6 w-full">
+            <h4 className="font-semibold text-lg text-white mb-3">Learn More</h4>
+            <div className="flex flex-col items-start gap-2">
+                <button onClick={() => setModalContent(getModalContent('how'))} className="text-green-100 hover:text-white hover:underline text-sm">How It Works</button>
+                <button onClick={() => setModalContent(getModalContent('tiers'))} className="text-green-100 hover:text-white hover:underline text-sm">Design Tiers Explained</button>
+                <button onClick={() => setModalContent(getModalContent('faq'))} className="text-green-100 hover:text-white hover:underline text-sm">FAQ</button>
+            </div>
+           </div>
         </div>
 
         <div className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center">
@@ -38,8 +114,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
               onClick={onStart}
               className="flex items-center justify-center gap-3 w-full bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c.621.206 1.278.412 1.95.632M9.75 3.104a2.25 2.25 0 00-2.25-2.25H5.25a2.25 2.25 0 00-2.25 2.25v5.714a2.25 2.25 0 00.659 1.591L5 14.5m0 0l-2.5 2.5a2.25 2.25 0 000 3.182m5-5.364a2.25 2.25 0 013.182 0l2.5 2.5a2.25 2.25 0 010 3.182M5 14.5l2.5-2.5m0 0l2.5 2.5m-5 0l-2.5 2.5m5-5.364a2.25 2.25 0 013.182 0l2.5 2.5a2.25 2.25 0 010 3.182m-5-5.364l2.5-2.5m2.5 2.5l2.5-2.5m2.5 2.5l2.5 2.5M16.5 12l-2.5 2.5a2.25 2.25 0 01-3.182 0l-2.5-2.5a2.25 2.25 0 01-3.182 0M16.5 12a2.25 2.25 0 00-3.182 0l-2.5 2.5a2.25 2.25 0 000 3.182m5-5.364l-2.5-2.5m2.5 2.5l2.5-2.5m0 0l2.5-2.5m-5 5.364l2.5-2.5" /></svg>
-              <span>Start New Design</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+              <span>New Project Setup</span>
             </button>
             <button
               onClick={onStartAgent}
@@ -73,6 +149,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
         </div>
       </div>
     </div>
+    </>
   );
 };
 

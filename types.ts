@@ -1,3 +1,4 @@
+
 export type UnitSystem = 'imperial' | 'metric';
 export type Currency = 'USD' | 'GBP' | 'EUR';
 
@@ -64,8 +65,11 @@ export interface RoomData {
   siteRequirements: string[];
   projectCosts: string[];
   designTier?: string;
-  // New field for business justification on Silver/Gold tiers
   businessJustification?: string;
+  // AV over IP Settings
+  networkSwitchModel?: string;
+  ipAddressingScheme?: string;
+  vlanConfiguration?: string;
 }
 
 export interface SuggestedConfiguration {
@@ -114,7 +118,6 @@ export interface ProjectData {
   coverImage: string;
   rooms: RoomData[];
   lastSaved: string;
-  // New field for overall project budget
   projectBudget?: number;
 }
 

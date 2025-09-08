@@ -1,6 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ProjectData, UserProfile, RoomData, RoomWizardAnswers, DesignFeedbackItem, SolutionVisualization, Proposal, EquipmentItem, SuggestedConfiguration, DisplayConfiguration, TieredRoomResponse, RoomTierOption } from '../types';
+import { v4 as uuidv4 } from 'uuid';
+import { ProjectData, UserProfile, RoomData, RoomWizardAnswers, DesignFeedbackItem, SolutionVisualization, Proposal, EquipmentItem, SuggestedConfiguration, DisplayConfiguration, TieredRoomResponse, RoomTierOption, createDefaultRoomData } from '../types';
 import { productDatabase } from '../components/productDatabase';
 import { installationTaskDatabase } from '../components/installationTaskDatabase';
 
@@ -149,4 +150,250 @@ export const generateTieredRoomOptions = async (roomType: string, primaryUse: st
     };
     
     return { bronze, silver, gold };
+};
+
+// FIX: Add missing function `generateRoomTemplate`
+/**
+ * Generates a room template based on type, tier, and user answers.
+ */
+export const generateRoomTemplate = async (roomType: string, designTier: string, wizardAnswers: RoomWizardAnswers): Promise<Omit<RoomData, 'id'>> => {
+    const prompt = `
+    **ROLE:** Expert AV Systems Designer.
+    **TASK:** Generate a complete RoomData object (excluding 'id') for a new room based on the provided parameters.
+    **INPUT:**
+    - Room Type: ${roomType}
+    - Design Tier: ${designTier}
+    - User Selections: ${JSON.stringify(wizardAnswers, null, 2)}
+    
+    **OUTPUT:** A single JSON object conforming to the RoomData type (without the 'id' field).
+    `;
+    console.log("Generating room template with prompt:", prompt);
+    await new Promise(res => setTimeout(res, 1000));
+
+    // Mock response based on inputs
+    return {
+        roomName: wizardAnswers.roomName,
+        roomType: roomType,
+        designTier: designTier,
+        roomDimensions: { length: 20, width: 15, height: 9 },
+        roomComplexity: designTier === 'Gold' ? 'High' : 'Standard',
+        primaryUse: wizardAnswers.primaryUse,
+        functionalityStatement: `A ${designTier}-tier ${roomType} designed for ${wizardAnswers.primaryUse} for up to ${wizardAnswers.participantCount} participants.`,
+        maxParticipants: wizardAnswers.participantCount,
+        maxDisplays: wizardAnswers.displayConfiguration.reduce((acc, d) => acc + d.quantity, 0) || 1,
+        videoInputs: [],
+        videoOutputs: [],
+        audioInputs: [],
+        audioOutputs: [],
+        audioCoverageNotes: '',
+        cablingInfrastructureNotes: 'Standard routing is assumed.',
+        networkConnection: 'Standard LAN',
+        controlWiring: 'Standard CAT6',
+        powerConsiderations: 'Standard Outlets',
+        environmentalConsiderations: 'Standard Office',
+        features: wizardAnswers.features,
+        preferredControlSystem: 'Any',
+        budget: designTier === 'Bronze' ? 'Economy' : designTier === 'Silver' ? 'Mid-Range' : 'High-End',
+        additionalInfo: '',
+        siteRequirements: [],
+        projectCosts: [],
+    };
+};
+
+// FIX: Add missing function `reviewRoomDesign`
+/**
+ * Reviews a room design and provides feedback.
+ */
+export const reviewRoomDesign = async (roomData: RoomData): Promise<DesignFeedbackItem[]> => {
+    const prompt = `
+    **ROLE:** Senior AV Design Engineer.
+    **TASK:** Review a single RoomData object for potential issues, improvements, or sales opportunities.
+    **INPUT:** ${JSON.stringify(roomData, null, 2)}
+    
+    **OUTPUT:** A JSON array of objects, where each object has a 'type' ('Warning', 'Suggestion', 'Opportunity') and a 'text'.
+    `;
+    console.log("Reviewing room design with prompt:", prompt);
+    await new Promise(res => setTimeout(res, 1000));
+
+    const feedback: DesignFeedbackItem[] = [];
+    if (roomData.features.includes('Video Conferencing') && !roomData.videoInputs.some(d => d.type.toLowerCase().includes('camera'))) {
+        feedback.push({ type: 'Warning', text: 'Video Conferencing is a feature, but no camera is specified in the video inputs.' });
+    }
+    if (roomData.videoOutputs.some(d => d.distance > 33)) {
+        feedback.push({ type: 'Suggestion', text: `A video output is over 33ft away. Consider using an HDBaseT extender or HAOC cable for signal integrity.` });
+    }
+    if (roomData.designTier === 'Gold' && !roomData.features.includes('Advanced Audio Processing')) {
+        feedback.push({ type: 'Opportunity', text: 'For a Gold-tier room, consider adding Advanced Audio Processing for a premium experience.' });
+    }
+    if (feedback.length === 0) {
+        feedback.push({ type: 'Insight', text: 'The current design looks solid and meets all specified requirements.'});
+    }
+    return feedback;
+};
+
+// FIX: Add missing function `visualizeSolution`
+/**
+ * Generates a visualization for a solution based on room type and tier.
+ */
+export const visualizeSolution = async (roomType: string, designTier: string): Promise<SolutionVisualization> => {
+    const prompt = `
+    **ROLE:** AV Marketing and Solutions Architect.
+    **TASK:** Create a compelling visualization of an AV solution for a specific room type and tier.
+    **INPUT:**
+    - Room Type: ${roomType}
+    - Design Tier: ${designTier}
+    
+    **OUTPUT:** A single JSON object conforming to the SolutionVisualization interface.
+    `;
+    console.log("Visualizing solution with prompt:", prompt);
+    await new Promise(res => setTimeout(res, 1000));
+
+    const heroProducts: Record<string, string[]> = {
+        'Bronze': ['APO-210-UC', 'HALO 80'],
+        'Silver': ['MX-0403-H3-MST', 'CAM-210-PTZ'],
+        'Gold': ['MX-1007-HYB', 'NHD-500-TX', 'SYN-TOUCH10']
+    };
+
+    return {
+        solutionTitle: `The ${designTier} ${roomType} Experience`,
+        solutionPhilosophy: `A ${designTier.toLowerCase()} solution focuses on ${designTier === 'Bronze' ? 'core reliability' : designTier === 'Silver' ? 'enhanced collaboration' : 'a seamless, premium experience'}.`,
+        heroProducts: heroProducts[designTier] || [],
+        simpleDiagram: {
+            nodes: [
+                { id: 'source', label: 'User Device', type: 'Source', group: 'Table' },
+                { id: 'core', label: 'Core System', type: 'Switcher', group: 'Rack' },
+                { id: 'display', label: 'Display', type: 'Display', group: 'Front of Room' }
+            ],
+            edges: [
+                { from: 'source', to: 'core', label: 'Content', type: 'video' },
+                { from: 'core', to: 'display', label: 'Video', type: 'video' }
+            ],
+            groups: ['Table', 'Rack', 'Front of Room']
+        }
+    };
+};
+
+/**
+ * Suggests a room configuration based on participant count and primary use.
+ */
+export const suggestRoomConfiguration = async (answers: { participantCount: number; primaryUse: string; roomType: string; }): Promise<SuggestedConfiguration> => {
+    const prompt = `
+    **ROLE:** Experienced AV Sales Engineer.
+    **TASK:** Suggest a coherent room configuration based on initial user needs. The suggestion MUST be logically consistent.
+    **INPUT:**
+    - Room Type: ${answers.roomType}
+    - Participant Count: ${answers.participantCount}
+    - Primary Use: ${answers.primaryUse}
+    
+    **CRITICAL LOGIC:**
+    1.  **Tier:** Determine the design tier (Bronze, Silver, Gold) based on the room type and capacity. Huddle rooms are typically Bronze. Boardrooms or rooms for >20 people are Gold. Most others are Silver.
+    2.  **Displays:** The number and type of displays must match the room. Boardrooms and larger conference rooms should have dual displays. Auditoriums need projectors. Classrooms need interactive displays.
+    3.  **Features:** Select features that align with the tier and use case. Silver/Gold tiers should include BYOM. A video conferencing room MUST have the "Video Conferencing" feature.
+    
+    **OUTPUT:** A single JSON object conforming to the SuggestedConfiguration interface.
+    `;
+    console.log("Suggesting room configuration with prompt:", prompt);
+    await new Promise(res => setTimeout(res, 1000));
+
+    // New, more intelligent mock logic
+    const { participantCount, primaryUse, roomType } = answers;
+
+    let designTier: 'Bronze' | 'Silver' | 'Gold' = 'Silver';
+    if (participantCount <= 6 || roomType === 'Huddle Room') {
+        designTier = 'Bronze';
+    } else if (participantCount > 20 || ['Boardroom', 'Auditorium', 'Operations Center', 'Briefing Center'].includes(roomType)) {
+        designTier = 'Gold';
+    }
+
+    let displayConfiguration: DisplayConfiguration[] = [{ type: 'Standard Display(s)', quantity: 1 }];
+    if (roomType === 'Auditorium') {
+        displayConfiguration = [{ type: 'Projector(s)', quantity: 1 }];
+    } else if (roomType === 'Classroom') {
+        displayConfiguration = [{ type: 'Interactive Display(s)', quantity: 1 }];
+    } else if ((roomType === 'Boardroom' || roomType === 'Conference Room') && participantCount > 8) {
+        displayConfiguration = [{ type: 'Standard Display(s)', quantity: 2 }];
+    } else if (designTier === 'Bronze') {
+        displayConfiguration = [{ type: 'Standard Display(s)', quantity: 1 }];
+    }
+
+    const features: string[] = ['Guest Wired Input', 'Wireless Presentation'];
+    if (primaryUse === 'Video Conferencing' || ['Conference Room', 'Boardroom', 'Huddle Room'].includes(roomType)) {
+        features.push('Video Conferencing');
+    }
+    if (designTier === 'Silver' || designTier === 'Gold') {
+        features.push('BYOM (Bring Your Own Meeting)');
+    }
+    if (designTier === 'Gold' || roomType === 'Boardroom') {
+        features.push('Advanced Audio Processing');
+    }
+    if (roomType === 'Classroom') {
+        features.push('Interactive Display');
+    }
+
+    return {
+        roomType: roomType,
+        designTier: designTier,
+        summary: `For a ${roomType} supporting ${participantCount} people for ${primaryUse}, we recommend a ${designTier}-tier setup. This includes ${displayConfiguration[0].quantity} ${displayConfiguration[0].type.toLowerCase()} and key features like ${features.slice(0, 2).join(', ')}.`,
+        estimatedCost: designTier === 'Bronze' ? '£3,000 - £7,000' : designTier === 'Silver' ? '£8,000 - £15,000' : '£15,000+',
+        displayConfiguration: displayConfiguration,
+        features: [...new Set(features)] // Ensure no duplicates
+    };
+};
+
+export const generateInspiredRoomDesign = async (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', participantCount: number = 10): Promise<Omit<RoomData, 'id'>> => {
+    const prompt = `
+    **ROLE & GOAL:**
+    You are a world-class AV systems design consultant. Your task is to generate a single, complete, and typical room design configuration based on a room type and a specific design tier. You will use your knowledge and Google Search to determine a modern, best-practice setup.
+
+    **INPUTS:**
+    - Room Type: "${roomType}"
+    - Design Tier Constraint: "${designTier}"
+    - Typical Participant Count: ${participantCount}
+
+    **CRITICAL INSTRUCTIONS:**
+    1.  **Research & Adherence:** Use Google Search to understand the common audiovisual requirements for a modern "${roomType}". The generated configuration MUST adhere to the specified '${designTier}'.
+    2.  **Configuration:** Based on your research, create a comprehensive configuration. This MUST include:
+        - A client-facing 'functionalityStatement' that reflects the chosen tier.
+        - A list of relevant 'features'. Bronze should be minimal, Silver should include collaboration (BYOM), and Gold should include advanced features.
+        - A typical list of I/O devices appropriate for the tier. Provide realistic distances in feet.
+    3.  **Output Format:** The output MUST be a single, valid JSON object that conforms to the TypeScript \`Omit<RoomData, 'id'>\` interface. Do not include any other text, explanations, or markdown formatting like \`\`\`json. The response should start with \`{\` and end with \`}\`.
+    `;
+    
+    console.log("Generating inspired design with prompt:", prompt);
+    await new Promise(res => setTimeout(res, 2000));
+    
+    const inspiredRoom = createDefaultRoomData(roomType, `${designTier} ${roomType}`);
+    inspiredRoom.designTier = designTier;
+
+    // Tier-specific mock data
+    switch(designTier) {
+        case 'Bronze':
+            inspiredRoom.functionalityStatement = `A reliable, cost-effective ${roomType} focused on core presentation needs with a single display and simple wired connectivity.`;
+            inspiredRoom.features = ['Guest Wired Input'];
+            inspiredRoom.videoInputs = [{ id: uuidv4(), name: 'Laptop', type: 'Laptop (HDMI)', ioType: 'videoInput', connectionType: 'HDMI', location: 'Table/Desk', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Table Grommet', distance: 15, notes: '' }];
+            inspiredRoom.videoOutputs = [{ id: uuidv4(), name: 'Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Device', distance: 25, notes: '' }];
+            inspiredRoom.audioInputs = [];
+            inspiredRoom.audioOutputs = [];
+            break;
+        case 'Gold':
+            inspiredRoom.functionalityStatement = `A premium, fully integrated ${roomType} with dual displays, advanced audio processing, and seamless BYOM for a high-impact experience.`;
+            inspiredRoom.features = ['Video Conferencing', 'Wireless Presentation', 'BYOM (Bring Your Own Meeting)', 'Advanced Audio Processing'];
+            inspiredRoom.videoInputs = [{ id: uuidv4(), name: 'Table Laptop', type: 'Laptop (USB-C)', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: 15, notes: 'For BYOM.' }, { id: uuidv4(), name: 'PTZ Camera', type: 'PTZ Camera', ioType: 'videoInput', connectionType: 'AV over IP', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: 40, notes: '' }];
+            inspiredRoom.videoOutputs = [{ id: uuidv4(), name: 'Main Display 1', type: 'Display', ioType: 'videoOutput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Device', distance: 25, notes: '' }, { id: uuidv4(), name: 'Main Display 2', type: 'Display', ioType: 'videoOutput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Device', distance: 30, notes: '' }];
+            inspiredRoom.audioInputs = [{ id: uuidv4(), name: 'Ceiling Mic Array', type: 'Ceiling Microphone', ioType: 'audioInput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'Direct to Device', distance: 20, notes: '' }];
+            inspiredRoom.audioOutputs = [{ id: uuidv4(), name: 'Ceiling Speakers', type: 'Ceiling Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'Direct to Device', distance: 30, notes: '' }];
+            break;
+        case 'Silver':
+        default:
+            inspiredRoom.functionalityStatement = `A versatile ${roomType} designed for seamless collaboration, featuring single-cable BYOM connectivity and high-quality audio for remote participants.`;
+            inspiredRoom.features = ['Video Conferencing', 'Wireless Presentation', 'BYOM (Bring Your Own Meeting)'];
+            inspiredRoom.videoInputs = [{ id: uuidv4(), name: 'Table Laptop', type: 'Laptop (USB-C)', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: 15, notes: 'For BYOM.' }];
+            inspiredRoom.videoOutputs = [{ id: uuidv4(), name: 'Main Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Device', distance: 25, notes: '' }];
+            inspiredRoom.audioInputs = [{ id: uuidv4(), name: 'Table Mic', type: 'Table Microphone', ioType: 'audioInput', connectionType: 'Analog Audio', location: 'Table/Desk', cableType: 'Speaker Wire', terminationPoint: 'Direct to Device', distance: 20, notes: '' }];
+            inspiredRoom.audioOutputs = [{ id: uuidv4(), name: 'Ceiling Speakers', type: 'Ceiling Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'Direct to Device', distance: 30, notes: '' }];
+            break;
+    }
+    
+    const { id, ...rest } = inspiredRoom;
+    return rest;
 };
