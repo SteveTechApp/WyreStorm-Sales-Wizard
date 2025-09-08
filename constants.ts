@@ -1,3 +1,5 @@
+
+// FIX: Corrected import path for types
 import { Currency } from './types';
 
 export const CURRENCY_OPTIONS: Record<Currency, { name: string; symbol: string }> = {

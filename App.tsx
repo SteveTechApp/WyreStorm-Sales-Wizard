@@ -11,6 +11,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import Header from './components/Header';
 import ProfileModal from './components/ProfileModal';
 import AgentInputForm from './components/AgentInputForm';
+import QuickQuestionModal from './components/QuickQuestionModal';
 
 type View = 'welcome' | 'setup' | 'agent-input' | 'co-pilot' | 'generating' | 'proposal' | 'error';
 export type UnitSystem = 'imperial' | 'metric';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
   const [savedProjects, setSavedProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState('Generating Proposal...');
+  const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -175,13 +177,13 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (view) {
       case 'welcome':
-        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} />;
       case 'setup':
         return <ProjectSetupScreen onSubmit={handleCreateProject} onBack={handleBackToWelcome} defaultProjectName={`New Project ${new Date().toLocaleDateString()}`} userProfile={userProfile} />;
       case 'agent-input':
         return <AgentInputForm onSubmit={handleAgentSubmit} onBack={handleBackToWelcome} />;
       case 'co-pilot':
-        if (projectData && userProfile) return <DesignCoPilot initialData={projectData} onSubmit={handleGenerateProposal} onSaveProject={saveProject} userProfile={userProfile} />;
+        if (projectData && userProfile) return <DesignCoPilot initialData={projectData} onSubmit={handleGenerateProposal} onSaveProject={saveProject} userProfile={userProfile} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} />;
         return null;
       case 'generating':
         return <LoadingSpinner message={loadingMessage} />;
@@ -202,7 +204,7 @@ const App: React.FC = () => {
           </div>
         );
       default:
-        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} />;
     }
   };
 
@@ -221,6 +223,10 @@ const App: React.FC = () => {
         onClose={() => setIsProfileModalOpen(false)}
         onSave={saveUserProfile}
         initialProfile={userProfile}
+      />
+       <QuickQuestionModal 
+        isOpen={isQuickQuestionModalOpen}
+        onClose={() => setIsQuickQuestionModalOpen(false)}
       />
     </div>
   );

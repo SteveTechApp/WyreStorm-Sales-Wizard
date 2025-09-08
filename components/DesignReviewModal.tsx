@@ -1,5 +1,7 @@
 
+
 import React from 'react';
+// FIX: Corrected import path for types
 import { DesignFeedbackItem } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -10,7 +12,7 @@ interface DesignReviewModalProps {
   isLoading: boolean;
 }
 
-const FEEDBACK_STYLES = {
+const FEEDBACK_STYLES: Record<string, any> = {
   Warning: {
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -32,6 +34,20 @@ const FEEDBACK_STYLES = {
     title: 'Opportunities',
     borderColor: 'border-green-500',
   },
+  Insight: {
+    icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+    ),
+    title: 'Insights',
+    borderColor: 'border-gray-500',
+  },
+  Financial: {
+    icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+    ),
+    title: 'Financial',
+    borderColor: 'border-purple-500',
+  }
 };
 
 const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, feedback, isLoading }) => {
@@ -68,6 +84,8 @@ const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, 
             {renderFeedbackCategory('Warning')}
             {renderFeedbackCategory('Suggestion')}
             {renderFeedbackCategory('Opportunity')}
+            {(feedback.filter(f => f.type === 'Insight').length > 0) && renderFeedbackCategory('Insight')}
+            {(feedback.filter(f => f.type === 'Financial').length > 0) && renderFeedbackCategory('Financial')}
             {feedback.length === 0 && (
                 <div className="text-center py-8">
                     <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

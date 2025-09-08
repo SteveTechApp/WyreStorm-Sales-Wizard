@@ -1,5 +1,7 @@
+
 import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+// FIX: Corrected import path for types
 import { RoomData, UnitSystem, IO_Device } from '../types';
 import { DEVICE_PALETTE, DeviceIconData } from './DeviceIcons';
 import { CONNECTION_TYPES, CABLE_TYPES, TERMINATION_POINTS, DEVICE_LOCATION_OPTIONS } from '../constants';

@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+// FIX: Corrected import path for types
 import { RoomData, ProjectData, IO_Device, UnitSystem, DesignFeedbackItem, RoomWizardAnswers } from '../types';
 import QuestionnaireForm from './QuestionnaireForm';
 import { generateRoomTemplate, reviewRoomDesign } from '../services/geminiService';

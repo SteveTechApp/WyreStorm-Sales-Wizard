@@ -1,5 +1,7 @@
 
+
 import React, { useMemo, useState } from 'react';
+// FIX: Corrected import path for types
 import { RoomData, UnitSystem } from '../types';
 import {
   BUDGET_OPTIONS,

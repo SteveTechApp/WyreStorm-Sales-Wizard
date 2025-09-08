@@ -1,8 +1,11 @@
 
+
 import React from 'react';
+// FIX: Corrected import path for types
 import { SolutionVisualization, Product } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import SystemDiagram from './SystemDiagram';
+// FIX: Corrected import path for product database
 import { productDatabase } from './productDatabase';
 
 interface SolutionVisualizerModalProps {

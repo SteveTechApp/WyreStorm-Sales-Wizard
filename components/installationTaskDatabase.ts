@@ -1,4 +1,6 @@
 
+
+// FIX: Corrected import path for types
 import { InstallationTask } from '../types';
 
 export const installationTaskDatabase: InstallationTask[] = [

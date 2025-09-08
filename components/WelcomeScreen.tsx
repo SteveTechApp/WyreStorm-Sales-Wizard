@@ -1,6 +1,8 @@
 
+
 import React, { useState } from 'react';
 import Logo from './Logo';
+// FIX: Corrected import path for types
 import { ProjectData } from '../types';
 import InfoModal from './InfoModal';
 
@@ -10,9 +12,10 @@ interface WelcomeScreenProps {
   savedProjects: ProjectData[];
   onLoadProject: (projectId: string) => void;
   onDeleteProject: (projectId: string) => void;
+  onAskQuestion: () => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, savedProjects, onLoadProject, onDeleteProject }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, savedProjects, onLoadProject, onDeleteProject, onAskQuestion }) => {
   const [modalContent, setModalContent] = useState<{ title: string; content: React.ReactNode } | null>(null);
 
   const formatDate = (dateString: string) => {
@@ -109,7 +112,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
 
         <div className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Get Started</h2>
-          <div className="flex flex-col gap-4 mb-8">
+          <div className="flex flex-col gap-4">
             <button
               onClick={onStart}
               className="flex items-center justify-center gap-3 w-full bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
@@ -125,6 +128,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
               <span>Parse Client Notes</span>
             </button>
           </div>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-200"></div></div>
+              <div className="relative flex justify-center">
+                <button onClick={onAskQuestion} className="bg-white px-4 text-sm font-medium text-gray-500 hover:text-[#008A3A] hover:underline">
+                  Or, just ask a quick technical question
+                </button>
+              </div>
+            </div>
           <div className="border-t border-gray-200 pt-6">
             <h3 className="text-xl font-bold text-gray-700 mb-4">Saved Projects</h3>
             {savedProjects.length > 0 ? (

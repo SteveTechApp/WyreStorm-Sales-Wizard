@@ -1,5 +1,7 @@
+
 import React from 'react';
 import Logo from './Logo';
+// FIX: Corrected import path for types
 import { UserProfile } from '../types';
 
 interface HeaderProps {

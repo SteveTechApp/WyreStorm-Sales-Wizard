@@ -1,4 +1,7 @@
+
+
 import React, { useState } from 'react';
+// FIX: Corrected import path for types
 import { UserProfile, RoomData, createDefaultRoomData } from '../types';
 import { ProjectSetupData } from '../App';
 import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from '../constants';
@@ -35,14 +38,26 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
   const handleAddPlaceholders = () => {
     if (quantity < 1) return;
 
-    const newPlaceholders: Omit<RoomData, 'id'>[] = [];
-    const existingCount = rooms.filter(r => r.roomType === selectedRoomType).length;
+    let currentAndNewRooms = [...rooms];
+    const placeholdersToAdd: Omit<RoomData, 'id'>[] = [];
 
-    for (let i = 1; i <= quantity; i++) {
-      const roomName = `${selectedRoomType} ${existingCount + i}`;
-      newPlaceholders.push(createDefaultRoomData(selectedRoomType, roomName));
+    for (let i = 0; i < quantity; i++) {
+        const baseName = selectedRoomType;
+        let potentialName = baseName;
+        let counter = 2;
+
+        // Check against all existing rooms AND rooms just added in this batch
+        while (currentAndNewRooms.some(r => r.roomName === potentialName)) {
+            potentialName = `${baseName} (${counter})`;
+            counter++;
+        }
+        
+        const newRoom = createDefaultRoomData(selectedRoomType, potentialName);
+        placeholdersToAdd.push(newRoom);
+        currentAndNewRooms.push(newRoom);
     }
-    setRooms(prev => [...prev, ...newPlaceholders]);
+
+    setRooms(prev => [...prev, ...placeholdersToAdd]);
   };
 
   const handleInspireMe = async (designTier: 'Bronze' | 'Silver' | 'Gold') => {
@@ -50,12 +65,13 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
     try {
         const inspiredRoom = await generateInspiredRoomDesign(selectedRoomType, designTier);
         
-        let potentialName = inspiredRoom.roomName;
         const baseName = inspiredRoom.roomName;
-        let counter = 1;
+        let potentialName = baseName;
+        let counter = 2;
+        
         while(rooms.some(r => r.roomName === potentialName)) {
-            counter++;
             potentialName = `${baseName} (${counter})`;
+            counter++;
         }
         inspiredRoom.roomName = potentialName;
 

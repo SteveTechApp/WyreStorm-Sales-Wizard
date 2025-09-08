@@ -1,9 +1,15 @@
 
+
+
 import React, { useRef, useState, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Proposal, ProjectData, UserProfile, EquipmentItem, UnitSystem, InstallationTaskItem, CustomCostItem } from '../types';
+// FIX: Corrected import path for types
+import { Proposal, ProjectData, UserProfile, EquipmentItem, UnitSystem, InstallationTaskItem, CustomCostItem, DiagramNode, Product } from '../types';
 import SystemDiagram from './SystemDiagram';
 import Logo from './Logo';
+import InfoModal from './InfoModal';
+// FIX: Corrected import path for product database
+import { productDatabase } from './productDatabase';
 
 interface ProposalDisplayProps {
   proposal: Proposal;
@@ -38,6 +44,7 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
     const svgRef = useRef<SVGSVGElement>(null);
     const [editableProposal, setEditableProposal] = useState<Proposal>(() => JSON.parse(JSON.stringify(proposal)));
     const [laborRate, setLaborRate] = useState(125);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     const totals = useMemo(() => {
         const hardwareDealerTotal = editableProposal.equipmentList.reduce((acc, item) => acc + (item.quantity * item.dealerPrice), 0);
@@ -86,6 +93,24 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
         link.download = `${projectData.projectName}_System_Diagram.svg`;
         link.click();
         URL.revokeObjectURL(url);
+    };
+
+    const handleNodeClick = (node: DiagramNode) => {
+        const product = productDatabase.find(p => p.sku === node.label || p.name === node.label);
+        if (product) {
+            setSelectedProduct(product);
+        } else {
+            // Create a pseudo-product for items not in the DB, like 'Laptop'
+            setSelectedProduct({
+                sku: node.id,
+                name: node.label,
+                category: node.group,
+                description: `A ${node.type} device located in the ${node.group}.`,
+                dealerPrice: 0,
+                msrp: 0,
+                tags: []
+            });
+        }
     };
     
     // --- Edit Handlers ---
@@ -147,7 +172,7 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
             <div className="space-y-6">
                 {renderSection("Executive Summary", <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: editableProposal.executiveSummary.replace(/\n/g, '<br />') }} />)}
                 {renderSection("Scope of Work", <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: editableProposal.scopeOfWork.replace(/\n/g, '<br />') }} />)}
-                {renderSection("System Diagram", <SystemDiagram ref={svgRef} diagram={editableProposal.systemDiagram} />, <button onClick={handleDownloadSvg} className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-md transition-colors">Download SVG</button>)}
+                {renderSection("System Diagram", <SystemDiagram ref={svgRef} diagram={editableProposal.systemDiagram} onNodeClick={handleNodeClick} />, <button onClick={handleDownloadSvg} className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-md transition-colors">Download SVG</button>)}
 
                 {renderSection(
                     "Equipment Schedule", 
@@ -229,6 +254,26 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
                     </div>
                 </div>
             </div>
+
+            <InfoModal
+                isOpen={!!selectedProduct}
+                onClose={() => setSelectedProduct(null)}
+                title={selectedProduct?.name || 'Device Details'}
+            >
+                {selectedProduct && (
+                    <div className="space-y-2">
+                        <p><strong>SKU:</strong> {selectedProduct.sku}</p>
+                        <p><strong>Category:</strong> {selectedProduct.category}</p>
+                        <p><strong>Description:</strong> {selectedProduct.description}</p>
+                        {selectedProduct.dealerPrice > 0 && (
+                            <p><strong>Dealer Price:</strong> {formatCurrency(selectedProduct.dealerPrice)}</p>
+                        )}
+                        {selectedProduct.msrp > 0 && (
+                            <p><strong>MSRP:</strong> {formatCurrency(selectedProduct.msrp)}</p>
+                        )}
+                    </div>
+                )}
+            </InfoModal>
         </div>
     );
 };

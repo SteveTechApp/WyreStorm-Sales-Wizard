@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
+// FIX: Corrected import path for types
 import { UserProfile } from '../types';
 import { CURRENCY_OPTIONS } from '../constants';
 

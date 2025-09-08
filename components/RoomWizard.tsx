@@ -1,5 +1,7 @@
 
+
 import React, { useState, useEffect, useMemo } from 'react';
+// FIX: Corrected import path for types
 import { RoomWizardAnswers, SolutionVisualization, DisplayConfiguration, SuggestedConfiguration, RoomData } from '../types';
 import { ROOM_TYPES, DESIGN_TIER_OPTIONS, COMMON_FEATURES, ROOM_SPECIFIC_FEATURES, PRIMARY_USE_OPTIONS, DISPLAY_TYPE_OPTIONS } from '../constants';
 import { visualizeSolution, suggestRoomConfiguration } from '../services/geminiService';
