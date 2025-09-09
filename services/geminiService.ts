@@ -1,13 +1,10 @@
-
-// FIX: Corrected import paths for modules.
 import { GoogleGenAI, Type } from "@google/genai";
 import { v4 as uuidv4 } from 'uuid';
-import { ProjectData, UserProfile, RoomData, RoomWizardAnswers, DesignFeedbackItem, SolutionVisualization, Proposal, EquipmentItem, SuggestedConfiguration, DisplayConfiguration, TieredRoomResponse, RoomTierOption, createDefaultRoomData, Product } from '../types';
+import { ProjectData, UserProfile, RoomData, RoomWizardAnswers, DesignFeedbackItem, SolutionVisualization, Proposal, EquipmentItem, SuggestedConfiguration, DisplayConfiguration, TieredRoomResponse, RoomTierOption, createDefaultRoomData, Product, ManualEquipmentItem } from '../types';
 import { productDatabase } from '../components/productDatabase';
 import { installationTaskDatabase } from '../components/installationTaskDatabase';
 import { AV_DESIGN_KNOWLEDGE_BASE } from '../technicalDatabase';
 
-// FIX: Initialized GoogleGenAI with API key from environment variable as per guidelines.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
 export const generateProposal = async (projectData: ProjectData, userProfile: UserProfile | null, unitSystem: 'imperial' | 'metric'): Promise<Proposal> => {
@@ -48,6 +45,7 @@ export const generateProposal = async (projectData: ProjectData, userProfile: Us
     5.  **HDBaseT Compatibility:** When you specify a product with an HDBaseT output (like a matrix or presentation switcher), you MUST check its 'compatibleReceivers' property in the product database. For each HDBaseT output being used, you MUST add one of the compatible receivers to the equipment list. If the product is a kit (check for the 'kitContents' property or if 'kit' is in the tags), the receivers are already included, so do not add them separately; instead, mention in the Scope of Work that the kit includes the necessary receivers.
     6.  **Complex Systems (AVoIP):** ${avoipInstruction}
     7.  **Budget vs. Functionality:** If a user requests high-bandwidth functionality on a low budget, include the hardware but note the budget implications in the Executive Summary, framing it as a worthwhile investment.
+    8.  **Manually Added Equipment:** Each room object may contain a 'manuallyAddedEquipment' array. You MUST include every item from this list in the final equipment list for the proposal, respecting the specified quantity. Combine quantities if your own logic selects the same SKU.
 
     **INPUT DATA:**
     1.  **Project Data:** ${JSON.stringify(projectData, null, 2)}
@@ -130,7 +128,37 @@ export const generateProposal = async (projectData: ProjectData, userProfile: Us
         return roomEquipment;
     });
 
-    const mockEquipment: EquipmentItem[] = perRoomEquipment;
+    const manuallyAddedEquipment = projectData.rooms.flatMap(room => 
+        (room.manuallyAddedEquipment || []).map((item: ManualEquipmentItem): EquipmentItem => {
+            const product = productDatabase.find(p => p.sku === item.sku);
+            const dealerPrice = product?.dealerPrice || 0;
+            const msrp = product?.msrp || 0;
+            return {
+                sku: item.sku,
+                name: item.name,
+                quantity: item.quantity,
+                dealerPrice,
+                dealerTotal: dealerPrice * item.quantity,
+                msrp,
+                msrpTotal: msrp * item.quantity,
+            };
+        })
+    );
+    
+    // Combine AI-generated and manually added equipment, summing quantities for duplicates
+    const combinedEquipment = [...perRoomEquipment, ...manuallyAddedEquipment];
+    const mockEquipment = combinedEquipment.reduce<EquipmentItem[]>((acc, item) => {
+        const existingItem = acc.find(i => i.sku === item.sku);
+        if (existingItem) {
+            existingItem.quantity += item.quantity;
+            existingItem.dealerTotal = existingItem.quantity * existingItem.dealerPrice;
+            existingItem.msrpTotal = existingItem.quantity * existingItem.msrp;
+        } else {
+            acc.push({ ...item });
+        }
+        return acc;
+    }, []);
+
 
     if (projectData.rooms.length > 4) {
         scopeOfWork += `\n- Due to the scale of this project, we will implement a WyreStorm NetworkHD 500 Series AV over IP system as the core signal distribution backbone. This provides ultimate flexibility for routing any source to any display and ensures the system is scalable for future needs.`;
@@ -165,54 +193,58 @@ export const parseCustomerNotes = async (notes: string): Promise<Partial<Project
     await new Promise(res => setTimeout(res, 1000));
     return {
         projectName: "Project from Notes", clientName: "Valued Customer Inc.",
-        rooms: [ { roomName: 'Main Conference Room', roomType: 'Conference Room', videoInputs: [{ name: 'Laptop 1', type: 'Laptop (HDMI)' }], videoOutputs: [{ name: 'Main Display', type: 'Display' }] } ] as any[]
+        rooms: [ { roomName: 'Main Conference Room', roomType: 'Conference Room', videoInputs: [{ name: 'Laptop 1', type: 'Laptop (HDMI)' }], videoOutputs: [{ name: 'Main Display', type: 'Display' }] } as any ]
     };
 };
 
 export const getProjectInsights = async (projectData: ProjectData): Promise<DesignFeedbackItem[]> => {
     const prompt = `
-    **ROLE:** Senior AV Systems Engineer and Strategic Advisor.
-    **TASK:** Analyze the entire ProjectData object and provide strategic insights based on the technical knowledge base.
-    **KNOWLEDGE BASE:** ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}
-    **INPUT:** ${JSON.stringify(projectData, null, 2)}
+    **ROLE:** You are a meticulous AV Systems Design Engineer acting as a design validation tool.
+    **TASK:** Analyze the provided ProjectData object against the technical knowledge base and product database. Your goal is to identify technical incompatibilities, design flaws, and strategic opportunities. You must provide clear, actionable feedback.
+
+    **KNOWLEDGE BASE (Source of Truth):**
+    ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}
+
+    **PRODUCT DATABASE (For lookups):**
+    ${JSON.stringify(productDatabase, null, 2)}
+
+    **INPUT PROJECT DATA:**
+    ${JSON.stringify(projectData, null, 2)}
     
-    **CRITICAL INSTRUCTIONS:**
-    - **Technical (Warning/Suggestion):** Check for cabling issues (HDMI > 10m), feature mismatches (VC feature without a camera/mic, BYOM without USB-C input).
-    - **Strategic (Insight):** Look for patterns. Suggest standardizing hardware. Check if core infrastructure (network switches) can support the load. Recommend AVoIP for large projects.
-    - **Financial (Financial):** Analyze budget vs. estimated cost.
-    
-    **OUTPUT:** A JSON array of objects, where each object has a 'type' ('Warning', 'Suggestion', 'Insight', 'Financial') and a 'text'.
+    **CRITICAL VALIDATION CHECKS (You MUST perform all of these):**
+    1.  **EOL Products:** Scan all equipment SKUs in all rooms ('manuallyAddedEquipment'). If any SKU corresponds to a product with 'eol: true' in the database, generate a 'Warning' stating the product is End-of-Life and should be replaced.
+    2.  **NetworkHD Series Mixing:** Identify all NetworkHD products in the project. Check their 'avoip.series' property. If products from different series (e.g., 500 and 600) are present in the same project, generate a 'Warning'. The warning text MUST explain that different NetworkHD series are not interoperable on the same network and require separate physical networks/VLANs and controllers.
+    3.  **HDBaseT Transmitter/Receiver Pairing:**
+        - Identify all HDBaseT transmitters (products with 'hdbasetOut' > 0 or in categories like 'Matrix Switcher', 'Presentation Switcher').
+        - For each transmitter found, check if it is a 'kit' by looking for the 'kit' tag or a 'kitContents' property. Kits do not require separate receivers.
+        - If it is NOT a kit, search the entire project's equipment list for a receiver whose SKU is listed in the transmitter's 'compatibleReceivers' array.
+        - If no compatible receiver is found for a non-kit transmitter, generate a 'Warning' that clearly names the transmitter and states it is missing a compatible receiver.
+    4.  **Cabling Distance:** Check all I/O devices. If any 'distance' is greater than 33ft (10m) and the connection is 'HDMI', generate a 'Suggestion' to use an HDBaseT extender or an HAOC cable.
+    5.  **Feature Mismatches:**
+        - If a room has 'Video Conferencing' in 'features' but lacks a 'Camera' and a 'Microphone' in its I/O devices, generate a 'Warning'.
+        - If a room has 'BYOM (Bring Your Own Meeting)' in 'features' but lacks an input with 'USB-C' in its type, generate a 'Warning' about missing single-cable connectivity.
+    6.  **Strategic Insights:** If the project has more than 4 rooms, generate an 'Insight' suggesting an AV over IP (NetworkHD) backbone for scalability.
+
+    **OUTPUT FORMAT (CRITICAL):**
+    You MUST respond with ONLY a single, valid JSON array of objects, where each object conforms to the \`DesignFeedbackItem\` TypeScript interface: \`{ type: 'Warning' | 'Suggestion' | 'Opportunity' | 'Financial' | 'Insight'; text: string; }\`. Do NOT include any other text, markdown, or explanation outside of the JSON array.
     `;
-    console.log("Getting project insights with prompt:", prompt);
-    await new Promise(res => setTimeout(res, 1000));
 
-    const insights: DesignFeedbackItem[] = [];
-    
-    projectData.rooms.forEach(room => {
-        const videoInputs = room.videoInputs || [];
-        const audioInputs = room.audioInputs || [];
-        const features = room.features || [];
-
-        if ([...videoInputs, ...(room.videoOutputs || [])].some(d => d.distance > 33)) {
-             insights.push({ type: 'Suggestion', text: `In '${room.roomName}', a device is over 33ft from the rack. Ensure HDBaseT extenders or HAOC cables are used.` });
-        }
-        if (features.includes('Video Conferencing') && !videoInputs.some(d => d.type.toLowerCase().includes('camera')) && !audioInputs.some(d => d.type.toLowerCase().includes('microphone'))) {
-            insights.push({ type: 'Warning', text: `The '${room.roomName}' has Video Conferencing enabled but no camera or microphone is specified.` });
-        }
-        if (features.includes('BYOM (Bring Your Own Meeting)') && !videoInputs.some(d => d.type.toLowerCase().includes('usb-c'))) {
-            insights.push({ type: 'Warning', text: `The '${room.roomName}' has BYOM enabled but no USB-C input is specified for single-cable connectivity.` });
-        }
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+      }
     });
-
-    if(projectData.rooms.length > 4) {
-         insights.push({ type: 'Insight', text: 'With this many rooms, consider an AV over IP (NetworkHD) backbone for future scalability and routing flexibility between spaces.' });
-    }
     
-    if(projectData.projectBudget && projectData.projectBudget > 1000) {
-        insights.push({ type: 'Financial', text: `The current project configuration appears to be within the specified budget of ${projectData.projectBudget}.` });
+    try {
+        const jsonText = response.text.trim();
+        const result = JSON.parse(jsonText);
+        return result as DesignFeedbackItem[];
+    } catch (e) {
+        console.error("Failed to parse AI response as JSON:", response.text, e);
+        return [{ type: 'Warning', text: 'The AI returned an invalid response. Please try again.' }];
     }
-
-    return insights;
 };
 
 export const generateTieredRoomOptions = async (roomType: string, primaryUse: string, participantCount: number): Promise<TieredRoomResponse> => {
@@ -240,13 +272,11 @@ export const generateTieredRoomOptions = async (roomType: string, primaryUse: st
     };
     const silver: RoomTierOption = {
         tier: 'Silver', estimatedCost: 8000,
-        // FIX: Moved businessJustification outside of roomData to match the RoomTierOption type.
         businessJustification: 'Upgrading to Silver adds BYOM (Bring Your Own Meeting) via a single USB-C cable. This significantly reduces meeting setup time, boosting productivity and providing a frustration-free experience for your team.',
         roomData: { ...baseRoom, roomName: `Silver ${roomType}`, designTier: 'Silver', maxDisplays: 2, functionalityStatement: 'A versatile system with a PTZ camera, enhanced audio, and single-cable BYOM for seamless collaboration.', features: ['Guest Wired Input', 'Wireless Presentation', 'BYOM (Bring Your Own Meeting)', 'Video Conferencing'], videoInputs: [{id:uuidv4(), name: 'BYOM Laptop', type: 'Laptop (USB-C)', ioType: 'videoInput'}, {id:uuidv4(), name: 'PTZ Camera', type:'Camera', ioType: 'videoInput'}] as any, videoOutputs: [], audioInputs: [{id:uuidv4(), name: 'Ceiling Mic', type:'Microphone', ioType: 'audioInput'}] as any, audioOutputs: [] }
     };
     const gold: RoomTierOption = {
         tier: 'Gold', estimatedCost: 15000,
-        // FIX: Moved businessJustification outside of roomData to match the RoomTierOption type.
         businessJustification: 'The Gold tier creates a high-impact executive space with superior audio clarity and integrated room control. This seamless environment impresses clients and empowers key decision-makers, delivering a strong ROI through enhanced communication and brand image.',
         roomData: { ...baseRoom, roomName: `Gold ${roomType}`, designTier: 'Gold', maxDisplays: 2, roomComplexity: 'High', functionalityStatement: 'A premium, fully integrated solution with advanced audio processing (DSP) and control for a high-impact experience.', features: ['Guest Wired Input', 'Wireless Presentation', 'BYOM (Bring Your Own Meeting)', 'Video Conferencing', 'Advanced Audio Processing', 'Lighting Control'], videoInputs: [], videoOutputs: [], audioInputs: [], audioOutputs: [] }
     };
@@ -288,40 +318,48 @@ export const generateRoomTemplate = async (roomType: string, designTier: string,
 export const reviewRoomDesign = async (roomData: RoomData): Promise<DesignFeedbackItem[]> => {
     const prompt = `
     **ROLE:** Senior AV Design Engineer.
-    **TASK:** Review a single RoomData object for potential issues, improvements, or sales opportunities, using the knowledge base.
-    **KNOWLEDGE BASE:** ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}
-    **INPUT:** ${JSON.stringify(roomData, null, 2)}
+    **TASK:** Review a single RoomData object for potential issues, improvements, or sales opportunities, using the knowledge base and product database.
+
+    **KNOWLEDGE BASE (Source of Truth):**
+    ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}
     
-    **OUTPUT:** A JSON array of objects, where each object has a 'type' ('Warning', 'Suggestion', 'Opportunity') and a 'text'.
+    **PRODUCT DATABASE (For lookups):**
+    ${JSON.stringify(productDatabase, null, 2)}
+
+    **INPUT ROOM DATA:**
+    ${JSON.stringify(roomData, null, 2)}
+    
+    **CRITICAL VALIDATION CHECKS:**
+    1.  **EOL Products:** Check 'manuallyAddedEquipment'. If any product is 'eol: true', generate a 'Warning'.
+    2.  **HDBaseT Pairing (Room-Level):** If an HDBaseT transmitter is in this room, check if a compatible receiver is also in this room. If not, generate a 'Warning' (unless the transmitter is a kit).
+    3.  **Feature Mismatches:** Check for 'Video Conferencing' without a camera/mic, and 'BYOM' without a USB-C input. Generate 'Warning's if found.
+    4.  **Cabling Distance:** Check I/O device distances for HDMI connections over 33ft/10m. Generate a 'Suggestion' for an extender.
+    5.  **Upsell Opportunities:** If the design is 'Gold' tier but lacks 'Advanced Audio Processing' (DSP), generate an 'Opportunity' to add it for a premium experience.
+    
+    **OUTPUT FORMAT (CRITICAL):**
+    You MUST respond with ONLY a single, valid JSON array of objects conforming to the \`DesignFeedbackItem\` interface. Do not add any explanatory text.
     `;
-    console.log("Reviewing room design with prompt:", prompt);
-    await new Promise(res => setTimeout(res, 1000));
+    
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+      }
+    });
 
-    const feedback: DesignFeedbackItem[] = [];
-    const features = roomData.features || [];
-    const videoInputs = roomData.videoInputs || [];
-    const audioInputs = roomData.audioInputs || [];
-    const videoOutputs = roomData.videoOutputs || [];
-
-    if (features.includes('Video Conferencing') && !videoInputs.some(d => d.type.toLowerCase().includes('camera'))) {
-        feedback.push({ type: 'Warning', text: 'Video Conferencing is a feature, but no camera is specified in the video inputs.' });
+    try {
+        const jsonText = response.text.trim();
+        const result = JSON.parse(jsonText);
+        // Add a default success message if AI returns nothing
+        if (Array.isArray(result) && result.length === 0) {
+            return [{ type: 'Insight', text: 'The current room design looks solid and meets all specified requirements.'}];
+        }
+        return result as DesignFeedbackItem[];
+    } catch (e) {
+        console.error("Failed to parse AI response as JSON:", response.text, e);
+        return [{ type: 'Warning', text: 'Could not get design review from the AI.' }];
     }
-     if (features.includes('Video Conferencing') && !audioInputs.some(d => d.type.toLowerCase().includes('microphone'))) {
-        feedback.push({ type: 'Warning', text: 'Video Conferencing is a feature, but no microphone is specified in the audio inputs.' });
-    }
-    if (features.includes('BYOM (Bring Your Own Meeting)') && !videoInputs.some(d => d.type.toLowerCase().includes('usb-c'))) {
-        feedback.push({ type: 'Suggestion', text: 'For a better user experience with BYOM, consider adding a native USB-C input.' });
-    }
-    if (videoOutputs.some(d => d.distance > 33)) {
-        feedback.push({ type: 'Suggestion', text: `A video output is over 33ft away. Consider using an HDBaseT extender or HAOC cable for signal integrity.` });
-    }
-    if (roomData.designTier === 'Gold' && !features.includes('Advanced Audio Processing')) {
-        feedback.push({ type: 'Opportunity', text: 'For a Gold-tier room, consider adding Advanced Audio Processing (DSP) for a premium experience.' });
-    }
-    if (feedback.length === 0) {
-        feedback.push({ type: 'Insight', text: 'The current design looks solid and meets all specified requirements.'});
-    }
-    return feedback;
 };
 
 /**
@@ -448,6 +486,19 @@ export const generateInspiredRoomDesign = async (roomType: string, designTier: '
     inspiredRoom.designTier = designTier;
     inspiredRoom.maxParticipants = participantCount;
 
+    const { length, width } = inspiredRoom.roomDimensions;
+    const rackPosition = { x: 2, y: 50 }; // Rack position in %
+
+    const calculateDistance = (x_percent: number, y_percent: number): number => {
+        if (!length || !width) return 0;
+        
+        const dx = (x_percent - rackPosition.x) / 100 * width;
+        const dy = (y_percent - rackPosition.y) / 100 * length;
+        
+        const rawDistance = Math.sqrt(dx * dx + dy * dy);
+        return parseFloat(rawDistance.toFixed(1));
+    };
+
     const isUCRoom = ['Conference Room', 'Huddle Room', 'Boardroom', 'Briefing Center'].includes(roomType);
 
     switch(designTier) {
@@ -456,13 +507,19 @@ export const generateInspiredRoomDesign = async (roomType: string, designTier: '
             inspiredRoom.features = ['Guest Wired Input', 'Wireless Presentation'];
             if(isUCRoom) inspiredRoom.features.push('Video Conferencing');
             
-            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table HDMI', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'HDMI', location: 'Table/Desk', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Table Grommet', distance: 20, notes: 'Wired input for guests.' });
-            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table USB-C', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: 20, notes: 'Input for modern laptops.' });
-            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Device', distance: 25, notes: '' });
+            const hdmiX = 45, hdmiY = 60;
+            const usbcX = 55, usbcY = 60;
+            const displayX = 50, displayY = 5;
+
+            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table HDMI', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'HDMI', location: 'Table/Desk', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Table Grommet', distance: calculateDistance(hdmiX, hdmiY), x: hdmiX, y: hdmiY, notes: 'Wired input for guests.' });
+            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table USB-C', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: calculateDistance(usbcX, usbcY), x: usbcX, y: usbcY, notes: 'Input for modern laptops.' });
+            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Device', distance: calculateDistance(displayX, displayY), x: displayX, y: displayY, notes: '' });
 
             if (isUCRoom) {
-                 inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Webcam', type: 'Camera', ioType: 'videoInput', connectionType: 'USB', location: 'Wall Mounted', cableType: 'USB', terminationPoint: 'Direct to Device', distance: 10, notes: 'Using WyreStorm CAM-110-L' });
-                 inspiredRoom.audioInputs.push({ id: uuidv4(), name: 'Speakerphone Mic', type: 'Microphone', ioType: 'audioInput', connectionType: 'USB', location: 'Table/Desk', cableType: 'USB', terminationPoint: 'Direct to Device', distance: 15, notes: 'Using WyreStorm HALO 30' });
+                 const camX = 50, camY = 10;
+                 const micX = 50, micY = 55;
+                 inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Webcam', type: 'Camera', ioType: 'videoInput', connectionType: 'USB', location: 'Wall Mounted', cableType: 'USB', terminationPoint: 'Direct to Device', distance: calculateDistance(camX, camY), x: camX, y: camY, notes: 'Using WyreStorm CAM-110-L' });
+                 inspiredRoom.audioInputs.push({ id: uuidv4(), name: 'Speakerphone Mic', type: 'Microphone', ioType: 'audioInput', connectionType: 'USB', location: 'Table/Desk', cableType: 'USB', terminationPoint: 'Direct to Device', distance: calculateDistance(micX, micY), x: micX, y: micY, notes: 'Using WyreStorm HALO 30' });
             }
             break;
         
@@ -471,18 +528,26 @@ export const generateInspiredRoomDesign = async (roomType: string, designTier: '
             inspiredRoom.features = ['Wireless Presentation', 'BYOM (Bring Your Own Meeting)'];
             if(isUCRoom) inspiredRoom.features.push('Video Conferencing');
 
-            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table Laptop (BYOM)', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: 15, notes: 'Single cable for video, data (for camera/mic), and power.' });
-            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: 40, notes: 'Using the compatible APO-RX1 receiver.' });
+            const byomXSilver = 50, byomYSilver = 60;
+            const displayXSilver = 50, displayYSilver = 5;
+
+            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table Laptop (BYOM)', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: calculateDistance(byomXSilver, byomYSilver), x: byomXSilver, y: byomYSilver, notes: 'Single cable for video, data (for camera/mic), and power.' });
+            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: calculateDistance(displayXSilver, displayYSilver), x: displayXSilver, y: displayYSilver, notes: 'Using the compatible APO-RX1 receiver.' });
             
             if (isUCRoom) {
-                inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'PTZ Camera', type: 'Camera', ioType: 'videoInput', connectionType: 'USB', location: 'Wall Mounted', cableType: 'USB', terminationPoint: 'Direct to Device', distance: 20, notes: 'Using WyreStorm CAM-210-PTZ for dynamic camera control.' });
-                inspiredRoom.audioInputs.push({ id: uuidv4(), name: 'Conference Speakerphone', type: 'Microphone', ioType: 'audioInput', connectionType: 'USB', location: 'Table/Desk', cableType: 'USB', terminationPoint: 'Direct to Device', distance: 15, notes: 'Using WyreStorm HALO 80 for expanded audio pickup.' });
+                const camX = 50, camY = 10;
+                const micX = 50, micY = 55;
+                inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'PTZ Camera', type: 'Camera', ioType: 'videoInput', connectionType: 'USB', location: 'Wall Mounted', cableType: 'USB', terminationPoint: 'Direct to Device', distance: calculateDistance(camX, camY), x: camX, y: camY, notes: 'Using WyreStorm CAM-210-PTZ for dynamic camera control.' });
+                inspiredRoom.audioInputs.push({ id: uuidv4(), name: 'Conference Speakerphone', type: 'Microphone', ioType: 'audioInput', connectionType: 'USB', location: 'Table/Desk', cableType: 'USB', terminationPoint: 'Direct to Device', distance: calculateDistance(micX, micY), x: micX, y: micY, notes: 'Using WyreStorm HALO 80 for expanded audio pickup.' });
             }
 
             if (roomType === 'Classroom') {
+                const iDisplayX = 50, iDisplayY = 5;
+                const lecturerMicX = 25, lecturerMicY = 25;
                 inspiredRoom.functionalityStatement = `The classroom is centered on an education-focused matrix (MX-0408-EDU) to manage multiple student and teacher sources. It includes a dedicated microphone input for the lecturer and supports an interactive display.`
                 inspiredRoom.features.push('Interactive Display');
-                inspiredRoom.audioInputs.push({id: uuidv4(), name: "Lecturer Mic", type: 'Microphone', ioType: 'audioInput', connectionType: 'Analog Audio', location: 'Lectern', cableType: 'XLR', terminationPoint: 'Direct to Matrix', distance: 25, notes: 'Mic input on EDU matrix'})
+                inspiredRoom.videoOutputs = [{ id: uuidv4(), name: 'Interactive Display', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: calculateDistance(iDisplayX, iDisplayY), x: iDisplayX, y: iDisplayY, notes: 'Main interactive teaching display.' }];
+                inspiredRoom.audioInputs.push({id: uuidv4(), name: "Lecturer Mic", type: 'Microphone', ioType: 'audioInput', connectionType: 'Analog Audio', location: 'Lectern', cableType: 'XLR', terminationPoint: 'Direct to Matrix', distance: calculateDistance(lecturerMicX, lecturerMicY), x: lecturerMicX, y: lecturerMicY, notes: 'Mic input on EDU matrix'})
             }
             break;
 
@@ -491,15 +556,31 @@ export const generateInspiredRoomDesign = async (roomType: string, designTier: '
             inspiredRoom.features = ['Wireless Presentation', 'BYOM (Bring Your Own Meeting)', 'Advanced Audio Processing', 'KVM Control', 'Room Scheduling'];
              if(isUCRoom) inspiredRoom.features.push('Video Conferencing');
             
-            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table Laptop 1 (BYOM)', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: 15, notes: 'Single cable for video, data, and power.' });
+            const byomXGold = 50, byomYGold = 60;
+            const display1X = 40, display1Y = 5;
+            const display2X = 60, display2Y = 5;
+
+            inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Table Laptop 1 (BYOM)', type: 'Laptop Input', ioType: 'videoInput', connectionType: 'USB-C', location: 'Table/Desk', cableType: 'USB-C 3.2', terminationPoint: 'Table Grommet', distance: calculateDistance(byomXGold, byomYGold), x: byomXGold, y: byomYGold, notes: 'Single cable for video, data, and power.' });
             inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'Global Content Feed', type: 'AVoIP Source', ioType: 'videoInput', connectionType: 'AV over IP', location: 'Central Rack', cableType: 'CAT6a Shielded', terminationPoint: 'Network Switch', distance: 100, notes: 'Input from building-wide NHD system into matrix.' });
-            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display 1', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: 40, notes: 'HDBaseT 3.0 output from matrix.' });
-            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display 2', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: 45, notes: 'HDBaseT 3.0 output from matrix.' });
+            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display 1', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: calculateDistance(display1X, display1Y), x: display1X, y: display1Y, notes: 'HDBaseT 3.0 output from matrix.' });
+            inspiredRoom.videoOutputs.push({ id: uuidv4(), name: 'Main Display 2', type: 'Display', ioType: 'videoOutput', connectionType: 'HDBaseT', location: 'Wall Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Direct to Device', distance: calculateDistance(display2X, display2Y), x: display2X, y: display2Y, notes: 'HDBaseT 3.0 output from matrix.' });
 
             if (isUCRoom) {
-                inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'PTZ Camera', type: 'Camera', ioType: 'videoInput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Matrix', distance: 50, notes: 'Using WyreStorm CAM-210-PTZ' });
-                inspiredRoom.audioInputs.push({ id: uuidv4(), name: 'Ceiling Mic Array', type: 'Microphone', ioType: 'audioInput', connectionType: 'Dante', location: 'Ceiling Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Network Switch', distance: 30, notes: 'Dante audio network integrated with matrix DSP.' });
-                inspiredRoom.audioOutputs.push({ id: uuidv4(), name: 'Ceiling Speakers', type: 'Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'From Matrix Amp', distance: 40, notes: 'Powered by the matrix\'s built-in amplifier.' });
+                const camX = 50, camY = 10;
+                const micX = 50, micY = 50;
+                const speaker1X = 25, speaker1Y = 25;
+                const speaker2X = 75, speaker2Y = 25;
+                const speaker3X = 25, speaker3Y = 75;
+                const speaker4X = 75, speaker4Y = 75;
+
+                inspiredRoom.videoInputs.push({ id: uuidv4(), name: 'PTZ Camera', type: 'Camera', ioType: 'videoInput', connectionType: 'HDMI', location: 'Wall Mounted', cableType: 'HAOC HDMI 2.1', terminationPoint: 'Direct to Matrix', distance: calculateDistance(camX, camY), x: camX, y: camY, notes: 'Using WyreStorm CAM-210-PTZ' });
+                inspiredRoom.audioInputs.push({ id: uuidv4(), name: 'Ceiling Mic Array', type: 'Microphone', ioType: 'audioInput', connectionType: 'Dante', location: 'Ceiling Mounted', cableType: 'CAT6a Shielded', terminationPoint: 'Network Switch', distance: calculateDistance(micX, micY), x: micX, y: micY, notes: 'Dante audio network integrated with matrix DSP.' });
+                inspiredRoom.audioOutputs.push(
+                    { id: uuidv4(), name: 'Ceiling Speaker FL', type: 'Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'From Matrix Amp', distance: calculateDistance(speaker1X, speaker1Y), x: speaker1X, y: speaker1Y, notes: 'Front-Left Speaker' },
+                    { id: uuidv4(), name: 'Ceiling Speaker FR', type: 'Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'From Matrix Amp', distance: calculateDistance(speaker2X, speaker2Y), x: speaker2X, y: speaker2Y, notes: 'Front-Right Speaker' },
+                    { id: uuidv4(), name: 'Ceiling Speaker RL', type: 'Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'From Matrix Amp', distance: calculateDistance(speaker3X, speaker3Y), x: speaker3X, y: speaker3Y, notes: 'Rear-Left Speaker' },
+                    { id: uuidv4(), name: 'Ceiling Speaker RR', type: 'Speaker', ioType: 'audioOutput', connectionType: 'Analog Audio', location: 'Ceiling Mounted', cableType: 'Speaker Wire', terminationPoint: 'From Matrix Amp', distance: calculateDistance(speaker4X, speaker4Y), x: speaker4X, y: speaker4Y, notes: 'Rear-Right Speaker' }
+                );
             }
             break;
     }
@@ -507,60 +588,4 @@ export const generateInspiredRoomDesign = async (roomType: string, designTier: '
     
     const { id, ...rest } = inspiredRoom;
     return rest;
-};
-
-export const answerQuickQuestion = async (question: string): Promise<string> => {
-    const prompt = `
-    **ROLE & GOAL:**
-    You are a WyreStorm technical product expert. Your goal is to answer technical and product-related questions concisely and accurately, referencing the provided knowledge bases.
-
-    **CRITICAL BEHAVIOR - FILTERING Q&A:**
-    If a user's question could result in multiple product recommendations (e.g., "what extenders support USB?"), you MUST NOT list all of them. Instead, you MUST ask a clarifying follow-up question to help the user filter the results. Provide examples in your question. For example, if asked about USB extenders, respond with: "There are several USB-capable extenders. To help narrow it down, are you looking for a solution based on HDBaseT, AV over IP, or a direct point-to-point USB extender?" For more complex queries, provide a direct, justified recommendation.
-
-    **KNOWLEDGE BASES (PRIMARY SOURCES OF TRUTH):**
-    1.  **AV Design Knowledge Base:** ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}
-    2.  **Product Database:** ${JSON.stringify(productDatabase, null, 2)}
-
-    **USER QUESTION:**
-    "${question}"
-
-    **TASK:**
-    Provide a concise, helpful answer to the user's question. If applicable, use the "Filtering Q&A" behavior. The output should be a single string.
-    `;
-
-    console.log("Answering quick question with prompt:", prompt);
-    await new Promise(res => setTimeout(res, 1500));
-    
-    // --- Mock Logic ---
-    const q = question.toLowerCase();
-
-    if (q.includes('hdmi') && q.includes('usb') && q.includes('40m')) {
-        return `For extending both 4K HDMI and a high-bandwidth USB webcam over 40m (approx. 131ft) on a single CAT6 cable, you need an extender that supports both high-quality video and robust USB passthrough.
-        
-        Given the 4K requirement and the webcam, an HDBaseT 3.0 solution is the most reliable choice.
-        
-        I would recommend the **EX-40-KVM-5K**. It's an HDBaseT 3.0 extender kit that supports:
-        - 4K/60Hz video up to 40m.
-        - USB 2.0 passthrough with enough bandwidth for a 4K webcam.
-        - It's a kit, so it includes both the Transmitter (TX) and Receiver (RX) units.
-        
-        You would connect the source (PC) and webcam to the TX, run a single CAT6 cable to the TV location, and connect the RX to the TV and an additional USB peripheral if needed.`;
-    }
-
-    if (q.includes('usb') && (q.includes('extender') || q.includes('handle'))) {
-        return `Of course. WyreStorm has several extenders that support USB, each suited for different applications. To recommend the best one, could you clarify your needs?
-        
-        Are you looking for:
-        
-        *   **A direct point-to-point USB 2.0 extender?** (e.g., EX-60-USB2)
-        *   **An HDBaseT extender with KVM for video and USB?** (e.g., EX-100-KVM for HDBT 2.0, or EX-40-KVM-5K for HDBT 3.0)
-        *   **An AV over IP solution with USB routing?** (e.g., the NetworkHD 500 series)
-        `;
-    }
-
-    if (q.includes('hdbaset') && q.includes('distance')) {
-        return "Most WyreStorm HDBaseT extenders support distances up to 100 meters (328 feet) for 1080p, and typically 70 meters for 4K, over a single high-quality Category cable. For exact specifications, it's best to check the product page for the specific model."
-    }
-
-    return "I can help with technical and product questions. For example, you could ask 'Which extenders support USB?' or 'What is the distance limit for HDBaseT?'.";
 };

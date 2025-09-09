@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DesignFeedbackItem } from '../types';
 
@@ -6,6 +5,7 @@ interface AIInsightsPanelProps {
     insights: DesignFeedbackItem[];
     isLoading: boolean;
     onRefresh: () => void;
+    onOpenProductFinder: () => void;
 }
 
 const FEEDBACK_STYLES: Record<DesignFeedbackItem['type'], { icon: JSX.Element; color: string; }> = {
@@ -31,9 +31,9 @@ const FEEDBACK_STYLES: Record<DesignFeedbackItem['type'], { icon: JSX.Element; c
   }
 };
 
-const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ insights, isLoading, onRefresh }) => {
+const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ insights, isLoading, onRefresh, onOpenProductFinder }) => {
     return (
-        <div className="w-80 border-l bg-gray-50 p-4 flex flex-col">
+        <div className="w-80 border-l bg-gray-50 p-4 flex flex-col h-full">
             <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-bold text-gray-800">AI Insights</h2>
                 <button onClick={onRefresh} disabled={isLoading} className="p-1 text-gray-500 hover:text-gray-800 disabled:opacity-50">
@@ -57,6 +57,15 @@ const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ insights, isLoading, 
                         {isLoading ? 'Analyzing...' : 'No insights yet. Add rooms or make changes to get feedback.'}
                     </div>
                 )}
+            </div>
+             <div className="mt-4 pt-4 border-t border-gray-200">
+                <button 
+                    onClick={onOpenProductFinder}
+                    className="w-full text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-3 rounded-md transition-colors flex items-center justify-center gap-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    Find Product
+                </button>
             </div>
         </div>
     );

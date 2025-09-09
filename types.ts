@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { ROOM_DIMENSION_DEFAULTS } from '../constants';
 
 export type UnitSystem = 'imperial' | 'metric';
 export type Currency = 'USD' | 'GBP' | 'EUR';
@@ -42,6 +43,12 @@ export interface IO_Device {
   y?: number;
 }
 
+export interface ManualEquipmentItem {
+    sku: string;
+    name: string;
+    quantity: number;
+}
+
 export interface RoomData {
   id: string;
   roomName: string;
@@ -53,6 +60,7 @@ export interface RoomData {
     width: number;
     height: number;
   };
+  orientation?: 'top' | 'bottom' | 'left' | 'right';
   maxParticipants: number;
   maxDisplays: number;
   functionalityStatement: string;
@@ -76,6 +84,7 @@ export interface RoomData {
   vlanConfiguration?: string;
   siteRequirements: string[];
   projectCosts: any[];
+  manuallyAddedEquipment: ManualEquipmentItem[];
 }
 
 export interface Proposal {
@@ -229,31 +238,37 @@ export interface InstallationTask {
     estimatedHours: number;
 }
 
-export const createDefaultRoomData = (roomType: string, roomName: string): RoomData => ({
-    id: uuidv4(),
-    roomName: roomName,
-    roomType: roomType,
-    designTier: 'Silver',
-    primaryUse: 'General Presentation',
-    roomDimensions: { length: 20, width: 15, height: 9 },
-    maxParticipants: 12,
-    maxDisplays: 1,
-    functionalityStatement: '',
-    features: [],
-    videoInputs: [],
-    videoOutputs: [],
-    audioInputs: [],
-    audioOutputs: [],
-    roomComplexity: 'Standard',
-    budget: 'Mid-Range',
-    preferredControlSystem: 'Any',
-    additionalInfo: '',
-    cablingInfrastructureNotes: 'Conduit from table to rack location is assumed.',
-    audioCoverageNotes: '',
-    networkConnection: 'Standard LAN',
-    controlWiring: 'Standard CAT6',
-    powerConsiderations: 'Standard Outlets',
-    environmentalConsiderations: 'Standard Office',
-    siteRequirements: [],
-    projectCosts: [],
-});
+export const createDefaultRoomData = (roomType: string, roomName: string): RoomData => {
+    const dimensions = ROOM_DIMENSION_DEFAULTS[roomType] || { length: 20, width: 15, height: 9 };
+    
+    return {
+        id: uuidv4(),
+        roomName: roomName,
+        roomType: roomType,
+        designTier: 'Silver',
+        primaryUse: 'General Presentation',
+        roomDimensions: dimensions,
+        orientation: 'top',
+        maxParticipants: 12,
+        maxDisplays: 1,
+        functionalityStatement: '',
+        features: [],
+        videoInputs: [],
+        videoOutputs: [],
+        audioInputs: [],
+        audioOutputs: [],
+        roomComplexity: 'Standard',
+        budget: 'Mid-Range',
+        preferredControlSystem: 'Any',
+        additionalInfo: '',
+        cablingInfrastructureNotes: 'Conduit from table to rack location is assumed.',
+        audioCoverageNotes: '',
+        networkConnection: 'Standard LAN',
+        controlWiring: 'Standard CAT6',
+        powerConsiderations: 'Standard Outlets',
+        environmentalConsiderations: 'Standard Office',
+        siteRequirements: [],
+        projectCosts: [],
+        manuallyAddedEquipment: [],
+    };
+};

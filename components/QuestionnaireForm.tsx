@@ -1,8 +1,6 @@
-
-
 import React, { useMemo, useState } from 'react';
 // FIX: Corrected import path for types
-import { RoomData, UnitSystem } from '../types';
+import { RoomData, UnitSystem, ManualEquipmentItem } from '../types';
 import {
   BUDGET_OPTIONS,
   COMMON_FEATURES,
@@ -97,6 +95,17 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
     } else if (!needsKVM && isCurrentlyEnabled) {
         onChange({ ...formData, features: formData.features.filter(f => f !== 'KVM Control') });
     }
+  };
+
+  const handleManualEquipmentChange = (index: number, newQuantity: number) => {
+    const updatedEquipment = [...formData.manuallyAddedEquipment];
+    updatedEquipment[index].quantity = Math.max(1, newQuantity); // Ensure quantity is at least 1
+    onChange({ ...formData, manuallyAddedEquipment: updatedEquipment });
+  };
+
+  const handleRemoveManualItem = (index: number) => {
+    const updatedEquipment = formData.manuallyAddedEquipment.filter((_, i) => i !== index);
+    onChange({ ...formData, manuallyAddedEquipment: updatedEquipment });
   };
 
   const availableFeatures = useMemo(() => {
@@ -198,7 +207,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
            <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">KVM Control</h3>
-                <p className="text-sm text-gray-500 mb-3">Does this room require KVM (Keyboard, Video, Mouse) control of a remote PC, for example controlling a rack-mounted computer from a meeting room or another connected space, where the user can select a (USB enabled) source device from inside or outside the room/space and use HDBT or AVoIP receiver/decoder that has USB connectivity to select it on the desired screen</p>
+                <p className="text-sm text-gray-500 mb-3">Does this room require KVM (Keyboard, Video, Mouse) control of a remote PC? This allows a user to control a computer in the rack or another room using a local keyboard and mouse.</p>
                 <div className="flex flex-wrap gap-2">
                     <label className="cursor-pointer">
                         <input type="radio" name="kvm" value="Yes" checked={formData.features.includes('KVM Control')} onChange={() => handleKVMChange(true)} className="sr-only peer" />
@@ -262,6 +271,35 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChang
       label: 'Infrastructure',
       content: (
         <div className="space-y-6">
+          <div className="p-4 bg-gray-50/50 border rounded-md">
+            <h3 className="text-lg font-semibold text-gray-700">Manually Added Equipment</h3>
+            <p className="text-xs text-gray-500 mt-1 mb-2">Products added via the "Product Finder" appear here. The AI will include them in the final proposal.</p>
+            <div className="space-y-2 mt-3">
+              {(formData.manuallyAddedEquipment || []).length > 0 ? (
+                formData.manuallyAddedEquipment.map((item, index) => (
+                  <div key={item.sku} className="flex items-center justify-between bg-white p-2 border rounded-md">
+                    <div>
+                      <p className="font-medium text-sm text-gray-800">{item.name}</p>
+                      <p className="text-xs text-gray-500">{item.sku}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => handleManualEquipmentChange(index, Number(e.target.value))}
+                        min="1"
+                        className="w-16 p-1 border border-gray-300 rounded-md text-center"
+                        aria-label={`Quantity for ${item.name}`}
+                      />
+                      <button onClick={() => handleRemoveManualItem(index)} className="text-red-500 hover:text-red-700 text-lg" title="Remove Item">&times;</button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-2">No manual equipment added yet.</p>
+              )}
+            </div>
+          </div>
           <div className="p-4 bg-gray-50/50 border rounded-md">
             <h3 className="text-lg font-semibold text-gray-700">Cabling & Site Notes</h3>
             <p className="text-xs text-gray-500 mt-1 mb-2">Describe the physical cable pathways and any known infrastructure.</p>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectData, Proposal, UserProfile, RoomData } from './types';
-import { generateProposal, parseCustomerNotes } from './services/geminiService';
+import { generateProposal, parseCustomerNotes, generateInspiredRoomDesign } from './services/geminiService';
 import WelcomeScreen from './components/WelcomeScreen';
 import ProjectSetupScreen from './components/ProjectSetupScreen';
 import DesignCoPilot from './components/DesignCoPilot';
@@ -103,6 +103,37 @@ const App: React.FC = () => {
   const handleStartSetup = () => {
     setView('setup');
   };
+  
+  const handleStartFromTemplate = async (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string) => {
+      setView('generating');
+      setLoadingMessage('Creating project from template...');
+      setError(null);
+      try {
+          const inspiredRoomData = await generateInspiredRoomDesign(roomType, designTier);
+          const newRoom: RoomData = {
+              ...inspiredRoomData,
+              id: uuidv4()
+          };
+          
+          const newProject: ProjectData = {
+              projectId: uuidv4(),
+              projectName: templateName,
+              clientName: 'New Client',
+              clientContactName: '',
+              clientContactEmail: '',
+              clientAddress: '',
+              coverImage: '',
+              rooms: [newRoom],
+              lastSaved: new Date().toISOString(),
+          };
+          setProjectData(newProject);
+          setView('co-pilot');
+      } catch (e: any) {
+          console.error("Failed to create from template:", e);
+          setError("The AI failed to generate the room from the template. Please try again or create a project manually.");
+          setView('error');
+      }
+  };
 
   const handleCreateProject = (setupData: ProjectSetupData) => {
     const newProject: ProjectData = {
@@ -177,7 +208,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (view) {
       case 'welcome':
-        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} onStartFromTemplate={handleStartFromTemplate} />;
       case 'setup':
         return <ProjectSetupScreen onSubmit={handleCreateProject} onBack={handleBackToWelcome} defaultProjectName={`New Project ${new Date().toLocaleDateString()}`} userProfile={userProfile} />;
       case 'agent-input':
@@ -204,7 +235,7 @@ const App: React.FC = () => {
           </div>
         );
       default:
-        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} />;
+        return <WelcomeScreen onStart={handleStartSetup} onStartAgent={handleStartAgent} savedProjects={savedProjects} onLoadProject={loadProject} onDeleteProject={deleteProject} onAskQuestion={() => setIsQuickQuestionModalOpen(true)} onStartFromTemplate={handleStartFromTemplate} />;
     }
   };
 

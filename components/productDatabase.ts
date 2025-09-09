@@ -1,5 +1,3 @@
-
-// FIX: Corrected import path for types
 import { Product } from '../types';
 
 export const productDatabase: Product[] = [
@@ -15,6 +13,17 @@ export const productDatabase: Product[] = [
     control: { rs232: true, ir: true, cec: true },
   },
   {
+    sku: 'SW-0401-MST-W',
+    name: '4x1 4K HDBaseT Switcher with Wireless Casting',
+    category: 'Presentation Switcher',
+    description: 'A 4-input switcher with HDBaseT, mirrored HDMI outputs, and built-in wireless casting capabilities for BYOD convenience.',
+    dealerPrice: 550,
+    msrp: 1100,
+    tags: ['switcher', 'hdbaset', 'bronze', 'wireless casting'],
+    connections: { hdmiIn: 2, usbC: 1, hdbasetOut: 1, hdmiOut: 1 },
+    control: { rs232: true, ir: true, cec: true },
+  },
+  {
     sku: 'APO-VX20-UC',
     name: 'Apollo VX20 All-in-One Video Bar',
     category: 'Unified Communications',
@@ -23,6 +32,17 @@ export const productDatabase: Product[] = [
     msrp: 1600,
     tags: ['uc', 'video bar', 'byom', 'bronze'],
     connections: { usbC: 1 },
+    audio: { micIn: true },
+  },
+  {
+    sku: 'APO-SB1-UC',
+    name: 'Apollo Soundbar with Wireless Casting',
+    category: 'Audio',
+    description: 'A UC-ready soundbar with integrated microphones and speakers, for rooms with existing cameras. Supports wireless casting for content sharing but does not pass USB data for BYOM.',
+    dealerPrice: 650,
+    msrp: 1300,
+    tags: ['uc', 'soundbar', 'audio', 'wireless casting', 'bronze'],
+    connections: { hdmiIn: 1 }, // For a display connection
     audio: { micIn: true },
   },
   {
@@ -194,5 +214,23 @@ export const productDatabase: Product[] = [
     dealerPrice: 470,
     msrp: 940,
     tags: ['avoip', 'controller', 'gold']
+  },
+  {
+    sku: 'APO-DG1',
+    name: 'Apollo DG1 Wireless Casting Dongle',
+    category: 'Accessory',
+    description: 'Wireless casting dongle for video and audio streaming. Does not support USB data transmission. Compatible with APO-210-UC and APO-VX20-UC (V1).',
+    dealerPrice: 150,
+    msrp: 300,
+    tags: ['dongle', 'wireless casting', 'accessory'],
+  },
+  {
+    sku: 'APO-DG2',
+    name: 'Apollo DG2 Wireless USB/AV Casting Dongle',
+    category: 'Accessory',
+    description: 'Advanced wireless casting dongle supporting both AV streams and USB data for true wireless BYOM functionality. Recommended for use with WyreStorm "-W" series products.',
+    dealerPrice: 250,
+    msrp: 500,
+    tags: ['dongle', 'wireless casting', 'byom', 'usb', 'accessory'],
   }
 ];

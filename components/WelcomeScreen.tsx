@@ -1,10 +1,44 @@
 
-
 import React, { useState } from 'react';
 import Logo from './Logo';
 // FIX: Corrected import path for types
 import { ProjectData } from '../types';
 import InfoModal from './InfoModal';
+
+interface RoomTemplate {
+  title: string;
+  description: string;
+  roomType: string;
+  designTier: 'Bronze' | 'Silver' | 'Gold';
+}
+
+const TEMPLATES: RoomTemplate[] = [
+    {
+        title: 'Small Huddle Room',
+        description: 'A cost-effective setup for 2-4 people with basic video conferencing and a single display.',
+        roomType: 'Huddle Room',
+        designTier: 'Bronze',
+    },
+    {
+        title: 'Modern Conference Room',
+        description: 'A balanced solution for 8-12 people, featuring BYOM, dual displays, and wireless casting.',
+        roomType: 'Conference Room',
+        designTier: 'Silver',
+    },
+    {
+        title: 'Executive Boardroom',
+        description: 'A premium, high-impact space with advanced audio, control, and seamless integration.',
+        roomType: 'Boardroom',
+        designTier: 'Gold',
+    },
+    {
+        title: 'Interactive Classroom',
+        description: 'Engaging setup with an interactive display, lecture capture, and clear audio for instructors.',
+        roomType: 'Classroom',
+        designTier: 'Silver',
+    },
+];
+
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -13,10 +47,17 @@ interface WelcomeScreenProps {
   onLoadProject: (projectId: string) => void;
   onDeleteProject: (projectId: string) => void;
   onAskQuestion: () => void;
+  onStartFromTemplate: (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string) => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, savedProjects, onLoadProject, onDeleteProject, onAskQuestion }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, savedProjects, onLoadProject, onDeleteProject, onAskQuestion, onStartFromTemplate }) => {
   const [modalContent, setModalContent] = useState<{ title: string; content: React.ReactNode } | null>(null);
+  const [loadingTemplate, setLoadingTemplate] = useState<string | null>(null);
+  
+  const handleTemplateClick = (template: RoomTemplate) => {
+      setLoadingTemplate(template.title);
+      onStartFromTemplate(template.roomType, template.designTier, template.title);
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString(undefined, {
@@ -92,7 +133,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
     <InfoModal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent?.title || ''}>
         {modalContent?.content}
     </InfoModal>
-    <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden animate-fade-in w-full max-w-6xl mx-auto">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden animate-fade-in w-full max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-5">
         <div className="md:col-span-2 bg-[#006837] p-8 md:p-12 text-white flex flex-col justify-center items-center md:items-start text-center md:text-left">
           <Logo variant="white" />
@@ -111,35 +152,58 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, sa
         </div>
 
         <div className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Get Started</h2>
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={onStart}
-              className="flex items-center justify-center gap-3 w-full bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-              <span>New Project Setup</span>
-            </button>
-            <button
-              onClick={onStartAgent}
-              className="flex items-center justify-center gap-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" /></svg>
-              <span>Parse Client Notes</span>
-            </button>
-          </div>
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-200"></div></div>
-              <div className="relative flex justify-center">
-                <button onClick={onAskQuestion} className="bg-white px-4 text-sm font-medium text-gray-500 hover:text-[#008A3A] hover:underline">
-                  Or, just ask a quick technical question
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Start Fresh</h2>
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={onStart}
+                  className="flex items-center justify-center gap-3 w-full bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  <span>New Project Setup</span>
+                </button>
+                <button
+                  onClick={onStartAgent}
+                  className="flex items-center justify-center gap-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" /></svg>
+                  <span>Parse Client Notes</span>
+                </button>
+                <button
+                    onClick={onAskQuestion}
+                    className="flex items-center justify-center gap-3 w-full bg-white hover:bg-gray-100 border text-gray-700 font-bold py-3 px-6 rounded-lg text-lg transition-all"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Ask a Quick Question</span>
                 </button>
               </div>
             </div>
-          <div className="border-t border-gray-200 pt-6">
+             <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">Start from a Template</h2>
+                <div className="space-y-3">
+                    {TEMPLATES.map(template => (
+                        <div key={template.title} className="p-3 bg-gray-50 rounded-md border hover:bg-gray-100 hover:border-gray-300 transition-colors">
+                            <p className="font-semibold text-gray-800 text-sm">{template.title}</p>
+                            <p className="text-xs text-gray-500 mt-1 mb-2">{template.description}</p>
+                            <button 
+                                onClick={() => handleTemplateClick(template)}
+                                disabled={!!loadingTemplate}
+                                className="text-sm font-medium text-[#008A3A] hover:underline disabled:text-gray-500 disabled:no-underline"
+                            >
+                                {loadingTemplate === template.title ? 'Creating...' : 'Start Project →'}
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 pt-6 mt-8">
             <h3 className="text-xl font-bold text-gray-700 mb-4">Saved Projects</h3>
             {savedProjects.length > 0 ? (
-              <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
+              <ul className="space-y-2 max-h-48 overflow-y-auto pr-2">
                 {savedProjects.sort((a,b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()).map(proj => (
                   <li key={proj.projectId} className="flex items-center justify-between p-3 bg-gray-50 rounded-md border hover:bg-gray-100">
                     <div>

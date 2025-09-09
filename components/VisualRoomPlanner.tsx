@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // FIX: Corrected import path for types
@@ -12,13 +11,21 @@ interface VisualRoomPlannerProps {
   unitSystem: UnitSystem;
 }
 
+const ORIENTATIONS = [
+    { value: 'top', label: 'Top' },
+    { value: 'bottom', label: 'Bottom' },
+    { value: 'left', label: 'Left' },
+    { value: 'right', label: 'Right' },
+] as const;
+
+type Orientation = typeof ORIENTATIONS[number]['value'];
+
 const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChange, unitSystem }) => {
   const [editingDevice, setEditingDevice] = useState<IO_Device | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const rackPosition = { x: 2, y: 50 }; // Rack position in %
   
-  // State for customizable grid spacing
-  const [gridSpacing, setGridSpacing] = useState(unitSystem === 'imperial' ? 2 : 1); // Default to 2 ft or 1 m
+  const [gridSpacing, setGridSpacing] = useState(unitSystem === 'imperial' ? 2 : 1);
 
   const allDevices = useMemo(() => [
     ...roomData.videoInputs,
@@ -29,7 +36,6 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
   
   const { length, width } = roomData.roomDimensions;
   
-  // Dynamically generate CSS for grid lines based on spacing and room dimensions
   const gridStyle = useMemo(() => {
     if (gridSpacing <= 0 || !length || !width) {
         return {};
@@ -104,7 +110,6 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
   const handleDeviceUpdate = () => {
     if (!editingDevice) return;
 
-    // Find original device to get its original ioType
     const originalDevice = allDevices.find(d => d.id === editingDevice.id);
     if (!originalDevice) {
         console.error("Could not find original device to update.");
@@ -118,20 +123,16 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
     const newRoomData = { ...roomData };
 
     if (originalIoType === newIoType) {
-        // ioType is the same, just update the properties in its array
         const targetArrayKey = `${newIoType}s` as keyof RoomData;
         (newRoomData[targetArrayKey] as IO_Device[]) = 
             (newRoomData[targetArrayKey] as IO_Device[]).map(d => d.id === editingDevice.id ? editingDevice : d);
     } else {
-        // ioType has changed, we need to move the device between arrays
         const originalArrayKey = `${originalIoType}s` as keyof RoomData;
         const newArrayKey = `${newIoType}s` as keyof RoomData;
         
-        // 1. Filter it out from the old array
         (newRoomData[originalArrayKey] as IO_Device[]) = 
             (newRoomData[originalArrayKey] as IO_Device[]).filter(d => d.id !== editingDevice.id);
         
-        // 2. Add it to the new array
         (newRoomData[newArrayKey] as IO_Device[]) = 
             [...(newRoomData[newArrayKey] as IO_Device[]), editingDevice];
     }
@@ -152,13 +153,33 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
     setEditingDevice(null);
   };
 
+  const handleOrientationChange = (newOrientation: Orientation) => {
+    onChange({ ...roomData, orientation: newOrientation });
+  };
+
   const aspectRatio = width / length;
+  
+  const renderFrontIndicator = () => {
+    const orientation = roomData.orientation || 'top';
+    const baseClasses = "absolute text-xs font-bold text-gray-400 bg-white/70 px-2 py-0.5 rounded-full pointer-events-none flex items-center gap-1 shadow";
+    
+    switch (orientation) {
+        case 'top':
+            return <div className={`${baseClasses} top-1 left-1/2 -translate-x-1/2`}>▼ FRONT ▼</div>;
+        case 'bottom':
+            return <div className={`${baseClasses} bottom-1 left-1/2 -translate-x-1/2`}>▲ FRONT ▲</div>;
+        case 'left':
+            return <div className={`${baseClasses} left-1 top-1/2 -translate-y-1/2 -rotate-90 origin-center`}>▼ FRONT ▼</div>;
+        case 'right':
+            return <div className={`${baseClasses} right-1 top-1/2 -translate-y-1/2 rotate-90 origin-center`}>▼ FRONT ▼</div>;
+        default:
+            return null;
+    }
+  };
 
   return (
     <div className="flex gap-4 h-[calc(100vh-350px)]">
-      {/* Sidebar Controls */}
       <div className="w-48 flex-shrink-0 flex flex-col gap-4">
-        {/* Device Palette */}
         <div className="bg-gray-50 border border-gray-200 rounded-md p-2">
             <h3 className="text-sm font-semibold text-gray-600 mb-2 px-2">Device Palette</h3>
             <p className="text-xs text-gray-500 mb-3 px-2">Drag icons onto the grid.</p>
@@ -179,12 +200,30 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
             </div>
         </div>
         
-        {/* Grid Controls */}
         <div className="bg-gray-50 border border-gray-200 rounded-md p-2">
-            <h3 className="text-sm font-semibold text-gray-600 mb-2 px-2">Grid Controls</h3>
-            <div className="px-2 space-y-2">
+            <h3 className="text-sm font-semibold text-gray-600 mb-2 px-2">Layout Controls</h3>
+            <div className="px-2 space-y-3">
                 <div>
-                    <label htmlFor="grid-spacing" className="block text-xs font-medium text-gray-500">Spacing ({unitSystem === 'imperial' ? 'ft' : 'm'})</label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Room Front Is</label>
+                  <div className="grid grid-cols-2 gap-1">
+                    {ORIENTATIONS.map(o => (
+                      <button
+                        key={o.value}
+                        type="button"
+                        onClick={() => handleOrientationChange(o.value)}
+                        className={`p-1 text-xs rounded border transition-colors ${
+                          (roomData.orientation || 'top') === o.value
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white hover:bg-gray-200 border-gray-300'
+                        }`}
+                      >
+                        {o.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                    <label htmlFor="grid-spacing" className="block text-xs font-medium text-gray-500">Grid Spacing ({unitSystem === 'imperial' ? 'ft' : 'm'})</label>
                     <input
                         id="grid-spacing"
                         type="number"
@@ -198,21 +237,20 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
         </div>
       </div>
 
-      {/* Grid */}
       <div className="flex-grow bg-white border border-dashed border-gray-300 rounded-md relative" ref={gridRef} onDrop={handleDrop} onDragOver={handleDragOver} style={{ aspectRatio: isNaN(aspectRatio) || !isFinite(aspectRatio) ? '1.33' : `${aspectRatio}`, ...gridStyle }}>
-        <div className="absolute top-2 left-2 text-xs text-gray-400 font-semibold">{`${width}${unitSystem === 'imperial' ? 'ft' : 'm'} x ${length}${unitSystem === 'imperial' ? 'ft' : 'm'}`}</div>
+        <div className="absolute top-2 left-2 text-xs text-gray-400 font-semibold bg-white/70 px-1.5 py-0.5 rounded">{`${width}${unitSystem === 'imperial' ? 'ft' : 'm'} x ${length}${unitSystem === 'imperial' ? 'ft' : 'm'}`}</div>
         
-        {/* Rack */}
+        {renderFrontIndicator()}
+        
         <div className="absolute w-8 h-12 bg-gray-700 text-white flex items-center justify-center rounded text-xs font-bold" style={{ left: `${rackPosition.x}%`, top: `${rackPosition.y}%`, transform: 'translate(-50%, -50%)' }} title="Equipment Rack">RACK</div>
 
-        {/* Devices */}
         {allDevices.map(device => (
           device.x != null && device.y != null && (
             <React.Fragment key={device.id}>
               <div
                 className="absolute flex flex-col items-center cursor-pointer group"
                 style={{ left: `${device.x}%`, top: `${device.y}%`, transform: 'translate(-50%, -50%)' }}
-                onClick={() => setEditingDevice(JSON.parse(JSON.stringify(device)))} // Use a copy to avoid mutating state before save
+                onClick={() => setEditingDevice(JSON.parse(JSON.stringify(device)))}
                 title={`Edit ${device.name}`}
               >
                 <div className="w-8 h-8 p-1 bg-white border-2 border-blue-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -226,7 +264,6 @@ const VisualRoomPlanner: React.FC<VisualRoomPlannerProps> = ({ roomData, onChang
         ))}
       </div>
       
-      {/* Editing Modal */}
       {editingDevice && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-20" onClick={() => setEditingDevice(null)}>
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>

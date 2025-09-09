@@ -1,4 +1,3 @@
-
 // FIX: Corrected import path for types
 import { Currency } from './types';
 
@@ -125,8 +124,12 @@ export const NETWORK_SWITCH_MODELS = ['WyreStorm NHD Series', 'Cisco Catalyst Se
 export const IP_ADDRESSING_SCHEMES = ['DHCP', 'Static IP', 'Mixed DHCP/Static'];
 export const VLAN_CONFIGURATIONS = ['Single Flat Network', 'Dedicated AV VLAN', 'Corporate VLAN with QoS', 'Guest VLAN'];
 
-export const ROOM_DIMENSION_DEFAULTS: Record<string, Record<string, { length: number; width: number; height: number; }>> = {
-    'Conference Room': {
-        'Standard': { length: 25, width: 15, height: 9 },
-    },
+export const ROOM_DIMENSION_DEFAULTS: Record<string, { length: number; width: number; height: number; }> = {
+  'Huddle Room': { length: 12, width: 10, height: 9 },
+  'Conference Room': { length: 25, width: 15, height: 9 },
+  'Boardroom': { length: 35, width: 18, height: 10 },
+  'Classroom': { length: 30, width: 30, height: 12 },
+  'Auditorium': { length: 60, width: 40, height: 20 },
+  'Briefing Center': { length: 40, width: 25, height: 12 },
+  'Operations Center': { length: 50, width: 35, height: 12 },
 };
