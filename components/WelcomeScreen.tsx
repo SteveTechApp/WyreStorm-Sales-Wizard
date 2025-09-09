@@ -1,44 +1,7 @@
-
-import React, { useState } from 'react';
-import Logo from './Logo';
-// FIX: Corrected import path for types
+import React, { useState, useRef, useEffect } from 'react';
 import { ProjectData } from '../types';
-import InfoModal from './InfoModal';
-
-interface RoomTemplate {
-  title: string;
-  description: string;
-  roomType: string;
-  designTier: 'Bronze' | 'Silver' | 'Gold';
-}
-
-const TEMPLATES: RoomTemplate[] = [
-    {
-        title: 'Small Huddle Room',
-        description: 'A cost-effective setup for 2-4 people with basic video conferencing and a single display.',
-        roomType: 'Huddle Room',
-        designTier: 'Bronze',
-    },
-    {
-        title: 'Modern Conference Room',
-        description: 'A balanced solution for 8-12 people, featuring BYOM, dual displays, and wireless casting.',
-        roomType: 'Conference Room',
-        designTier: 'Silver',
-    },
-    {
-        title: 'Executive Boardroom',
-        description: 'A premium, high-impact space with advanced audio, control, and seamless integration.',
-        roomType: 'Boardroom',
-        designTier: 'Gold',
-    },
-    {
-        title: 'Interactive Classroom',
-        description: 'Engaging setup with an interactive display, lecture capture, and clear audio for instructors.',
-        roomType: 'Classroom',
-        designTier: 'Silver',
-    },
-];
-
+import { AgentIcon, PlusIcon, TrashIcon, ChevronRightIcon, ChevronLeftIcon } from './Icons';
+import TierTooltip from './TierTooltip';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -46,185 +9,221 @@ interface WelcomeScreenProps {
   savedProjects: ProjectData[];
   onLoadProject: (projectId: string) => void;
   onDeleteProject: (projectId: string) => void;
-  onAskQuestion: () => void;
-  onStartFromTemplate: (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string) => void;
+  onStartFromTemplate: (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onStartAgent, savedProjects, onLoadProject, onDeleteProject, onAskQuestion, onStartFromTemplate }) => {
-  const [modalContent, setModalContent] = useState<{ title: string; content: React.ReactNode } | null>(null);
-  const [loadingTemplate, setLoadingTemplate] = useState<string | null>(null);
-  
-  const handleTemplateClick = (template: RoomTemplate) => {
-      setLoadingTemplate(template.title);
-      onStartFromTemplate(template.roomType, template.designTier, template.title);
-  }
+const TEMPLATES: { name: string; roomType: string; designTier: 'Bronze' | 'Silver' | 'Gold'; participantCount: number }[] = [
+    { name: 'Small Huddle Room (4)', roomType: 'Huddle Room', designTier: 'Bronze', participantCount: 4 },
+    { name: 'Medium Conference Room (12)', roomType: 'Conference Room', designTier: 'Silver', participantCount: 12 },
+    { name: 'Executive Boardroom (20)', roomType: 'Boardroom', designTier: 'Gold', participantCount: 20 },
+    { name: 'Interactive Classroom (30)', roomType: 'Classroom', designTier: 'Gold', participantCount: 30 },
+    { name: 'Standard Classroom (40)', roomType: 'Classroom', designTier: 'Silver', participantCount: 40 },
+    { name: '100-Seater Auditorium', roomType: 'Auditorium', designTier: 'Silver', participantCount: 100 },
+    { name: '300-Seater Auditorium', roomType: 'Auditorium', designTier: 'Gold', participantCount: 300 },
+    { name: 'Briefing Center Video Wall', roomType: 'Briefing Center', designTier: 'Gold', participantCount: 25 },
+    { name: 'Operations Center 2x4 Wall', roomType: 'Operations Center', designTier: 'Gold', participantCount: 12 },
+    { name: 'Small Pub / Bar (2x4)', roomType: 'Hospitality Venue', designTier: 'Silver', participantCount: 8 },
+    { name: 'Large Sports Bar (8x25)', roomType: 'Hospitality Venue', designTier: 'Gold', participantCount: 33 },
+];
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString(undefined, {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
-  };
+const getBackgroundImageUrl = (roomType: string): string => {
+    switch (roomType) {
+        case 'Huddle Room':
+        case 'Conference Room':
+        case 'Boardroom':
+            // Modern meeting space
+            return 'https://images.unsplash.com/photo-1556761175-b413da4b248a?q=80&w=2070&auto=format&fit=crop';
+        case 'Classroom':
+        case 'Auditorium':
+             // University lecture theatre with students
+            return 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop';
+        case 'Briefing Center':
+            // LED video wall
+            return 'https://images.unsplash.com/photo-1633394675535-e1a5a92a54b3?q=80&w=1974&auto=format&fit=crop';
+        case 'Operations Center':
+            // Command and control room
+            return 'https://images.unsplash.com/photo-1618060932014-4deda4932554?q=80&w=2070&auto=format&fit=crop';
+        case 'Hospitality Venue':
+            // Sports bar with screens
+            return 'https://images.unsplash.com/photo-1627933930253-06928e485d5e?q=80&w=1968&auto=format&fit=crop';
+        default:
+             // Default to modern meeting space
+            return 'https://images.unsplash.com/photo-1556761175-b413da4b248a?q=80&w=2070&auto=format&fit=crop';
+    }
+};
 
-  const getModalContent = (type: 'how' | 'tiers' | 'faq') => {
-    switch (type) {
-        case 'how':
-            return {
-                title: "How It Works",
-                content: (
-                    <>
-                        <p>This AI Sales Assistant is designed to streamline the creation of professional AV proposals. Here's the typical workflow:</p>
-                        <ul>
-                            <li><strong>Step 1: Project Setup.</strong> Start by either choosing a pre-defined project scope (like 'Small Office') to get a head start, or begin a custom project from scratch.</li>
-                            <li><strong>Step 2: Add & Configure Rooms.</strong> Use the AI Room Wizard to add rooms. Describe your client's needs, and the AI will suggest a complete configuration (including room type, design tier, features, and displays) for you to approve and refine.</li>
-                            <li><strong>Step 3: Review & Refine.</strong> Use the AI Design Co-Pilot dashboard to see your whole project. The AI will provide real-time insights—technical warnings, strategic suggestions, and even financial advice—as you work.</li>
-                            <li><strong>Step 4: Generate Proposal.</strong> Once you're happy with the design, click "Generate Proposal." The AI will compile all the room data into a comprehensive sales document, including an executive summary, scope of work, equipment list, and system diagram.</li>
-                        </ul>
-                    </>
-                )
-            };
-        case 'tiers':
-            return {
-                title: "Understanding Design Tiers",
-                content: (
-                    <>
-                        <p>The "Bronze, Silver, Gold" tiers provide a framework for discussing budget and functionality with your client. They are not rigid, but represent a design philosophy.</p>
-                        <h3>Bronze Tier 🥉</h3>
-                        <ul>
-                            <li><strong>Focus:</strong> Core functionality and value.</li>
-                            <li><strong>Goal:</strong> Meets the essential requirements of the space reliably and cost-effectively.</li>
-                            <li><strong>Typical Hardware:</strong> Entry-level switchers, all-in-one video bars, basic connectivity.</li>
-                        </ul>
-                        <h3>Silver Tier 🥈</h3>
-                        <ul>
-                            <li><strong>Focus:</strong> The balanced, recommended standard for modern collaboration.</li>
-                            <li><strong>Goal:</strong> Enhances user experience and flexibility with features like BYOM (Bring Your Own Meeting), wireless casting, and better audio.</li>
-                            <li><strong>Typical Hardware:</strong> More capable matrix switchers, PTZ cameras, multiple microphones, USB-C docking. This is the sweet spot for most corporate environments.</li>
-                        </ul>
-                        <h3>Gold Tier 🥇</h3>
-                        <ul>
-                            <li><strong>Focus:</strong> A premium, seamless, and future-proofed experience.</li>
-                            <li><strong>Goal:</strong> Creates a high-impact environment that impresses clients and empowers executives. Often includes advanced integration and automation.</li>
-                            <li><strong>Typical Hardware:</strong> High-end matrix switchers with DSPs, AV over IP distribution, advanced control systems, and integrated environmental controls (lighting/shades).</li>
-                        </ul>
-                    </>
-                )
-            };
-        case 'faq':
-            return {
-                title: "Frequently Asked Questions",
-                content: (
-                    <>
-                        <h4>Is my data saved?</h4>
-                        <p>Yes, all your project data and your user profile are saved directly in your web browser's local storage. No data is sent to a central server outside of the AI analysis calls.</p>
-                        <h4>Can I edit the final proposal?</h4>
-                        <p>Absolutely. The final proposal screen allows for full editing of equipment quantities and pricing, labor hours, and even the addition of custom line items. The AI-generated proposal is a starting point, not the final word.</p>
-                        <h4>How does the "Parse Client Notes" feature work?</h4>
-                        <p>You can copy/paste text from an email, an RFQ document, or your own meeting notes. The AI will read the text and attempt to extract key information like the project name, client details, and room requirements to give you a head start on the design.</p>
-                    </>
-                )
-            };
-        default: return null;
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
+  onStart,
+  onStartAgent,
+  savedProjects,
+  onLoadProject,
+  onDeleteProject,
+  onStartFromTemplate
+}) => {
+  const sortedProjects = [...savedProjects].sort((a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime());
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScrollability = () => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      setCanScrollLeft(el.scrollLeft > 1);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
     }
   };
 
-  return (
-    <>
-    <InfoModal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent?.title || ''}>
-        {modalContent?.content}
-    </InfoModal>
-    <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden animate-fade-in w-full max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-5">
-        <div className="md:col-span-2 bg-[#006837] p-8 md:p-12 text-white flex flex-col justify-center items-center md:items-start text-center md:text-left">
-          <Logo variant="white" />
-          <h1 className="text-3xl lg:text-4xl font-extrabold mt-6 mb-2" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.2)' }}>
-            AI Design Co-Pilot
-          </h1>
-          <p className="text-green-100 text-lg">Build Expert AV Proposals in Minutes.</p>
-           <div className="mt-8 border-t border-green-400/30 pt-6 w-full">
-            <h4 className="font-semibold text-lg text-white mb-3">Learn More</h4>
-            <div className="flex flex-col items-start gap-2">
-                <button onClick={() => setModalContent(getModalContent('how'))} className="text-green-100 hover:text-white hover:underline text-sm">How It Works</button>
-                <button onClick={() => setModalContent(getModalContent('tiers'))} className="text-green-100 hover:text-white hover:underline text-sm">Design Tiers Explained</button>
-                <button onClick={() => setModalContent(getModalContent('faq'))} className="text-green-100 hover:text-white hover:underline text-sm">FAQ</button>
-            </div>
-           </div>
-        </div>
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (el) {
+        checkScrollability();
+        el.addEventListener('scroll', checkScrollability);
+        window.addEventListener('resize', checkScrollability);
+        return () => {
+            el.removeEventListener('scroll', checkScrollability);
+            window.removeEventListener('resize', checkScrollability);
+        };
+    }
+  }, [TEMPLATES]);
 
-        <div className="md:col-span-3 p-8 md:p-12 flex flex-col justify-center">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Start Fresh</h2>
-              <div className="flex flex-col gap-4">
-                <button
-                  onClick={onStart}
-                  className="flex items-center justify-center gap-3 w-full bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                  <span>New Project Setup</span>
+  const handleScroll = (direction: 'left' | 'right') => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      const scrollAmount = el.clientWidth * 0.8; 
+      el.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const handleLeftScrollClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleScroll('left');
+  };
+  
+  const handleRightScrollClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleScroll('right');
+  };
+
+  const handleTemplateClick = (template: typeof TEMPLATES[0]) => {
+      onStartFromTemplate(template.roomType, template.designTier, template.name, template.participantCount);
+  };
+  
+  return (
+    <div className="w-full max-w-screen-2xl mx-auto animate-fade-in">
+      <header className="text-center mb-12">
+        <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">WyreStorm AI Sales Assistant</h1>
+        <p className="mt-2 text-lg text-gray-500">Your intelligent partner for designing and proposing AV solutions.</p>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <section>
+            <h2 className="text-2xl font-bold text-[#008A3A] mb-4">Start a New Project</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button onClick={onStart} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-[#008A3A] hover:bg-green-50 transition-all">
+                    <div className="bg-[#008A3A] text-white p-3 rounded-full mb-3"><PlusIcon className="h-7 w-7" /></div>
+                    <h3 className="font-bold text-gray-800 text-lg">Create Manually</h3>
+                    <p className="text-sm text-gray-500">Build your project step-by-step with the design co-pilot.</p>
                 </button>
-                <button
-                  onClick={onStartAgent}
-                  className="flex items-center justify-center gap-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg transition-all transform hover:scale-105"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" /></svg>
-                  <span>Parse Client Notes</span>
+                <button onClick={onStartAgent} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all">
+                    <div className="bg-blue-600 text-white p-3 rounded-full mb-3"><AgentIcon className="h-7 w-7" /></div>
+                    <h3 className="font-bold text-gray-800 text-lg">Analyze Document</h3>
+                    <p className="text-sm text-gray-500">Let the AI parse a client's brief, RFQ, or meeting notes.</p>
                 </button>
-                <button
-                    onClick={onAskQuestion}
-                    className="flex items-center justify-center gap-3 w-full bg-white hover:bg-gray-100 border text-gray-700 font-bold py-3 px-6 rounded-lg text-lg transition-all"
-                    >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>Ask a Quick Question</span>
-                </button>
-              </div>
             </div>
-             <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Start from a Template</h2>
-                <div className="space-y-3">
-                    {TEMPLATES.map(template => (
-                        <div key={template.title} className="p-3 bg-gray-50 rounded-md border hover:bg-gray-100 hover:border-gray-300 transition-colors">
-                            <p className="font-semibold text-gray-800 text-sm">{template.title}</p>
-                            <p className="text-xs text-gray-500 mt-1 mb-2">{template.description}</p>
-                            <button 
-                                onClick={() => handleTemplateClick(template)}
-                                disabled={!!loadingTemplate}
-                                className="text-sm font-medium text-[#008A3A] hover:underline disabled:text-gray-500 disabled:no-underline"
+        </section>
+        
+        <section className="flex flex-col">
+            <h2 className="text-2xl font-bold text-[#008A3A] mb-4">Recent Projects</h2>
+            <div className="bg-white border border-gray-200 rounded-lg p-4 flex-grow flex flex-col">
+                {sortedProjects.length > 0 ? (
+                <ul className="divide-y divide-gray-200">
+                    {sortedProjects.map(project => (
+                    <li key={project.projectId} className="py-3 flex justify-between items-center group">
+                        <div>
+                            <p className="font-semibold text-gray-800">{project.projectName}</p>
+                            <p className="text-sm text-gray-500">{project.clientName} - Last saved: {new Date(project.lastSaved).toLocaleString()}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => onLoadProject(project.projectId)}
+                                className="text-sm font-medium text-green-600 hover:text-green-800"
                             >
-                                {loadingTemplate === template.title ? 'Creating...' : 'Start Project →'}
+                                Load
+                            </button>
+                            <button
+                                onClick={() => onDeleteProject(project.projectId)}
+                                className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                                title="Delete Project"
+                            >
+                                <TrashIcon />
                             </button>
                         </div>
+                    </li>
                     ))}
+                </ul>
+                ) : (
+                <div className="text-center text-gray-500 flex-grow flex flex-col justify-center items-center">
+                    <p>No saved projects yet.</p>
+                    <p className="text-sm">Start a new project to see it here.</p>
                 </div>
+                )}
             </div>
-          </div>
-          <div className="border-t border-gray-200 pt-6 mt-8">
-            <h3 className="text-xl font-bold text-gray-700 mb-4">Saved Projects</h3>
-            {savedProjects.length > 0 ? (
-              <ul className="space-y-2 max-h-48 overflow-y-auto pr-2">
-                {savedProjects.sort((a,b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()).map(proj => (
-                  <li key={proj.projectId} className="flex items-center justify-between p-3 bg-gray-50 rounded-md border hover:bg-gray-100">
-                    <div>
-                      <p className="font-semibold text-gray-800">{proj.projectName}</p>
-                      <p className="text-xs text-gray-500">Last saved: {formatDate(proj.lastSaved)}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => onLoadProject(proj.projectId)} className="text-sm font-medium text-[#008A3A] hover:underline">Load</button>
-                      <button onClick={() => onDeleteProject(proj.projectId)} className="text-sm font-medium text-red-600 hover:underline">Delete</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500 text-center py-4">No saved projects found.</p>
-            )}
-          </div>
-        </div>
+        </section>
       </div>
+      
+      <section>
+        <h2 className="text-2xl font-bold text-[#008A3A] mb-4 text-center">Start from a Template</h2>
+        <div className="relative">
+          <div ref={scrollContainerRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-2 px-2">
+              {TEMPLATES.map(template => (
+                  <button 
+                      key={template.name}
+                      onClick={() => handleTemplateClick(template)}
+                      className="relative flex-shrink-0 w-64 h-40 text-left p-4 rounded-lg hover:shadow-lg transition-shadow flex flex-col justify-between overflow-hidden group"
+                  >
+                      <div
+                          className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105 opacity-50"
+                          style={{ backgroundImage: `url(${getBackgroundImageUrl(template.roomType)})` }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
+                      
+                      <div className="relative z-10 flex flex-col justify-between h-full text-white">
+                          <div>
+                              <p className="font-bold text-lg whitespace-normal" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>{template.name}</p>
+                              <p className="text-xs opacity-90" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>{template.roomType}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                              <TierTooltip tier={template.designTier}>
+                                <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border backdrop-blur-sm ${
+                                    template.designTier === 'Bronze' ? 'bg-yellow-900/40 text-yellow-100 border-yellow-300/50' :
+                                    template.designTier === 'Silver' ? 'bg-slate-700/40 text-slate-100 border-slate-300/50' :
+                                    'bg-amber-800/40 text-amber-100 border-amber-200/50'
+                                }`}>{template.designTier}</span>
+                              </TierTooltip>
+                          </div>
+                      </div>
+                  </button>
+              ))}
+          </div>
+          <button 
+              onClick={handleLeftScrollClick}
+              disabled={!canScrollLeft}
+              className="absolute top-1/2 left-0 -translate-y-1/2 -ml-4 bg-white rounded-full p-2 shadow-md border border-gray-200 disabled:opacity-0 disabled:cursor-not-allowed hover:bg-gray-100 transition-opacity z-10"
+              aria-label="Scroll left"
+          >
+              <ChevronLeftIcon className="h-6 w-6 text-gray-700" />
+          </button>
+          <button 
+              onClick={handleRightScrollClick}
+              disabled={!canScrollRight}
+              className="absolute top-1/2 right-0 -translate-y-1/2 -mr-4 bg-white rounded-full p-2 shadow-md border border-gray-200 disabled:opacity-0 disabled:cursor-not-allowed hover:bg-gray-100 transition-opacity z-10"
+              aria-label="Scroll right"
+          >
+              <ChevronRightIcon className="h-6 w-6 text-gray-700" />
+          </button>
+        </div>
+      </section>
     </div>
-    </>
   );
 };
 

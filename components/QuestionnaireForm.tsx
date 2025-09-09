@@ -1,392 +1,125 @@
-import React, { useMemo, useState } from 'react';
-// FIX: Corrected import path for types
-import { RoomData, UnitSystem, ManualEquipmentItem } from '../types';
+
+import React from 'react';
+import { RoomData, UnitSystem, ManuallyAddedEquipment } from '../types';
 import {
-  BUDGET_OPTIONS,
-  COMMON_FEATURES,
-  ROOM_SPECIFIC_FEATURES,
-  ROOM_COMPLEXITY_OPTIONS,
-  SCALE_SPECIFIC_FEATURES,
-  CONTROL_SYSTEM_OPTIONS,
-  NETWORK_CONNECTION_OPTIONS,
-  CONTROL_WIRING_OPTIONS,
-  POWER_CONSIDERATIONS,
-  ENVIRONMENTAL_CONSIDERATIONS,
-  NETWORK_SWITCH_MODELS,
-  IP_ADDRESSING_SCHEMES,
-  VLAN_CONFIGURATIONS,
+    WALL_CONSTRUCTION_OPTIONS,
+    CONTAINMENT_OPTIONS,
+    AUDIO_SPEAKER_LAYOUT_OPTIONS,
+    AUDIO_SYSTEM_TYPE_OPTIONS,
+    AUDIO_USE_CASE_OPTIONS,
 } from '../constants';
-import Tabs from './Tabs';
-import VisualRoomPlanner from './VisualRoomPlanner'; // Import the new visual planner
+import { TrashIcon } from './Icons';
 
 interface QuestionnaireFormProps {
-  formData: RoomData;
-  onChange: (data: RoomData) => void;
-  unitSystem: UnitSystem;
+    room: RoomData;
+    onUpdate: (updatedRoom: RoomData) => void;
+    unitSystem: UnitSystem;
 }
 
-const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ formData, onChange, unitSystem }) => {
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const showAdvancedAudio = useMemo(() => 
-    ['High', 'Complex / Multi-Zone'].includes(formData.roomComplexity),
-    [formData.roomComplexity]
-  );
-
-  const validateField = (name: string, value: any): string => {
-    switch (name) {
-      case 'roomName':
-        return String(value).trim().length > 0 ? '' : 'Room Name is required.';
-      case 'primaryUse':
-        return String(value).trim().length > 0 ? '' : 'Primary Use Case is required.';
-      case 'length':
-      case 'width':
-      case 'height':
-      case 'maxParticipants':
-      case 'maxDisplays':
-        return Number(value) > 0 ? '' : 'Must be a positive number.';
-      default:
-        return '';
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const isNumber = type === 'number';
-    const processedValue = isNumber ? Number(value) : value;
-
-    setErrors(prev => ({ ...prev, [name]: validateField(name, processedValue) }));
+const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, unitSystem }) => {
     
-    if (name === 'roomComplexity') {
-      const newRoomType = formData.roomType;
-      const newRoomComplexity = value;
-      const newAvailableFeatures = [...new Set([...COMMON_FEATURES, ...(ROOM_SPECIFIC_FEATURES[newRoomType] || []), ...(SCALE_SPECIFIC_FEATURES[newRoomComplexity] || [])])];
-      onChange({
-        ...formData,
-        [name]: value,
-        features: formData.features.filter(f => newAvailableFeatures.includes(f)),
-      });
-    } else {
-      onChange({ ...formData, [name]: processedValue });
-    }
-  };
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        onUpdate({ ...room, [name]: value });
+    };
 
-  const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const numValue = Number(value) || 0;
+    const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        onUpdate({
+            ...room,
+            dimensions: {
+                ...room.dimensions,
+                length: room.dimensions?.length || 0,
+                width: room.dimensions?.width || 0,
+                height: room.dimensions?.height || 0,
+                [name]: Number(value) || 0,
+            },
+        });
+    };
 
-    setErrors(prev => ({ ...prev, [name]: validateField(name, numValue) }));
+    const handleAudioUseCaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value, checked } = e.target;
+        const currentUseCases = room.audioUseCases || [];
+        const newUseCases = checked
+            ? [...currentUseCases, value]
+            : currentUseCases.filter(c => c !== value);
+        onUpdate({ ...room, audioUseCases: newUseCases });
+    };
 
-    onChange({
-      ...formData,
-      roomDimensions: { ...formData.roomDimensions, [name]: numValue },
-    });
-  };
-  
-  const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    onChange({ ...formData, features: checked ? [...formData.features, value] : formData.features.filter(f => f !== value) });
-  };
-    
-  const handleKVMChange = (needsKVM: boolean) => {
-    const isCurrentlyEnabled = formData.features.includes('KVM Control');
-    if (needsKVM && !isCurrentlyEnabled) {
-        onChange({ ...formData, features: [...formData.features, 'KVM Control'] });
-    } else if (!needsKVM && isCurrentlyEnabled) {
-        onChange({ ...formData, features: formData.features.filter(f => f !== 'KVM Control') });
-    }
-  };
+    const handleRemoveManualItem = (skuToRemove: string) => {
+        const updatedEquipment = (room.manuallyAddedEquipment || []).filter(item => item.sku !== skuToRemove);
+        onUpdate({ ...room, manuallyAddedEquipment: updatedEquipment });
+    };
 
-  const handleManualEquipmentChange = (index: number, newQuantity: number) => {
-    const updatedEquipment = [...formData.manuallyAddedEquipment];
-    updatedEquipment[index].quantity = Math.max(1, newQuantity); // Ensure quantity is at least 1
-    onChange({ ...formData, manuallyAddedEquipment: updatedEquipment });
-  };
-
-  const handleRemoveManualItem = (index: number) => {
-    const updatedEquipment = formData.manuallyAddedEquipment.filter((_, i) => i !== index);
-    onChange({ ...formData, manuallyAddedEquipment: updatedEquipment });
-  };
-
-  const availableFeatures = useMemo(() => {
-    const specificRoom = ROOM_SPECIFIC_FEATURES[formData.roomType] || [];
-    const specificScale = SCALE_SPECIFIC_FEATURES[formData.roomComplexity] || [];
-    const specialFeatures = ['KVM Control', 'Wireless Presentation', 'Guest Wired Input', 'BYOM (Bring Your Own Meeting)'];
-    return [...new Set([...COMMON_FEATURES, ...specificRoom, ...specificScale, ...formData.features])].filter(f => !specialFeatures.includes(f)).sort();
-  }, [formData.roomType, formData.roomComplexity, formData.features]);
-
-  const distanceUnit = unitSystem === 'imperial' ? 'ft' : 'm';
-
-  const TABS = [
-    {
-      label: 'Room Setup',
-      content: (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="roomName" className="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
-              <input type="text" name="roomName" value={formData.roomName} onChange={handleChange} className={`w-full p-2 border ${errors.roomName ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., Executive Boardroom"/>
-              {errors.roomName && <p className="text-xs text-red-600 mt-1">{errors.roomName}</p>}
-            </div>
-            <div><label htmlFor="roomType" className="block text-sm font-medium text-gray-700 mb-1">Room Type</label><div className="w-full p-2 border border-gray-200 rounded-md bg-gray-100 text-gray-700 font-medium cursor-not-allowed">{formData.roomType}</div></div>
-          </div>
-          <div className="space-y-4 p-4 bg-gray-50/50 border rounded-md">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Room Size & Scale</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-1">{`Length (${distanceUnit})`}</label>
-                  <input type="number" name="length" value={formData.roomDimensions.length} onChange={handleDimensionChange} className={`w-full p-2 border ${errors.length ? 'border-red-500' : 'border-gray-300'} rounded-md`}/>
-                  {errors.length && <p className="text-xs text-red-600 mt-1">{errors.length}</p>}
-                </div>
-                <div>
-                  <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-1">{`Width (${distanceUnit})`}</label>
-                  <input type="number" name="width" value={formData.roomDimensions.width} onChange={handleDimensionChange} className={`w-full p-2 border ${errors.width ? 'border-red-500' : 'border-gray-300'} rounded-md`}/>
-                  {errors.width && <p className="text-xs text-red-600 mt-1">{errors.width}</p>}
-                </div>
-                <div>
-                  <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">{`Height (${distanceUnit})`}</label>
-                  <input type="number" name="height" value={formData.roomDimensions.height} onChange={handleDimensionChange} className={`w-full p-2 border ${errors.height ? 'border-red-500' : 'border-gray-300'} rounded-md`}/>
-                  {errors.height && <p className="text-xs text-red-600 mt-1">{errors.height}</p>}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Room Complexity</label>
-                <div className="flex flex-wrap gap-2">
-                    {ROOM_COMPLEXITY_OPTIONS.map(opt => (
-                        <label key={opt} className="cursor-pointer">
-                            <input type="radio" name="roomComplexity" value={opt} checked={formData.roomComplexity === opt} onChange={handleChange} className="sr-only peer" />
-                            <div className="px-3 py-2 border rounded-md text-sm font-medium transition-colors bg-white text-gray-700 border-gray-300 peer-checked:bg-[#008A3A] peer-checked:text-white peer-checked:border-[#008A3A]">{opt}</div>
-                        </label>
-                    ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <label htmlFor="primaryUse" className="block text-sm font-medium text-gray-700 mb-1">Primary Use Case</label>
-            <input type="text" name="primaryUse" value={formData.primaryUse} onChange={handleChange} className={`w-full p-2 border ${errors.primaryUse ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., Video conferencing with clients"/>
-            {errors.primaryUse && <p className="text-xs text-red-600 mt-1">{errors.primaryUse}</p>}
-          </div>
-          <div>
-            <label htmlFor="functionalityStatement" className="block text-sm font-medium text-gray-700 mb-1">Functionality Statement</label>
-            <textarea name="functionalityStatement" id="functionalityStatement" value={formData.functionalityStatement} onChange={handleChange} rows={2} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., A simple presentation room with a single display and wired laptop input."/>
-            <p className="text-xs text-gray-500 mt-1">A brief, client-facing summary of what this room is for. The AI will generate a starting point for you.</p>
-          </div>
-          <div className="space-y-4 p-4 bg-gray-50/50 border rounded-md">
-            <h3 className="text-lg font-semibold text-gray-700">Room Capacity</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="maxParticipants" className="block text-sm font-medium text-gray-700 mb-1">Max Participants</label>
-                <input type="number" name="maxParticipants" id="maxParticipants" value={formData.maxParticipants} onChange={handleChange} min="1" className={`w-full p-2 border ${errors.maxParticipants ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., 12"/>
-                {errors.maxParticipants && <p className="text-xs text-red-600 mt-1">{errors.maxParticipants}</p>}
-              </div>
-              <div>
-                <label htmlFor="maxDisplays" className="block text-sm font-medium text-gray-700 mb-1">Max Displays</label>
-                <input type="number" name="maxDisplays" id="maxDisplays" value={formData.maxDisplays} onChange={handleChange} min="1" className={`w-full p-2 border ${errors.maxDisplays ? 'border-red-500' : 'border-gray-300'} rounded-md`} placeholder="e.g., 2"/>
-                {errors.maxDisplays && <p className="text-xs text-red-600 mt-1">{errors.maxDisplays}</p>}
-              </div>
-            </div>
-          </div>
+    const renderField = (label: string, name: string, value: string | number, onChange: (e: React.ChangeEvent<any>) => void, type = 'text', options?: {value: string; label: string}[]) => (
+        <div>
+            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+            {type === 'select' ? (
+                <select id={name} name={name} value={value} onChange={onChange} className="w-full p-2 border border-gray-300 rounded-md">
+                    {options?.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                </select>
+            ) : (
+                <input id={name} name={name} type={type} value={value} onChange={onChange} className="w-full p-2 border border-gray-300 rounded-md" />
+            )}
         </div>
-      ),
-    },
-    {
-      label: 'Visual Planner',
-      content: (
-        <VisualRoomPlanner 
-            roomData={formData}
-            onChange={onChange}
-            unitSystem={unitSystem}
-        />
-      ),
-    },
-    {
-      label: 'Connectivity & Control',
-      content: (
-           <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">KVM Control</h3>
-                <p className="text-sm text-gray-500 mb-3">Does this room require KVM (Keyboard, Video, Mouse) control of a remote PC? This allows a user to control a computer in the rack or another room using a local keyboard and mouse.</p>
-                <div className="flex flex-wrap gap-2">
-                    <label className="cursor-pointer">
-                        <input type="radio" name="kvm" value="Yes" checked={formData.features.includes('KVM Control')} onChange={() => handleKVMChange(true)} className="sr-only peer" />
-                        <div className="px-4 py-2 border rounded-md text-sm font-medium transition-colors bg-white text-gray-700 border-gray-300 peer-checked:bg-[#008A3A] peer-checked:text-white peer-checked:border-[#008A3A]">Yes</div>
-                    </label>
-                    <label className="cursor-pointer">
-                        <input type="radio" name="kvm" value="No" checked={!formData.features.includes('KVM Control')} onChange={() => handleKVMChange(false)} className="sr-only peer" />
-                        <div className="px-4 py-2 border rounded-md text-sm font-medium transition-colors bg-white text-gray-700 border-gray-300 peer-checked:bg-[#008A3A] peer-checked:text-white peer-checked:border-[#008A3A]">No</div>
-                    </label>
+    );
+
+    return (
+        <div className="p-1 space-y-6">
+            <section className="bg-white p-4 border rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Room Dimensions ({unitSystem === 'imperial' ? 'ft' : 'm'})</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {renderField('Length', 'length', room.dimensions?.length || 0, handleDimensionChange, 'number')}
+                    {renderField('Width', 'width', room.dimensions?.width || 0, handleDimensionChange, 'number')}
+                    {renderField('Height', 'height', room.dimensions?.height || 0, handleDimensionChange, 'number')}
                 </div>
-              </div>
-              <hr />
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">BYOD (Bring Your Own Device)</h3>
-                <p className="text-sm text-gray-500 mb-3">How will guests or ad-hoc users present their content or run meetings?</p>
-                <div className="flex flex-col space-y-3">
-                    <label className="flex items-start space-x-3 text-sm">
-                        <input type="checkbox" value="Wireless Presentation" checked={formData.features.includes('Wireless Presentation')} onChange={handleFeatureChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] mt-0.5 flex-shrink-0"/>
-                        <div>
-                            <strong className="font-semibold text-gray-800">Wireless Presentation</strong>
-                            <span className="text-gray-600 block">Users can connect and share content from their laptops or mobile devices wirelessly (e.g., AirPlay, Miracast).</span>
-                        </div>
-                    </label>
-                    <label className="flex items-start space-x-3 text-sm">
-                        <input type="checkbox" value="Guest Wired Input" checked={formData.features.includes('Guest Wired Input')} onChange={handleFeatureChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] mt-0.5 flex-shrink-0"/>
-                        <div>
-                            <strong className="font-semibold text-gray-800">Guest Wired Input</strong>
-                            <span className="text-gray-600 block">A simple, reliable HDMI/USB-C cable is available at the table or lectern for guest connectivity.</span>
-                        </div>
-                    </label>
-                    <label className="flex items-start space-x-3 text-sm">
-                        <input type="checkbox" value="BYOM (Bring Your Own Meeting)" checked={formData.features.includes('BYOM (Bring Your Own Meeting)')} onChange={handleFeatureChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] mt-0.5 flex-shrink-0"/>
-                        <div>
-                            <strong className="font-semibold text-gray-800">BYOM (Bring Your Own Meeting)</strong>
-                            <span className="text-gray-600 block">Users can connect their laptop via a single cable (typically USB-C) to use the room's camera, microphones, and speakers for their own video conference (e.g., Teams, Zoom).</span>
-                        </div>
-                    </label>
-                </div>
-              </div>
-              <hr />
-              <div><h3 className="text-lg font-semibold text-gray-700 mb-2">Additional Features</h3><div className="grid grid-cols-2 sm:grid-cols-3 gap-4">{availableFeatures.map(feature => (<label key={feature} className="flex items-center space-x-2 text-sm"><input type="checkbox" value={feature} checked={formData.features.includes(feature)} onChange={handleFeatureChange} className="rounded text-[#008A3A] focus:ring-[#00732f]"/><span>{feature}</span></label>))}</div></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div><label htmlFor="preferredControlSystem" className="block text-sm font-medium text-gray-700 mb-1">Preferred or Existing Control System</label><select name="preferredControlSystem" value={formData.preferredControlSystem} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">{CONTROL_SYSTEM_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select></div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Budget</label>
-                    <div className="flex flex-wrap gap-2">
-                        {BUDGET_OPTIONS.map(opt => (
-                            <label key={opt} className="cursor-pointer">
-                                <input type="radio" name="budget" value={opt} checked={formData.budget === opt} onChange={handleChange} className="sr-only peer" />
-                                <div className="px-3 py-2 border rounded-md text-sm font-medium transition-colors bg-white text-gray-700 border-gray-300 peer-checked:bg-[#008A3A] peer-checked:text-white peer-checked:border-[#008A3A]">{opt}</div>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-              </div>
-              <div><label htmlFor="additionalInfo" className="block text-sm font-medium text-gray-700 mb-1">Additional Information</label><textarea name="additionalInfo" value={formData.additionalInfo} onChange={handleChange} rows={4} className="w-full p-2 border border-gray-300 rounded-md" placeholder="Any other notes, constraints, or preferences..."></textarea></div>
-           </div>
-      )
-    },
-    {
-      label: 'Infrastructure',
-      content: (
-        <div className="space-y-6">
-          <div className="p-4 bg-gray-50/50 border rounded-md">
-            <h3 className="text-lg font-semibold text-gray-700">Manually Added Equipment</h3>
-            <p className="text-xs text-gray-500 mt-1 mb-2">Products added via the "Product Finder" appear here. The AI will include them in the final proposal.</p>
-            <div className="space-y-2 mt-3">
-              {(formData.manuallyAddedEquipment || []).length > 0 ? (
-                formData.manuallyAddedEquipment.map((item, index) => (
-                  <div key={item.sku} className="flex items-center justify-between bg-white p-2 border rounded-md">
+            </section>
+
+            <section className="bg-white p-4 border rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Construction & Audio</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   {renderField('Wall Construction', 'wallConstruction', room.wallConstruction || 'drywall', handleInputChange, 'select', WALL_CONSTRUCTION_OPTIONS)}
+                   {renderField('Cable Containment', 'containment', room.containment || 'none', handleInputChange, 'select', CONTAINMENT_OPTIONS)}
+                   {renderField('Speaker Layout', 'audioLayout', room.audioLayout || 'none', handleInputChange, 'select', AUDIO_SPEAKER_LAYOUT_OPTIONS)}
+                   {renderField('Audio System Type', 'audioSystemType', room.audioSystemType || 'none', handleInputChange, 'select', AUDIO_SYSTEM_TYPE_OPTIONS)}
                     <div>
-                      <p className="font-medium text-sm text-gray-800">{item.name}</p>
-                      <p className="text-xs text-gray-500">{item.sku}</p>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Audio Use Cases</label>
+                        <div className="space-y-1 mt-2">
+                            {AUDIO_USE_CASE_OPTIONS.map(opt => (
+                                <label key={opt.value} className="flex items-center space-x-2 text-sm">
+                                    <input type="checkbox" value={opt.value} checked={(room.audioUseCases || []).includes(opt.value)} onChange={handleAudioUseCaseChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] border-gray-300" />
+                                    <span>{opt.label}</span>
+                                </label>
+                            ))}
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <input 
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => handleManualEquipmentChange(index, Number(e.target.value))}
-                        min="1"
-                        className="w-16 p-1 border border-gray-300 rounded-md text-center"
-                        aria-label={`Quantity for ${item.name}`}
-                      />
-                      <button onClick={() => handleRemoveManualItem(index)} className="text-red-500 hover:text-red-700 text-lg" title="Remove Item">&times;</button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500 text-center py-2">No manual equipment added yet.</p>
-              )}
-            </div>
-          </div>
-          <div className="p-4 bg-gray-50/50 border rounded-md">
-            <h3 className="text-lg font-semibold text-gray-700">Cabling & Site Notes</h3>
-            <p className="text-xs text-gray-500 mt-1 mb-2">Describe the physical cable pathways and any known infrastructure.</p>
-            <textarea 
-                name="cablingInfrastructureNotes" 
-                id="cablingInfrastructureNotes" 
-                value={formData.cablingInfrastructureNotes} 
-                onChange={handleChange} 
-                rows={3} 
-                className="w-full p-2 border border-gray-300 rounded-md" 
-                placeholder="e.g., Existing floor box under the main table with 2x power and 2x data. Conduit runs from floor box to rack location. Ceiling is solid, so wall drops are preferred for displays."
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="networkConnection" className="block text-sm font-medium text-gray-700 mb-1">Primary Network Connection</label>
-                <select name="networkConnection" value={formData.networkConnection} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                    {NETWORK_CONNECTION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="controlWiring" className="block text-sm font-medium text-gray-700 mb-1">Control System Wiring</label>
-                <select name="controlWiring" value={formData.controlWiring} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                    {CONTROL_WIRING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </select>
-              </div>
-          </div>
-           <div className="p-4 bg-gray-50/50 border rounded-md">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">AV over IP Settings</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                     <div>
-                        <label htmlFor="networkSwitchModel" className="block text-sm font-medium text-gray-700 mb-1">Network Switch Model</label>
-                        <select name="networkSwitchModel" value={formData.networkSwitchModel || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                            <option value="">-- Select --</option>
-                            {NETWORK_SWITCH_MODELS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                        </select>
-                      </div>
-                      <div>
-                        <label htmlFor="ipAddressingScheme" className="block text-sm font-medium text-gray-700 mb-1">IP Addressing Scheme</label>
-                        <select name="ipAddressingScheme" value={formData.ipAddressingScheme || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                           <option value="">-- Select --</option>
-                           {IP_ADDRESSING_SCHEMES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                        </select>
-                      </div>
-                       <div>
-                        <label htmlFor="vlanConfiguration" className="block text-sm font-medium text-gray-700 mb-1">VLAN Configuration</label>
-                        <select name="vlanConfiguration" value={formData.vlanConfiguration || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                           <option value="">-- Select --</option>
-                           {VLAN_CONFIGURATIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                        </select>
-                      </div>
                 </div>
-           </div>
-          <div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Power & Environmental</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="powerConsiderations" className="block text-sm font-medium text-gray-700 mb-1">Power Considerations</label>
-                    <select name="powerConsiderations" value={formData.powerConsiderations} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                        {POWER_CONSIDERATIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="environmentalConsiderations" className="block text-sm font-medium text-gray-700 mb-1">Environmental Factors</label>
-                    <select name="environmentalConsiderations" value={formData.environmentalConsiderations} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md">
-                        {ENVIRONMENTAL_CONSIDERATIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                    </select>
-                  </div>
-              </div>
-          </div>
-           {showAdvancedAudio && (
-            <div className="animate-fade-in pt-2">
-              <label htmlFor="audioCoverageNotes" className="block text-sm font-medium text-gray-700 mb-1">Audio Coverage Zones</label>
-               <p className="text-xs text-gray-500 mb-2">For this complex space, describe the different areas that need microphone pickup or speaker coverage.</p>
-              <textarea name="audioCoverageNotes" value={formData.audioCoverageNotes} onChange={handleChange} rows={3} className="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., Main seating area, presenter stage, overflow lobby..."></textarea>
-            </div>
-          )}
+            </section>
+            
+            {(room.manuallyAddedEquipment && room.manuallyAddedEquipment.length > 0) && (
+                <section className="bg-white p-4 border rounded-lg">
+                    <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Manually Added Equipment</h3>
+                    <ul className="divide-y">
+                        {room.manuallyAddedEquipment.map((item: ManuallyAddedEquipment) => (
+                            <li key={item.sku} className="py-2 flex justify-between items-center group">
+                                <div>
+                                    <p className="font-medium text-gray-700">{item.name}</p>
+                                    <p className="text-sm text-gray-500">{item.sku} (Qty: {item.quantity})</p>
+                                </div>
+                                <button 
+                                    onClick={() => handleRemoveManualItem(item.sku)} 
+                                    className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    title="Remove Item"
+                                >
+                                    <TrashIcon />
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
         </div>
-      )
-    },
-  ];
-
-  return (
-    <div className="bg-white p-6 rounded-lg animate-fade-in h-full flex flex-col">
-        <Tabs tabs={TABS} />
-    </div>
-  );
+    );
 };
 
 export default QuestionnaireForm;

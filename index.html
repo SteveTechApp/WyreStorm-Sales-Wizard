@@ -18,6 +18,16 @@
   }
 }
 </script>
+<style>
+  /* Ensure scrollbar-hide works across browsers */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+</style>
 </head>
   <body class="bg-gray-50">
     <div id="root"></div>

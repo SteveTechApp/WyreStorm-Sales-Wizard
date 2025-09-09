@@ -1,3 +1,4 @@
+
 import React, { useEffect, useId } from 'react';
 
 // Mermaid is loaded from CDN, so we declare it as a global variable for TypeScript

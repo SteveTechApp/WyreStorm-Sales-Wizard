@@ -1,58 +1,66 @@
+
 import React from 'react';
 import { RoomData } from '../types';
+import TierTooltip from './TierTooltip';
 
 interface RoomCardProps {
-    room: RoomData;
-    isActive: boolean;
-    onSelect: () => void;
-    onReconfigure: () => void;
-    onRemove: () => void;
+  room: RoomData;
+  isActive: boolean;
+  onSelect: () => void;
+  onReconfigure: () => void;
+  onRemove: () => void;
 }
-
-const TIER_STYLES: Record<string, { bg: string; text: string; border: string; }> = {
-    'Bronze': { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-400' },
-    'Silver': { bg: 'bg-gray-200', text: 'text-gray-800', border: 'border-gray-400' },
-    'Gold': { bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-400' },
-};
 
 const RoomCard: React.FC<RoomCardProps> = ({ room, isActive, onSelect, onReconfigure, onRemove }) => {
-    const tierStyle = TIER_STYLES[room.designTier || 'Silver'] || TIER_STYLES.Silver;
+  const handleRemoveClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent onSelect from firing when deleting
+    onRemove();
+  };
 
-    const handleRemove = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onRemove();
-    };
-
-    const handleReconfigure = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onReconfigure();
-    };
-
-    const isPlaceholder = !room.functionalityStatement;
-    const buttonText = isPlaceholder ? 'Configure Room' : 'Re-Configure';
-
-
-    return (
-        <div 
-            className={`bg-white p-4 rounded-lg border shadow-sm cursor-pointer hover:shadow-lg transition-all ${isActive ? 'border-2 border-green-500 ring-2 ring-green-200' : 'border-gray-200 hover:border-green-300'}`}
-            onClick={onSelect}
-        >
-            <div className="flex justify-between items-start">
-                <div>
-                    <p className="font-bold text-gray-800 truncate">{room.roomName}</p>
-                    <p className="text-sm text-gray-500">{room.roomType}</p>
-                </div>
-                {room.designTier && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${tierStyle.bg} ${tierStyle.text} ${tierStyle.border}`}>{room.designTier}</span>}
-            </div>
-            <p className="text-xs text-gray-600 mt-2 italic h-12 overflow-hidden">
-                {room.functionalityStatement || 'This room has not been configured yet. Click below to launch the AI Room Wizard.'}
-            </p>
-            <div className="mt-3 pt-3 border-t flex justify-between">
-                <button onClick={handleReconfigure} className="text-xs font-semibold text-blue-600 hover:underline">{buttonText}</button>
-                <button onClick={handleRemove} className="text-xs font-semibold text-red-600 hover:underline">Remove</button>
-            </div>
+  return (
+    <div
+      onClick={onSelect}
+      className={`p-3 border rounded-lg cursor-pointer transition-all group relative ${
+        isActive
+          ? 'bg-green-50 border-green-400 shadow-md'
+          : 'bg-white border-gray-200 hover:border-gray-400 hover:shadow-sm'
+      }`}
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <h4 className="font-bold text-gray-800">{room.roomName}</h4>
+          <p className="text-sm text-gray-500">{room.roomType}</p>
         </div>
-    );
-}
+        <TierTooltip tier={room.designTier}>
+          <span
+            className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${
+              room.designTier === 'Bronze' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
+              room.designTier === 'Silver' ? 'bg-slate-200 text-slate-800 border-slate-400' :
+              'bg-amber-100 text-amber-800 border-amber-300'
+            }`}
+          >
+            {room.designTier}
+          </span>
+        </TierTooltip>
+      </div>
+      <div className="mt-3 flex justify-between items-center text-xs">
+        <button
+          onClick={(e) => { e.stopPropagation(); onReconfigure(); }}
+          className="font-medium text-blue-600 hover:underline"
+        >
+          Reconfigure
+        </button>
+        <span className="text-gray-400">{room.maxParticipants} Participants</span>
+      </div>
+       <button 
+          onClick={handleRemoveClick}
+          className="absolute top-1 right-1 p-1 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+          title="Remove Room"
+        >
+         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+  );
+};
 
 export default RoomCard;

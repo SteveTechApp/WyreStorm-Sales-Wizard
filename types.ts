@@ -1,118 +1,71 @@
-import { v4 as uuidv4 } from 'uuid';
-import { ROOM_DIMENSION_DEFAULTS } from '../constants';
 
 export type UnitSystem = 'imperial' | 'metric';
-export type Currency = 'USD' | 'GBP' | 'EUR';
 
 export interface UserProfile {
-  name: string;
-  company: string;
-  email: string;
-  logoUrl: string;
-  currency: Currency;
-  unitSystem: UnitSystem;
+    name: string;
+    company: string;
+    email: string;
+    logoUrl: string;
+    currency: 'GBP' | 'USD' | 'EUR';
+    unitSystem: UnitSystem;
 }
 
-export interface ProjectData {
-  projectId: string;
-  projectName: string;
-  clientName: string;
-  clientContactName: string;
-  clientContactEmail: string;
-  clientAddress: string;
-  coverImage: string;
-  projectBudget?: number;
-  rooms: RoomData[];
-  lastSaved: string;
+export interface RoomDimensions {
+    length: number;
+    width: number;
+    height: number;
 }
 
-export type IO_Type = 'videoInput' | 'videoOutput' | 'audioInput' | 'audioOutput';
-
-export interface IO_Device {
-  id: string;
-  name: string;
-  type: string;
-  ioType: IO_Type;
-  location: string;
-  distance: number;
-  connectionType: string;
-  cableType: string;
-  terminationPoint: string;
-  notes: string;
-  x?: number;
-  y?: number;
-}
-
-export interface ManualEquipmentItem {
+export interface ManuallyAddedEquipment {
     sku: string;
     name: string;
     quantity: number;
 }
 
 export interface RoomData {
-  id: string;
-  roomName: string;
-  roomType: string;
-  designTier: 'Bronze' | 'Silver' | 'Gold' | string;
-  primaryUse: string;
-  roomDimensions: {
-    length: number;
-    width: number;
-    height: number;
-  };
-  orientation?: 'top' | 'bottom' | 'left' | 'right';
-  maxParticipants: number;
-  maxDisplays: number;
-  functionalityStatement: string;
-  features: string[];
-  videoInputs: IO_Device[];
-  videoOutputs: IO_Device[];
-  audioInputs: IO_Device[];
-  audioOutputs: IO_Device[];
-  roomComplexity: string;
-  budget: string;
-  preferredControlSystem: string;
-  additionalInfo: string;
-  cablingInfrastructureNotes: string;
-  audioCoverageNotes: string;
-  networkConnection: string;
-  controlWiring: string;
-  powerConsiderations: string;
-  environmentalConsiderations: string;
-  networkSwitchModel?: string;
-  ipAddressingScheme?: string;
-  vlanConfiguration?: string;
-  siteRequirements: string[];
-  projectCosts: any[];
-  manuallyAddedEquipment: ManualEquipmentItem[];
+    id: string;
+    roomName: string;
+    roomType: string;
+    designTier: 'Bronze' | 'Silver' | 'Gold';
+    maxParticipants: number;
+    features: string[];
+    functionalityStatement: string;
+    primaryUse?: string;
+    dimensions?: RoomDimensions;
+    wallConstruction?: string;
+    containment?: string;
+    audioLayout?: string;
+    audioSystemType?: string;
+    audioUseCases?: string[];
+    manuallyAddedEquipment?: ManuallyAddedEquipment[];
 }
 
-export interface Proposal {
-  executiveSummary: string;
-  scopeOfWork: string;
-  systemDiagram: StructuredSystemDiagram;
-  equipmentList: EquipmentItem[];
-  installationPlan: InstallationTaskItem[];
-  siteRequirements: string[];
-  pricing: {
-    hardwareDealerTotal: number;
-    hardwareMsrpTotal: number;
-    laborTotal: number;
-    grandTotal: number;
-    currency: Currency;
-    customCostItems: CustomCostItem[];
-  };
+export interface ProjectSetupData {
+    projectName: string;
+    clientName: string;
+    clientContactName?: string;
+    clientContactEmail?: string;
+    clientAddress?: string;
+    projectBudget?: number;
+    coverImage?: string;
+    rooms: Omit<RoomData, 'id'>[];
+}
+
+export interface ProjectData extends Omit<ProjectSetupData, 'rooms'> {
+    projectId: string;
+    lastSaved: string;
+    rooms: RoomData[];
 }
 
 export interface EquipmentItem {
-  sku: string;
-  name: string;
-  quantity: number;
-  dealerPrice: number;
-  dealerTotal: number;
-  msrp: number;
-  msrpTotal: number;
-  isCustom?: boolean;
+    sku: string;
+    name:string;
+    quantity: number;
+    dealerPrice: number;
+    dealerTotal: number;
+    msrp: number;
+    msrpTotal: number;
+    isCustom?: boolean;
 }
 
 export interface InstallationTaskItem {
@@ -128,10 +81,10 @@ export interface CustomCostItem {
     cost: number;
 }
 
-export interface StructuredSystemDiagram {
-    nodes: DiagramNode[];
-    edges: DiagramEdge[];
-    groups: string[];
+export interface Pricing {
+    currency: 'GBP' | 'USD' | 'EUR';
+    customCostItems: CustomCostItem[];
+    // Other pricing fields can be added here
 }
 
 export interface DiagramNode {
@@ -140,59 +93,38 @@ export interface DiagramNode {
     type: string;
     group: string;
 }
-
+  
 export interface DiagramEdge {
     from: string;
     to: string;
-    label: string;
+    label?: string;
     type: 'video' | 'audio' | 'control' | 'usb' | 'network';
+}
+  
+export interface StructuredSystemDiagram {
+    nodes: DiagramNode[];
+    edges: DiagramEdge[];
+    groups: string[];
+}
+
+export interface Proposal {
+    executiveSummary: string;
+    scopeOfWork: string;
+    systemDiagram: StructuredSystemDiagram;
+    equipmentList: EquipmentItem[];
+    installationPlan: InstallationTaskItem[];
+    pricing: Pricing;
+    siteRequirements: string[];
+    furtherResources: string;
 }
 
 export interface RoomWizardAnswers {
     roomName: string;
     participantCount: number;
-    primaryUse: string;
-    displayConfiguration: DisplayConfiguration[];
-    features: string[];
-}
-
-export interface DisplayConfiguration {
-    type: string;
-    quantity: number;
-}
-
-export interface DesignFeedbackItem {
-    type: 'Warning' | 'Suggestion' | 'Opportunity' | 'Financial' | 'Insight';
-    text: string;
-}
-
-export interface SolutionVisualization {
-    solutionTitle: string;
-    solutionPhilosophy: string;
-    heroProducts: string[];
-    simpleDiagram: StructuredSystemDiagram;
-}
-
-export interface SuggestedConfiguration {
-    roomType: string;
-    designTier: 'Bronze' | 'Silver' | 'Gold';
-    summary: string;
-    estimatedCost: string;
-    displayConfiguration: DisplayConfiguration[];
-    features: string[];
-}
-
-export interface RoomTierOption {
-    tier: 'Bronze' | 'Silver' | 'Gold';
-    estimatedCost: number;
-    roomData: Partial<RoomData>;
-    businessJustification?: string;
-}
-
-export interface TieredRoomResponse {
-    bronze: RoomTierOption;
-    silver: RoomTierOption;
-    gold: RoomTierOption;
+    videoInputs: { type: string, count: number }[];
+    videoOutputs: { type: string, count: number }[];
+    audioNeeds: string[];
+    controlNeeds: string[];
 }
 
 export interface Product {
@@ -203,16 +135,13 @@ export interface Product {
     dealerPrice: number;
     msrp: number;
     tags: string[];
-    compatibleReceivers?: string[];
-    kitContents?: string[];
-    eol?: boolean;
     connections?: {
         hdmiIn?: number;
-        hdmiOut?: number;
         usbC?: number;
         hdbasetIn?: number;
         hdbasetOut?: number;
-        lanPassThrough?: boolean;
+        hdmiOut?: number;
+        lanPassThrough?: number;
     };
     control?: {
         rs232?: boolean;
@@ -220,15 +149,19 @@ export interface Product {
         cec?: boolean;
     };
     audio?: {
+        dante?: 'software' | 'dedicated';
+        micIn?: boolean;
         analogIn?: number;
         analogOut?: number;
-        micIn?: boolean;
-        dante?: 'dedicated' | 'software' | false;
     };
     avoip?: {
-        series?: 100 | 150 | 400 | 500 | 600;
-        multiview?: 'native' | 'requires_switcher' | false;
+        series: string | number;
+        multiview?: 'native' | 'requires_switcher';
     };
+    kitContents?: string[];
+    compatibleReceivers?: string[];
+    sygmaCloud?: boolean;
+    eol?: boolean;
 }
 
 export interface InstallationTask {
@@ -238,37 +171,14 @@ export interface InstallationTask {
     estimatedHours: number;
 }
 
-export const createDefaultRoomData = (roomType: string, roomName: string): RoomData => {
-    const dimensions = ROOM_DIMENSION_DEFAULTS[roomType] || { length: 20, width: 15, height: 9 };
-    
-    return {
-        id: uuidv4(),
-        roomName: roomName,
-        roomType: roomType,
-        designTier: 'Silver',
-        primaryUse: 'General Presentation',
-        roomDimensions: dimensions,
-        orientation: 'top',
-        maxParticipants: 12,
-        maxDisplays: 1,
-        functionalityStatement: '',
-        features: [],
-        videoInputs: [],
-        videoOutputs: [],
-        audioInputs: [],
-        audioOutputs: [],
-        roomComplexity: 'Standard',
-        budget: 'Mid-Range',
-        preferredControlSystem: 'Any',
-        additionalInfo: '',
-        cablingInfrastructureNotes: 'Conduit from table to rack location is assumed.',
-        audioCoverageNotes: '',
-        networkConnection: 'Standard LAN',
-        controlWiring: 'Standard CAT6',
-        powerConsiderations: 'Standard Outlets',
-        environmentalConsiderations: 'Standard Office',
-        siteRequirements: [],
-        projectCosts: [],
-        manuallyAddedEquipment: [],
-    };
-};
+export interface DesignFeedbackItem {
+    type: 'Warning' | 'Suggestion' | 'Opportunity' | 'Insight' | 'Financial';
+    text: string;
+}
+
+export interface SolutionVisualization {
+    solutionTitle: string;
+    solutionPhilosophy: string;
+    heroProducts: string[];
+    simpleDiagram: StructuredSystemDiagram;
+}

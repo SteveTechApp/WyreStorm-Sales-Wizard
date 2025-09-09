@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useRef, useState, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // FIX: Corrected import path for types
@@ -222,6 +223,8 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
                 )}
                 
                 {editableProposal.siteRequirements && editableProposal.siteRequirements.length > 0 && renderSection("Project Prerequisites", <ul className="list-disc list-inside space-y-2">{editableProposal.siteRequirements.map(req => <li key={req}>{req}</li>)}</ul>)}
+                
+                {editableProposal.furtherResources && renderSection("Further Resources", <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: editableProposal.furtherResources }} />)}
 
                 <div className="p-6 bg-white rounded-lg border border-gray-200">
                     <h2 className="text-2xl font-bold text-[#008A3A] border-b-2 border-gray-200 pb-2 mb-4">Project Investment Summary</h2>

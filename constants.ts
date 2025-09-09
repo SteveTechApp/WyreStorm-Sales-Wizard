@@ -1,135 +1,78 @@
-// FIX: Corrected import path for types
-import { Currency } from './types';
-
-export const CURRENCY_OPTIONS: Record<Currency, { name: string; symbol: string }> = {
-  'USD': { name: 'US Dollar', symbol: '$' },
-  'GBP': { name: 'British Pound', symbol: '£' },
-  'EUR': { name: 'Euro', symbol: '€' },
-};
-
-export const DESIGN_TIER_INFO = {
-  Bronze: {
-    title: 'Bronze Tier 🥉',
-    focus: 'Core functionality and value.',
-    goal: 'Meets essential requirements reliably and cost-effectively.',
-    hardware: 'Entry-level switchers, all-in-one video bars, basic connectivity.',
-  },
-  Silver: {
-    title: 'Silver Tier 🥈',
-    focus: 'The balanced, recommended standard.',
-    goal: 'Enhances collaboration with features like BYOM and wireless casting.',
-    hardware: 'Matrix switchers, PTZ cameras, multiple mics, USB-C docking.',
-  },
-  Gold: {
-    title: 'Gold Tier 🥇',
-    focus: 'A premium, seamless, future-proofed experience.',
-    goal: 'Creates a high-impact environment that impresses clients and empowers executives.',
-    hardware: 'High-end matrixes with DSPs, AV over IP, advanced control.',
-  },
-};
 
 export const ROOM_TYPES = [
-  'Conference Room',
-  'Huddle Room',
-  'Boardroom',
-  'Classroom',
-  'Auditorium',
-  'Briefing Center',
-  'Operations Center',
+    'Huddle Room',
+    'Conference Room',
+    'Boardroom',
+    'Classroom',
+    'Auditorium',
+    'Briefing Center',
+    'Operations Center',
+    'Hospitality Venue',
+    'Other'
 ];
 
-export const PRIMARY_USE_OPTIONS = [
-    'General Presentation',
-    'Video Conferencing',
-    'Collaboration / Brainstorming',
-    'Training / Lecture',
-    'Command & Control',
-    'Entertainment / Social',
-];
+export const DESIGN_TIER_OPTIONS: ['Bronze', 'Silver', 'Gold'] = ['Bronze', 'Silver', 'Gold'];
 
-export const DISPLAY_TYPE_OPTIONS = [
-    { id: 'display', label: 'Standard Display(s)', defaultName: 'Display' },
-    { id: 'projector', label: 'Projector(s)', defaultName: 'Projector' },
-    { id: 'lcd_videowall', label: 'LCD Video Wall', defaultName: 'Video Wall' },
-    { id: 'led_videowall', label: 'Direct-View LED Wall', defaultName: 'LED Wall' },
-    { id: 'interactive', label: 'Interactive Display(s)', defaultName: 'Interactive Display' },
-    { id: 'confidence', label: 'Confidence/Stage Monitor(s)', defaultName: 'Confidence Monitor' },
-    { id: 'repeater', label: 'Repeater/Overflow Display(s)', defaultName: 'Repeater Display' },
-    { id: 'external', label: 'External Feed (Record/Stream)', defaultName: 'External Feed' },
-];
-
-export const SUGGESTED_TIERS: Record<string, string> = {
-  'Conference Room': 'Silver',
-  'Huddle Room': 'Bronze',
-  'Boardroom': 'Gold',
-  'Classroom': 'Silver',
-  'Auditorium': 'Gold',
-  'Briefing Center': 'Gold',
-  'Operations Center': 'Gold',
+export const DESIGN_TIER_INFO = {
+    Bronze: {
+        title: 'Bronze Tier',
+        focus: 'Core functionality and reliability.',
+        goal: 'Meet the essential requirements with cost-effective, straightforward solutions.',
+        hardware: 'Typically uses all-in-one devices or simple switchers.'
+    },
+    Silver: {
+        title: 'Silver Tier',
+        focus: 'Enhanced flexibility and user experience.',
+        goal: 'Provide a robust feature set with more connectivity and control options.',
+        hardware: 'Often involves matrix switchers, HDBaseT, and professional cameras/audio.'
+    },
+    Gold: {
+        title: 'Gold Tier',
+        focus: 'Maximum performance and scalability.',
+        goal: 'Deliver a no-compromise solution using the best available technology like AVoIP.',
+        hardware: 'Network-based distribution (AVoIP), advanced control, and integrated audio (Dante).'
+    }
 };
 
-export const DESIGN_TIER_OPTIONS = ['Bronze', 'Silver', 'Gold'];
-
-export const BUDGET_OPTIONS = ['Economy', 'Mid-Range', 'High-End', 'Cost-No-Object'];
-
-export const ROOM_COMPLEXITY_OPTIONS = ['Small / Simple', 'Standard', 'High', 'Complex / Multi-Zone'];
-
-export const COMMON_FEATURES = [
-  'Video Conferencing',
-  'Audio Conferencing',
-  'Wireless Presentation',
-  'Digital Signage',
-  'Room Scheduling',
-  'Guest Wired Input',
-  'BYOM (Bring Your Own Meeting)',
+export const WALL_CONSTRUCTION_OPTIONS = [
+    { value: 'drywall', label: 'Drywall / Gypsum' },
+    { value: 'concrete', label: 'Concrete Block' },
+    { value: 'brick', label: 'Brick' },
+    { value: 'glass', label: 'Glass Wall' },
+    { value: 'other', label: 'Other / Mixed' }
 ];
 
-export const ROOM_SPECIFIC_FEATURES: Record<string, string[]> = {
-  'Conference Room': ['Dual Displays', 'Table Microphones'],
-  'Huddle Room': ['All-in-One Video Bar'],
-  'Boardroom': ['Motorized Shades', 'Lighting Control', 'Advanced Audio Processing'],
-  'Classroom': ['Interactive Display', 'Lecture Capture', 'Assistive Listening'],
-  'Auditorium': ['Projection System', 'Live Sound Reinforcement', 'Stage Lighting'],
-};
-
-export const SCALE_SPECIFIC_FEATURES: Record<string, string[]> = {
-  'High': ['Video Wall', 'DSP for Audio', 'Advanced Control'],
-  'Complex / Multi-Zone': ['Matrix Switching', 'Multi-Zone Audio', 'Room Combining'],
-};
-
-export const CONTROL_SYSTEM_OPTIONS = [
-  'Any',
-  'Crestron',
-  'AMX',
-  'Extron',
-  'Control4',
-  'Q-SYS',
+export const CONTAINMENT_OPTIONS = [
+    { value: 'none', label: 'None (surface mount)' },
+    { value: 'conduit', label: 'Conduit' },
+    { value: 'raceway', label: 'Surface Raceway / Trunking' },
+    { value: 'in-wall', label: 'In-Wall Rated' },
 ];
 
-export const VIDEO_INPUT_TYPES = ['Laptop (HDMI)', 'Laptop (USB-C)', 'Resident PC', 'Document Camera', 'PTZ Camera', 'Wireless Casting'];
-export const VIDEO_OUTPUT_TYPES = ['Display', 'Projector', 'Confidence Monitor', 'Stream/Record'];
-export const AUDIO_INPUT_TYPES = ['Table Microphone', 'Ceiling Microphone', 'Wireless Lavalier', 'Program Audio'];
-export const AUDIO_OUTPUT_TYPES = ['Ceiling Speaker', 'Wall-mounted Speaker', 'Soundbar', 'Assistive Listening'];
+export const AUDIO_SPEAKER_LAYOUT_OPTIONS = [
+    { value: 'none', label: 'None / Display Speakers Only' },
+    { value: 'stereo', label: 'Stereo (2.0)' },
+    { value: 'ceiling', label: 'In-Ceiling Distributed' },
+    { value: 'soundbar', label: 'Soundbar' },
+    { value: 'surround', label: 'Surround Sound (5.1 or greater)' },
+];
 
-export const DEVICE_LOCATION_OPTIONS = ['Table/Desk', 'Lectern', 'Local Rack', 'Central Rack', 'Ceiling Mounted', 'Wall Mounted', 'Floor Box'];
-export const CABLE_TYPES = ['CAT6a Shielded', 'CAT6 Unshielded', 'HAOC HDMI 2.1', 'USB-C 3.2', 'Speaker Wire'];
-export const TERMINATION_POINTS = ['Wall Plate', 'Floor Box', 'Table Grommet', 'Ceiling Box', 'Direct to Device'];
-export const CONNECTION_TYPES = ['HDMI', 'USB-C', 'HDBaseT', 'AV over IP', 'Analog Audio'];
-export const NETWORK_CONNECTION_OPTIONS = ['Standard LAN', 'Dedicated AV LAN', 'Fiber Uplink'];
-export const CONTROL_WIRING_OPTIONS = ['Standard CAT6', 'RS-232', 'Cresnet/LAN'];
-export const POWER_CONSIDERATIONS = ['Standard Outlets', 'Dedicated Circuit', 'UPS Backup'];
-export const ENVIRONMENTAL_CONSIDERATIONS = ['Standard Office', 'High Ambient Light', 'Acoustically Treated'];
+export const AUDIO_SYSTEM_TYPE_OPTIONS = [
+    { value: 'none', label: 'Not Applicable' },
+    { value: 'integrated', label: 'Integrated (e.g., soundbar, all-in-one)' },
+    { value: 'dsp', label: 'Dedicated DSP with Amps' },
+    { value: 'avoip', label: 'Networked Audio (Dante/AVB)' },
+];
 
-export const NETWORK_SWITCH_MODELS = ['WyreStorm NHD Series', 'Cisco Catalyst Series', 'Netgear M4250 Series', 'Client Provided Switch', 'Unmanaged Switch (Not Recommended)'];
-export const IP_ADDRESSING_SCHEMES = ['DHCP', 'Static IP', 'Mixed DHCP/Static'];
-export const VLAN_CONFIGURATIONS = ['Single Flat Network', 'Dedicated AV VLAN', 'Corporate VLAN with QoS', 'Guest VLAN'];
+export const AUDIO_USE_CASE_OPTIONS = [
+    { value: 'speech', label: 'Speech Reinforcement' },
+    { value: 'program', label: 'Program Audio (videos, music)' },
+    { value: 'conferencing', label: 'Video Conferencing (UC)' },
+    { value: 'assistive', label: 'Assistive Listening' },
+];
 
-export const ROOM_DIMENSION_DEFAULTS: Record<string, { length: number; width: number; height: number; }> = {
-  'Huddle Room': { length: 12, width: 10, height: 9 },
-  'Conference Room': { length: 25, width: 15, height: 9 },
-  'Boardroom': { length: 35, width: 18, height: 10 },
-  'Classroom': { length: 30, width: 30, height: 12 },
-  'Auditorium': { length: 60, width: 40, height: 20 },
-  'Briefing Center': { length: 40, width: 25, height: 12 },
-  'Operations Center': { length: 50, width: 35, height: 12 },
+export const CURRENCY_OPTIONS: { [key: string]: { name: string; symbol: string } } = {
+    'GBP': { name: 'British Pound', symbol: '£' },
+    'USD': { name: 'US Dollar', symbol: '$' },
+    'EUR': { name: 'Euro', symbol: '€' },
 };

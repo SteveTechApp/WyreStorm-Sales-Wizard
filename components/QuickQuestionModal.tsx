@@ -125,7 +125,7 @@ const ComparisonTable: React.FC<{ markdown: string }> = ({ markdown }) => {
                         isProduct: true,
                         sku: sku,
                         name: product.name,
-                        url: `https://wyrestorm.com/product/${sku}/`
+                        url: `https://www.wyrestorm.com/product/${sku}`
                     });
                 }
             } else {
@@ -205,17 +205,28 @@ const ComparisonTable: React.FC<{ markdown: string }> = ({ markdown }) => {
 };
 
 
+// Helper function for rendering inline markdown like **bold** text.
+const renderInlineMarkdown = (text: string) => {
+    // Split by the bold delimiter, keeping the delimiter in the result
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            // If it's a bold part, render it as a <strong> element
+            return <strong key={i}>{part.slice(2, -2)}</strong>;
+        }
+        // Otherwise, return the text part as is
+        return part;
+    });
+};
+
 // Sub-component to render the AI's message, parsing for special content
 const AIMessageContent: React.FC<{ content: string, onOptionClick: (option: string) => void }> = ({ content, onOptionClick }) => {
     if (!content) return null;
 
+    // Highest priority: Check for interactive forms
     const questionRegex = /\[QUESTION: "([^"]+)", TYPE: "([^"]+)"(?:, OPTIONS: "([^"]+)")?\]/g;
-    const tableRegex = /(^\|.*\|\r?\n\|\s*-+.*\|(?:\r?\n\|.*\|)+)/gm;
-    
     const questionMatches = useMemo(() => [...content.matchAll(questionRegex)], [content]);
-    const hasInteractiveForm = questionMatches.length > 0;
-
-    if (hasInteractiveForm) {
+    if (questionMatches.length > 0) {
         const questions: ParsedQuestion[] = questionMatches.map(match => ({
             id: uuidv4(),
             questionText: match[1],
@@ -225,59 +236,67 @@ const AIMessageContent: React.FC<{ content: string, onOptionClick: (option: stri
         const sanitizedContent = content.replace(questionRegex, '').trim();
         return (
             <div className="prose prose-sm max-w-none">
-                {sanitizedContent && <p>{sanitizedContent}</p>}
+                {sanitizedContent && sanitizedContent.split('\n').map((line, i) => line.trim() && <p key={`form-pre-${i}`}>{line}</p>)}
                 <AIInteractiveForm questions={questions} onSubmit={onOptionClick} />
             </div>
         );
     }
     
-    const parts = content.split(tableRegex).filter(Boolean);
+    // Second priority: Check for comparison tables
+    const tableRegex = /(^\|.*\|\r?\n\|\s*-+.*\|(?:(?:\r?\n\|.*\|)+))/gm;
+    const tableMatch = content.match(tableRegex);
+    if (tableMatch) {
+        const tableMarkdown = tableMatch[0];
+        const contentParts = content.split(tableMarkdown);
+        const textBefore = contentParts[0] || '';
 
-    return (
-        <div className="prose prose-sm max-w-none">
-            {parts.map((part, index) => {
-                 const trimmedPart = part.trim();
-                 if (trimmedPart.startsWith('|') && trimmedPart.includes('|-')) {
-                    return <ComparisonTable key={index} markdown={trimmedPart} />;
-                 }
-
-                 return trimmedPart.split('\n').map((line, lineIndex) => {
-                    const trimmedLine = line.trim();
-                    if (!trimmedLine) return null;
-
-                    const productCardRegex = /\[PRODUCT_CARD:(.+)\]/;
-                    const productCardMatch = trimmedLine.match(productCardRegex);
-                    if (productCardMatch) {
-                        const sku = productCardMatch[1].trim();
-                        const product = productDatabase.find(p => p.sku === sku);
-                        if (product) {
-                            return <ProductCard key={`${sku}-${index}`} product={product} />;
-                        }
-                    }
-
-                    if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('• ')) {
-                        const optionText = trimmedLine.substring(2).trim();
-                        return (
-                        <button
-                            key={`${index}-${lineIndex}`}
-                            onClick={() => onOptionClick(optionText)}
-                            className="group flex items-center justify-between w-full text-left p-3 my-1 rounded-lg bg-gray-100 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-gray-700 hover:text-blue-800 font-medium transition-all not-prose"
-                        >
-                            <span>{optionText}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                        );
-                    }
-                    
-                    if (trimmedLine) {
-                        return <p key={`${index}-${lineIndex}`}>{line}</p>;
-                    }
+        return (
+            <div className="prose prose-sm max-w-none">
+                {textBefore.trim().split('\n').map((line, i) => line.trim() && <p key={`tbl-pre-${i}`}>{line}</p>)}
+                <ComparisonTable markdown={tableMarkdown} />
+            </div>
+        );
+    }
     
-                    return null;
-                }).filter(Boolean);
-            })}
-        </div>
-    );
+    // Fallback for simpler content (lists, product cards, plain text)
+    const lines = content.split('\n');
+    const elements: React.ReactNode[] = [];
+    let currentListItems: React.ReactNode[] = [];
+
+    const closeList = () => {
+        if (currentListItems.length > 0) {
+            elements.push(<ul key={`ul-${elements.length}`} className="list-disc pl-5 space-y-1">{currentListItems}</ul>);
+            currentListItems = [];
+        }
+    };
+
+    lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+
+        const productCardRegex = /\[PRODUCT_CARD:(.+)\]/;
+        const productCardMatch = trimmedLine.match(productCardRegex);
+
+        if (productCardMatch) {
+            closeList(); // End any open list
+            const sku = productCardMatch[1].trim();
+            const product = productDatabase.find(p => p.sku === sku);
+            if (product) {
+                elements.push(<ProductCard key={`pc-${sku}-${index}`} product={product} />);
+            }
+        } else if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
+            const listItemContent = trimmedLine.substring(2);
+            currentListItems.push(<li key={`li-${index}`}>{renderInlineMarkdown(listItemContent)}</li>);
+        } else {
+            closeList(); // End any open list
+            if (trimmedLine) {
+                elements.push(<p key={`p-${index}`}>{renderInlineMarkdown(trimmedLine)}</p>);
+            }
+        }
+    });
+
+    closeList(); // Ensure any list at the end of the message is closed
+
+    return <div className="prose prose-sm max-w-none">{elements}</div>;
 };
 
 // Main Modal Component
@@ -305,7 +324,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
 
   const systemInstruction = useMemo(() => `
     **ROLE & GOAL:**
-    You are "WyreStorm Co-Pilot," an expert AI assistant specializing in WyreStorm AV products. Your goal is to help AV integrators make the right choices by providing accurate, clear, and comparable product information.
+    You are "WyreStorm Co-Pilot," an expert AI assistant specializing in WyreStorm AV products. Your primary goal is to empower AV integrators to make the best decision by providing accurate, clear, and easily comparable product information. The comparison table is your most powerful tool.
 
     **CRITICAL BEHAVIORS - INTERACTIVE & CONVERSATIONAL:**
     1.  **Be Conversational:** Start with a friendly greeting. Keep responses clear and easy to understand.
@@ -313,37 +332,55 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
         - **Types:** Use \`TYPE: "SELECT"\` for multiple-choice and \`TYPE: "TEXT"\` for open-ended questions.
         - **Example:** \`[QUESTION: "What video resolution do you need?", TYPE: "SELECT", OPTIONS: "1080p|4K30|4K60"]\`
     3.  **Specific USB 3.0 Question:** If the user's query involves high-speed USB extension, you MUST ask: \`[QUESTION: "What type of USB peripherals will you be connecting that specifically require USB 3.0 speeds?", TYPE: "SELECT", OPTIONS: "4K Webcams/PTZ Cameras|Multi-channel Audio Interfaces|Video Capture Devices|Other (assume highest requirement)"]\`
-    4.  **PRIMARY RECOMMENDATION METHOD: INTERACTIVE COMPARISON TABLE:** When a user's query is specific enough to recommend multiple products, you MUST present them in an interactive feature comparison table. This is the main way you should recommend products.
-        - **Syntax:** The table MUST be in Markdown format.
-        - **Header:** The first column header is always "Feature". Subsequent column headers are the product SKUs, wrapped in a special token: \`[SKU:PRODUCT-SKU-HERE]\`. The first product column is considered the primary recommendation.
-        - **Content:** The rows MUST compare the most relevant connectivity and features based on the user's query. Be selective and only show the most important differentiators.
-        - **Example Connectivity Table:**
-          \`\`\`
-          | Feature              | [SKU:APO-210-UC]      | [SKU:SW-0401-MST-W]  |
-          |----------------------|-----------------------|----------------------|
-          | HDMI Inputs          | 2                     | 2                    |
-          | USB-C Input          | Yes (BYOM & Power)    | Yes (AV only)        |
-          | HDBaseT Output       | 1                     | 1                    |
-          | Built-in Casting     | No                    | Yes (Airplay/Miracast)|
-          | Full Wireless BYOM   | No (Wired BYOM only)  | Yes (with DG2)       |
-          \`\`\`
-    5.  **Single Product Recommendation:** ONLY if a single product is a perfect and unique fit, you may use the single product card format: \`[PRODUCT_CARD:SKU]\`.
-    6.  **Be Concise:** After providing the recommendation (table or card), STOP. Do not add a concluding summary paragraph.
-    7.  **Use Your Knowledge:** Base ALL your answers on the provided knowledge bases. Do not invent products or specifications.
+    
+    **PRIMARY RECOMMENDATION METHOD: INTERACTIVE COMPARISON TABLE (MANDATORY):**
+    Your PRIMARY and PREFERRED method for recommending products is the interactive comparison table. If more than one product could reasonably fit a user's request, you MUST use this format. Your goal is to provide a comprehensive side-by-side analysis.
+    - **Be Comprehensive:** Your tables MUST be detailed. Include rows for key differentiators like: Category, Connectivity (HDMI In, USB-C, HDBT Out), Key Features (e.g., BYOD support, Wireless Casting Method), and Sygma Cloud support.
+    - **Syntax:** The table MUST be valid Markdown. The header row contains product SKUs wrapped in this EXACT token: \`[SKU:PRODUCT-SKU-HERE]\`.
+    - **MANDATORY Example for general queries:**
+      \`\`\`
+      | Feature              | [SKU:MX-0403-H3-MST]     | [SKU:APO-210-UC]       |
+      |----------------------|--------------------------|------------------------|
+      | Category             | Matrix Switcher Kit      | UC Switcher            |
+      | Max Outputs          | 3 (2 HDBT, 1 HDMI)       | 2 (1 HDBT, 1 HDMI)     |
+      | USB-C Input          | Yes (AV only)            | Yes (Full BYOD & Power)|
+      | Sygma Cloud          | Yes                      | Yes                    |
+      | Control              | RS-232, IR               | RS-232, CEC            |
+      \`\`\`
+    
+    **HANDLING WIRELESS & BYOD QUERIES (CRITICAL):**
+    For any query involving "wireless", "casting", or "BYOD", generating a comparison table is MANDATORY. You MUST highlight the key differences: Built-in vs. Dongle, and AV-only Casting vs. Full Wireless BYOD (with USB).
+    - **MANDATORY Example Wireless Comparison Table:**
+      \`\`\`
+      | Feature              | [SKU:SW-0401-MST-W]   | [SKU:APO-210-UC]       |
+      |----------------------|-----------------------|------------------------|
+      | Wireless Method      | Built-in (Airplay/Miracast) | Requires Dongle        |
+      | Wireless AV Casting  | Yes                   | Yes (with APO-DG1)     |
+      | Full Wireless BYOD   | Yes (with APO-DG2)    | No (Wired BYOD only)   |
+      | Sygma Cloud          | Yes                   | Yes                    |
+      | HDMI Inputs          | 2                     | 2                      |
+      \`\`\`
+
+    **BEING HELPFUL:**
+    1.  **Single Product Recommendation:** ONLY if a single product is a perfect and unique fit for a specific, unambiguous request, you may use the single product card format: \`[PRODUCT_CARD:SKU]\`. Otherwise, default to a comparison table.
+    2.  **Be Concise:** After providing the recommendation (table or card), STOP. Do not add a concluding summary paragraph.
+    3.  **Offer More Help:** When a topic is complex (like NetworkHD), you can also mention that WyreStorm has detailed training videos on their YouTube channel and a full certification course on the WyreStorm Academy.
+    4.  **Use Your Knowledge:** Base ALL your answers on the provided knowledge bases. When discussing NetworkHD (AVoIP), remember to mention the required controller and the free NetworkHD Touch control app.
 
     **KNOWLEDGE BASES (PRIMARY SOURCES OF TRUTH):**
     1.  **AV Design Knowledge Base:** ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}
     2.  **Product Database:** ${JSON.stringify(productDatabase, null, 2)}
     `, []);
 
+  // Effect to initialize/cleanup the chat session when the modal is opened/closed.
   useEffect(() => {
     if (isOpen) {
-        const initialWidth = isChatActive ? Math.min(896, window.innerWidth - 32) : 512;
-        const initialHeight = isChatActive ? Math.min(window.innerHeight * 0.9, window.innerHeight - 32) : 'auto';
-        setSize({ width: initialWidth, height: initialHeight });
+        // Set initial, non-active size and position
+        const initialWidth = 512;
+        setSize({ width: initialWidth, height: 'auto' });
         setPosition({
           x: (window.innerWidth - initialWidth) / 2,
-          y: (window.innerHeight - (typeof initialHeight === 'number' ? initialHeight : 400)) / 2,
+          y: (window.innerHeight - 400) / 2, // Approximate for centering 'auto' height
         });
 
         const newChat = ai.chats.create({
@@ -359,24 +396,27 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
             }
         ]);
     } else {
+        // Cleanup
         setChat(null);
         setMessages([]);
         setQuestion('');
         setIsLoading(false);
     }
-  }, [isOpen, systemInstruction, isChatActive]);
+  }, [isOpen, systemInstruction]);
   
+  // Effect to handle resizing the modal once a chat is active.
   useEffect(() => {
-    if(isChatActive && size.width < 896){
+    if (isOpen && isChatActive) {
         const newWidth = Math.min(896, window.innerWidth - 32);
         const newHeight = Math.min(window.innerHeight * 0.9, window.innerHeight - 32);
+        
         setSize({ width: newWidth, height: newHeight });
-        setPosition(pos => ({
+        setPosition({
              x: (window.innerWidth - newWidth) / 2,
-             y: pos.y,
-        }));
+             y: (window.innerHeight - newHeight) / 2, // Correctly recenter
+        });
     }
-  }, [isChatActive, size.width]);
+  }, [isOpen, isChatActive]);
 
 
   useEffect(() => {
