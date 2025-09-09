@@ -1,11 +1,14 @@
 
 
+
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // FIX: Corrected import for ProjectSetupData. It should be imported from '../types' not '../App'.
-import { ProjectSetupData, UserProfile, RoomData } from '../types';
+import { ProjectSetupData, UserProfile } from '../types';
 import { ROOM_TYPES } from '../constants';
 import { TrashIcon } from './Icons';
+// FIX: Import utility to create default room data.
+import { createDefaultRoomData } from '../utils';
 
 interface RoomPlaceholder {
     id: string;
@@ -51,9 +54,11 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
             clientAddress,
             projectBudget,
             coverImage: '', // Placeholder for now
+            // FIX: Use createDefaultRoomData to ensure all required properties are present on the room object.
             rooms: rooms.map(({ id, ...rest }) => ({
+                ...createDefaultRoomData(),
                 ...rest,
-                // These are defaults for an unconfigured room
+                // These are defaults for an unconfigured room that might override createDefaultRoomData
                 designTier: 'Silver',
                 maxParticipants: 10,
                 primaryUse: 'General Presentation',

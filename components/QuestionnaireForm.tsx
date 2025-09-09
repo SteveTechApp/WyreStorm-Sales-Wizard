@@ -18,11 +18,7 @@ interface QuestionnaireFormProps {
 
 const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, unitSystem }) => {
     
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        onUpdate({ ...room, [name]: value });
-    };
-
+    // FIX: Removed unused handleInputChange, replaced with specific handlers for nested objects.
     const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         onUpdate({
@@ -37,13 +33,52 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, u
         });
     };
 
+    // FIX: Added handler for updating nested constructionDetails object.
+    const handleConstructionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        onUpdate({
+            ...room,
+            constructionDetails: {
+                // Ensure other properties are not lost if they exist
+                wallConstruction: room.constructionDetails?.wallConstruction || 'drywall',
+                cableContainment: room.constructionDetails?.cableContainment || 'none',
+                [name]: value,
+            },
+        });
+    };
+
+    // FIX: Added handler for updating nested audioSystemDetails object.
+    const handleAudioDetailsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        onUpdate({
+            ...room,
+            audioSystemDetails: {
+                // Ensure other properties are not lost if they exist
+                speakerLayout: room.audioSystemDetails?.speakerLayout || 'none',
+                systemType: room.audioSystemDetails?.systemType || 'none',
+                useCases: room.audioSystemDetails?.useCases || [],
+                [name]: value,
+            },
+        });
+    };
+
     const handleAudioUseCaseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, checked } = e.target;
-        const currentUseCases = room.audioUseCases || [];
+        // FIX: Correctly access nested useCases array.
+        const currentUseCases = room.audioSystemDetails.useCases || [];
         const newUseCases = checked
             ? [...currentUseCases, value]
             : currentUseCases.filter(c => c !== value);
-        onUpdate({ ...room, audioUseCases: newUseCases });
+        // FIX: Correctly update the nested audioSystemDetails object.
+        onUpdate({ 
+            ...room, 
+            audioSystemDetails: {
+                ...room.audioSystemDetails,
+                speakerLayout: room.audioSystemDetails?.speakerLayout || 'none',
+                systemType: room.audioSystemDetails?.systemType || 'none',
+                useCases: newUseCases 
+            }
+        });
     };
 
     const handleRemoveManualItem = (skuToRemove: string) => {
@@ -78,16 +113,18 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, u
             <section className="bg-white p-4 border rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Construction & Audio</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   {renderField('Wall Construction', 'wallConstruction', room.wallConstruction || 'drywall', handleInputChange, 'select', WALL_CONSTRUCTION_OPTIONS)}
-                   {renderField('Cable Containment', 'containment', room.containment || 'none', handleInputChange, 'select', CONTAINMENT_OPTIONS)}
-                   {renderField('Speaker Layout', 'audioLayout', room.audioLayout || 'none', handleInputChange, 'select', AUDIO_SPEAKER_LAYOUT_OPTIONS)}
-                   {renderField('Audio System Type', 'audioSystemType', room.audioSystemType || 'none', handleInputChange, 'select', AUDIO_SYSTEM_TYPE_OPTIONS)}
+                   {/* FIX: Corrected property access, names, and handlers for nested objects. */}
+                   {renderField('Wall Construction', 'wallConstruction', room.constructionDetails?.wallConstruction || 'drywall', handleConstructionChange, 'select', WALL_CONSTRUCTION_OPTIONS)}
+                   {renderField('Cable Containment', 'cableContainment', room.constructionDetails?.cableContainment || 'none', handleConstructionChange, 'select', CONTAINMENT_OPTIONS)}
+                   {renderField('Speaker Layout', 'speakerLayout', room.audioSystemDetails?.speakerLayout || 'none', handleAudioDetailsChange, 'select', AUDIO_SPEAKER_LAYOUT_OPTIONS)}
+                   {renderField('Audio System Type', 'systemType', room.audioSystemDetails?.systemType || 'none', handleAudioDetailsChange, 'select', AUDIO_SYSTEM_TYPE_OPTIONS)}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Audio Use Cases</label>
                         <div className="space-y-1 mt-2">
                             {AUDIO_USE_CASE_OPTIONS.map(opt => (
                                 <label key={opt.value} className="flex items-center space-x-2 text-sm">
-                                    <input type="checkbox" value={opt.value} checked={(room.audioUseCases || []).includes(opt.value)} onChange={handleAudioUseCaseChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] border-gray-300" />
+                                    {/* FIX: Correctly access nested useCases for checked state. */}
+                                    <input type="checkbox" value={opt.value} checked={(room.audioSystemDetails?.useCases || []).includes(opt.value)} onChange={handleAudioUseCaseChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] border-gray-300" />
                                     <span>{opt.label}</span>
                                 </label>
                             ))}

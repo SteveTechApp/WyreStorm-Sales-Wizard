@@ -7,6 +7,8 @@ import RoomWizard from './RoomWizard';
 import QuestionnaireForm from './QuestionnaireForm';
 import Tabs from './Tabs';
 import { generateRoomFunctionality } from '../services/geminiService';
+// FIX: Import createDefaultRoomData to initialize new rooms completely.
+import { createDefaultRoomData } from '../utils';
 
 interface ProjectBuilderProps {
     projectData: ProjectData;
@@ -37,19 +39,19 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
         }));
     };
 
-    const handleAddOrUpdateRoomFromWizard = async (answers: RoomWizardAnswers, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold') => {
+    // FIX: Updated function signature to accept a single 'answers' object.
+    const handleAddOrUpdateRoomFromWizard = async (answers: RoomWizardAnswers) => {
         setIsRoomWizardOpen(false);
 
         // Call Gemini to get the functionality statement
-        const { functionalityStatement, features: refinedFeatures } = await generateRoomFunctionality(answers, roomType, designTier);
+        // FIX: Pass only one argument to generateRoomFunctionality.
+        const { functionalityStatement } = await generateRoomFunctionality(answers);
 
+        // FIX: The newRoomData is constructed from answers and the generated functionality statement.
+        // This resolves issues with incorrect property names like 'participantCount' and non-existent 'refinedFeatures'.
         const newRoomData = {
             ...answers,
-            roomType,
-            designTier,
             functionalityStatement,
-            features: refinedFeatures,
-            maxParticipants: answers.participantCount,
         };
 
         if (roomToEdit) {
@@ -59,7 +61,9 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
             setRoomToEdit(null);
         } else {
             // Add new room
+            // FIX: Use createDefaultRoomData to ensure the new room object has all required properties.
             const newRoom: RoomData = {
+                ...createDefaultRoomData(),
                 ...newRoomData,
                 id: uuidv4(),
             };
@@ -169,7 +173,8 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
             <RoomWizard
                 isOpen={isRoomWizardOpen}
                 onClose={() => setIsRoomWizardOpen(false)}
-                onAdd={handleAddOrUpdateRoomFromWizard}
+                // FIX: Changed prop from 'onAdd' to 'onUpdate' to match the component's definition.
+                onUpdate={handleAddOrUpdateRoomFromWizard}
                 initialData={roomToEdit}
             />
         </div>

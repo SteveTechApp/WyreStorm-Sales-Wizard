@@ -16,10 +16,26 @@ export interface RoomDimensions {
     height: number;
 }
 
+export interface ConstructionDetails {
+    wallConstruction: string;
+    cableContainment: string;
+}
+
+export interface AudioSystemDetails {
+    speakerLayout: string;
+    systemType: string;
+    useCases: string[];
+}
+
 export interface ManuallyAddedEquipment {
     sku: string;
     name: string;
     quantity: number;
+}
+
+export interface Feature {
+    name: string;
+    priority: 'must-have' | 'nice-to-have';
 }
 
 export interface RoomData {
@@ -28,17 +44,20 @@ export interface RoomData {
     roomType: string;
     designTier: 'Bronze' | 'Silver' | 'Gold';
     maxParticipants: number;
-    features: string[];
+    features: Feature[];
     functionalityStatement: string;
     primaryUse?: string;
-    dimensions?: RoomDimensions;
-    wallConstruction?: string;
-    containment?: string;
-    audioLayout?: string;
-    audioSystemType?: string;
-    audioUseCases?: string[];
-    manuallyAddedEquipment?: ManuallyAddedEquipment[];
+    dimensions: RoomDimensions;
+    constructionDetails: ConstructionDetails;
+    audioSystemDetails: AudioSystemDetails;
+    manuallyAddedEquipment: ManuallyAddedEquipment[];
+    // New Technical Requirements
+    requiredResolution?: '1080p' | '4K30' | '4K60';
+    hdrRequirements?: 'None' | 'HDR10' | 'Dolby Vision';
+    wirelessCasting?: 'None' | 'Built-in' | 'Dongle (AV)' | 'Dongle (BYOD)';
+    hdbasetStandard?: 'Auto' | '2.0' | '3.0';
 }
+
 
 export interface ProjectSetupData {
     projectName: string;
@@ -118,14 +137,8 @@ export interface Proposal {
     furtherResources: string;
 }
 
-export interface RoomWizardAnswers {
-    roomName: string;
-    participantCount: number;
-    videoInputs: { type: string, count: number }[];
-    videoOutputs: { type: string, count: number }[];
-    audioNeeds: string[];
-    controlNeeds: string[];
-}
+// FIX: Corrected RoomWizardAnswers to match properties in RoomData for consistency.
+export type RoomWizardAnswers = Omit<RoomData, 'id' | 'functionalityStatement' | 'manuallyAddedEquipment' | 'dimensions' | 'constructionDetails' | 'audioSystemDetails'>;
 
 export interface Product {
     sku: string;

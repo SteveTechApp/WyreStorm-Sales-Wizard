@@ -12,8 +12,9 @@ import ProfileModal from './components/ProfileModal';
 import AgentInputForm from './components/AgentInputForm';
 import QuickQuestionFAB from './components/QuickQuestionFAB';
 import QuickQuestionModal from './components/QuickQuestionModal';
-import { ProjectData, ProjectSetupData, Proposal, UserProfile, RoomData } from './types';
-import { generateProposal, analyzeRequirements } from './services/geminiService';
+import { ProjectData, ProjectSetupData, Proposal, UserProfile, RoomData, Feature } from './types';
+import { generateProposal, analyzeRequirements, generateInspiredRoomDesign } from './services/geminiService';
+import { createDefaultRoomData } from './utils';
 
 type AppState = 'welcome' | 'agent-input' | 'project-setup' | 'design-copilot' | 'generating-proposal' | 'proposal-display' | 'error';
 
@@ -79,7 +80,7 @@ const App: React.FC = () => {
             ...setupData,
             projectId: uuidv4(),
             lastSaved: new Date().toISOString(),
-            rooms: setupData.rooms.map(r => ({ ...r, id: uuidv4() })),
+            rooms: setupData.rooms.map(r => ({ ...createDefaultRoomData(), ...r, id: uuidv4() })),
         };
         setProjectData(newProject);
         setAppState('design-copilot');
@@ -93,7 +94,20 @@ const App: React.FC = () => {
                 ...requirements,
                 projectId: uuidv4(),
                 lastSaved: new Date().toISOString(),
-                rooms: requirements.rooms.map(r => ({ ...r, id: uuidv4() })),
+                rooms: requirements.rooms.map(r => {
+                    const defaultRoom = createDefaultRoomData();
+                    const featuresAsObjects: Feature[] = (r.features || []).map(featureName => ({
+                        name: featureName,
+                        priority: 'must-have'
+                    }));
+
+                    return {
+                        ...defaultRoom,
+                        ...r,
+                        id: uuidv4(),
+                        features: featuresAsObjects,
+                    };
+                }),
             };
             setProjectData(newProject);
             setAppState('design-copilot');
@@ -131,25 +145,28 @@ const App: React.FC = () => {
         }
     };
     
-     const handleStartFromTemplate = (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => {
-        const newProject: ProjectData = {
-            projectId: uuidv4(),
-            projectName: `${templateName} Project`,
-            clientName: userProfile?.company || 'My Company',
-            lastSaved: new Date().toISOString(),
-            rooms: [{
-                id: uuidv4(),
-                roomName: templateName,
-                roomType,
-                designTier,
-                maxParticipants: participantCount,
-                // These are defaults, user will reconfigure in the next step
-                features: [],
-                functionalityStatement: '',
-            }]
-        };
-        setProjectData(newProject);
-        setAppState('design-copilot');
+     const handleStartFromTemplate = async (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => {
+        setAppState('generating-proposal');
+        try {
+            const inspiredRoom = await generateInspiredRoomDesign(templateName, roomType, designTier, participantCount);
+            
+            const newProject: ProjectData = {
+                projectId: uuidv4(),
+                projectName: `${templateName} Project`,
+                clientName: userProfile?.company || 'My Company',
+                lastSaved: new Date().toISOString(),
+                rooms: [{
+                    ...createDefaultRoomData(),
+                    ...inspiredRoom,
+                    id: uuidv4(),
+                }]
+            };
+            setProjectData(newProject);
+            setAppState('design-copilot');
+        } catch (e: any) {
+            setError(`Failed to generate from template: ${e.message}`);
+            setAppState('error');
+        }
     };
 
     const renderContent = () => {
@@ -181,7 +198,7 @@ const App: React.FC = () => {
                             userProfile={userProfile}
                         />;
             case 'generating-proposal':
-                return <LoadingSpinner message="Generating Your Proposal..." />;
+                return <LoadingSpinner message="AI is Designing..." />;
             case 'proposal-display':
                 if (!proposal || !projectData) return <LoadingSpinner message="Loading Proposal..." />;
                 return <ProposalDisplay 

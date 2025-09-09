@@ -2,41 +2,62 @@
 export const AV_DESIGN_KNOWLEDGE_BASE = `
 WyreStorm AV Design Principles:
 
-1.  **Signal Integrity is Key:** Always choose the right technology for the distance.
-    - Short runs (<5m): Use high-quality passive HDMI cables.
-    - Medium runs (5-15m): Use Active Optical Cables (AOC) like CAB-HAOC series.
-    - Long runs (>15m): Use HDBaseT or AVoIP extenders.
+**Core Philosophy:** The goal is to create a reliable, user-friendly system that meets the client's needs now and in the future. The choice between a traditional matrix-based system and a networked AVoIP system is the most fundamental decision.
 
-2.  **Resolution and Bandwidth:**
-    - 4K60 4:4:4 requires 18Gbps. This needs HDMI 2.0, HDBaseT 3.0, or high-performance AVoIP (like NetworkHD 500/600 series).
-    - 1080p is sufficient for many applications and can be reliably sent over HDBaseT 2.0 or lower-bandwidth AVoIP (NetworkHD 300/400 series).
+---
 
-3.  **Unified Communications (UC) & Bring Your Own Device (BYOD):**
-    - A key differentiator is the USB connection. A true BYOD solution must extend USB for webcams, microphones, and speakerphones.
-    - Products like the Apollo series (APO-210-UC, APO-VX20-UC) are designed for this, combining switching with USB-C connectivity.
-    - "Wireless Casting" is NOT the same as "Wireless BYOD".
-        - Casting (e.g., in SW-0401-MST-W) sends video/audio from a device.
-        - BYOD requires a USB data path back to the laptop to connect to room peripherals. This is often achieved with a dongle like the APO-DG2.
+### Section 1: Application Principles (Room Type -> Technology)
 
-4.  **Audio Integration:**
-    - For simple rooms, de-embedded audio from an extender or switcher is fine.
-    - For larger rooms or complex audio needs, a dedicated DSP is recommended.
-    - Dante is the standard for networked audio in enterprise environments. WyreStorm offers products with native Dante (NHD-500-DNT-TX, MX-1007-HYB) or software-upgradable Dante (NHD-500-TX/RX).
+This section guides the high-level architectural choice based on the room's purpose.
 
-5.  **Choosing AVoIP (NetworkHD):**
-    - **100 Series (JPEG2000):** Good for low-latency, video wall, and multiview applications up to 1080p.
-    - **300 Series (H.264):** Ideal for streaming to the web (YouTube, Facebook) or recording.
-    - **400 Series (JPEG2000):** The previous 4K HDR solution. The 500 series is now the primary 1GbE recommendation.
-    - **500 Series (H.265/HEVC):** The current flagship 1GbE solution. 4K60 4:4:4, Dolby Vision, HDR, and full KVM/USB support. The best choice for high-quality, flexible distribution on a standard 1GbE network. Requires a controller (NHD-CTL-PRO).
-    - **600 Series (SDVoE):** For zero-latency, uncompressed 4K60 4:4:4 performance. Requires a 10GbE network, making it suitable for high-end applications like command centers or medical imaging.
+*   **Corporate (Huddle, Conference, Boardroom):**
+    *   **Small/Medium Rooms (up to 16 seats):** Traditional matrix switchers (e.g., MX-0403-H3-MST) or powerful presentation switchers (e.g., APO-210-UC) are often the best fit. They are cost-effective, reliable, and provide all necessary BYOD connectivity in a single chassis.
+    *   **Large Boardrooms / Divisible Rooms:** AVoIP (NetworkHD 500 series) becomes highly advantageous here. It offers scalability to add more sources/displays easily, simplifies routing to different room combinations, and supports integrated Dante audio for better voice lift and conferencing audio.
 
-6.  **Control:**
-    - CEC (Consumer Electronics Control) can turn displays on/off over HDMI. It's simple but can be unreliable in complex systems.
-    - RS-232 is the most reliable method for professional display control.
-    - For full room control, use a Synergy keypad or touch panel, or integrate with a third-party control system.
+*   **Education (Classroom, Lecture Hall):**
+    *   **Standard Classroom:** Reliability and simplicity are key. An HDBaseT matrix switcher is an excellent choice, providing robust long-distance transmission to projectors or displays from a central lectern.
+    *   **Large Lecture Halls / University Campuses:** AVoIP is the superior solution. It allows for overflow rooms, lecture capture streaming (with NHD-300 encoders), and campus-wide content distribution. The ability to route any source to any display across the network is a massive benefit.
 
-7.  **Product Tiers:**
-    - **Bronze:** Focus on all-in-one solutions (APO-VX20-UC) or simple HDBaseT switchers (SW-0401-MST). Cost-effective and reliable for basic needs.
-    - **Silver:** Move to matrix switchers (MX-0403-H3-MST), more powerful UC solutions (APO-210-UC), and professional PTZ cameras (CAM-210-PTZ). Offers more flexibility.
-    - **Gold:** Based on AVoIP (NetworkHD 500/600 series) for ultimate scalability and performance. Includes advanced audio (Dante) and control.
+*   **Hospitality (Sports Bar, Venue):**
+    *   This is a prime use case for AVoIP (NetworkHD 500). The need to route many sources (e.g., 8-16 satellite decoders) to many displays (e.g., 10-50 screens) makes a traditional matrix expensive and inflexible. AVoIP allows for an 'any-to-any' configuration that can be easily controlled by staff from a tablet (NetworkHD Touch App).
+
+*   **Command & Control / Operations Centers:**
+    *   Latency and image quality are critical. For these applications, the NetworkHD 600 Series (SDVoE) is the recommended solution. It provides lossless, zero-latency 4K60 video over a 10GbE network, which is essential for monitoring critical data feeds. Video wall and multiview capabilities are also native to this platform.
+
+---
+
+### Section 2: Technology Mapping Rules (Requirement -> Product Feature)
+
+This section provides hard rules for selecting products based on specific technical requirements.
+
+*   **Resolution & HDR:**
+    *   **Requirement: 4K60 4:4:4 or Dolby Vision.**
+    *   **Rule:** This requires a full 18Gbps bandwidth pipeline.
+    *   **Products:** HDBaseT 3.0 solutions (e.g., MX-0403-H3-MST, APO-210-UC), NetworkHD 500 Series, or NetworkHD 600 Series. HDBaseT 2.0 products are NOT suitable.
+
+*   **BYOD & USB:**
+    *   **Requirement: Full BYOD (user connects laptop to use room camera/mic).**
+    *   **Rule:** The system MUST support USB 2.0 (or higher) extension and switching alongside video.
+    *   **Products:** Apollo UC series (APO-210-UC, APO-VX20-UC), HDBaseT 3.0 matrixes (MX-0403-H3-MST), or KVM-capable AVoIP (NetworkHD 500/600).
+
+*   **Wireless Connectivity:**
+    *   **Requirement: Wireless Casting (AV only).**
+    *   **Rule:** User wants to share their screen's video and audio without a cable.
+    *   **Products:** Switchers with built-in casting (SW-0401-MST-W) or solutions using the APO-DG1 dongle.
+    *   **Requirement: Full Wireless BYOD (AV + USB).**
+    *   **Rule:** User wants to share their screen AND connect to room peripherals wirelessly.
+    *   **Products:** This requires the APO-DG2 dongle paired with a compatible '-W' switcher or Apollo UC device.
+
+*   **Audio:**
+    *   **Requirement: Multiple zones of audio or high-quality conferencing audio.**
+    *   **Rule:** A dedicated audio solution is needed. Simple de-embedded audio is insufficient.
+    *   **Products:** Prioritize solutions with Dante integration (NHD-500-DNT-TX, MX-1007-HYB) to hand off audio to a dedicated DSP or Dante-enabled amplifiers/speakers.
+
+---
+
+### Section 3: General Best Practices
+
+*   **HDBaseT Compatibility:** Always pair transmitters and receivers of the same HDBaseT class (e.g., HDBT 3.0 TX with HDBT 3.0 RX). Mismatching classes will result in limited functionality or complete signal failure.
+*   **AVoIP Network:** NetworkHD requires a managed network switch with specific features (like IGMP Snooping). Do not use unmanaged switches. 10GbE is ONLY required for the 600 series.
+*   **Controller is Mandatory:** ALL NetworkHD systems require an NHD-CTL-PRO controller for system management. Always include one per isolated network.
 `;

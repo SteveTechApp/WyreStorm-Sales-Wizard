@@ -1,4 +1,7 @@
 
+// FIX: Import RoomData type to resolve type errors below.
+import { RoomData } from './types';
+
 export const ROOM_TYPES = [
     'Huddle Room',
     'Conference Room',
@@ -33,6 +36,46 @@ export const DESIGN_TIER_INFO = {
         hardware: 'Network-based distribution (AVoIP), advanced control, and integrated audio (Dante).'
     }
 };
+
+export const COMMON_FEATURES = [
+    'USB-C Connectivity',
+    'Wireless Presentation',
+    'BYOD (Bring Your Own Device)',
+    'Video Conferencing',
+    'Multiple Displays',
+    'Interactive Display',
+    'Room Control System',
+    'Lecture Capture',
+    'Digital Signage',
+    'Video Wall',
+    'Dante Audio',
+];
+
+export const RESOLUTION_OPTIONS: { value: RoomData['requiredResolution'], label: string }[] = [
+    { value: '1080p', label: '1080p (Full HD)' },
+    { value: '4K30', label: '4K @ 30Hz' },
+    { value: '4K60', label: '4K @ 60Hz' },
+];
+
+export const HDR_OPTIONS: { value: RoomData['hdrRequirements'], label: string }[] = [
+    { value: 'None', label: 'None / SDR' },
+    { value: 'HDR10', label: 'HDR10' },
+    { value: 'Dolby Vision', label: 'Dolby Vision' },
+];
+
+export const WIRELESS_CASTING_OPTIONS: { value: RoomData['wirelessCasting'], label: string }[] = [
+    { value: 'None', label: 'None / Wired Only' },
+    { value: 'Built-in', label: 'Built-in (Airplay/Miracast)' },
+    { value: 'Dongle (AV)', label: 'Dongle (AV Streaming Only)' },
+    { value: 'Dongle (BYOD)', label: 'Dongle (Full Wireless BYOD)' },
+];
+
+export const HDBASET_OPTIONS: { value: RoomData['hdbasetStandard'], label: string }[] = [
+    { value: 'Auto', label: 'Auto (Recommended)' },
+    { value: '2.0', label: 'HDBaseT 2.0' },
+    { value: '3.0', label: 'HDBaseT 3.0' },
+];
+
 
 export const WALL_CONSTRUCTION_OPTIONS = [
     { value: 'drywall', label: 'Drywall / Gypsum' },

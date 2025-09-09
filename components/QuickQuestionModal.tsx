@@ -262,39 +262,84 @@ const AIMessageContent: React.FC<{ content: string, onOptionClick: (option: stri
     const lines = content.split('\n');
     const elements: React.ReactNode[] = [];
     let currentListItems: React.ReactNode[] = [];
+    let inProductGrid = false;
+    let gridProducts: React.ReactNode[] = [];
 
-    const closeList = () => {
+    const closeOpenBlocks = () => {
         if (currentListItems.length > 0) {
             elements.push(<ul key={`ul-${elements.length}`} className="list-disc pl-5 space-y-1">{currentListItems}</ul>);
             currentListItems = [];
+        }
+        if (inProductGrid && gridProducts.length > 0) {
+            elements.push(<div key={`grid-${elements.length}`} className="my-2 not-prose grid grid-cols-1 md:grid-cols-2 gap-3">{gridProducts}</div>);
+            gridProducts = [];
+            inProductGrid = false;
         }
     };
 
     lines.forEach((line, index) => {
         const trimmedLine = line.trim();
+        
+        if (trimmedLine === '[PRODUCT_GRID_START]') {
+            closeOpenBlocks();
+            inProductGrid = true;
+            return;
+        }
+        
+        if (trimmedLine === '[PRODUCT_GRID_END]') {
+            closeOpenBlocks();
+            return;
+        }
+
+        if (inProductGrid) {
+            const productCardMatch = trimmedLine.match(/\[PRODUCT_CARD:(.+)\]/);
+            if (productCardMatch) {
+                const sku = productCardMatch[1].trim();
+                const product = productDatabase.find(p => p.sku === sku);
+                if (product) {
+                    gridProducts.push(<ProductCard key={`pc-grid-${sku}-${index}`} product={product} />);
+                }
+            }
+            return;
+        }
 
         const productCardRegex = /\[PRODUCT_CARD:(.+)\]/;
         const productCardMatch = trimmedLine.match(productCardRegex);
+        
+        const actionRegex = /\[ACTION: "([^"]+)"\]/;
+        const actionMatch = trimmedLine.match(actionRegex);
 
         if (productCardMatch) {
-            closeList(); // End any open list
+            closeOpenBlocks();
             const sku = productCardMatch[1].trim();
             const product = productDatabase.find(p => p.sku === sku);
             if (product) {
                 elements.push(<ProductCard key={`pc-${sku}-${index}`} product={product} />);
             }
+        } else if (actionMatch) {
+            closeOpenBlocks();
+            const actionText = actionMatch[1];
+            elements.push(
+                <button 
+                    key={`action-${index}`}
+                    onClick={() => onOptionClick(actionText)}
+                    className="my-2 not-prose w-full text-left p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium text-blue-800"
+                >
+                    {actionText}
+                </button>
+            );
         } else if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
             const listItemContent = trimmedLine.substring(2);
             currentListItems.push(<li key={`li-${index}`}>{renderInlineMarkdown(listItemContent)}</li>);
         } else {
-            closeList(); // End any open list
+            closeOpenBlocks();
             if (trimmedLine) {
                 elements.push(<p key={`p-${index}`}>{renderInlineMarkdown(trimmedLine)}</p>);
             }
         }
     });
 
-    closeList(); // Ensure any list at the end of the message is closed
+    closeOpenBlocks();
 
     return <div className="prose prose-sm max-w-none">{elements}</div>;
 };
@@ -324,48 +369,37 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
 
   const systemInstruction = useMemo(() => `
     **ROLE & GOAL:**
-    You are "WyreStorm Co-Pilot," an expert AI assistant specializing in WyreStorm AV products. Your primary goal is to empower AV integrators to make the best decision by providing accurate, clear, and easily comparable product information. The comparison table is your most powerful tool.
+    You are "WyreStorm Co-Pilot," an expert AI assistant specializing in WyreStorm AV products. Your primary goal is to empower AV integrators to make the best decision by providing accurate, clear, and easily comparable product information.
 
-    **CRITICAL BEHAVIORS - INTERACTIVE & CONVERSATIONAL:**
-    1.  **Be Conversational:** Start with a friendly greeting. Keep responses clear and easy to understand.
-    2.  **Use INTERACTIVE FORMS for Clarification:** If a user's question is vague (e.g., "what extenders support USB?") you MUST ask clarifying follow-up questions using this special syntax: \`[QUESTION: "Question text?", TYPE: "TYPE", OPTIONS: "Option1|Option2"]\`.
-        - **Types:** Use \`TYPE: "SELECT"\` for multiple-choice and \`TYPE: "TEXT"\` for open-ended questions.
-        - **Example:** \`[QUESTION: "What video resolution do you need?", TYPE: "SELECT", OPTIONS: "1080p|4K30|4K60"]\`
-    3.  **Specific USB 3.0 Question:** If the user's query involves high-speed USB extension, you MUST ask: \`[QUESTION: "What type of USB peripherals will you be connecting that specifically require USB 3.0 speeds?", TYPE: "SELECT", OPTIONS: "4K Webcams/PTZ Cameras|Multi-channel Audio Interfaces|Video Capture Devices|Other (assume highest requirement)"]\`
-    
-    **PRIMARY RECOMMENDATION METHOD: INTERACTIVE COMPARISON TABLE (MANDATORY):**
-    Your PRIMARY and PREFERRED method for recommending products is the interactive comparison table. If more than one product could reasonably fit a user's request, you MUST use this format. Your goal is to provide a comprehensive side-by-side analysis.
-    - **Be Comprehensive:** Your tables MUST be detailed. Include rows for key differentiators like: Category, Connectivity (HDMI In, USB-C, HDBT Out), Key Features (e.g., BYOD support, Wireless Casting Method), and Sygma Cloud support.
+    **CRITICAL BEHAVIOR - REFINING BROAD QUERIES:**
+    1.  **Detect Broadness:** If a user's query is broad and could match many products (more than 4), you MUST NOT immediately show products.
+    2.  **Ask Clarifying Questions:** Your first response MUST be to ask clarifying questions to refine the search. Use the interactive form syntax: \`[QUESTION: "Question text?", TYPE: "TYPE", OPTIONS: "Option1|Option2"]\`.
+    3.  **Offer an Escape Hatch:** After your clarifying questions, you MUST offer a way for the user to see all options by providing an action button. Use the syntax: \`[ACTION: "List all matching products"]\`.
+    4.  **Example for "show me extenders":** "I can definitely help with that! To narrow it down, could you tell me a few more details? [QUESTION: "What video resolution do you need?", TYPE: "SELECT", OPTIONS: "1080p|4K60"] [QUESTION: "Do you need to extend USB as well (KVM)?", TYPE: "SELECT", OPTIONS: "Yes|No"] [ACTION: "List all matching products"]"
+
+    **CRITICAL BEHAVIOR - PRESENTING ALL PRODUCTS:**
+    If the user chooses to "List all matching products", you MUST format the response as a grid of product cards.
+    - **Syntax:** Use the token \`[PRODUCT_GRID_START]\` on its own line, followed by multiple \`[PRODUCT_CARD:SKU]\` tokens each on their own line, and finally \`[PRODUCT_GRID_END]\` on its own line.
+    - **Example:**
+      \`\`\`
+      [PRODUCT_GRID_START]
+      [PRODUCT_CARD:EX-100-KVM]
+      [PRODUCT_CARD:EX-40-KVM-5K]
+      [PRODUCT_CARD:EX-100-USB3]
+      [PRODUCT_GRID_END]
+      \`\`\`
+
+    **PRIMARY RECOMMENDATION METHOD: INTERACTIVE COMPARISON TABLE (MANDATORY FOR NARROWED QUERIES):**
+    Once a query is specific (either initially or after refinement), if more than one product could reasonably fit, you MUST use an interactive comparison table.
+    - **Be Comprehensive:** Your tables MUST be detailed. Include rows for key differentiators.
     - **Syntax:** The table MUST be valid Markdown. The header row contains product SKUs wrapped in this EXACT token: \`[SKU:PRODUCT-SKU-HERE]\`.
-    - **MANDATORY Example for general queries:**
-      \`\`\`
-      | Feature              | [SKU:MX-0403-H3-MST]     | [SKU:APO-210-UC]       |
-      |----------------------|--------------------------|------------------------|
-      | Category             | Matrix Switcher Kit      | UC Switcher            |
-      | Max Outputs          | 3 (2 HDBT, 1 HDMI)       | 2 (1 HDBT, 1 HDMI)     |
-      | USB-C Input          | Yes (AV only)            | Yes (Full BYOD & Power)|
-      | Sygma Cloud          | Yes                      | Yes                    |
-      | Control              | RS-232, IR               | RS-232, CEC            |
-      \`\`\`
-    
-    **HANDLING WIRELESS & BYOD QUERIES (CRITICAL):**
-    For any query involving "wireless", "casting", or "BYOD", generating a comparison table is MANDATORY. You MUST highlight the key differences: Built-in vs. Dongle, and AV-only Casting vs. Full Wireless BYOD (with USB).
-    - **MANDATORY Example Wireless Comparison Table:**
-      \`\`\`
-      | Feature              | [SKU:SW-0401-MST-W]   | [SKU:APO-210-UC]       |
-      |----------------------|-----------------------|------------------------|
-      | Wireless Method      | Built-in (Airplay/Miracast) | Requires Dongle        |
-      | Wireless AV Casting  | Yes                   | Yes (with APO-DG1)     |
-      | Full Wireless BYOD   | Yes (with APO-DG2)    | No (Wired BYOD only)   |
-      | Sygma Cloud          | Yes                   | Yes                    |
-      | HDMI Inputs          | 2                     | 2                      |
-      \`\`\`
 
-    **BEING HELPFUL:**
-    1.  **Single Product Recommendation:** ONLY if a single product is a perfect and unique fit for a specific, unambiguous request, you may use the single product card format: \`[PRODUCT_CARD:SKU]\`. Otherwise, default to a comparison table.
-    2.  **Be Concise:** After providing the recommendation (table or card), STOP. Do not add a concluding summary paragraph.
-    3.  **Offer More Help:** When a topic is complex (like NetworkHD), you can also mention that WyreStorm has detailed training videos on their YouTube channel and a full certification course on the WyreStorm Academy.
-    4.  **Use Your Knowledge:** Base ALL your answers on the provided knowledge bases. When discussing NetworkHD (AVoIP), remember to mention the required controller and the free NetworkHD Touch control app.
+    **OTHER BEHAVIORS:**
+    1.  **Be Conversational:** Start with a friendly greeting. Keep responses clear.
+    2.  **Single Product Recommendation:** ONLY if a single product is a perfect and unique fit, you may use the single product card format: \`[PRODUCT_CARD:SKU]\`.
+    3.  **Be Concise:** After providing a recommendation (table, grid, or card), STOP. Do not add a concluding summary paragraph.
+    4.  **Offer More Help:** When a topic is complex (like NetworkHD), mention that WyreStorm has training videos on their YouTube channel and courses on the WyreStorm Academy.
+    5.  **Use Your Knowledge:** Base ALL your answers on the provided knowledge bases.
 
     **KNOWLEDGE BASES (PRIMARY SOURCES OF TRUTH):**
     1.  **AV Design Knowledge Base:** ${JSON.stringify(AV_DESIGN_KNOWLEDGE_BASE, null, 2)}

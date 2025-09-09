@@ -1,23 +1,12 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ProjectData, Proposal, RoomWizardAnswers, UserProfile } from "../types";
+import { ProjectData, Proposal, RoomWizardAnswers, UserProfile, RoomData } from "../types";
 import { productDatabase } from '../components/productDatabase';
 import { installationTaskDatabase } from '../components/installationTaskDatabase';
 import { AV_DESIGN_KNOWLEDGE_BASE } from "../technicalDatabase";
 
 // Initialize the Gemini AI client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
-
-const generateSystemDiagramPrompt = (roomData: any) => {
-    return `
-      Based on the equipment list for a ${roomData.roomType}, create a structured system diagram.
-      - Categorize devices into logical groups like 'Rack', 'Table', 'Display Wall'.
-      - Define nodes for each piece of equipment.
-      - Define edges for connections: video, audio, usb, control, network.
-      - **Example Node**: { "id": "SW-0401", "label": "SW-0401-MST", "type": "Switcher", "group": "Table" }
-      - **Example Edge**: { "from": "Laptop", "to": "SW-0401", "label": "HDMI", "type": "video" }
-    `;
-};
 
 const proposalGenerationSchema = {
     type: Type.OBJECT,
@@ -52,7 +41,7 @@ const proposalGenerationSchema = {
         },
         systemDiagram: {
             type: Type.OBJECT,
-            description: "A structured representation of the system diagram.",
+            description: "A structured representation of the system diagram, built from the final equipment list.",
             properties: {
                 nodes: {
                     type: Type.ARRAY,
@@ -82,7 +71,7 @@ const proposalGenerationSchema = {
         },
         furtherResources: {
             type: Type.STRING,
-            description: "A brief section with links to product pages or datasheets, formatted as HTML."
+            description: "A markdown-formatted section with links to the WyreStorm Academy and relevant YouTube videos."
         }
     }
 };
@@ -92,11 +81,11 @@ const proposalGenerationSchema = {
  */
 export const generateProposal = async (projectData: ProjectData, userProfile: UserProfile | null): Promise<Proposal> => {
     const systemInstruction = `You are an expert AV System Designer for WyreStorm. Your task is to generate a comprehensive sales proposal in JSON format.
-    - Use the provided project data, product database, and installation task database.
-    - Select the most appropriate equipment for the specified design tier and room functionality.
-    - Calculate quantities accurately (e.g., one transmitter and one receiver per HDBaseT link).
-    - Create a logical and clear system diagram.
-    - Base all decisions on the provided knowledge base. Do not invent products.
+    - Use the provided project data, product database, and your extensive knowledge base.
+    - **Crucially, you MUST adhere to the user's requirements.** Prioritize 'must-have' features and strictly follow the specified technical requirements (resolution, HDR, HDBaseT, etc.). Use the 'Technology Mapping Rules' in your knowledge base to guide product selection.
+    - Use the 'Application Principles' from your knowledge base to choose the correct system architecture (e.g., Matrix vs. AVoIP).
+    - Create a logical and clear system diagram based on the final equipment list you choose.
+    - Calculate quantities accurately (e.g., one NHD-CTL-PRO per AVoIP system, correct number of transmitters/receivers).
     - The proposal must be professional, well-written, and tailored to the client's needs.
     - All pricing should be in ${userProfile?.currency || 'GBP'}.
     - IMPORTANT: Ensure the final output is a single, valid JSON object that strictly adheres to the provided schema. Do not wrap it in markdown backticks.
@@ -125,7 +114,6 @@ export const generateProposal = async (projectData: ProjectData, userProfile: Us
         const jsonText = response.text.trim();
         const parsedProposal = JSON.parse(jsonText);
 
-        // Add pricing and totals to the parsed proposal
         return {
             ...parsedProposal,
             pricing: {
@@ -147,20 +135,18 @@ export const generateProposal = async (projectData: ProjectData, userProfile: Us
 /**
  * Generates a functionality statement and feature list for a room.
  */
-export const generateRoomFunctionality = async (answers: RoomWizardAnswers, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold') => {
-    const systemInstruction = "You are an AV system designer. Your task is to generate a concise, one-sentence functionality statement and a bulleted list of key features based on user answers. The tone should be professional and clear."
+export const generateRoomFunctionality = async (answers: RoomWizardAnswers) => {
+    const systemInstruction = "You are an AV system designer. Your task is to generate a concise, one-sentence functionality statement based on the user's answers. The tone should be professional and clear."
     const prompt = `
-      A user is configuring a ${designTier} tier ${roomType}.
+      A user is configuring a ${answers.designTier} tier ${answers.roomType}.
       Here are their requirements:
       - Room Name: ${answers.roomName}
-      - Max Participants: ${answers.participantCount}
-      - Video Inputs: ${JSON.stringify(answers.videoInputs)}
-      - Video Outputs: ${JSON.stringify(answers.videoOutputs)}
-      - Audio Needs: ${answers.audioNeeds.join(', ')}
-      - Control Needs: ${answers.controlNeeds.join(', ')}
+      - Max Participants: ${answers.maxParticipants}
+      - Features: ${JSON.stringify(answers.features)}
+      - Technical Specs: Resolution: ${answers.requiredResolution}, HDR: ${answers.hdrRequirements}, Casting: ${answers.wirelessCasting}
 
-      Based on this, provide a functionality statement and a list of features.
-      Respond in JSON format with two keys: "functionalityStatement" (a string) and "features" (an array of strings).
+      Based on this, provide a functionality statement.
+      Respond in JSON format with one key: "functionalityStatement" (a string).
     `;
 
     const response = await ai.models.generateContent({
@@ -172,8 +158,7 @@ export const generateRoomFunctionality = async (answers: RoomWizardAnswers, room
             responseSchema: {
                 type: Type.OBJECT,
                 properties: {
-                    functionalityStatement: { type: Type.STRING },
-                    features: { type: Type.ARRAY, items: { type: Type.STRING } }
+                    functionalityStatement: { type: Type.STRING }
                 }
             }
         },
@@ -188,15 +173,15 @@ export const generateRoomFunctionality = async (answers: RoomWizardAnswers, room
  */
 export const getProjectInsights = async (projectData: ProjectData) => {
     const systemInstruction = `You are an expert AV design reviewer. Your task is to analyze the provided project data and offer concise, actionable insights.
-    - Categorize feedback as 'Warning', 'Suggestion', or 'Opportunity'.
-    - Warnings are for potential incompatibilities or missing critical components.
+    - Use your internal AV Design Knowledge Base to check for common errors.
+    - Warnings are for potential incompatibilities (e.g., HDBaseT mismatch, missing AVoIP controller, EOL products) or unmet 'must-have' features.
     - Suggestions are for improvements or alternative products.
-    - Opportunities are for upselling or adding value.
-    - Base your review on the provided WyreStorm product database and general AV best practices.
+    - Opportunities are for upselling or adding value based on 'nice-to-have' features.
     `;
     const prompt = `
       Project Data: ${JSON.stringify(projectData, null, 2)}
       Product Database: ${JSON.stringify(productDatabase, null, 2)}
+      AV Design Knowledge Base: ${AV_DESIGN_KNOWLEDGE_BASE}
       
       Provide your feedback as a JSON array of objects, where each object has "type" and "text" keys.
     `;
@@ -264,7 +249,7 @@ export const analyzeRequirements = async (documentText: string, userProfile: Use
                                 designTier: { type: Type.STRING, enum: ['Bronze', 'Silver', 'Gold'] },
                                 maxParticipants: { type: Type.INTEGER },
                                 functionalityStatement: { type: Type.STRING },
-                                features: { type: Type.ARRAY, items: { type: Type.STRING } }
+                                features: { type: Type.ARRAY, items: { type: Type.STRING } } // AI will output simple strings here
                             }
                         }
                     }
@@ -274,4 +259,73 @@ export const analyzeRequirements = async (documentText: string, userProfile: Use
      });
 
      return JSON.parse(response.text);
+};
+
+/**
+ * Generates an inspired room design based on a template.
+ */
+export const generateInspiredRoomDesign = async (templateName: string, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', participantCount: number): Promise<Partial<RoomData>> => {
+    const systemInstruction = `You are an expert AV System Designer for WyreStorm. Your task is to generate a pre-configured room object in JSON based on a template name.
+    - Use your internal AV Design Knowledge Base to select appropriate features and technical specifications.
+    - All 'must-have' features should be critical to the room's function. Add some relevant 'nice-to-have' features for the given tier.
+    - The functionality statement should be a concise, professional summary.
+    - Select a full list of appropriate equipment from the product database.
+    - For any AVoIP system, ALWAYS include an NHD-CTL-PRO-V2 controller.
+    `;
+    const prompt = `
+        Template: "${templateName}"
+        Room Type: ${roomType}
+        Design Tier: ${designTier}
+        Participant Count: ${participantCount}
+
+        Product Database: ${JSON.stringify(productDatabase, null, 2)}
+        AV Design Knowledge Base: ${AV_DESIGN_KNOWLEDGE_BASE}
+        
+        Generate the room configuration JSON object now.
+    `;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+            systemInstruction,
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                    roomName: { type: Type.STRING },
+                    roomType: { type: Type.STRING },
+                    designTier: { type: Type.STRING },
+                    maxParticipants: { type: Type.INTEGER },
+                    functionalityStatement: { type: Type.STRING },
+                    features: {
+                        type: Type.ARRAY,
+                        items: {
+                            type: Type.OBJECT,
+                            properties: {
+                                name: { type: Type.STRING },
+                                priority: { type: Type.STRING, enum: ['must-have', 'nice-to-have'] }
+                            }
+                        }
+                    },
+                    manuallyAddedEquipment: {
+                        type: Type.ARRAY,
+                        items: {
+                            type: Type.OBJECT,
+                            properties: {
+                                sku: { type: Type.STRING },
+                                name: { type: Type.STRING },
+                                quantity: { type: Type.INTEGER }
+                            }
+                        }
+                    },
+                    requiredResolution: { type: Type.STRING, enum: ['1080p', '4K30', '4K60'] },
+                    hdrRequirements: { type: Type.STRING, enum: ['None', 'HDR10', 'Dolby Vision'] },
+                    hdbasetStandard: { type: Type.STRING, enum: ['Auto', '2.0', '3.0'] },
+                }
+            }
+        },
+    });
+
+    return JSON.parse(response.text);
 };
