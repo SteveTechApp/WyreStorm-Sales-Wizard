@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ProjectData, Proposal, RoomWizardAnswers, UserProfile, RoomData } from "../types";
+import { ProjectData, Proposal, RoomWizardAnswers, UserProfile, RoomData, UnitSystem } from "../types";
 import { productDatabase } from '../components/productDatabase';
 import { installationTaskDatabase } from '../components/installationTaskDatabase';
 import { AV_DESIGN_KNOWLEDGE_BASE } from "../technicalDatabase";
@@ -264,13 +264,13 @@ export const analyzeRequirements = async (documentText: string, userProfile: Use
 /**
  * Generates an inspired room design based on a template.
  */
-export const generateInspiredRoomDesign = async (templateName: string, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', participantCount: number): Promise<Partial<RoomData>> => {
-    const systemInstruction = `You are an expert AV System Designer for WyreStorm. Your task is to generate a pre-configured room object in JSON based on a template name.
-    - Use your internal AV Design Knowledge Base to select appropriate features and technical specifications.
-    - All 'must-have' features should be critical to the room's function. Add some relevant 'nice-to-have' features for the given tier.
+export const generateInspiredRoomDesign = async (templateName: string, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', participantCount: number, unitSystem: UnitSystem): Promise<Partial<RoomData>> => {
+    const systemInstruction = `You are an expert AV System Designer for WyreStorm. Your task is to generate a flawless, pre-validated room object in JSON based on a template name. This design should NOT produce any warnings when reviewed.
+    - Use your internal AV Design Knowledge Base to create a complete and functional system.
+    - Select appropriate features and technical specifications for the given tier.
+    - Provide typical and realistic room dimensions in ${unitSystem} for the specified room type and participant count.
     - The functionality statement should be a concise, professional summary.
-    - Select a full list of appropriate equipment from the product database.
-    - For any AVoIP system, ALWAYS include an NHD-CTL-PRO-V2 controller.
+    - Select a full list of appropriate equipment from the product database to create a functional system. For example, any AVoIP system MUST include an NHD-CTL-PRO-V2 controller, and presentation switchers should be paired with compatible receivers if needed.
     `;
     const prompt = `
         Template: "${templateName}"
@@ -308,6 +308,15 @@ export const generateInspiredRoomDesign = async (templateName: string, roomType:
                             }
                         }
                     },
+                    dimensions: {
+                        type: Type.OBJECT,
+                        description: `Room dimensions in ${unitSystem}.`,
+                        properties: {
+                            length: { type: Type.NUMBER },
+                            width: { type: Type.NUMBER },
+                            height: { type: Type.NUMBER },
+                        }
+                    },
                     manuallyAddedEquipment: {
                         type: Type.ARRAY,
                         items: {
@@ -323,7 +332,8 @@ export const generateInspiredRoomDesign = async (templateName: string, roomType:
                     hdrRequirements: { type: Type.STRING, enum: ['None', 'HDR10', 'Dolby Vision'] },
                     hdbasetStandard: { type: Type.STRING, enum: ['Auto', '2.0', '3.0'] },
                 }
-            }
+            },
+            thinkingConfig: { thinkingBudget: 0 },
         },
     });
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectData, RoomData, UnitSystem, RoomWizardAnswers } from '../types';
@@ -18,6 +17,7 @@ interface ProjectBuilderProps {
     onSubmit: (data: ProjectData) => void;
     onSaveProject: (data: ProjectData) => void;
     unitSystem: UnitSystem;
+    onFindProduct: () => void;
 }
 
 const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
@@ -28,6 +28,7 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
     onSubmit,
     onSaveProject,
     unitSystem,
+    onFindProduct,
 }) => {
     const [isRoomWizardOpen, setIsRoomWizardOpen] = useState(false);
     const [roomToEdit, setRoomToEdit] = useState<RoomData | null>(null);
@@ -106,7 +107,7 @@ const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
         const tabs = [
             {
                 label: 'Configuration',
-                content: <QuestionnaireForm room={activeRoom} onUpdate={handleUpdateRoom} unitSystem={unitSystem} />,
+                content: <QuestionnaireForm room={activeRoom} onUpdate={handleUpdateRoom} unitSystem={unitSystem} onFindProduct={onFindProduct} />,
             }
         ];
 

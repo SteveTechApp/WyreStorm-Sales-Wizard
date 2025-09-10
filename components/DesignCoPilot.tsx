@@ -102,6 +102,7 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
           onSubmit={onSubmit}
           onSaveProject={handleSaveProject}
           unitSystem={unitSystem}
+          onFindProduct={() => setIsProductFinderOpen(true)}
         />
       </div>
       <AIInsightsPanel 

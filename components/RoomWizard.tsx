@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { RoomData, Feature, RoomWizardAnswers } from '../types';
 import { 
@@ -10,6 +9,7 @@ import {
     WIRELESS_CASTING_OPTIONS,
     HDBASET_OPTIONS,
 } from '../constants';
+import TierTooltip from './TierTooltip';
 
 interface RoomWizardProps {
     isOpen: boolean;
@@ -124,11 +124,12 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
                                     {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
                                 </select>
                             </div>
-                            <div>
+                            <div className="relative group">
                                 <label className="block text-sm font-medium text-gray-700">Design Tier</label>
                                 <select value={designTier} onChange={e => setDesignTier(e.target.value as any)} className="mt-1 w-full p-2 border border-gray-300 rounded-md bg-white">
                                     {DESIGN_TIER_OPTIONS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
                                 </select>
+                                <TierTooltip tier={designTier} />
                             </div>
                         </div>
                     </section>

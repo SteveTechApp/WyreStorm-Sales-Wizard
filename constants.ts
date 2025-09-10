@@ -1,18 +1,22 @@
-
 // FIX: Import RoomData type to resolve type errors below.
 import { RoomData } from './types';
 
-export const ROOM_TYPES = [
-    'Huddle Room',
-    'Conference Room',
-    'Boardroom',
-    'Classroom',
-    'Auditorium',
-    'Briefing Center',
-    'Operations Center',
-    'Hospitality Venue',
-    'Other'
+export const TEMPLATES: { name: string; roomType: string; description: string; participantCount: number }[] = [
+    { name: 'Small Huddle Room (4)', roomType: 'Huddle Room', participantCount: 4, description: "A cost-effective setup for a single display. An all-in-one WyreStorm solution provides simple plug-and-present connectivity for laptops via HDMI and USB-C." },
+    { name: 'Medium Conference Room (12)', roomType: 'Conference Room', participantCount: 12, description: "Designed for dual displays, this room uses a powerful HDBaseT presentation switcher to reliably connect multiple sources, like guest laptops and a room PC, ensuring a seamless meeting experience." },
+    { name: 'Executive Boardroom (20)', roomType: 'Boardroom', participantCount: 20, description: "A premium solution for dual displays, featuring a high-performance matrix switcher or AVoIP system for seamless source selection. Supports full wireless BYOD for connecting to in-room cameras and audio." },
+    { name: 'Interactive Classroom (30)', roomType: 'Classroom', participantCount: 30, description: "Focuses on a single large interactive display. A versatile presentation switcher provides connectivity for a lectern PC and guest devices, with options for wireless casting and lecture capture." },
+    { name: 'Standard Classroom (40)', roomType: 'Classroom', participantCount: 40, description: "A reliable dual-display setup for larger classes. An HDBaseT matrix switcher ensures high-quality video is sent to both projectors from sources at the lectern, such as a PC or document camera." },
+    { name: '100-Seater Auditorium', roomType: 'Auditorium', participantCount: 100, description: "Engineered for a large projector and two repeater screens. This system uses a powerful HDBaseT matrix to distribute signals over long distances, ensuring everyone has a clear view." },
+    { name: '300-Seater Auditorium', roomType: 'Auditorium', participantCount: 300, description: "A scalable AVoIP solution for dual main projectors and four repeater screens. NetworkHD provides the flexibility to route any source to any display, with integrated Dante audio for professional sound." },
+    { name: 'Briefing Center Video Wall', roomType: 'Briefing Center', participantCount: 25, description: "A high-impact solution centered on a large LED video wall. A NetworkHD AVoIP system provides the power to manage content flexibly, allowing for dynamic layouts from media players and laptops." },
+    { name: 'Operations Center 2x4 Wall', roomType: 'Operations Center', participantCount: 12, description: "A zero-latency AVoIP system designed for a 2x4 video wall. This solution allows multiple critical sources, such as PC feeds and data streams, to be displayed simultaneously in customizable layouts." },
+    { name: 'Small Pub / Bar (2x4)', roomType: 'Hospitality Venue', participantCount: 8, description: "A straightforward system for distributing two sources, like a SKY decoder and a media player, to four screens. A compact WyreStorm matrix switcher provides simple, reliable source selection for each display." },
+    { name: 'Large Sports Bar (8x25)', roomType: 'Hospitality Venue', participantCount: 33, description: "A highly scalable NetworkHD AVoIP system designed to distribute eight sources, like SKY decoders and media players, to twenty-five different screens, letting you show any game on any screen." },
 ];
+
+const templateRoomTypes = [...new Set(TEMPLATES.map(t => t.roomType))];
+export const ROOM_TYPES = [...templateRoomTypes, 'Other'];
 
 export const DESIGN_TIER_OPTIONS: ['Bronze', 'Silver', 'Gold'] = ['Bronze', 'Silver', 'Gold'];
 

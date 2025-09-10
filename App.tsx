@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import WelcomeScreen from './components/WelcomeScreen';
@@ -24,9 +23,12 @@ const App: React.FC = () => {
     const [proposal, setProposal] = useState<Proposal | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [isProfileRemembered, setIsProfileRemembered] = useState(false);
     const [savedProjects, setSavedProjects] = useState<ProjectData[]>([]);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
+    const [loadingContext, setLoadingContext] = useState<'template' | 'proposal' | null>(null);
+    const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
 
     // Load data from localStorage on initial render
     useEffect(() => {
@@ -34,6 +36,11 @@ const App: React.FC = () => {
             const savedProfile = localStorage.getItem('userProfile');
             if (savedProfile) {
                 setUserProfile(JSON.parse(savedProfile));
+                setIsProfileRemembered(true);
+            } else {
+                // Force profile creation on first visit
+                setIsProfileModalOpen(true);
+                setIsProfileRemembered(false);
             }
 
             const projects = localStorage.getItem('savedProjects');
@@ -42,12 +49,19 @@ const App: React.FC = () => {
             }
         } catch (e) {
             console.error("Failed to load data from localStorage", e);
+        } finally {
+            setIsInitialLoadComplete(true);
         }
     }, []);
 
-    const handleSaveUserProfile = (profile: UserProfile) => {
+    const handleSaveUserProfile = (profile: UserProfile, rememberMe: boolean) => {
         setUserProfile(profile);
-        localStorage.setItem('userProfile', JSON.stringify(profile));
+        setIsProfileRemembered(rememberMe);
+        if (rememberMe) {
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+        } else {
+            localStorage.removeItem('userProfile');
+        }
     };
 
     const handleSaveProject = useCallback((data: ProjectData) => {
@@ -87,6 +101,7 @@ const App: React.FC = () => {
     };
     
     const handleAgentSubmit = async (text: string) => {
+        setLoadingContext('template');
         setAppState('generating-proposal'); // Show loading state
         try {
             const requirements = await analyzeRequirements(text, userProfile);
@@ -118,6 +133,7 @@ const App: React.FC = () => {
     };
 
     const handleGenerateProposal = async (data: ProjectData) => {
+        setLoadingContext('proposal');
         setAppState('generating-proposal');
         setProjectData(data); // Save latest state before generating
         handleSaveProject(data);
@@ -146,9 +162,10 @@ const App: React.FC = () => {
     };
     
      const handleStartFromTemplate = async (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => {
+        setLoadingContext('template');
         setAppState('generating-proposal');
         try {
-            const inspiredRoom = await generateInspiredRoomDesign(templateName, roomType, designTier, participantCount);
+            const inspiredRoom = await generateInspiredRoomDesign(templateName, roomType, designTier, participantCount, userProfile?.unitSystem || 'imperial');
             
             const newProject: ProjectData = {
                 projectId: uuidv4(),
@@ -198,7 +215,7 @@ const App: React.FC = () => {
                             userProfile={userProfile}
                         />;
             case 'generating-proposal':
-                return <LoadingSpinner message="AI is Designing..." />;
+                return <LoadingSpinner context={loadingContext} />;
             case 'proposal-display':
                 if (!proposal || !projectData) return <LoadingSpinner message="Loading Proposal..." />;
                 return <ProposalDisplay 
@@ -218,13 +235,15 @@ const App: React.FC = () => {
         <div className="flex flex-col h-screen bg-gray-100 font-sans">
             <Header onNewProject={handleNewProject} onShowProfile={() => setIsProfileModalOpen(true)} userProfile={userProfile} />
             <main className="flex-grow p-4 sm:p-8 overflow-y-auto flex items-center justify-center">
-                {renderContent()}
+                {isInitialLoadComplete ? renderContent() : <LoadingSpinner message="Initializing..." />}
             </main>
             <ProfileModal 
                 isOpen={isProfileModalOpen}
                 onClose={() => setIsProfileModalOpen(false)}
                 onSave={handleSaveUserProfile}
                 initialProfile={userProfile}
+                isDismissable={!!userProfile}
+                isRemembered={isProfileRemembered}
             />
             <QuickQuestionFAB onClick={() => setIsQuickQuestionModalOpen(true)} />
             <QuickQuestionModal isOpen={isQuickQuestionModalOpen} onClose={() => setIsQuickQuestionModalOpen(false)} />

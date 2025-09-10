@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { RoomData, UnitSystem, ManuallyAddedEquipment } from '../types';
 import {
@@ -14,9 +13,10 @@ interface QuestionnaireFormProps {
     room: RoomData;
     onUpdate: (updatedRoom: RoomData) => void;
     unitSystem: UnitSystem;
+    onFindProduct: () => void;
 }
 
-const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, unitSystem }) => {
+const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, unitSystem, onFindProduct }) => {
     
     // FIX: Removed unused handleInputChange, replaced with specific handlers for nested objects.
     const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,9 +133,9 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, u
                 </div>
             </section>
             
-            {(room.manuallyAddedEquipment && room.manuallyAddedEquipment.length > 0) && (
-                <section className="bg-white p-4 border rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Manually Added Equipment</h3>
+            <section className="bg-white p-4 border rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Manually Added Equipment</h3>
+                {(room.manuallyAddedEquipment && room.manuallyAddedEquipment.length > 0) ? (
                     <ul className="divide-y">
                         {room.manuallyAddedEquipment.map((item: ManuallyAddedEquipment) => (
                             <li key={item.sku} className="py-2 flex justify-between items-center group">
@@ -153,8 +153,18 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ room, onUpdate, u
                             </li>
                         ))}
                     </ul>
-                </section>
-            )}
+                ) : (
+                     <p className="text-sm text-gray-500 py-2">No equipment added manually for this room.</p>
+                )}
+                 <button 
+                    type="button" 
+                    onClick={onFindProduct}
+                    className="text-sm text-blue-600 hover:underline mt-4 font-medium flex items-center gap-1"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    Find Product to Add
+                </button>
+            </section>
         </div>
     );
 };

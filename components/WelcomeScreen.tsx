@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ProjectData } from '../types';
 import { AgentIcon, PlusIcon, TrashIcon, ChevronRightIcon, ChevronLeftIcon } from './Icons';
+import { TEMPLATES } from '../constants';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -10,20 +11,6 @@ interface WelcomeScreenProps {
   onDeleteProject: (projectId: string) => void;
   onStartFromTemplate: (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => void;
 }
-
-const TEMPLATES: { name: string; roomType: string; description: string; designTier: 'Bronze' | 'Silver' | 'Gold'; participantCount: number }[] = [
-    { name: 'Small Huddle Room (4)', roomType: 'Huddle Room', designTier: 'Bronze', participantCount: 4, description: "A cost-effective setup for a single display. An all-in-one WyreStorm solution provides simple plug-and-present connectivity for laptops via HDMI and USB-C." },
-    { name: 'Medium Conference Room (12)', roomType: 'Conference Room', designTier: 'Silver', participantCount: 12, description: "Designed for dual displays, this room uses a powerful HDBaseT presentation switcher to reliably connect multiple sources, like guest laptops and a room PC, ensuring a seamless meeting experience." },
-    { name: 'Executive Boardroom (20)', roomType: 'Boardroom', designTier: 'Gold', participantCount: 20, description: "A premium solution for dual displays, featuring a high-performance matrix switcher or AVoIP system for seamless source selection. Supports full wireless BYOD for connecting to in-room cameras and audio." },
-    { name: 'Interactive Classroom (30)', roomType: 'Classroom', designTier: 'Gold', participantCount: 30, description: "Focuses on a single large interactive display. A versatile presentation switcher provides connectivity for a lectern PC and guest devices, with options for wireless casting and lecture capture." },
-    { name: 'Standard Classroom (40)', roomType: 'Classroom', designTier: 'Silver', participantCount: 40, description: "A reliable dual-display setup for larger classes. An HDBaseT matrix switcher ensures high-quality video is sent to both projectors from sources at the lectern, such as a PC or document camera." },
-    { name: '100-Seater Auditorium', roomType: 'Auditorium', designTier: 'Silver', participantCount: 100, description: "Engineered for a large projector and two repeater screens. This system uses a powerful HDBaseT matrix to distribute signals over long distances, ensuring everyone has a clear view." },
-    { name: '300-Seater Auditorium', roomType: 'Auditorium', designTier: 'Gold', participantCount: 300, description: "A scalable AVoIP solution for dual main projectors and four repeater screens. NetworkHD provides the flexibility to route any source to any display, with integrated Dante audio for professional sound." },
-    { name: 'Briefing Center Video Wall', roomType: 'Briefing Center', designTier: 'Gold', participantCount: 25, description: "A high-impact solution centered on a large LED video wall. A NetworkHD AVoIP system provides the power to manage content flexibly, allowing for dynamic layouts from media players and laptops." },
-    { name: 'Operations Center 2x4 Wall', roomType: 'Operations Center', designTier: 'Gold', participantCount: 12, description: "A zero-latency AVoIP system designed for a 2x4 video wall. This solution allows multiple critical sources, such as PC feeds and data streams, to be displayed simultaneously in customizable layouts." },
-    { name: 'Small Pub / Bar (2x4)', roomType: 'Hospitality Venue', designTier: 'Silver', participantCount: 8, description: "A straightforward system for distributing two sources, like a SKY decoder and a media player, to four screens. A compact WyreStorm matrix switcher provides simple, reliable source selection for each display." },
-    { name: 'Large Sports Bar (8x25)', roomType: 'Hospitality Venue', designTier: 'Gold', participantCount: 33, description: "A highly scalable NetworkHD AVoIP system designed to distribute eight sources, like SKY decoders and media players, to twenty-five different screens, letting you show any game on any screen." },
-];
 
 const getBackgroundImageUrl = (roomType: string): string => {
     switch (roomType) {
@@ -55,7 +42,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 }) => {
   const sortedProjects = [...savedProjects].sort((a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -72,7 +59,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     itemRefs.current[newIndex]?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
-        inline: 'center',
+        inline: 'start',
     });
   };
 
@@ -81,8 +68,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     handleScroll(direction);
   };
   
-  const handleTemplateClick = (template: typeof TEMPLATES[0]) => {
-      onStartFromTemplate(template.roomType, template.designTier, template.name, template.participantCount);
+  const handleTemplateClick = (template: typeof TEMPLATES[0], designTier: 'Bronze' | 'Silver' | 'Gold') => {
+      onStartFromTemplate(template.roomType, designTier, template.name, template.participantCount);
   };
   
   return (
@@ -156,24 +143,25 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             className="flex gap-x-4 md:gap-x-8 overflow-x-auto pb-4 scrollbar-hide"
             style={{
                 scrollSnapType: 'x mandatory',
-                paddingLeft: 'calc(50% - 144px)', // Half of card width w-72
-                paddingRight: 'calc(50% - 144px)',
             }}
           >
               {TEMPLATES.map((template, index) => {
+                  const tierButtonClasses = "w-full text-center py-2 text-xs font-bold text-white rounded-md transition-all hover:scale-105 shadow-md";
+                  const bronzeClasses = "bg-yellow-800 hover:bg-yellow-700";
+                  const silverClasses = "bg-slate-600 hover:bg-slate-500";
+                  const goldClasses = "bg-amber-700 hover:bg-amber-600";
                   return (
-                      <button 
+                      <div
                           key={template.name}
                           ref={el => { itemRefs.current[index] = el; }}
                           data-index={index}
-                          onClick={() => handleTemplateClick(template)}
-                          className="relative flex-shrink-0 w-72 h-96 text-left p-4 rounded-lg flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105"
+                          className="relative flex-shrink-0 w-72 h-96 text-left p-4 rounded-lg flex flex-col justify-between overflow-hidden shadow-lg"
                            style={{ 
-                                scrollSnapAlign: 'center',
+                                scrollSnapAlign: 'start',
                            }}
                       >
                           <div
-                              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110 opacity-50"
+                              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 opacity-50"
                               style={{ backgroundImage: `url(${getBackgroundImageUrl(template.roomType)})` }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10" />
@@ -187,15 +175,16 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                                        {template.description}
                                    </p>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border backdrop-blur-sm ${
-                                    template.designTier === 'Bronze' ? 'bg-yellow-900/40 text-yellow-100 border-yellow-300/50' :
-                                    template.designTier === 'Silver' ? 'bg-slate-700/40 text-slate-100 border-slate-300/50' :
-                                    'bg-amber-800/40 text-amber-100 border-amber-200/50'
-                                }`}>{template.designTier}</span>
+                              <div className="space-y-2">
+                                <p className="text-xs font-semibold text-white/90" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>Choose Specification:</p>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <button onClick={() => handleTemplateClick(template, 'Bronze')} className={`${tierButtonClasses} ${bronzeClasses}`}>Bronze</button>
+                                    <button onClick={() => handleTemplateClick(template, 'Silver')} className={`${tierButtonClasses} ${silverClasses}`}>Silver</button>
+                                    <button onClick={() => handleTemplateClick(template, 'Gold')} className={`${tierButtonClasses} ${goldClasses}`}>Gold</button>
+                                </div>
                               </div>
                           </div>
-                      </button>
+                      </div>
                   );
               })}
           </div>

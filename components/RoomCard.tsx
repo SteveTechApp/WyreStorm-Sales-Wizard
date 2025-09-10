@@ -1,5 +1,6 @@
 import React from 'react';
 import { RoomData } from '../types';
+import TierTooltip from './TierTooltip';
 
 interface RoomCardProps {
   room: RoomData;
@@ -31,15 +32,18 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, isActive, onSelect, onReconfi
           <h4 className="font-bold text-gray-800">{room.roomName}</h4>
           <p className="text-sm text-gray-500">{room.roomType}</p>
         </div>
-        <span
-          className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${
-            room.designTier === 'Bronze' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-            room.designTier === 'Silver' ? 'bg-slate-200 text-slate-800 border-slate-400' :
-            'bg-amber-100 text-amber-800 border-amber-300'
-          }`}
-        >
-          {room.designTier}
-        </span>
+        <div className="relative group">
+            <span
+              className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${
+                room.designTier === 'Bronze' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
+                room.designTier === 'Silver' ? 'bg-slate-200 text-slate-800 border-slate-400' :
+                'bg-amber-100 text-amber-800 border-amber-300'
+              }`}
+            >
+              {room.designTier}
+            </span>
+            <TierTooltip tier={room.designTier} />
+        </div>
       </div>
       <div className="mt-3 flex justify-between items-center text-xs">
         <button

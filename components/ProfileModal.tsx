@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 // FIX: Corrected import path for types
 import { UserProfile } from '../types';
@@ -7,19 +6,27 @@ import { CURRENCY_OPTIONS } from '../constants';
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (profile: UserProfile) => void;
+  onSave: (profile: UserProfile, rememberMe: boolean) => void;
   initialProfile: UserProfile | null;
+  isDismissable?: boolean;
+  isRemembered: boolean;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, initialProfile }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, initialProfile, isDismissable = true, isRemembered }) => {
   const [profile, setProfile] = useState<UserProfile>({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
+  const [rememberMe, setRememberMe] = useState(true);
 
   useEffect(() => {
-    if (initialProfile) {
-      // Ensure unitSystem has a default if loading an old profile without it
-      setProfile({ unitSystem: 'imperial', ...initialProfile });
+    if (isOpen) {
+      // Pre-populate form with initial data or clear it for a new user
+      setProfile(initialProfile || { name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
+      
+      // The checkbox should reflect if the profile is currently in a "remembered" state,
+      // or default to true for a brand new user.
+      setRememberMe(isRemembered || !initialProfile);
     }
-  }, [initialProfile, isOpen]);
+  }, [initialProfile, isOpen, isRemembered]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -38,17 +45,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
   };
 
   const handleSave = () => {
-    onSave(profile);
+    onSave(profile, rememberMe);
     onClose();
+  };
+  
+  const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.target === e.currentTarget && isDismissable) {
+          onClose();
+      }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Profile</h2>
-        <p className="text-sm text-gray-500 mb-6">This information will be used to customize your proposals.</p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackgroundClick}>
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4" onClick={e => e.stopPropagation()}>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">{isDismissable ? 'Your Profile' : 'Welcome! Create Your Profile'}</h2>
+        <p className="text-sm text-gray-500 mb-6">{isDismissable ? 'This information will be used to customize your proposals.' : 'Please provide some basic info to get started. This will be used on your proposals.'}</p>
         
         <div className="space-y-4">
           <div>
@@ -92,13 +105,30 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
-            Cancel
-          </button>
-          <button type="button" onClick={handleSave} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">
-            Save Profile
-          </button>
+        <div className="mt-6 flex justify-between items-center">
+          <div className="flex items-center">
+              <input
+                  id="rememberMe"
+                  name="rememberMe"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] border-gray-300"
+              />
+              <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
+                  Remember my details
+              </label>
+          </div>
+          <div className="flex gap-3">
+            {isDismissable && (
+              <button type="button" onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
+                  Cancel
+              </button>
+            )}
+            <button type="button" onClick={handleSave} className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">
+              Save Profile
+            </button>
+          </div>
         </div>
       </div>
     </div>
