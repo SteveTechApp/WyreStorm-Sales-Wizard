@@ -12,7 +12,6 @@ interface AddRoomModalProps {
 
 const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onAdd, isAdding }) => {
     const [roomType, setRoomType] = useState(ROOM_TYPES[0]);
-    // FIX: Explicitly type the designTier state to allow any of the three tier options, resolving an assignment error.
     const [designTier, setDesignTier] = useState<'Bronze' | 'Silver' | 'Gold'>(DESIGN_TIER_OPTIONS[1]); // Default to Silver
 
     if (!isOpen) return null;

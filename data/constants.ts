@@ -1,5 +1,4 @@
-
-import { RoomData } from './types';
+import { RoomData } from '../utils/types';
 
 export const TEMPLATES: { name: string; roomType: string; description: string; participantCount: number }[] = [
     { name: 'Huddle / Small Meeting Room (2-6)', roomType: 'Conference Room', participantCount: 6, description: "A compact, cost-effective setup for small team collaboration, featuring simple plug-and-present connectivity." },

@@ -29,7 +29,6 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ chart, onNodeClick }) =
         htmlLabels: true,
       },
       // IMPORTANT: Set securityLevel to 'loose' to allow external function calls.
-      // 'antiscript' (the previous setting) would block this interaction.
       securityLevel: 'loose',
     });
 
@@ -49,8 +48,7 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ chart, onNodeClick }) =
       const element = document.getElementById(elementId);
       if (element) {
         try {
-            // FIX: Validate the Mermaid syntax before attempting to render.
-            // This prevents Mermaid from throwing its own, less-catchable errors.
+            // Validate the Mermaid syntax before attempting to render.
             mermaid.parse(chart);
             // Set the innerHTML to the chart string, which mermaid.run will process.
             element.innerHTML = chart;
@@ -64,8 +62,7 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ chart, onNodeClick }) =
     }
   }, [chart, elementId]);
 
-  // FIX: This div acts as a container for Mermaid to render into.
-  // It is kept empty initially to prevent a flash of unstyled chart text.
+  // This div acts as a container for Mermaid to render into.
   return <div id={elementId} className="w-full flex justify-center" />;
 };
 

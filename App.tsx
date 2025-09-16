@@ -1,254 +1,46 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import WelcomeScreen from './components/WelcomeScreen';
-import ProjectSetupScreen from './components/ProjectSetupScreen';
-import DesignCoPilot from './components/DesignCoPilot';
-import ProposalDisplay from './components/ProposalDisplay';
-import Header from './components/Header';
+import React from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import WelcomeScreen from './pages/WelcomeScreen';
+import ProjectSetupScreen from './pages/ProjectSetupScreen';
+import AgentInputForm from './pages/AgentInputForm';
+import DesignCoPilot from './pages/DesignCoPilot';
+import ProposalDisplay from './pages/ProposalDisplay';
+import AppLayout from './components/AppLayout';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorDisplay from './components/ErrorDisplay';
-import ProfileModal from './components/ProfileModal';
-import AgentInputForm from './components/AgentInputForm';
-import QuickQuestionFAB from './components/QuickQuestionFAB';
-import QuickQuestionModal from './components/QuickQuestionModal';
-import { ProjectData, ProjectSetupData, Proposal, UserProfile, RoomData, Feature } from './types';
-import { generateProposal, analyzeRequirements, generateInspiredRoomDesign } from './services/geminiService';
-import { createDefaultRoomData } from './utils';
-
-type AppState = 'welcome' | 'agent-input' | 'project-setup' | 'design-copilot' | 'generating-proposal' | 'proposal-display' | 'error';
+import { useAppContext } from './context/AppContext';
 
 const App: React.FC = () => {
-    const [appState, setAppState] = useState<AppState>('welcome');
-    const [projectData, setProjectData] = useState<ProjectData | null>(null);
-    const [proposal, setProposal] = useState<Proposal | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-    const [isProfileRemembered, setIsProfileRemembered] = useState(false);
-    const [savedProjects, setSavedProjects] = useState<ProjectData[]>([]);
-    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
-    const [loadingContext, setLoadingContext] = useState<'template' | 'proposal' | null>(null);
-    const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
+  const { isInitialLoadComplete, appState, error, handleNewProject, loadingContext } = useAppContext();
 
-    // Load data from localStorage on initial render
-    useEffect(() => {
-        try {
-            const savedProfile = localStorage.getItem('userProfile');
-            if (savedProfile) {
-                setUserProfile(JSON.parse(savedProfile));
-                setIsProfileRemembered(true);
-            } else {
-                // Force profile creation on first visit
-                setIsProfileModalOpen(true);
-                setIsProfileRemembered(false);
-            }
+  if (!isInitialLoadComplete) {
+      return (
+          <div className="flex flex-col h-screen items-center justify-center">
+               <LoadingSpinner message="Initializing..." />
+          </div>
+      )
+  }
 
-            const projects = localStorage.getItem('savedProjects');
-            if (projects) {
-                setSavedProjects(JSON.parse(projects));
-            }
-        } catch (e) {
-            console.error("Failed to load data from localStorage", e);
-        } finally {
-            setIsInitialLoadComplete(true);
-        }
-    }, []);
+  if (appState === 'generating-proposal') {
+    return <div className="flex flex-col h-screen items-center justify-center bg-gray-100"><LoadingSpinner context={loadingContext} /></div>;
+  }
+   if (appState === 'error') {
+     return <div className="flex flex-col h-screen items-center justify-center bg-gray-100"><ErrorDisplay error={error} onAcknowledge={handleNewProject} acknowledgeButtonText="Start Over" /></div>;
+  }
 
-    const handleSaveUserProfile = (profile: UserProfile, rememberMe: boolean) => {
-        setUserProfile(profile);
-        setIsProfileRemembered(rememberMe);
-        if (rememberMe) {
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-        } else {
-            localStorage.removeItem('userProfile');
-        }
-    };
-
-    const handleSaveProject = useCallback((data: ProjectData) => {
-        const updatedData = { ...data, lastSaved: new Date().toISOString() };
-        setSavedProjects(prev => {
-            const existingIndex = prev.findIndex(p => p.projectId === updatedData.projectId);
-            const newProjects = [...prev];
-            if (existingIndex > -1) {
-                newProjects[existingIndex] = updatedData;
-            } else {
-                newProjects.push(updatedData);
-            }
-            localStorage.setItem('savedProjects', JSON.stringify(newProjects));
-            return newProjects;
-        });
-        setProjectData(updatedData);
-    }, []);
-
-    const handleNewProject = () => {
-        setProjectData(null);
-        setProposal(null);
-        setAppState('welcome');
-    };
-
-    const handleStartSetup = () => setAppState('project-setup');
-    const handleStartAgent = () => setAppState('agent-input');
-
-    const handleProjectSetupSubmit = (setupData: ProjectSetupData) => {
-        const newProject: ProjectData = {
-            ...setupData,
-            projectId: uuidv4(),
-            lastSaved: new Date().toISOString(),
-            rooms: setupData.rooms.map(r => ({ ...createDefaultRoomData(), ...r, id: uuidv4() })),
-        };
-        setProjectData(newProject);
-        setAppState('design-copilot');
-    };
-    
-    const handleAgentSubmit = async (text: string) => {
-        setLoadingContext('template');
-        setAppState('generating-proposal'); // Show loading state
-        try {
-            const requirements = await analyzeRequirements(text, userProfile);
-            const newProject: ProjectData = {
-                ...requirements,
-                projectId: uuidv4(),
-                lastSaved: new Date().toISOString(),
-                rooms: requirements.rooms.map(r => {
-                    const defaultRoom = createDefaultRoomData();
-                    const featuresAsObjects: Feature[] = (r.features || []).map(featureName => ({
-                        name: featureName,
-                        priority: 'must-have'
-                    }));
-
-                    return {
-                        ...defaultRoom,
-                        ...r,
-                        id: uuidv4(),
-                        features: featuresAsObjects,
-                    };
-                }),
-            };
-            setProjectData(newProject);
-            setAppState('design-copilot');
-        } catch(e: any) {
-            setError(`Failed to analyze document: ${e.message}`);
-            setAppState('error');
-        }
-    };
-
-    const handleGenerateProposal = async (data: ProjectData) => {
-        setLoadingContext('proposal');
-        setAppState('generating-proposal');
-        setProjectData(data); // Save latest state before generating
-        handleSaveProject(data);
-        try {
-            const generatedProposal = await generateProposal(data, userProfile);
-            setProposal(generatedProposal);
-            setAppState('proposal-display');
-        } catch (e: any) {
-            setError(`The AI failed to generate the proposal. Error: ${e.message}`);
-            setAppState('error');
-        }
-    };
-
-    const handleDeleteProject = (projectId: string) => {
-        const newProjects = savedProjects.filter(p => p.projectId !== projectId);
-        setSavedProjects(newProjects);
-        localStorage.setItem('savedProjects', JSON.stringify(newProjects));
-    };
-
-    const handleLoadProject = (projectId: string) => {
-        const projectToLoad = savedProjects.find(p => p.projectId === projectId);
-        if (projectToLoad) {
-            setProjectData(projectToLoad);
-            setAppState('design-copilot');
-        }
-    };
-    
-     const handleStartFromTemplate = async (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => {
-        setLoadingContext('template');
-        setAppState('generating-proposal');
-        try {
-            const inspiredRoom = await generateInspiredRoomDesign(templateName, roomType, designTier, participantCount, userProfile?.unitSystem || 'imperial');
-            
-            const newProject: ProjectData = {
-                projectId: uuidv4(),
-                projectName: `${templateName} Project`,
-                clientName: userProfile?.company || 'My Company',
-                lastSaved: new Date().toISOString(),
-                rooms: [{
-                    ...createDefaultRoomData(),
-                    ...inspiredRoom,
-                    id: uuidv4(),
-                }]
-            };
-            setProjectData(newProject);
-            setAppState('design-copilot');
-        } catch (e: any) {
-            setError(`Failed to generate from template: ${e.message}`);
-            setAppState('error');
-        }
-    };
-
-    const renderContent = () => {
-        switch (appState) {
-            case 'welcome':
-                return <WelcomeScreen 
-                            onStart={handleStartSetup} 
-                            onStartAgent={handleStartAgent}
-                            savedProjects={savedProjects}
-                            onLoadProject={handleLoadProject}
-                            onDeleteProject={handleDeleteProject}
-                            onStartFromTemplate={handleStartFromTemplate}
-                        />;
-            case 'agent-input':
-                return <AgentInputForm onSubmit={handleAgentSubmit} onBack={handleNewProject} />;
-            case 'project-setup':
-                return <ProjectSetupScreen 
-                            onSubmit={handleProjectSetupSubmit} 
-                            onBack={handleNewProject}
-                            defaultProjectName={`New Project ${new Date().toLocaleDateString()}`}
-                            userProfile={userProfile}
-                        />;
-            case 'design-copilot':
-                if (!projectData || !userProfile) return <LoadingSpinner message="Loading Project..." />;
-                return <DesignCoPilot 
-                            initialData={projectData} 
-                            onSubmit={handleGenerateProposal} 
-                            onSaveProject={handleSaveProject} 
-                            userProfile={userProfile}
-                        />;
-            case 'generating-proposal':
-                return <LoadingSpinner context={loadingContext} />;
-            case 'proposal-display':
-                if (!proposal || !projectData) return <LoadingSpinner message="Loading Proposal..." />;
-                return <ProposalDisplay 
-                            proposal={proposal} 
-                            projectData={projectData}
-                            userProfile={userProfile}
-                            unitSystem={userProfile?.unitSystem || 'imperial'}
-                        />;
-            case 'error':
-                return <ErrorDisplay error={error} onAcknowledge={handleNewProject} acknowledgeButtonText="Start Over" />;
-            default:
-                return <div>Invalid state</div>;
-        }
-    };
-
-    return (
-        <div className="flex flex-col h-screen bg-gray-100 font-sans">
-            <Header onNewProject={handleNewProject} onShowProfile={() => setIsProfileModalOpen(true)} userProfile={userProfile} />
-            <main className="flex-grow p-4 sm:p-8 overflow-y-auto flex items-center justify-center">
-                {isInitialLoadComplete ? renderContent() : <LoadingSpinner message="Initializing..." />}
-            </main>
-            <ProfileModal 
-                isOpen={isProfileModalOpen}
-                onClose={() => setIsProfileModalOpen(false)}
-                onSave={handleSaveUserProfile}
-                initialProfile={userProfile}
-                isDismissable={!!userProfile}
-                isRemembered={isProfileRemembered}
-            />
-            <QuickQuestionFAB onClick={() => setIsQuickQuestionModalOpen(true)} />
-            <QuickQuestionModal isOpen={isQuickQuestionModalOpen} onClose={() => setIsQuickQuestionModalOpen(false)} />
-        </div>
-    );
+  return (
+    <HashRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<WelcomeScreen />} />
+          <Route path="/setup" element={<ProjectSetupScreen />} />
+          <Route path="/agent" element={<AgentInputForm />} />
+          <Route path="/design/:projectId" element={<DesignCoPilot />} />
+          <Route path="/proposal/:projectId" element={<ProposalDisplay />} />
+        </Route>
+      </Routes>
+    </HashRouter>
+  );
 };
 
 export default App;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RoomData, Feature, RoomWizardAnswers } from '../types';
+import { RoomData, Feature, RoomWizardAnswers, UnitSystem, RoomDimensions } from '../utils/types';
 import { 
     DESIGN_TIER_OPTIONS, 
     ROOM_TYPES, 
@@ -8,7 +8,7 @@ import {
     HDR_OPTIONS,
     WIRELESS_CASTING_OPTIONS,
     HDBASET_OPTIONS,
-} from '../constants';
+} from '../data/constants';
 import TierTooltip from './TierTooltip';
 
 interface RoomWizardProps {
@@ -16,14 +16,17 @@ interface RoomWizardProps {
     onClose: () => void;
     onUpdate: (answers: RoomWizardAnswers) => void;
     initialData?: RoomData | null;
+    unitSystem: UnitSystem;
 }
 
-const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, initialData }) => {
+const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, initialData, unitSystem }) => {
     const [roomName, setRoomName] = useState('New Room');
     const [roomType, setRoomType] = useState(ROOM_TYPES[0]);
     const [designTier, setDesignTier] = useState<'Bronze' | 'Silver' | 'Gold'>('Silver');
     const [maxParticipants, setMaxParticipants] = useState(10);
     const [features, setFeatures] = useState<Feature[]>([]);
+    const [dimensions, setDimensions] = useState({ length: '20', width: '15', height: '9' });
+    const [errors, setErrors] = useState<{ roomName?: string; dimensions?: string; }>({});
     
     // New technical requirements state
     const [requiredResolution, setRequiredResolution] = useState<RoomData['requiredResolution']>('4K60');
@@ -39,6 +42,11 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
                 setDesignTier(initialData.designTier);
                 setMaxParticipants(initialData.maxParticipants);
                 setFeatures(initialData.features || []);
+                setDimensions({
+                    length: String(initialData.dimensions.length),
+                    width: String(initialData.dimensions.width),
+                    height: String(initialData.dimensions.height)
+                });
                 setRequiredResolution(initialData.requiredResolution || '4K60');
                 setHdrRequirements(initialData.hdrRequirements || 'HDR10');
                 setWirelessCasting(initialData.wirelessCasting || 'None');
@@ -50,13 +58,49 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
                 setDesignTier('Silver');
                 setMaxParticipants(10);
                 setFeatures([]);
+                setDimensions({ length: '20', width: '15', height: '9' });
                 setRequiredResolution('4K60');
                 setHdrRequirements('HDR10');
                 setWirelessCasting('None');
                 setHdbasetStandard('Auto');
             }
+            setErrors({});
         }
     }, [isOpen, initialData]);
+
+    const handleRoomNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value;
+        if (name.length > 50) {
+            setErrors(prev => ({ ...prev, roomName: 'Room name cannot exceed 50 characters.' }));
+        } else {
+            setErrors(prev => {
+                const { roomName, ...rest } = prev;
+                return rest;
+            });
+        }
+        setRoomName(name);
+    };
+
+    const handleDimensionChange = (field: keyof RoomDimensions, value: string) => {
+        const sanitizedValue = value.replace(/[^0-9.]/g, '');
+        setDimensions(prev => ({ ...prev, [field]: sanitizedValue }));
+
+        // Check all dimensions for validity
+        const currentDims = { ...dimensions, [field]: sanitizedValue };
+        const allValid = Object.values(currentDims).every(dim => {
+            const numValue = parseFloat(dim);
+            return dim.trim() !== '' && !isNaN(numValue) && numValue > 0;
+        });
+
+        if (!allValid) {
+            setErrors(prev => ({ ...prev, dimensions: 'Dimensions must be positive numbers.' }));
+        } else {
+            setErrors(prev => {
+                const { dimensions, ...rest } = prev;
+                return rest;
+            });
+        }
+    };
 
     const handleFeatureToggle = (featureName: string) => {
         const existingFeature = features.find(f => f.name === featureName);
@@ -72,12 +116,30 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
     };
 
     const handleFinish = () => {
+        const finalErrors: { roomName?: string; dimensions?: string } = {};
+        if (roomName.length > 50) finalErrors.roomName = 'Room name cannot exceed 50 characters.';
+        if (!roomName.trim()) finalErrors.roomName = 'Room name is required.';
+
+        const length = parseFloat(dimensions.length);
+        const width = parseFloat(dimensions.width);
+        const height = parseFloat(dimensions.height);
+
+        if (isNaN(length) || length <= 0 || isNaN(width) || width <= 0 || isNaN(height) || height <= 0) {
+            finalErrors.dimensions = 'All dimensions must be valid positive numbers.';
+        }
+        
+        if (Object.keys(finalErrors).length > 0) {
+            setErrors(finalErrors);
+            return;
+        }
+
         const answers: RoomWizardAnswers = {
             roomName,
             roomType,
             designTier,
             maxParticipants,
             features,
+            dimensions: { length, width, height },
             requiredResolution,
             hdrRequirements,
             wirelessCasting,
@@ -98,6 +160,8 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
         </div>
     );
 
+    const isSubmittable = Object.keys(errors).length === 0 && roomName.trim() !== '';
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
             <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
@@ -112,7 +176,8 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Room Name</label>
-                                <input type="text" value={roomName} onChange={e => setRoomName(e.target.value)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" />
+                                <input type="text" value={roomName} onChange={handleRoomNameChange} className={`mt-1 w-full p-2 border rounded-md ${errors.roomName ? 'border-red-500' : 'border-gray-300'}`} />
+                                {errors.roomName && <p className="text-red-600 text-xs mt-1">{errors.roomName}</p>}
                             </div>
                             <div>
                                  <label className="block text-sm font-medium text-gray-700">Max Participants</label>
@@ -132,6 +197,26 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
                                 <TierTooltip tier={designTier} />
                             </div>
                         </div>
+                    </section>
+
+                    {/* Dimensions */}
+                     <section>
+                        <h3 className="font-semibold text-lg text-gray-700 mb-3">Room Dimensions ({unitSystem === 'imperial' ? 'ft' : 'm'})</h3>
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Length</label>
+                                <input type="text" value={dimensions.length} onChange={e => handleDimensionChange('length', e.target.value)} className={`mt-1 w-full p-2 border rounded-md ${errors.dimensions ? 'border-red-500' : 'border-gray-300'}`} />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Width</label>
+                                <input type="text" value={dimensions.width} onChange={e => handleDimensionChange('width', e.target.value)} className={`mt-1 w-full p-2 border rounded-md ${errors.dimensions ? 'border-red-500' : 'border-gray-300'}`} />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Height</label>
+                                <input type="text" value={dimensions.height} onChange={e => handleDimensionChange('height', e.target.value)} className={`mt-1 w-full p-2 border rounded-md ${errors.dimensions ? 'border-red-500' : 'border-gray-300'}`} />
+                            </div>
+                         </div>
+                         {errors.dimensions && <p className="text-red-600 text-xs mt-2">{errors.dimensions}</p>}
                     </section>
 
                     {/* Features */}
@@ -176,7 +261,7 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onUpdate, init
                     <button type="button" onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
                         Cancel
                     </button>
-                    <button type="button" onClick={handleFinish} className="ml-3 bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md">
+                    <button type="button" onClick={handleFinish} disabled={!isSubmittable} className="ml-3 bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-4 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed">
                         Update Room Configuration
                     </button>
                 </div>

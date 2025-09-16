@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ProjectSetupData } from '../types';
+import { useNavigate } from 'react-router-dom';
+import { ProjectSetupData } from '../utils/types';
+import { useAppContext } from '../context/AppContext';
 
-interface ProjectSetupFormData {
-    projectName: string;
-    clientName: string;
-}
+const ProjectSetupScreen: React.FC = () => {
+    const { handleProjectSetupSubmit } = useAppContext();
+    const navigate = useNavigate();
 
-interface ProjectSetupScreenProps {
-    onSubmit: (data: ProjectSetupData) => void;
-    onBack: () => void;
-    defaultProjectName: string;
-}
-
-const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBack, defaultProjectName }) => {
-    const [formData, setFormData] = useState<ProjectSetupFormData>({
-        projectName: defaultProjectName,
+    const [formData, setFormData] = useState({
+        projectName: `New Project - ${new Date().toLocaleDateString()}`,
         clientName: '',
     });
 
@@ -24,19 +18,19 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
             if (savedDraft) {
                 const parsedData = JSON.parse(savedDraft);
                 setFormData({
-                    projectName: parsedData.projectName || defaultProjectName,
+                    projectName: parsedData.projectName || `New Project - ${new Date().toLocaleDateString()}`,
                     clientName: parsedData.clientName || ''
                 });
             }
         } catch (e) {
             console.error("Failed to load project setup draft:", e);
         }
-    }, [defaultProjectName]);
+    }, []);
 
     useEffect(() => {
         const handler = setTimeout(() => {
             localStorage.setItem('projectSetupDraft', JSON.stringify(formData));
-        }, 500); // Debounce save by 500ms
+        }, 500);
 
         return () => {
             clearTimeout(handler);
@@ -55,15 +49,15 @@ const ProjectSetupScreen: React.FC<ProjectSetupScreenProps> = ({ onSubmit, onBac
         e.preventDefault();
         const setupData: ProjectSetupData = {
             ...formData,
-            rooms: [] // Always submit an empty array; rooms are added via the wizard.
+            rooms: []
         };
-        onSubmit(setupData);
+        handleProjectSetupSubmit(setupData, navigate);
         localStorage.removeItem('projectSetupDraft');
     };
     
     const handleBack = () => {
         localStorage.removeItem('projectSetupDraft');
-        onBack();
+        navigate('/');
     };
 
     return (

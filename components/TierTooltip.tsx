@@ -1,6 +1,6 @@
 import React from 'react';
-import { DESIGN_TIER_INFO } from '../constants';
-import { RoomData } from '../types';
+import { DESIGN_TIER_INFO } from '../data/constants';
+import { RoomData } from '../utils/types';
 
 interface TierTooltipProps {
   tier: 'Bronze' | 'Silver' | 'Gold';

@@ -1,6 +1,6 @@
 
+
 import React, { useMemo } from 'react';
-// FIX: Corrected import path for types
 import { StructuredSystemDiagram, DiagramNode, DiagramEdge } from '../types';
 
 interface SystemDiagramProps {
@@ -77,7 +77,7 @@ const SystemDiagram = React.forwardRef<SVGSVGElement, SystemDiagramProps>(({ dia
     );
   }
   
-  const { positions, orderedGroups, groupNodes } = layout;
+  const { positions, orderedGroups, groupNodes } = layout || {};
 
   return (
     <svg ref={ref} width={width} height={height} className="font-sans">
@@ -153,5 +153,4 @@ const SystemDiagram = React.forwardRef<SVGSVGElement, SystemDiagramProps>(({ dia
   );
 });
 
-// FIX: Added the missing default export.
 export default SystemDiagram;

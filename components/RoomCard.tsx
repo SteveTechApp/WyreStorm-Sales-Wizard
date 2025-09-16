@@ -1,5 +1,5 @@
 import React from 'react';
-import { RoomData } from '../types';
+import { RoomData } from '../utils/types';
 import TierTooltip from './TierTooltip';
 
 interface RoomCardProps {

@@ -1,7 +1,6 @@
 
 
 import React from 'react';
-// FIX: Corrected import path for types
 import { DesignFeedbackItem } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -57,7 +56,7 @@ const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, 
     const items = feedback?.filter(f => f.type === type);
     if (!items || items.length === 0) return null;
 
-    const { icon, title, borderColor } = FEEDBACK_STYLES[type];
+    const { icon, title, borderColor } = FEEDBACK_STYLES[type] || {};
 
     return (
       <div>

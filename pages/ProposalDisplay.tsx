@@ -1,24 +1,34 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Proposal, ProjectData, UserProfile, EquipmentItem, InstallationTaskItem, CustomCostItem, DiagramNode, Product } from '../utils/types';
-import SystemDiagram from './SystemDiagram';
-import Logo from './Logo';
-import InfoModal from './InfoModal';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Proposal, EquipmentItem, InstallationTaskItem, CustomCostItem, DiagramNode, Product } from '../utils/types';
+import SystemDiagram from '../components/SystemDiagram';
+import Logo from '../components/Logo';
+import InfoModal from '../components/InfoModal';
 import { productDatabase } from '../data/productDatabase';
+import { useAppContext } from '../context/AppContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
-interface ProposalDisplayProps {
-  proposal: Proposal;
-  projectData: ProjectData;
-  userProfile: UserProfile | null;
-}
+const ProposalDisplay: React.FC = () => {
+    const { proposal, projectData, userProfile } = useAppContext();
+    const { projectId } = useParams();
+    const navigate = useNavigate();
 
-const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData, userProfile }) => {
-    const svgRef = useRef<SVGSVGElement>(null);
-    const [editableProposal, setEditableProposal] = useState<Proposal>(() => JSON.parse(JSON.stringify(proposal)));
+    const [editableProposal, setEditableProposal] = useState<Proposal | null>(() => proposal ? JSON.parse(JSON.stringify(proposal)) : null);
     const [laborRate, setLaborRate] = useState(125);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const svgRef = useRef<SVGSVGElement>(null);
+
+    useEffect(() => {
+        if (!projectData || projectData.projectId !== projectId || !proposal) {
+           navigate('/');
+        } else {
+           setEditableProposal(JSON.parse(JSON.stringify(proposal)));
+        }
+    }, [proposal, projectData, projectId, navigate]);
 
     const totals = useMemo(() => {
+        if (!editableProposal) return { hardwareDealerTotal: 0, hardwareMsrpTotal: 0, totalHours: 0, laborTotal: 0, grandTotal: 0 };
         const hardwareDealerTotal = editableProposal.equipmentList.reduce((acc, item) => acc + (item.quantity * item.dealerPrice), 0);
         const hardwareMsrpTotal = editableProposal.equipmentList.reduce((acc, item) => acc + (item.quantity * item.msrp), 0);
         const totalHours = editableProposal.installationPlan.reduce((acc, task) => acc + Number(task.hours), 0);
@@ -28,8 +38,12 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
         return { hardwareDealerTotal, hardwareMsrpTotal, totalHours, laborTotal, grandTotal };
     }, [editableProposal, laborRate]);
 
+    if (!editableProposal || !projectData || !userProfile) {
+        return <LoadingSpinner message="Loading Proposal..." />;
+    }
+
     const handleReset = () => {
-        setEditableProposal(JSON.parse(JSON.stringify(proposal)));
+        if (proposal) setEditableProposal(JSON.parse(JSON.stringify(proposal)));
     };
     
     const formatCurrency = (amount: number) => {
@@ -72,47 +86,45 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
         if (product) {
             setSelectedProduct(product);
         } else {
-            // Create a pseudo-product for items not in the DB, like 'Laptop'
-            setSelectedProduct({
-                sku: node.id,
-                name: node.label,
-                category: node.group,
-                description: `A ${node.type} device located in the ${node.group}.`,
-                dealerPrice: 0,
-                msrp: 0,
-                tags: []
-            });
+            setSelectedProduct({ sku: node.id, name: node.label, category: node.group, description: `A ${node.type} device located in the ${node.group}.`, dealerPrice: 0, msrp: 0, tags: [] });
         }
     };
     
-    // --- Edit Handlers ---
     const handleEquipmentChange = (index: number, field: keyof EquipmentItem, value: string) => {
-        const newList = [...editableProposal.equipmentList];
-        const numValue = (field === 'quantity' || field === 'dealerPrice' || field === 'msrp') ? parseFloat(value) || 0 : value;
-        (newList[index] as any)[field] = numValue;
-        setEditableProposal(p => ({ ...p, equipmentList: newList }));
+        setEditableProposal(p => {
+            if (!p) return null;
+            const newList = [...p.equipmentList];
+            const numValue = (field === 'quantity' || field === 'dealerPrice' || field === 'msrp') ? parseFloat(value) || 0 : value;
+            (newList[index] as any)[field] = numValue;
+            return { ...p, equipmentList: newList };
+        });
     };
-    const handleAddEquipment = () => setEditableProposal(p => ({ ...p, equipmentList: [...p.equipmentList, { sku: 'CUSTOM-001', name: 'Custom Item', quantity: 1, dealerPrice: 0, dealerTotal: 0, msrp: 0, msrpTotal: 0, isCustom: true }] }));
-    const handleRemoveEquipment = (index: number) => setEditableProposal(p => ({ ...p, equipmentList: p.equipmentList.filter((_, i) => i !== index) }));
+    const handleAddEquipment = () => setEditableProposal(p => p ? { ...p, equipmentList: [...p.equipmentList, { sku: 'CUSTOM-001', name: 'Custom Item', quantity: 1, dealerPrice: 0, dealerTotal: 0, msrp: 0, msrpTotal: 0, isCustom: true }] } : null);
+    const handleRemoveEquipment = (index: number) => setEditableProposal(p => p ? { ...p, equipmentList: p.equipmentList.filter((_, i) => i !== index) } : null);
 
     const handleLaborChange = (index: number, field: keyof InstallationTaskItem, value: string) => {
-        const newList = [...editableProposal.installationPlan];
-        const numValue = (field === 'hours') ? parseFloat(value) || 0 : value;
-        (newList[index] as any)[field] = numValue;
-        setEditableProposal(p => ({ ...p, installationPlan: newList }));
+        setEditableProposal(p => {
+            if (!p) return null;
+            const newList = [...p.installationPlan];
+            const numValue = (field === 'hours') ? parseFloat(value) || 0 : value;
+            (newList[index] as any)[field] = numValue;
+            return { ...p, installationPlan: newList };
+        });
     };
-    const handleAddLabor = () => setEditableProposal(p => ({ ...p, installationPlan: [...p.installationPlan, { task: 'Custom Task', description: '', hours: 1, isCustom: true }] }));
-    const handleRemoveLabor = (index: number) => setEditableProposal(p => ({ ...p, installationPlan: p.installationPlan.filter((_, i) => i !== index) }));
+    const handleAddLabor = () => setEditableProposal(p => p ? { ...p, installationPlan: [...p.installationPlan, { task: 'Custom Task', description: '', hours: 1, isCustom: true }] } : null);
+    const handleRemoveLabor = (index: number) => setEditableProposal(p => p ? { ...p, installationPlan: p.installationPlan.filter((_, i) => i !== index) } : null);
 
     const handleCustomCostChange = (index: number, field: keyof CustomCostItem, value: string) => {
-        const newList = [...editableProposal.pricing.customCostItems];
-        const numValue = (field === 'cost') ? parseFloat(value) || 0 : value;
-        (newList[index] as any)[field] = numValue;
-        setEditableProposal(p => ({ ...p, pricing: { ...p.pricing, customCostItems: newList } }));
+        setEditableProposal(p => {
+            if (!p) return null;
+            const newList = [...p.pricing.customCostItems];
+            const numValue = (field === 'cost') ? parseFloat(value) || 0 : value;
+            (newList[index] as any)[field] = numValue;
+            return { ...p, pricing: { ...p.pricing, customCostItems: newList } };
+        });
     };
-    const handleAddCustomCost = () => setEditableProposal(p => ({ ...p, pricing: { ...p.pricing, customCostItems: [...p.pricing.customCostItems, { id: uuidv4(), description: 'New Custom Cost', cost: 0 }] } }));
-    const handleRemoveCustomCost = (index: number) => setEditableProposal(p => ({ ...p, pricing: { ...p.pricing, customCostItems: p.pricing.customCostItems.filter((_, i) => i !== index) } }));
-
+    const handleAddCustomCost = () => setEditableProposal(p => p ? { ...p, pricing: { ...p.pricing, customCostItems: [...p.pricing.customCostItems, { id: uuidv4(), description: 'New Custom Cost', cost: 0 }] } } : null);
+    const handleRemoveCustomCost = (index: number) => setEditableProposal(p => p ? { ...p, pricing: { ...p.pricing, customCostItems: p.pricing.customCostItems.filter((_, i) => i !== index) } } : null);
 
     const renderSection = (title: string, content: React.ReactNode, actions?: React.ReactNode) => (
         <section className="p-6 bg-white rounded-lg border border-gray-200">
@@ -146,8 +158,7 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
                 {renderSection("Scope of Work", <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: editableProposal.scopeOfWork.replace(/\n/g, '<br />') }} />)}
                 {renderSection("System Diagram", <SystemDiagram ref={svgRef} diagram={editableProposal.systemDiagram} onNodeClick={handleNodeClick} />, <button onClick={handleDownloadSvg} className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-md transition-colors">Download SVG</button>)}
 
-                {renderSection(
-                    "Equipment Schedule", 
+                {renderSection("Equipment Schedule", 
                     <>
                     <table className="w-full text-left">
                         <thead className="border-b bg-gray-50"><tr className="text-xs text-gray-600 uppercase">
@@ -229,22 +240,14 @@ const ProposalDisplay: React.FC<ProposalDisplayProps> = ({ proposal, projectData
                 </div>
             </div>
 
-            <InfoModal
-                isOpen={!!selectedProduct}
-                onClose={() => setSelectedProduct(null)}
-                title={selectedProduct?.name || 'Device Details'}
-            >
+            <InfoModal isOpen={!!selectedProduct} onClose={() => setSelectedProduct(null)} title={selectedProduct?.name || 'Device Details'}>
                 {selectedProduct && (
                     <div className="space-y-2">
                         <p><strong>SKU:</strong> {selectedProduct.sku}</p>
                         <p><strong>Category:</strong> {selectedProduct.category}</p>
                         <p><strong>Description:</strong> {selectedProduct.description}</p>
-                        {selectedProduct.dealerPrice > 0 && (
-                            <p><strong>Dealer Price:</strong> {formatCurrency(selectedProduct.dealerPrice)}</p>
-                        )}
-                        {selectedProduct.msrp > 0 && (
-                            <p><strong>MSRP:</strong> {formatCurrency(selectedProduct.msrp)}</p>
-                        )}
+                        {selectedProduct.dealerPrice > 0 && (<p><strong>Dealer Price:</strong> {formatCurrency(selectedProduct.dealerPrice)}</p>)}
+                        {selectedProduct.msrp > 0 && (<p><strong>MSRP:</strong> {formatCurrency(selectedProduct.msrp)}</p>)}
                     </div>
                 )}
             </InfoModal>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ProjectData, UserProfile, DesignFeedbackItem, UnitSystem, Product } from '../types';
+import { ProjectData, UserProfile, DesignFeedbackItem, UnitSystem, Product, ManuallyAddedEquipment } from '../types';
 import { getProjectInsights } from '../services/geminiService';
 import ProjectBuilder from './ProjectBuilder';
 import AIInsightsPanel from './AIInsightsPanel';
 import ProductFinderModal from './ProductFinderModal';
+import RelatedProductsModal from './RelatedProductsModal';
 
 interface DesignCoPilotProps {
   initialData: ProjectData;
@@ -19,6 +20,9 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
   const [isLoadingInsights, setIsLoadingInsights] = useState(true);
   const [unitSystem] = useState<UnitSystem>(userProfile.unitSystem || 'imperial');
   const [isProductFinderOpen, setIsProductFinderOpen] = useState(false);
+  const [isRelatedModalOpen, setIsRelatedModalOpen] = useState(false);
+  const [targetProduct, setTargetProduct] = useState<ManuallyAddedEquipment | null>(null);
+
 
   useEffect(() => {
     // Sync if the underlying initialData changes (e.g., new project loaded)
@@ -72,7 +76,8 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
         activeRoom.manuallyAddedEquipment.push({
           sku: product.sku,
           name: product.name,
-          quantity: 1
+          quantity: 1,
+          isAiGenerated: false,
         });
       }
       
@@ -81,6 +86,16 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
     });
 
     setIsProductFinderOpen(false);
+  };
+
+  const handleFindRelated = (product: ManuallyAddedEquipment) => {
+    setTargetProduct(product);
+    setIsRelatedModalOpen(true);
+  };
+
+  const handleSelectFromRelatedModal = (product: Product) => {
+    handleSelectProduct(product);
+    setIsRelatedModalOpen(false);
   };
 
 
@@ -103,6 +118,8 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
           onSaveProject={handleSaveProject}
           unitSystem={unitSystem}
           onFindProduct={() => setIsProductFinderOpen(true)}
+          userProfile={userProfile}
+          onFindRelated={handleFindRelated}
         />
       </div>
       <AIInsightsPanel 
@@ -116,6 +133,12 @@ const DesignCoPilot: React.FC<DesignCoPilotProps> = ({ initialData, onSubmit, on
         isOpen={isProductFinderOpen}
         onClose={() => setIsProductFinderOpen(false)}
         onSelectProduct={handleSelectProduct}
+      />
+      <RelatedProductsModal
+        isOpen={isRelatedModalOpen}
+        onClose={() => setIsRelatedModalOpen(false)}
+        targetProduct={targetProduct}
+        onSelectProduct={handleSelectFromRelatedModal}
       />
     </>
   );

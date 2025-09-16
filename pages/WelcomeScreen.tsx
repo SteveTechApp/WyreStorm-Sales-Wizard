@@ -1,22 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { ProjectData, IncomingRequest } from '../types';
-import { AgentIcon, PlusIcon, TrashIcon, ChevronRightIcon, ChevronLeftIcon, InfoIcon, MeetingRoomIcon, ClassroomIcon, VideoWallIcon, HospitalityIcon, ClockIcon, StarIcon } from './Icons';
-import { TEMPLATES } from '../constants';
-
-interface WelcomeScreenProps {
-  onStart: () => void;
-  onStartAgent: () => void;
-  savedProjects: ProjectData[];
-  onLoadProject: (projectId: string) => void;
-  onDeleteProject: (projectId: string) => void;
-  onStartFromTemplate: (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number) => void;
-  favouritedClients: string[];
-  onToggleFavourite: (clientName: string) => void;
-  incomingRequests: IncomingRequest[];
-  onConfirmRequest: (requestId: string) => void;
-  onRejectRequest: (requestId: string) => void;
-}
+import { useNavigate } from 'react-router-dom';
+import { IncomingRequest } from '../utils/types';
+import { AgentIcon, PlusIcon, TrashIcon, ChevronRightIcon, ChevronLeftIcon, InfoIcon, MeetingRoomIcon, ClassroomIcon, VideoWallIcon, HospitalityIcon, ClockIcon, StarIcon } from '../components/Icons';
+import { TEMPLATES } from '../data/constants';
+import { useAppContext } from '../context/AppContext';
 
 const getBackgroundImageUrl = (roomType: string): string => {
     switch (roomType) {
@@ -118,19 +105,22 @@ const TentativeRequestCard: React.FC<{ request: IncomingRequest, onConfirm: (id:
 };
 
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
-  onStart,
-  onStartAgent,
-  savedProjects,
-  onLoadProject,
-  onDeleteProject,
-  onStartFromTemplate,
-  favouritedClients,
-  onToggleFavourite,
-  incomingRequests,
-  onConfirmRequest,
-  onRejectRequest
-}) => {
+const WelcomeScreen: React.FC = () => {
+  const appContext = useAppContext();
+  const {
+      savedProjects,
+      handleLoadProject,
+      handleDeleteProject,
+      handleStartFromTemplate,
+      favouritedClients,
+      handleToggleFavouriteClient,
+      incomingRequests,
+      handleConfirmRequest,
+      handleRejectRequest
+  } = appContext;
+
+  const navigate = useNavigate();
+  
   const sortedProjects = [...savedProjects].sort((a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -172,8 +162,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   };
   
   const handleTemplateClick = (template: typeof TEMPLATES[0], designTier: 'Bronze' | 'Silver' | 'Gold') => {
-      onStartFromTemplate(template.roomType, designTier, template.name, template.participantCount);
+      handleStartFromTemplate(template.roomType, designTier, template.name, template.participantCount, navigate);
   };
+  
+  const handleConfirmClick = (requestId: string) => {
+      handleConfirmRequest(requestId, navigate);
+  }
 
   const handleInfoMouseEnter = (index: number) => {
       setHoveredTooltipIndex(index);
@@ -200,12 +194,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         <section>
             <h2 className="text-xl font-bold text-[#008A3A] mb-3">Start a New Project</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button onClick={onStart} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-[#008A3A] hover:bg-green-50 transition-all">
+                <button onClick={() => navigate('/setup')} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-[#008A3A] hover:bg-green-50 transition-all">
                     <div className="bg-[#008A3A] text-white p-3 rounded-full mb-3"><PlusIcon className="h-7 w-7" /></div>
                     <h3 className="font-bold text-gray-800 text-lg">Create Manually</h3>
                     <p className="text-sm text-gray-500">Build your project step-by-step.</p>
                 </button>
-                <button onClick={onStartAgent} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <button onClick={() => navigate('/agent')} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all">
                     <div className="bg-blue-600 text-white p-3 rounded-full mb-3"><AgentIcon className="h-7 w-7" /></div>
                     <h3 className="font-bold text-gray-800 text-lg">Analyze Document</h3>
                     <p className="text-sm text-gray-500">Parse a client brief, RFQ, or notes.</p>
@@ -221,8 +215,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                         <TentativeRequestCard 
                             key={req.requestId} 
                             request={req}
-                            onConfirm={onConfirmRequest}
-                            onReject={onRejectRequest}
+                            onConfirm={handleConfirmClick}
+                            onReject={handleRejectRequest}
                         />
                     ))}
                 </div>
@@ -237,7 +231,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                     {sortedProjects.map(project => (
                     <li key={project.projectId} className="py-3 px-3 flex justify-between items-center group">
                         <div className="flex items-center gap-3">
-                            <button onClick={(e) => { e.stopPropagation(); onToggleFavourite(project.clientName); }} className="text-gray-400 hover:text-amber-500" title={`Favourite ${project.clientName}`}>
+                            <button onClick={(e) => { e.stopPropagation(); handleToggleFavouriteClient(project.clientName); }} className="text-gray-400 hover:text-amber-500" title={`Favourite ${project.clientName}`}>
                                 <StarIcon isFilled={favouritedClients.includes(project.clientName)} className={favouritedClients.includes(project.clientName) ? 'text-amber-400' : ''} />
                             </button>
                             <div>
@@ -255,13 +249,13 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                         </div>
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => onLoadProject(project.projectId)}
+                                onClick={() => handleLoadProject(project.projectId, navigate)}
                                 className="text-sm font-medium text-green-600 hover:text-green-800"
                             >
                                 Load
                             </button>
                             <button
-                                onClick={() => onDeleteProject(project.projectId)}
+                                onClick={() => handleDeleteProject(project.projectId)}
                                 className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
                                 title="Delete Project"
                             >

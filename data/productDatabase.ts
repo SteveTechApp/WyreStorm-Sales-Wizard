@@ -1,4 +1,4 @@
-import { Product } from '../types';
+import { Product } from '../utils/types';
 
 export const productDatabase: Product[] = [
   // Control Solutions

@@ -1,9 +1,10 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
-import { ProjectData, Proposal, RoomWizardAnswers, UserProfile, RoomData, UnitSystem } from "../types";
-import { productDatabase } from '../components/productDatabase';
-import { installationTaskDatabase } from '../components/installationTaskDatabase';
-import { AV_DESIGN_KNOWLEDGE_BASE } from "../technicalDatabase";
+import { ProjectData, Proposal, RoomWizardAnswers, UserProfile, RoomData, UnitSystem, ManuallyAddedEquipment, RelatedProductsPayload, Product } from "../utils/types";
+import { productDatabase } from '../data/productDatabase';
+import { installationTaskDatabase } from '../data/installationTaskDatabase';
+import { AV_DESIGN_KNOWLEDGE_BASE } from "../data/technicalDatabase";
 
 // Initialize the Gemini AI client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
@@ -85,7 +86,7 @@ export const generateProposal = async (projectData: ProjectData, userProfile: Us
     - **Crucially, you MUST adhere to the user's requirements.** Prioritize 'must-have' features and strictly follow the specified technical requirements (resolution, HDR, HDBaseT, etc.). Use the 'Technology Mapping Rules' in your knowledge base to guide product selection.
     - Use the 'Application Principles' from your knowledge base to choose the correct system architecture (e.g., Matrix vs. AVoIP).
     - Create a logical and clear system diagram based on the final equipment list you choose.
-    - Calculate quantities accurately (e.g., one NHD-CTL-PRO per AVoIP system, correct number of transmitters/receivers).
+    - **Calculate quantities accurately (e.g., one NHD-CTL-PRO per AVoIP system, correct number of transmitters/receivers).**
     - The proposal must be professional, well-written, and tailored to the client's needs.
     - All pricing should be in ${userProfile?.currency || 'GBP'}.
     - IMPORTANT: Ensure the final output is a single, valid JSON object that strictly adheres to the provided schema. Do not wrap it in markdown backticks.
@@ -174,7 +175,7 @@ export const generateRoomFunctionality = async (answers: RoomWizardAnswers) => {
 export const getProjectInsights = async (projectData: ProjectData) => {
     const systemInstruction = `You are an expert AV design reviewer. Your task is to analyze the provided project data and offer concise, actionable insights.
     - Use your internal AV Design Knowledge Base to check for common errors.
-    - Warnings are for potential incompatibilities (e.g., HDBaseT mismatch, missing AVoIP controller, EOL products) or unmet 'must-have' features.
+    - Warnings are for potential incompatibilities (e.g., HDBaseT mismatch, missing AVoIP controller, EOL products) or unmet 'must-have' features. **If you identify an incompatibility, your feedback text MUST suggest the correct replacement SKU to fix the issue.**
     - Suggestions are for improvements or alternative products.
     - Opportunities are for upselling or adding value based on 'nice-to-have' features.
     `;
@@ -267,10 +268,11 @@ export const analyzeRequirements = async (documentText: string, userProfile: Use
 export const generateInspiredRoomDesign = async (templateName: string, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', participantCount: number, unitSystem: UnitSystem): Promise<Partial<RoomData>> => {
     const systemInstruction = `You are an expert AV System Designer for WyreStorm. Your task is to generate a flawless, pre-validated room object in JSON based on a template name. This design should NOT produce any warnings when reviewed.
     - Use your internal AV Design Knowledge Base to create a complete and functional system.
-    - Select appropriate features and technical specifications for the given tier.
+    - Select appropriate features and technical specifications for the given tier. **Based on the equipment you select, you MUST populate the 'features' array with the corresponding feature names (e.g., if you choose a wireless casting device, add 'Wireless Presentation' to the features).**
     - Provide typical and realistic room dimensions in ${unitSystem} for the specified room type and participant count.
     - The functionality statement should be a concise, professional summary.
     - Select a full list of appropriate equipment from the product database to create a functional system. For example, any AVoIP system MUST include an NHD-CTL-PRO-V2 controller, and presentation switchers should be paired with compatible receivers if needed.
+    - For all equipment you suggest in the 'manuallyAddedEquipment' list, you MUST set the 'isAiGenerated' flag to true.
     `;
     const prompt = `
         Template: "${templateName}"
@@ -324,7 +326,8 @@ export const generateInspiredRoomDesign = async (templateName: string, roomType:
                             properties: {
                                 sku: { type: Type.STRING },
                                 name: { type: Type.STRING },
-                                quantity: { type: Type.INTEGER }
+                                quantity: { type: Type.INTEGER },
+                                isAiGenerated: { type: Type.BOOLEAN, description: "Set to true for all equipment generated by this template." }
                             }
                         }
                     },
@@ -338,4 +341,165 @@ export const generateInspiredRoomDesign = async (templateName: string, roomType:
     });
 
     return JSON.parse(response.text);
+};
+
+/**
+ * Gets an equipment suggestion list for a single room.
+ */
+export const getRoomEquipmentSuggestion = async (roomData: RoomData, userProfile: UserProfile | null): Promise<ManuallyAddedEquipment[]> => {
+    const systemInstruction = `You are an expert AV System Designer for WyreStorm. Your task is to generate a list of recommended equipment for a single room based on its configuration.
+    - Use the provided room data, product database, and your extensive AV Design Knowledge Base.
+    - Select a full list of appropriate equipment to create a functional system. For example, any AVoIP system MUST include an NHD-CTL-PRO-V2 controller, and presentation switchers should be paired with compatible receivers if needed.
+    - **Crucially, you MUST adhere to the user's requirements.** Prioritize 'must-have' features and strictly follow the specified technical requirements.
+    - Pay close attention to the 'primarySources' to determine the required number and type of inputs on the switcher/matrix. Also, consider the 'displayType' when selecting equipment; for instance, a 'Video Wall' requires a dedicated processor or specific AVoIP hardware.
+    - For all equipment you suggest, you MUST set the 'isAiGenerated' flag to true.
+    - Return ONLY a valid JSON array of equipment items, adhering to the schema. Do not add any other text or markdown.
+    `;
+    const prompt = `
+        Room Data: ${JSON.stringify(roomData, null, 2)}
+        WyreStorm Product Database: ${JSON.stringify(productDatabase, null, 2)}
+        AV Design Knowledge Base: ${AV_DESIGN_KNOWLEDGE_BASE}
+        
+        Generate the JSON array of equipment now.
+    `;
+
+    const roomEquipmentGenerationSchema = {
+        type: Type.ARRAY,
+        items: {
+            type: Type.OBJECT,
+            properties: {
+                sku: { type: Type.STRING },
+                name: { type: Type.STRING },
+                quantity: { type: Type.INTEGER },
+                isAiGenerated: { type: Type.BOOLEAN, description: "MUST be true for all items." }
+            },
+            required: ['sku', 'name', 'quantity', 'isAiGenerated']
+        }
+    };
+    
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                systemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: roomEquipmentGenerationSchema,
+            },
+        });
+        const jsonText = response.text.trim();
+        return JSON.parse(jsonText);
+    } catch (error) {
+         console.error("Error getting equipment suggestion:", error);
+        throw new Error("The AI failed to generate an equipment list.");
+    }
+};
+
+/**
+ * Finds compatible accessories and alternative products for a given piece of equipment.
+ */
+export const getRelatedProducts = async (product: ManuallyAddedEquipment | Product): Promise<RelatedProductsPayload> => {
+    const systemInstruction = `You are an expert WyreStorm Product Specialist. Your task is to analyze a given product and, using the complete product database and your design knowledge, recommend compatible accessories and suitable alternative products.
+    - **Accessories:** These should be items that are required for or enhance the functionality of the target product (e.g., receivers for a transmitter, casting dongles, specific cables).
+    - **Alternatives:** These should be products that fulfill a similar role but may belong to a different tier, offer different features, or use a different technology (e.g., an AVoIP encoder as an alternative to an HDBaseT matrix).
+    - For each recommendation, you MUST provide a concise 'reason' explaining why it is a suitable choice.
+    - Return ONLY a valid JSON object adhering to the schema. Do not add any other text or markdown.
+    `;
+    const prompt = `
+        Target Product: ${JSON.stringify(product, null, 2)}
+        WyreStorm Product Database: ${JSON.stringify(productDatabase, null, 2)}
+        AV Design Knowledge Base: ${AV_DESIGN_KNOWLEDGE_BASE}
+        
+        Generate the JSON object of related products now.
+    `;
+
+    const relatedProductsSchema = {
+        type: Type.OBJECT,
+        properties: {
+            alternatives: {
+                type: Type.ARRAY,
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        sku: { type: Type.STRING },
+                        name: { type: Type.STRING },
+                        reason: { type: Type.STRING }
+                    },
+                    required: ['sku', 'name', 'reason']
+                }
+            },
+            accessories: {
+                type: Type.ARRAY,
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        sku: { type: Type.STRING },
+                        name: { type: Type.STRING },
+                        reason: { type: Type.STRING }
+                    },
+                    required: ['sku', 'name', 'reason']
+                }
+            }
+        },
+        required: ['alternatives', 'accessories']
+    };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                systemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: relatedProductsSchema,
+            },
+        });
+        const jsonText = response.text.trim();
+        return JSON.parse(jsonText);
+    } catch (error) {
+         console.error("Error getting related products:", error);
+        throw new Error("The AI failed to generate related products.");
+    }
+};
+
+/**
+ * Gets a quick answer to a user's question using Gemini with search grounding.
+ */
+export const getQuickAnswer = async (question: string): Promise<{ answer: string, sources: any[] }> => {
+    const systemInstruction = `You are an expert WyreStorm AV systems designer and product specialist. Your knowledge base includes all WyreStorm products and general AV design principles.
+    - Answer the user's question concisely and accurately.
+    - If the question is about a specific product, provide key details.
+    - If the question is about a design concept, give a clear explanation.
+    - Use the provided Google Search results to answer questions about recent events, new products, or information not in your knowledge base.
+    - ALWAYS format your answer using markdown for readability (e.g., use bullet points, bold text).
+    - If you use information from a search result, cite it in your answer.
+    `;
+
+    const prompt = `
+        Question: "${question}"
+
+        WyreStorm Product Database (for reference): ${JSON.stringify(productDatabase, null, 2)}
+        AV Design Knowledge Base (for reference): ${AV_DESIGN_KNOWLEDGE_BASE}
+
+        Provide a direct answer to the question now.
+    `;
+    
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                systemInstruction,
+                tools: [{ googleSearch: {} }],
+            },
+        });
+        
+        const answer = response.text;
+        const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+
+        return { answer, sources };
+    } catch (error) {
+        console.error("Error getting quick answer:", error);
+        throw new Error("The AI failed to provide an answer. Please try rephrasing your question.");
+    }
 };

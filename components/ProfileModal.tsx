@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// FIX: Corrected import path for types
-import { UserProfile } from '../types';
-import { CURRENCY_OPTIONS } from '../constants';
+import { UserProfile } from '../utils/types';
+import { CURRENCY_OPTIONS } from '../data/constants';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -13,29 +12,46 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, initialProfile, isDismissable = true, isRemembered }) => {
-  const [profile, setProfile] = useState<UserProfile>({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
-  const [rememberMe, setRememberMe] = useState(true);
+  const [profile, setProfile] = useState<UserProfile>(initialProfile || { name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
+  const [rememberMe, setRememberMe] = useState(isRemembered);
+  const [errors, setErrors] = useState<{ email?: string; logo?: string }>({});
 
   useEffect(() => {
     if (isOpen) {
-      // Pre-populate form with initial data or clear it for a new user
-      setProfile(initialProfile || { name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
-      
-      // The checkbox should reflect if the profile is currently in a "remembered" state,
-      // or default to true for a brand new user.
-      setRememberMe(isRemembered || !initialProfile);
+      if (initialProfile) {
+        setProfile(initialProfile);
+        setRememberMe(isRemembered);
+      } else {
+        setProfile({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'imperial' });
+        setRememberMe(true);
+      }
+      setErrors({}); // Reset errors on open
     }
   }, [initialProfile, isOpen, isRemembered]);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProfile(p => ({ ...p, [name]: value as any }));
+    // Clear validation error for the field being edited
+    if (name === 'email' && errors.email) {
+      const { email, ...rest } = errors;
+      setErrors(rest);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 1024 * 150) { // 150KB limit
+        setErrors(prev => ({ ...prev, logo: "Logo image is too large. Please use an image under 150KB." }));
+        e.target.value = ''; // Clear the input so a new file can be chosen
+        return;
+      }
+      
+      // Clear logo error if a valid file is chosen
+      const { logo, ...rest } = errors;
+      setErrors(rest);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfile(p => ({ ...p, logoUrl: reader.result as string }));
@@ -45,6 +61,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
   };
 
   const handleSave = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Validate email format before saving.
+    if (!profile.email || !emailRegex.test(profile.email)) {
+        setErrors(prev => ({...prev, email: "Please enter a valid email address."}));
+        return; // Block saving if email is invalid
+    }
+
+    // If we reach here, email is valid. We don't block saving for logo issues.
     onSave(profile, rememberMe);
     onClose();
   };
@@ -59,7 +83,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackgroundClick}>
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm m-4" onClick={e => e.stopPropagation()}>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">{isDismissable ? 'Your Profile' : 'Welcome! Create Your Profile'}</h2>
         <p className="text-sm text-gray-500 mb-6">{isDismissable ? 'This information will be used to customize your proposals.' : 'Please provide some basic info to get started. This will be used on your proposals.'}</p>
         
@@ -74,7 +98,17 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Contact Email</label>
-            <input type="email" id="email" name="email" value={profile.email} onChange={handleChange} className="mt-1 w-full p-2 border border-gray-300 rounded-md"/>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              value={profile.email} 
+              onChange={handleChange} 
+              className={`mt-1 w-full p-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              aria-invalid={!!errors.email}
+              aria-describedby="email-error"
+            />
+            {errors.email && <p id="email-error" className="text-red-600 text-xs mt-1">{errors.email}</p>}
           </div>
            <div>
             <label htmlFor="currency" className="block text-sm font-medium text-gray-700">Default Currency</label>
@@ -102,6 +136,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, in
                 <input id="logo-upload" type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
               </label>
             </div>
+            {errors.logo && <p className="text-red-600 text-xs mt-2">{errors.logo}</p>}
           </div>
         </div>
 

@@ -1,7 +1,5 @@
-
-// FIX: Corrected import paths
-import { productDatabase } from "../components/productDatabase";
-import { Product } from "../types";
+import { productDatabase } from "../data/productDatabase";
+import { Product } from "../utils/types";
 
 /**
  * Finds products based on a search query.

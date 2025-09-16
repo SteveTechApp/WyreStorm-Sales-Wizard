@@ -1,5 +1,4 @@
-
-import { InstallationTask } from '../types';
+import { InstallationTask } from '../utils/types';
 
 export const installationTaskDatabase: InstallationTask[] = [
     {
