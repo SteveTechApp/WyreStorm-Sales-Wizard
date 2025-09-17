@@ -1,19 +1,19 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Logo from './Logo';
 import { ProjectData, UserProfile } from '../utils/types';
 import { SearchIcon } from './Icons';
+import ThemeSelector from './ThemeSelector';
 
 interface HeaderProps {
   onNewProject: () => void;
-  onShowProfile: () => void;
   userProfile: UserProfile | null;
   savedProjects: ProjectData[];
   onLoadProject: (projectId: string) => void;
-  isUserAvailable: boolean;
-  onSetAvailability: (isAvailable: boolean) => void;
+  onOpenProfileModal: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onNewProject, onShowProfile, userProfile, savedProjects, onLoadProject, isUserAvailable, onSetAvailability }) => {
+const Header: React.FC<HeaderProps> = ({ onNewProject, userProfile, savedProjects, onLoadProject, onOpenProfileModal }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<ProjectData[]>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -57,17 +57,16 @@ const Header: React.FC<HeaderProps> = ({ onNewProject, onShowProfile, userProfil
   };
   
   return (
-    <header className="bg-white shadow-md p-4 flex justify-between items-center flex-shrink-0">
+    <header className="bg-background-secondary p-4 flex justify-between items-center flex-shrink-0 border-b border-border-color">
       <div className="flex items-center gap-4">
         <Logo />
-        <h1 className="text-xl font-semibold text-gray-700 hidden sm:block">AI Sales Assistant</h1>
       </div>
 
       <div className="flex-1 flex justify-center px-8">
         <div ref={searchContainerRef} className="relative w-full max-w-md">
             <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <SearchIcon className="h-5 w-5 text-gray-400" />
+                    <SearchIcon className="h-5 w-5 text-text-secondary" />
                 </div>
                 <input
                     type="text"
@@ -75,25 +74,25 @@ const Header: React.FC<HeaderProps> = ({ onNewProject, onShowProfile, userProfil
                     onChange={handleSearchChange}
                     onFocus={() => { if (searchQuery.trim()) setIsSearchActive(true); }}
                     placeholder="Search projects by name or client..."
-                    className="block w-full bg-gray-100 border border-transparent rounded-md py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="block w-full bg-background border border-transparent rounded-md py-2 pl-10 pr-3 text-sm placeholder-text-secondary focus:outline-none focus:bg-background-secondary focus:border-primary focus:ring-1 focus:ring-primary text-text-primary"
                 />
             </div>
             {isSearchActive && (
-                <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200">
+                <div className="absolute z-10 mt-1 w-full bg-background-secondary rounded-md shadow-lg border border-border-color">
                     <ul className="max-h-80 overflow-auto rounded-md">
                         {searchResults.length > 0 ? (
                             searchResults.map(project => (
                                 <li
                                     key={project.projectId}
                                     onClick={() => handleResultClick(project.projectId)}
-                                    className="cursor-pointer select-none relative py-2 px-4 text-gray-900 hover:bg-gray-100"
+                                    className="cursor-pointer select-none relative py-2 px-4 text-text-primary hover:bg-background"
                                 >
                                     <span className="block font-medium">{project.projectName}</span>
-                                    <span className="block text-sm text-gray-500">{project.clientName}</span>
+                                    <span className="block text-sm text-text-secondary">{project.clientName}</span>
                                 </li>
                             ))
                         ) : (
-                            <li className="select-none relative py-2 px-4 text-gray-500">
+                            <li className="select-none relative py-2 px-4 text-text-secondary">
                                 No projects found.
                             </li>
                         )}
@@ -104,29 +103,24 @@ const Header: React.FC<HeaderProps> = ({ onNewProject, onShowProfile, userProfil
       </div>
 
       <div className="flex items-center gap-4">
-         <div className="flex items-center gap-2" title={isUserAvailable ? "You will automatically receive placeholder requests from favourite clients." : "You are busy and will not receive new requests."}>
-            <span className="text-sm font-medium text-gray-600 hidden lg:block">Auto-Accept Jobs</span>
-            <button onClick={() => onSetAvailability(!isUserAvailable)} className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${isUserAvailable ? 'bg-green-600' : 'bg-gray-400'}`}>
-                <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${isUserAvailable ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
-        </div>
         <button
           onClick={onNewProject}
-          className="font-medium text-gray-600 hover:text-[#008A3A] transition-colors"
+          className="font-medium text-text-secondary hover:text-accent transition-colors"
         >
           New Project
         </button>
-        <button onClick={onShowProfile} className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-            {userProfile?.logoUrl ? (
+        <ThemeSelector />
+        <button onClick={onOpenProfileModal} className="flex items-center gap-2 cursor-pointer group rounded-md p-1 hover:bg-background transition-colors">
+          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-accent transition-all">
+             {userProfile?.logoUrl ? (
               <img src={userProfile.logoUrl} alt="Company Logo" className="w-full h-full object-contain" />
             ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0012 11z" clipRule="evenodd" />
+                <svg xmlns="http://www.w.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0012 11z" clipRule="evenodd" />
                 </svg>
             )}
           </div>
-          <span className="font-semibold text-gray-700 hidden md:block">{userProfile?.company || 'My Company'}</span>
+          <span className="font-semibold text-text-primary hidden md:block">{userProfile?.company || 'My Company'}</span>
         </button>
       </div>
     </header>

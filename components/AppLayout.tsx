@@ -1,35 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import ProfileModal from './ProfileModal';
 import QuickQuestionFAB from './QuickQuestionFAB';
 import QuickQuestionModal from './QuickQuestionModal';
+import ProfileModal from './ProfileModal';
 import { useAppContext } from '../context/AppContext';
 
-const AppLayout: React.FC = () => {
-    const appContext = useAppContext();
+const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { 
         userProfile, 
-        handleSaveUserProfile, 
-        isProfileRemembered, 
+        handleSaveUserProfile,
+        isProfileModalOpen,
+        setIsProfileModalOpen,
         savedProjects, 
         handleLoadProject, 
-        isUserAvailable, 
-        handleSetAvailability, 
         handleNewProject, 
-        isProfileModalOpen, 
-        setIsProfileModalOpen 
-    } = appContext;
+        isQuickQuestionModalOpen,
+        setIsQuickQuestionModalOpen
+    } = useAppContext();
     
-    const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
     const navigate = useNavigate();
-
-    // Open profile modal on first load if no profile exists
-    useEffect(() => {
-        if (!userProfile) {
-            setIsProfileModalOpen(true);
-        }
-    }, [userProfile, setIsProfileModalOpen]);
     
     const handleNewProjectClick = () => {
         handleNewProject();
@@ -41,31 +32,31 @@ const AppLayout: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-gray-100 font-sans">
+        <div className="flex flex-col h-screen font-sans">
             <Header 
                 onNewProject={handleNewProjectClick} 
-                onShowProfile={() => setIsProfileModalOpen(true)} 
                 userProfile={userProfile}
                 savedProjects={savedProjects}
                 onLoadProject={handleLoadProjectClick}
-                isUserAvailable={isUserAvailable}
-                onSetAvailability={handleSetAvailability}
+                onOpenProfileModal={() => setIsProfileModalOpen(true)}
             />
-            <main className="flex-grow p-4 sm:p-8 overflow-y-auto flex items-center justify-center">
-                <Outlet />
+            <main className="flex-grow overflow-y-auto">
+                {children}
             </main>
-            <ProfileModal 
-                isOpen={isProfileModalOpen}
-                onClose={() => setIsProfileModalOpen(false)}
-                onSave={handleSaveUserProfile}
-                initialProfile={userProfile}
-                isDismissable={!!userProfile}
-                isRemembered={isProfileRemembered}
-            />
             <QuickQuestionFAB onClick={() => setIsQuickQuestionModalOpen(true)} />
             <QuickQuestionModal
                 isOpen={isQuickQuestionModalOpen}
                 onClose={() => setIsQuickQuestionModalOpen(false)}
+            />
+            <ProfileModal
+                isOpen={isProfileModalOpen}
+                onClose={() => setIsProfileModalOpen(false)}
+                onSave={(profile) => {
+                    handleSaveUserProfile(profile);
+                    setIsProfileModalOpen(false);
+                }}
+                initialProfile={userProfile}
+                isDismissable={true}
             />
         </div>
     );

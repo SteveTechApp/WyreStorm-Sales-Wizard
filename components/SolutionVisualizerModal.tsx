@@ -1,10 +1,9 @@
 
-
 import React from 'react';
-import { SolutionVisualization, Product } from '../types';
+import { SolutionVisualization, Product } from '../utils/types';
 import LoadingSpinner from './LoadingSpinner';
 import SystemDiagram from './SystemDiagram';
-import { productDatabase } from './productDatabase';
+import { productDatabase } from '../data/productDatabase';
 
 interface SolutionVisualizerModalProps {
   isOpen: boolean;
@@ -33,7 +32,7 @@ const SolutionVisualizerModal: React.FC<SolutionVisualizerModalProps> = ({ isOpe
             <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 text-2xl leading-none">&times;</button>
         </div>
         <div className="mt-4 border-t pt-4 min-h-[400px]">
-          {isLoading && <LoadingSpinner message="Visualizing Solution..." />}
+          {isLoading && <LoadingSpinner message="Visualising Solution..." />}
           {!isLoading && data && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
                 {/* Left Side: Philosophy & Products */}

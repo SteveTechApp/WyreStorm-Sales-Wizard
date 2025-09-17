@@ -1,7 +1,9 @@
 export const AV_DESIGN_KNOWLEDGE_BASE = `
-WyreStorm AV Design Principles - **VERSION 2.3 - CRITICAL INSTRUCTIONS**
+WyreStorm AV Design Principles - **VERSION 2.7 - CRITICAL INSTRUCTIONS**
 
-**Core Philosophy:** Your primary directive is to create a reliable, cost-effective, and non-redundant system that perfectly matches the user's specified Design Tier. You MUST follow the hierarchical logic below.
+**Rule 0: All generated text based on this knowledge base MUST be written in professional UK English.**
+
+**Core Philosophy:** Your primary directive is to create a reliable, cost-effective, and non-redundant system. You MUST follow the hierarchical logic below. The user's specified **Design Tier** is the most important factor, but you must also consider the **Application Vertical** (e.g., Education vs. Corporate) as specific rules may apply.
 
 ---
 
@@ -26,110 +28,112 @@ This is your most important instruction. The Design Tier dictates the technology
 
 ---
 
+### Section 1.5: Vertical-Specific Design Rules (Education)
+
+When the \`roomType\` indicates an educational environment (e.g., "Classroom", "Lecture Hall", "Primary School"), these rules take precedence over general tier guidelines due to strict budget constraints.
+
+*   **Primary School Classroom (Bronze Tier):**
+    *   **Goal:** Extreme cost-effectiveness and simplicity.
+    *   **Technology:** AVoIP is **STRICTLY FORBIDDEN**. The core of the system **MUST** be a simple presentation switcher (e.g., \`SW-0401-MST\` or \`SW-0401-MST-W\`). A typical setup would involve inputs for 2x HDMI and 1x USB-C. The switcher should have dual outputs to drive a local monitor (via mirrored HDMI) and a projector (via HDBaseT).
+    *   **Audio/Control:** Use integrated audio solutions (like \`APO-SB1-UC\` or switcher audio de-embed) and simple keypad control (\`SYN-KEY10\`). Avoid expensive touch panels.
+
+*   **Secondary School / University (Silver Tier):**
+    *   **Goal:** Balance of features and budget.
+    *   **Technology:** An HDBaseT matrix (\`MX-0403-H3-MST\`) or advanced presentation switcher (\`APO-210-UC\`) is the default. If AVoIP is required for flexibility (e.g., campus-wide distribution), use a cost-effective 1080p system like the **NetworkHD 150 Series**. Do NOT specify 4K AVoIP systems like NHD-500 unless explicitly required.
+
+*   **University / Higher Education (Gold Tier):**
+    *   **Goal:** High-performance for advanced learning spaces (e.g., Active Learning, University Auditoriums).
+    *   **Technology:** This is where advanced solutions are appropriate. **NetworkHD 500 Series** for 4K AVoIP, Dante audio integration, and multi-camera setups with the \`CAM-0402-BRG\` become viable options.
+
+---
+
 ### Section 2: Core Architecture Choice: Matrix vs. AVoIP
 
-Follow this logic **after** considering the Tier Philosophy.
+Follow this logic **after** considering the Tier Philosophy and Vertical Rules.
 
 1.  **Is the application Hospitality, Command & Control, or a campus-wide/multi-room distribution system?**
     *   **YES:** AVoIP is the correct choice. Select the series based on Tier (500 for Hospitality, 600 for Command & Control).
     *   **NO:** Proceed to step 2.
 
 2.  **Is this a single room design?**
-    *   **YES:** Default to a Matrix or Presentation Switcher, according to the Tier Philosophy. AVoIP is an exception, not the rule.
+    *   **YES:** Default to a Matrix or Presentation switcher, according to the Tier Philosophy and Vertical Rules. AVoIP is an exception, not the rule.
     *   **NO (e.g., divisible room):** AVoIP is a strong candidate, especially for Silver and Gold tiers.
 
 ---
 
 ### Section 3: Equipment Selection Logic (Anti-Redundancy & Suitability Rules)
 
-**CRITICAL:** After selecting primary equipment, review your entire list to eliminate functional redundancy and ensure suitability.
-
-*   **Rule 1: Integrated Peripherals.** If you select a device with an integrated camera (e.g., APO-VX20-UC), you **MUST NOT** add a separate camera (e.g., CAM-210-PTZ).
-*   **Rule 2: Integrated Audio.** If you select a device with integrated microphones/speakerphone (e.g., APO-210-UC, APO-SB1-UC, HALO series), you **MUST NOT** add another separate speakerphone unless the participant count is high (>16) and the product description mentions daisy-chaining (like HALO 80).
-*   **Rule 3: All-in-One vs. Components.** For Bronze tier, if an all-in-one device meets the requirements, you **MUST** choose it over separate components. For example, use APO-VX20-UC instead of a separate switcher + camera + speakerphone.
-*   **Rule 4: Mutually Exclusive Products.** The Apollo VX20 (APO-VX20-UC) and Apollo 210 (APO-210-UC) should **NEVER** be specified in the same room. They serve similar purposes at different tiers.
-*   **Rule 5: Room Size Suitability.**
-    *   **APO-VX20-UC:** Ideal for small rooms (up to 10 participants). Do not specify for large spaces.
-    *   **HALO 80:** A single unit is for small-medium rooms (up to 8 participants). For larger rooms (>8 participants), multiple units must be specified and daisy-chained.
-    *   **APO-210-UC:** Suitable for medium rooms (8-20 participants) especially when a separate, higher-quality PTZ camera is needed.
+*   **Rule 3.1 (No EOL):** Do NOT specify any product where the 'eol' flag is true. If a suitable product is EOL, find the nearest modern equivalent.
+*   **Rule 3.2 (Control System):** If a system requires control, specify a Synergy controller. Use the 10-button keypad ('SYN-KEY10') for Bronze-tier systems. Use the touch panel ('SYN-TOUCH10') for Silver and Gold tiers.
+*   **Rule 3.3 (Dante Audio):** Only specify products with Dante (e.g., NHD-500-DNT-TX) for Gold-tier projects or where high-quality, networked audio is a 'must-have' feature. For other tiers, use the standard NHD-500-TX and rely on HDMI audio de-embedding.
+*   **Rule 3.4 (USB/KVM):** If USB extension is required (e.g., for a camera or interactive display), you MUST specify an appropriate KVM extender (e.g., EX-100-KVM) or a switcher with native USB extension (e.g., APO-210-UC).
+*   **Rule 3.5 (Wireless BYOD):** If 'Video Conferencing' is a feature and the user also requests 'Wireless Presentation', the system MUST support full wireless BYOD (passing USB data for camera/mics). This requires a "-W" series switcher and the APO-DG2 dongle. The APO-DG1 dongle ONLY supports AV casting and is not suitable for this scenario.
+*   **Rule 3.6 (AVoIP Controller):** EVERY AVoIP system, regardless of size, MUST include one (and only one) 'NHD-CTL-PRO-V2' for system management.
 
 ---
 
-### Section 4: Component-Specific Rules & Nuances
+### Section 4: Solution Coherency Rules
 
-*   **Apollo Dongle Compatibility:** The APO-DG1 is for wireless AV casting (video/audio only) and is the correct choice for the APO-VX20-UC (V1) and APO-210-UC. The APO-DG2 provides full wireless BYOD (AV + USB data) and is designed for products with a "-W" suffix (e.g., SW-0401-MST-W). **You MUST NOT pair the APO-DG2 with the APO-VX20-UC or APO-210-UC.**
-*   **CAM-210-PTZ Camera in 4K Systems:** The CAM-210-PTZ camera outputs a 1080p signal. This is **perfectly acceptable** for Silver and Gold tier systems with a 4K60 requirement. The system's presentation switcher (like APO-210-UC) or matrix switcher will upscale the camera feed to match the display resolution. Do not flag this as an incompatibility.
-
----
-
-### Section 5: General Best Practices
-
-*   **HDBaseT Compatibility:** Always pair transmitters and receivers of the same HDBaseT class.
-*   **AVoIP Network:** NetworkHD requires a managed switch with IGMP Snooping. 10GbE is ONLY for the 600 series.
-*   **Controller is Mandatory:** ALL NetworkHD systems require one (and only one) NHD-CTL-PRO-V2 per isolated network.
+*   **Rule 4.1 (Series Matching):** All AVoIP encoders and decoders in a single system MUST be from the same NetworkHD series (e.g., all 500 series). Do not mix series.
+*   **Rule 4.2 (Receiver Matching):** If using an HDBaseT matrix or switcher, you MUST specify a compatible receiver for each HDBaseT output. Check the 'compatibleReceivers' field in the product database. For example, the 'APO-210-UC' requires the 'APO-RX1'.
+*   **Rule 4.3 (Quantity Matching):** Ensure the number of transmitters/encoders matches the number of sources, and the number of receivers/decoders matches the number of displays.
 
 ---
 
-### Section 6: Audio & Camera Design Logic
+### Section 5: Hospitality Specific Rules
 
-*   **Rule 6.1: Large Room Audio.** For large rooms (Auditoriums, Lecture Halls, large Boardrooms with 20+ participants), integrated solutions are generally insufficient. You MUST recommend a solution using a matrix with audio DSP capabilities (like MX-1007-HYB) or a dedicated audio system with Dante. The proposal text MUST state that this setup requires third-party speakers and microphones (e.g., wireless lapel, handheld) for adequate coverage.
-*   **Rule 6.2: Small/Medium Room Microphone Extension.** For extending microphone pickup in small to medium rooms, the HALO 80 daisy-chain feature is a good option. For ceiling microphone requirements, the COM-MIC-HUB paired with one or more APO-SKY-MIC ceiling microphones is the correct solution. Do NOT specify the COM-MIC-HUB for large auditorium-style voice lift; it's for meeting room voice capture.
-*   **Rule 6.3: Multi-Camera Venues.** For large venues like auditoriums, lecture halls, or event spaces requiring multiple camera angles, the CAM-0402-BRG video bridge is the primary solution. It allows integrating HDMI, USB, and NDI cameras into a single, switchable feed with multiview capabilities. This should be a Gold-tier recommendation.
-*   **Rule 6.4: Audio Coverage for Larger Rooms.** For rooms with dimensions exceeding 15ft x 15ft (or approx 4.5m x 4.5m), you MUST recommend a solution with 'In-Ceiling Distributed' speakers over a 'Soundbar'. You must justify this in the Scope of Work by stating it provides 'even audio coverage for all participants, overcoming the inverse-square law to provide consistent volume levels throughout the space'. If a user manually specifies a soundbar for a room of this size, you MUST generate a 'Suggestion' in the AI Design Review with the text: "For a room of this size, distributed ceiling speakers would provide more consistent audio for all participants compared to a soundbar."
-
----
-
-### Section 7: Source & Display Integration
-
-*   **Rule 7.1: Parsing Primary Sources.** You MUST analyze the 'primarySources' string to determine the total number of required inputs. For example, "2x Laptop, 1x Room PC" requires 3 inputs. Select a switcher/matrix that meets or exceeds this count. If 'Laptop' is a source, prioritize switchers with USB-C inputs.
-*   **Rule 7.2: Video Wall Design.** If 'displayType' is 'Video Wall', the design is incomplete without a video wall solution.
-    *   **Bronze/Silver Tier:** A dedicated video wall processor like the 'SW-0204-VW' is a suitable choice for simple 2x2 walls.
-    *   **Gold Tier:** AVoIP is the preferred solution. Use NetworkHD 600 series (NHD-600-TRX) for its native video wall processing capabilities or the NetworkHD 150 series (NHD-150-RX) for cost-effective 1080p walls. You MUST also include the required number of encoders for the sources.
-*   **Rule 7.3: Projector Considerations.** If 'displayType' is 'Projector', this often implies a longer distance between the source/rack and the display. You should strongly consider HDBaseT extenders (like EX-100-KVM) or a switcher with a built-in HDBaseT output (like APO-210-UC) to ensure signal integrity over the required distance.
+*   **Rule 5.1 (AVoIP is Default):** For any hospitality venue (bar, casino) with more than 4 displays or 4 sources, AVoIP is the MANDATORY choice.
+*   **Rule 5.2 (Series by Tier):** Use NetworkHD 500 series as the default for these applications to handle mixed 4K and 1080p sources common in hospitality.
+*   **Rule 5.3 (Multiview for Sports Bars):** For 'Large Sports Bar' or 'Casino' applications, multiview capability is a 'must-have'. Use NHD-0401-MV processors for this.
 
 ---
 
-### Section 8: Environmental Considerations
+### Section 6: Diagram Generation Logic
 
-*   **Rule 8.1: High Ambient Light & Glass Walls.**
-    *   **Trigger:** If the room data specifies \`constructionDetails.wallConstruction\` is 'glass'.
-    *   **Action:** You MUST generate a 'Suggestion' in the AI Design Review.
-    *   **Suggestion Text:** "Glass wall construction noted. This presents unique challenges. 1) **Ambient Light:** Standard displays may look washed out. Review display brightness (500+ nits recommended). Consider high-brightness alternatives like direct-view LED walls or high-lumen projectors with ALR screens for best results. 2) **Mounting:** As walls cannot be used, confirm a suitable mounting solution like a ceiling mount or floor stand is part of the plan."
-
----
-
-### Section 9: Display & Viewing Distance Principles (AVIXA Standards)
-
-*   **Rule 9.1: The 4/6/8 Rule for Display Sizing.**
-    *   **Trigger:** When reviewing any room design.
-    *   **Action:** Generate a 'Suggestion' to prompt the user to verify the display size is adequate.
-    *   **Logic & Text:**
-        *   For rooms used for critical decision-making with detailed content (e.g., Operations Center, Boardroom, Briefing Center), the suggestion text must be: "Based on AVIXA's 4/6/8 rule, for a room of this length focused on critical detail, ensure the furthest viewer is no more than 4 times the display's height away. This guarantees legibility of fine text and data."
-        *   For general use rooms (e.g., Conference Room, Classroom), the suggestion text must be: "Based on AVIXA's 4/6/8 rule, for a general-purpose room, ensure the furthest viewer is no more than 6 times the display's height away. This is suitable for viewing presentations and videos."
+*   **Groups:** The standard group order for diagrams is: Sources, Table/Podium, Rack, Displays, Audio, Control.
+*   **Connections:** Show all logical connections for video, audio, control, and USB. Use the correct edge type.
+*   **Clarity:** Create a clean, easy-to-read diagram. Do not clutter it with unnecessary detail.
 
 ---
 
-### Section 10: Advanced Audio Principles
+### Section 7: Video Wall Logic
 
-*   **Rule 10.1: Inverse Square Law for Microphones.**
-    *   **Trigger:** When reviewing any room that includes microphones.
-    *   **Action:** Generate an 'Insight' to educate the user.
-    *   **Insight Text:** "Insight: When placing microphones, remember the inverse square law. Doubling the distance from the talker to the mic reduces the perceived audio level by 6dB (making it sound half as loud). Place microphones as close to participants as practical for the clearest signal and best performance."
-*   **Rule 10.2: Audio Delays in Long Rooms.**
-    *   **Trigger:** When a room uses a distributed speaker system ('ceiling' layout) AND the room length exceeds 25ft (approx. 7.5m).
-    *   **Action:** Generate a 'Suggestion' for adding a DSP.
-    *   **Suggestion Text:** "For a distributed audio system in a room of this length, a DSP with audio delay capabilities is highly recommended. Time-aligning the speakers prevents echo and ensures speech is clear and intelligible for every listener, regardless of where they are seated."
+*   **Rule 7.1 (LCD Video Walls):** For LCD video walls, you MUST specify a dedicated video wall processor (e.g., SW-0204-VW) to drive the displays.
+*   **Rule 7.2 (AVoIP Video Walls):** For Gold-tier AVoIP systems, video walls can be created natively by the NetworkHD decoders (e.g., NHD-500-RX). A separate processor is not needed, but you must mention this capability in the Scope of Work.
+*   **Rule 7.3 (AVoIP Multiview):** For AVoIP systems that require multiview on a single display (not a video wall), you MUST specify a multiview processor like the NHD-0401-MV.
+*   **Rule 7.4 (LED Walls Wiring):** For Bronze/Silver tiers, assume the LED wall's internal controller will use tile-mode and scale a single input. For Gold tier projects, assume a more flexible direct drive solution where each panel or section gets a dedicated AVoIP feed, requiring multiple decoders for advanced content mapping.
 
 ---
 
-### Section 11: Installation & Safety Principles
+### Section 8: Environmental & Infrastructure (CTS-D Principles)
 
-*   **Rule 11.1: Hazardous Material Warning.**
-    *   **Trigger:** When generating the 'siteRequirements' section of any proposal.
-    *   **Action:** You MUST include the following text as one of the requirements.
-    *   **Requirement Text:** "Client to confirm building's original construction date. For structures pre-dating the 1980s (and especially pre-1960s), a hazardous material survey (e.g., for asbestos in insulation or tiles) is strongly advised before any work that disturbs ceilings, floors, or walls."
-*   **Rule 11.2: Documentation as a Cost-Saving Measure.**
-    *   **Trigger:** When generating insights for any project (`getProjectInsights`).
-    *   **Action:** You should generate a 'Financial' or 'Opportunity' insight regarding documentation.
-    *   **Insight Text:** "Financial Insight: To reduce labor costs, consider the level of documentation required for each space. A full package with as-built drawings, rack layouts, and custom user manuals may be essential for complex rooms, but simpler spaces might only require standard documentation, saving significant time and budget."
+*   **Rule 8.1 (Glass Walls):** If 'wallConstruction' is 'glass', you MUST generate a 'Suggestion' to consider a high-brightness display or projection solution to overcome ambient light, and a 'Warning' to confirm that a non-wall mounting solution is planned.
+*   **Rule 8.2 (HVAC):** If the equipment list contains more than 5 devices in a single rack, generate a 'Site Requirement' in the proposal stating "Client must ensure adequate ventilation and cooling is provided for the equipment rack, with a target ambient temperature of 20-25°C."
+*   **Rule 8.3 (Electrical):** For any system with more than 3 core components, generate a 'Site Requirement' stating "Client must provide a dedicated, clean power circuit for the AV rack."
+
+---
+
+### Section 9: Display & Viewing Standards (AVIXA & CTS-D)
+
+*   **Rule 9.1 (4/6/8 Rule):** Check the display size against the room's length.
+    *   **Analytical Viewing (e.g., Operations Center):** Farthest viewer should be no more than 4x the image height.
+    *   **Basic Viewing (e.g., Boardroom, Classroom):** Farthest viewer should be no more than 6x the image height.
+    *   **Passive Viewing (e.g., Auditorium):** Farthest viewer should be no more than 8x the image height.
+    *   If the rule is violated, generate a 'Suggestion' recommending a larger display or projector.
+
+---
+
+### Section 10: Advanced Audio Principles (CTS-D)
+
+*   **Rule 10.1 (Inverse Square Law):** If the primary audio use case is 'Speech Reinforcement' in a large room (length > 10m), generate an 'Insight' explaining that microphone placement is critical due to the inverse square law, and that ceiling or gooseneck mics are recommended over table mics for better gain before feedback.
+*   **Rule 10.2 (Audio Delay):** If a room is long (length > 15m) and uses a distributed speaker layout ('ceiling' or 'pendant'), you MUST include a DSP product or a matrix with integrated DSP and generate an 'Insight' explaining that audio delay will be configured to ensure speech intelligibility for all participants.
+
+---
+
+### Section 11: Installation & Professionalism (CTS-D)
+
+*   **Rule 11.1 (Hazardous Materials):** For any project, add a 'Site Requirement' to the proposal: "Client is responsible for identifying and, if necessary, remediating any hazardous materials (e.g., asbestos) in the work area prior to installation commencing."
+*   **Rule 11.2 (Documentation Costs):** For Bronze tier projects, you can generate a 'Financial' insight suggesting that if the client does not require full as-built drawings, labour costs can be reduced.
+*   **Rule 11.3 (Accessibility):** If the application is public sector (Education, Government) and the room capacity is over 50, you MUST generate a 'Suggestion' to include an Assisted Listening System to comply with local accessibility regulations.
+*   **Rule 11.4 (Serviceability):** Ensure that equipment placement allows for adequate service access. If a display is recessed, you MUST suggest a pull-out or serviceable mount.
 `;

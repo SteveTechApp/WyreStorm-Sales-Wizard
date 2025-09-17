@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WyreStorm Sales Training Platform</title>
+    <title>WyreStorm Wingman</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script type="importmap">
 {
   "imports": {
@@ -15,10 +18,42 @@
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.17.0",
     "uuid": "https://aistudiocdn.com/uuid@^9.0.1",
-    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.1"
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^6.25.1",
+    "docx": "https://aistudiocdn.com/docx@^8.5.0"
   }
 }
 </script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Poppins', 'sans-serif'],
+          display: ['Orbitron', 'sans-serif'],
+        },
+        colors: {
+          primary: 'var(--color-primary)',
+          secondary: 'var(--color-secondary)',
+          accent: 'var(--color-accent)',
+          'accent-hover': 'var(--color-accent-hover)',
+          destructive: 'var(--color-destructive)',
+          'destructive-hover': 'var(--color-destructive-hover)',
+          background: 'var(--color-background)',
+          'background-secondary': 'var(--color-background-secondary)',
+          'text-primary': 'var(--color-text-primary)',
+          'text-secondary': 'var(--color-text-secondary)',
+          'text-on-accent': 'var(--color-text-on-accent)',
+          'border-color': 'var(--color-border)',
+          'shadow-color': 'var(--color-shadow)',
+          'card': 'var(--color-card)',
+          'card-hover': 'var(--color-card-hover)',
+          'input-bg': 'var(--color-input-bg)',
+        }
+      }
+    }
+  }
+</script>
+<style id="app-theme"></style>
 <style>
   /* Ensure scrollbar-hide works across browsers */
   .scrollbar-hide::-webkit-scrollbar {
@@ -38,8 +73,7 @@
   }
 </style>
 </head>
-  <body class="bg-gray-50">
+  <body>
     <div id="root"></div>
-    <script type="module" src="/main.tsx"></script>
   </body>
 </html>

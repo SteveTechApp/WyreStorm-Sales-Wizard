@@ -1,5 +1,7 @@
+
+
 import React, { useState, useEffect } from 'react';
-import { Product } from '../types';
+import { Product } from '../utils/types';
 import { findProducts } from '../services/productFinderService';
 
 interface ProductFinderModalProps {

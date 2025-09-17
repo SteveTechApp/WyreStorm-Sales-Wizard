@@ -1,10 +1,14 @@
+
+
 import React, { useState, useEffect } from 'react';
+// FIX: Update react-router-dom imports for v6 compatibility.
 import { useNavigate } from 'react-router-dom';
 import { ProjectSetupData } from '../utils/types';
 import { useAppContext } from '../context/AppContext';
 
 const ProjectSetupScreen: React.FC = () => {
     const { handleProjectSetupSubmit } = useAppContext();
+    // FIX: Replaced useHistory with useNavigate for v6 compatibility.
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -51,36 +55,38 @@ const ProjectSetupScreen: React.FC = () => {
             ...formData,
             rooms: []
         };
+        // FIX: Use navigate for navigation in v6.
         handleProjectSetupSubmit(setupData, navigate);
         localStorage.removeItem('projectSetupDraft');
     };
     
     const handleBack = () => {
         localStorage.removeItem('projectSetupDraft');
+        // FIX: Use navigate for navigation in v6.
         navigate('/');
     };
 
     return (
-        <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-md animate-fade-in w-full max-w-xl">
-            <h2 className="text-2xl font-bold text-[#008A3A] mb-2">Create New Project</h2>
-            <p className="text-gray-600 mb-6">Enter the high-level project details. You'll add and configure rooms using the AI Room Wizard in the next step.</p>
+        <div className="bg-background-secondary p-8 rounded-lg border border-border-color shadow-md animate-fade-in w-full max-w-xl">
+            <h2 className="text-2xl font-bold text-accent mb-2">Create New Project</h2>
+            <p className="text-text-secondary mb-6">Enter the high-level project details. You'll add and configure rooms using the AI Room Wizard in the next step.</p>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                     <div>
-                        <label htmlFor="projectName" className="block text-sm font-medium text-gray-700">Project Name</label>
-                        <input type="text" id="projectName" name="projectName" value={formData.projectName} onChange={handleChange} className="mt-1 w-full p-2 border border-gray-300 rounded-md" required />
+                        <label htmlFor="projectName" className="block text-sm font-medium text-text-secondary">Project Name</label>
+                        <input type="text" id="projectName" name="projectName" value={formData.projectName} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg text-text-primary" required />
                     </div>
                     <div>
-                        <label htmlFor="clientName" className="block text-sm font-medium text-gray-700">Client Company Name</label>
-                        <input type="text" id="clientName" name="clientName" value={formData.clientName} onChange={handleChange} className="mt-1 w-full p-2 border border-gray-300 rounded-md" required />
+                        <label htmlFor="clientName" className="block text-sm font-medium text-text-secondary">Client Company Name</label>
+                        <input type="text" id="clientName" name="clientName" value={formData.clientName} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg text-text-primary" required />
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t">
-                    <button type="button" onClick={handleBack} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg">
+                <div className="flex items-center justify-between pt-4 border-t border-border-color">
+                    <button type="button" onClick={handleBack} className="bg-background hover:bg-border-color text-text-primary font-bold py-2 px-6 rounded-lg">
                         Back
                     </button>
-                    <button type="submit" className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-6 rounded-lg">
+                    <button type="submit" className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-6 rounded-lg">
                         Start Designing
                     </button>
                 </div>

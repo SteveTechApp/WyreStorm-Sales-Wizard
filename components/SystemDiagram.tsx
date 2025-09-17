@@ -1,7 +1,7 @@
 
 
 import React, { useMemo } from 'react';
-import { StructuredSystemDiagram, DiagramNode, DiagramEdge } from '../types';
+import { StructuredSystemDiagram, DiagramNode, DiagramEdge } from '../utils/types';
 
 interface SystemDiagramProps {
   diagram: StructuredSystemDiagram | null;

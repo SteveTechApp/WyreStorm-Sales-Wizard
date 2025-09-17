@@ -1,6 +1,8 @@
+
+
+
 import React from 'react';
-import { Product } from '../types';
-import { CURRENCY_OPTIONS } from '../constants';
+import { Product } from '../utils/types';
 
 interface ProductCardProps {
   product: Product;
@@ -8,9 +10,8 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const formatCurrency = (amount: number) => {
-    // A default currency is fine here for display purposes.
-    const currency = 'GBP'; 
-    const symbol = CURRENCY_OPTIONS[currency]?.symbol || '£';
+    // Hardcode to GBP as user profile selection is removed.
+    const symbol = '£';
     return `${symbol}${amount.toFixed(2)}`;
   };
   

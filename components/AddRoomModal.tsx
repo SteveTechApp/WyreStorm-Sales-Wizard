@@ -1,7 +1,7 @@
 
 
 import React, { useState } from 'react';
-import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from '../constants';
+import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from '../data/constants';
 
 interface AddRoomModalProps {
     isOpen: boolean;

@@ -1,7 +1,6 @@
 
-
 import React from 'react';
-import { DesignFeedbackItem } from '../types';
+import { DesignFeedbackItem } from '../utils/types';
 import LoadingSpinner from './LoadingSpinner';
 
 interface DesignReviewModalProps {
@@ -77,7 +76,7 @@ const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, 
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl m-4" onClick={e => e.stopPropagation()}>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">AI Design Review</h2>
-        {isLoading && <LoadingSpinner message="Analyzing Design..." />}
+        {isLoading && <LoadingSpinner message="Analysing Design..." />}
         {!isLoading && feedback && (
           <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-4">
             {renderFeedbackCategory('Warning')}

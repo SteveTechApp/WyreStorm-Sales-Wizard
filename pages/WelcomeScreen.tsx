@@ -1,25 +1,48 @@
-import React, { useState, useRef, useEffect } from 'react';
+
+
+import React, { useState, useEffect } from 'react';
+// FIX: Update react-router-dom imports for v6 compatibility.
 import { useNavigate } from 'react-router-dom';
 import { IncomingRequest } from '../utils/types';
-import { AgentIcon, PlusIcon, TrashIcon, ChevronRightIcon, ChevronLeftIcon, InfoIcon, MeetingRoomIcon, ClassroomIcon, VideoWallIcon, HospitalityIcon, ClockIcon, StarIcon } from '../components/Icons';
+import { AgentIcon, PlusIcon, TrashIcon, MeetingRoomIcon, ClassroomIcon, VideoWallIcon, HospitalityIcon, ClockIcon, StarIcon } from '../components/Icons';
 import { TEMPLATES } from '../data/constants';
 import { useAppContext } from '../context/AppContext';
 
 const getBackgroundImageUrl = (roomType: string): string => {
     switch (roomType) {
+        // Corporate
         case 'Huddle Room':
-        case 'Conference Room':
+            return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2232&auto=format&fit=crop'; // Small, informal meeting space
         case 'Boardroom':
-            return 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop';
+            return 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop'; // Formal, large table
+        case 'Reception Area':
+            return 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop'; // Modern lobby/reception
+
+        // Education
         case 'Classroom':
+            return 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop'; // Generic classroom, good for Primary/Secondary
+        case 'Gymnasium':
+            return 'https://images.unsplash.com/photo-1575042331928-5627f37992be?q=80&w=2070&auto=format&fit=crop'; // School sports hall
+        case 'Active Learning Classroom':
+            return 'https://images.unsplash.com/photo-1594125674939-573516315a6b?q=80&w=2070&auto=format&fit=crop'; // University space with pods
+        case 'Lecture Hall':
+            return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop'; // Tiered seating
+
+        // Large Venue / Speciality
         case 'Auditorium':
-            return 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop';
-        case 'Briefing Center':
-            return 'https://images.unsplash.com/photo-1560439539-504a74a44133?q=80&w=1974&auto=format&fit=crop';
+        case 'Theatre / Main Hall':
+             return 'https://images.unsplash.com/photo-1504333638930-c8787321eee0?q=80&w=2070&auto=format&fit=crop'; // Theatre style
         case 'Operations Center':
             return 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?q=80&w=2070&auto=format&fit=crop';
-        case 'Hospitality Venue':
+        
+        // Hospitality
+        case 'Small Bar':
+            return 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop';
+        case 'Large Sports Bar':
             return 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?q=80&w=2070&auto=format&fit=crop';
+        case 'Casino':
+            return 'https://images.unsplash.com/photo-1525498295246-315387a3c3df?q=80&w=2070&auto=format&fit=crop';
+        
         default:
             return 'https://images.unsplash.com/photo-1590650516494-0c8e4a4dd67e?q=80&w=2071&auto=format&fit=crop';
     }
@@ -29,16 +52,21 @@ const RoomTypeIcon: React.FC<{ roomType: string }> = ({ roomType }) => {
     const iconProps = { className: "h-8 w-8 mb-2 opacity-80" };
     switch (roomType) {
         case 'Huddle Room':
-        case 'Conference Room':
         case 'Boardroom':
+        case 'Reception Area':
+        case 'Auditorium':
+        case 'Theatre / Main Hall':
             return <MeetingRoomIcon {...iconProps} />;
         case 'Classroom':
-        case 'Auditorium':
+        case 'Active Learning Classroom':
+        case 'Lecture Hall':
             return <ClassroomIcon {...iconProps} />;
-        case 'Briefing Center':
         case 'Operations Center':
+        case 'Gymnasium':
             return <VideoWallIcon {...iconProps} />;
-        case 'Hospitality Venue':
+        case 'Small Bar':
+        case 'Large Sports Bar':
+        case 'Casino':
             return <HospitalityIcon {...iconProps} />;
         default:
             return <MeetingRoomIcon {...iconProps} />;
@@ -77,27 +105,27 @@ const TentativeRequestCard: React.FC<{ request: IncomingRequest, onConfirm: (id:
     const isExpired = timeLeft === "Expired";
 
     return (
-        <div className={`p-4 rounded-lg border-2 ${isExpired ? 'bg-gray-100 border-gray-300 opacity-70' : 'bg-blue-50 border-blue-300 animate-pulse-slow'}`}>
+        <div className={`p-4 rounded-lg border-2 ${isExpired ? 'bg-background border-border-color opacity-70' : 'bg-primary/10 border-primary/50 animate-pulse-slow'}`}>
             <div className="flex justify-between items-start">
                 <div>
-                    <p className="font-bold text-gray-800">{request.clientName}</p>
-                    <p className="text-sm text-gray-600">{request.description}</p>
+                    <p className="font-bold text-text-primary">{request.clientName}</p>
+                    <p className="text-sm text-text-secondary">{request.description}</p>
                 </div>
-                <div className={`flex items-center gap-1 text-sm font-medium ${isExpired ? 'text-gray-500' : 'text-blue-700'}`}>
+                <div className={`flex items-center gap-1 text-sm font-medium ${isExpired ? 'text-text-secondary' : 'text-primary'}`}>
                     <ClockIcon className="h-4 w-4" />
                     <span>{timeLeft}</span>
                 </div>
             </div>
-            <p className="text-xs text-blue-800/80 mt-2">This request was auto-accepted because the client is on your favourites list. Please confirm to create a new project.</p>
+            <p className="text-xs text-primary/80 mt-2">This request was auto-accepted because the client is on your favourites list. Please confirm to create a new project.</p>
             {!isExpired && (
                  <div className="flex items-center gap-3 mt-3">
-                    <button onClick={() => onConfirm(request.requestId)} className="flex-1 text-sm font-bold text-white bg-green-600 hover:bg-green-700 py-2 px-4 rounded-md">Confirm</button>
-                    <button onClick={() => onReject(request.requestId)} className="flex-1 text-sm font-medium text-red-700 bg-red-100 hover:bg-red-200 py-2 px-4 rounded-md">Reject</button>
+                    <button onClick={() => onConfirm(request.requestId)} className="flex-1 text-sm font-bold text-text-on-accent bg-primary hover:bg-secondary py-2 px-4 rounded-md">Confirm</button>
+                    <button onClick={() => onReject(request.requestId)} className="flex-1 text-sm font-medium text-destructive bg-destructive/20 hover:bg-destructive/30 py-2 px-4 rounded-md">Reject</button>
                 </div>
             )}
              {isExpired && (
                  <div className="flex items-center gap-3 mt-3">
-                    <button onClick={() => onReject(request.requestId)} className="w-full text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-md">Dismiss Expired</button>
+                    <button onClick={() => onReject(request.requestId)} className="w-full text-sm font-medium text-text-primary bg-background-secondary hover:bg-border-color py-2 px-4 rounded-md">Dismiss Expired</button>
                 </div>
             )}
         </div>
@@ -122,44 +150,8 @@ const WelcomeScreen: React.FC = () => {
   const navigate = useNavigate();
   
   const sortedProjects = [...savedProjects].sort((a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime());
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [hoveredTooltipIndex, setHoveredTooltipIndex] = useState<number | null>(null);
-  const [clickedTooltipIndex, setClickedTooltipIndex] = useState<number | null>(null);
-
+  
   const tentativeRequests = incomingRequests.filter(r => r.status === 'tentative');
-
-  useEffect(() => {
-    itemRefs.current = itemRefs.current.slice(0, TEMPLATES.length);
-    const handleClickOutside = () => {
-        setClickedTooltipIndex(null);
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleScroll = (direction: 'left' | 'right') => {
-    const newIndex = direction === 'left' 
-        ? Math.max(0, activeIndex - 1) 
-        : Math.min(TEMPLATES.length - 1, activeIndex + 1);
-    
-    setActiveIndex(newIndex);
-    
-    itemRefs.current[newIndex]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'start',
-    });
-  };
-
-  const handleArrowClick = (e: React.MouseEvent, direction: 'left' | 'right') => {
-    e.stopPropagation();
-    handleScroll(direction);
-  };
   
   const handleTemplateClick = (template: typeof TEMPLATES[0], designTier: 'Bronze' | 'Silver' | 'Gold') => {
       handleStartFromTemplate(template.roomType, designTier, template.name, template.participantCount, navigate);
@@ -168,48 +160,39 @@ const WelcomeScreen: React.FC = () => {
   const handleConfirmClick = (requestId: string) => {
       handleConfirmRequest(requestId, navigate);
   }
-
-  const handleInfoMouseEnter = (index: number) => {
-      setHoveredTooltipIndex(index);
-  };
-
-  const handleInfoMouseLeave = () => {
-      setHoveredTooltipIndex(null);
-  };
-
-  const handleInfoClick = (e: React.MouseEvent, index: number) => {
-      e.stopPropagation();
-      setClickedTooltipIndex(prev => (prev === index ? null : index));
-  };
   
   return (
-    <div className="w-full h-full max-w-screen-2xl mx-auto animate-fade-in flex flex-col lg:flex-row gap-8">
+    <div className="w-full h-full max-w-screen-2xl mx-auto animate-fade-in flex flex-col lg:flex-row gap-8 p-4 sm:p-8">
       {/* Left Column */}
-      <aside className="lg:w-[400px] flex-shrink-0 flex flex-col gap-8">
+      <aside className="lg:w-[450px] flex-shrink-0 flex flex-col gap-8">
         <header className="text-left">
-            <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">WyreStorm AI Sales Assistant</h1>
-            <p className="mt-1 text-md text-gray-500">Your intelligent partner for designing and proposing AV solutions.</p>
+            <h1 className="text-5xl font-extrabold text-text-primary font-display uppercase">WyreStorm Wingman</h1>
+            <p className="mt-2 text-lg text-text-secondary">Your intelligent co-pilot for designing and proposing AV solutions. I've got your six.</p>
         </header>
 
         <section>
-            <h2 className="text-xl font-bold text-[#008A3A] mb-3">Start a New Project</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button onClick={() => navigate('/setup')} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-[#008A3A] hover:bg-green-50 transition-all">
-                    <div className="bg-[#008A3A] text-white p-3 rounded-full mb-3"><PlusIcon className="h-7 w-7" /></div>
-                    <h3 className="font-bold text-gray-800 text-lg">Create Manually</h3>
-                    <p className="text-sm text-gray-500">Build your project step-by-step.</p>
+            <h2 className="text-xl font-bold text-text-primary mb-3 font-display">START NEW MISSION</h2>
+            <div className="space-y-4">
+                <button onClick={() => navigate('/setup')} className="group w-full flex items-center text-left p-4 bg-background-secondary border-2 border-border-color rounded-lg hover:border-primary transition-all">
+                    <div className="bg-primary/20 text-primary p-4 rounded-lg mr-5"><PlusIcon className="h-8 w-8" /></div>
+                    <div>
+                        <h3 className="font-bold text-text-primary text-xl">Manual Input</h3>
+                        <p className="text-md text-text-secondary">Build your project from scratch, room by room.</p>
+                    </div>
                 </button>
-                <button onClick={() => navigate('/agent')} className="group flex flex-col items-center justify-center text-center p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all">
-                    <div className="bg-blue-600 text-white p-3 rounded-full mb-3"><AgentIcon className="h-7 w-7" /></div>
-                    <h3 className="font-bold text-gray-800 text-lg">Analyze Document</h3>
-                    <p className="text-sm text-gray-500">Parse a client brief, RFQ, or notes.</p>
+                <button onClick={() => navigate('/agent')} className="group w-full flex items-center text-left p-4 bg-background-secondary border-2 border-border-color rounded-lg hover:border-primary transition-all">
+                    <div className="bg-primary/20 text-primary p-4 rounded-lg mr-5"><AgentIcon className="h-8 w-8" /></div>
+                    <div>
+                        <h3 className="font-bold text-text-primary text-xl">Analyse Intel</h3>
+                        <p className="text-md text-text-secondary">Let your Wingman parse a client brief, RFQ, or notes to get a head start.</p>
+                    </div>
                 </button>
             </div>
         </section>
 
         {tentativeRequests.length > 0 && (
             <section>
-                <h2 className="text-xl font-bold text-blue-600 mb-3">Incoming Requests</h2>
+                <h2 className="text-xl font-bold text-primary mb-3 font-display">INCOMING TRANSMISSIONS</h2>
                 <div className="space-y-3">
                     {tentativeRequests.map(req => (
                         <TentativeRequestCard 
@@ -224,10 +207,10 @@ const WelcomeScreen: React.FC = () => {
         )}
         
         <section className="flex flex-col flex-grow min-h-0">
-            <h2 className="text-xl font-bold text-[#008A3A] mb-3">Recent Projects</h2>
-            <div className="bg-white border border-gray-200 rounded-lg p-1 flex-grow flex flex-col overflow-y-auto scrollbar-hide">
+            <h2 className="text-xl font-bold text-text-primary mb-3 font-display">MISSION LOG</h2>
+            <div className="bg-background-secondary border border-border-color rounded-lg p-1 flex-grow flex flex-col overflow-y-auto scrollbar-hide">
                 {sortedProjects.length > 0 ? (
-                <ul className="divide-y divide-gray-200">
+                <ul className="divide-y divide-border-color">
                     {sortedProjects.map(project => (
                     <li key={project.projectId} className="py-3 px-3 flex justify-between items-center group">
                         <div className="flex items-center gap-3">
@@ -236,27 +219,26 @@ const WelcomeScreen: React.FC = () => {
                             </button>
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <p className="font-semibold text-gray-800">{project.projectName}</p>
-                                    {(project.status === 'draft' || !project.status) && (
-                                        <span className="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">Draft</span>
-                                    )}
-                                    {project.status === 'complete' && (
-                                        <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Complete</span>
+                                    <p className="font-semibold text-text-primary">{project.projectName}</p>
+                                    {(project.proposals && project.proposals.length > 0) ? (
+                                        <span className="text-xs font-medium bg-primary/20 text-primary px-2 py-0.5 rounded-full">PROPOSAL</span>
+                                    ) : (
+                                        <span className="text-xs font-medium bg-background text-text-secondary px-2 py-0.5 rounded-full">DRAFT</span>
                                     )}
                                 </div>
-                                <p className="text-sm text-gray-500">{project.clientName} - Last saved: {new Date(project.lastSaved).toLocaleString()}</p>
+                                <p className="text-sm text-text-secondary">{project.clientName} - Last saved: {new Date(project.lastSaved).toLocaleString()}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => handleLoadProject(project.projectId, navigate)}
-                                className="text-sm font-medium text-green-600 hover:text-green-800"
+                                className="text-sm font-medium text-primary hover:text-secondary"
                             >
                                 Load
                             </button>
                             <button
                                 onClick={() => handleDeleteProject(project.projectId)}
-                                className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="text-destructive hover:text-destructive-hover opacity-0 group-hover:opacity-100 transition-opacity"
                                 title="Delete Project"
                             >
                                 <TrashIcon />
@@ -266,9 +248,9 @@ const WelcomeScreen: React.FC = () => {
                     ))}
                 </ul>
                 ) : (
-                <div className="text-center text-gray-500 flex-grow flex flex-col justify-center items-center">
-                    <p>No saved projects yet.</p>
-                    <p className="text-sm">Start a new project to see it here.</p>
+                <div className="text-center text-text-secondary flex-grow flex flex-col justify-center items-center">
+                    <p>Mission log is empty.</p>
+                    <p className="text-sm">Start a new mission to see it here.</p>
                 </div>
                 )}
             </div>
@@ -277,67 +259,45 @@ const WelcomeScreen: React.FC = () => {
 
       {/* Right Column (Templates) */}
       <main className="flex-1 flex flex-col min-w-0">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Or, start from a template...</h2>
-          <div className="flex-grow relative group -mx-4">
+          <h2 className="text-2xl font-bold text-text-primary mb-4 font-display">DEPLOY FROM TEMPLATE...</h2>
+          <div className="flex-grow overflow-y-auto scrollbar-hide">
             <div 
-              ref={scrollContainerRef} 
-              className="flex gap-x-4 md:gap-x-6 overflow-x-auto pb-2 px-4 scrollbar-hide h-full"
-              style={{ scrollSnapType: 'x mandatory' }}
+              className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
             >
                 {TEMPLATES.map((template, index) => {
-                    const tierButtonClasses = "w-full text-center py-2 text-xs font-bold text-white rounded-md transition-all hover:scale-105 shadow-md";
-                    const bronzeClasses = "bg-yellow-800 hover:bg-yellow-700";
-                    const silverClasses = "bg-slate-600 hover:bg-slate-500";
-                    const goldClasses = "bg-amber-700 hover:bg-amber-600";
-                    const isTooltipVisible = clickedTooltipIndex === index || (hoveredTooltipIndex === index && clickedTooltipIndex === null);
+                    const tierButtonClasses = "w-full text-center py-2 text-xs font-bold rounded-md transition-all hover:scale-105 shadow-md border-2";
+                    const bronzeClasses = "bg-yellow-800/80 border-yellow-600 hover:bg-yellow-700 text-white";
+                    const silverClasses = "bg-slate-600/80 border-slate-400 hover:bg-slate-500 text-white";
+                    const goldClasses = "bg-amber-700/80 border-amber-500 hover:bg-amber-600 text-white";
 
                     return (
                         <div
                             key={template.name}
-                            ref={el => { itemRefs.current[index] = el; }}
-                            data-index={index}
-                            className="relative flex-shrink-0 w-64 h-full text-left p-4 rounded-lg flex flex-col justify-between overflow-hidden shadow-lg"
-                            style={{ scrollSnapAlign: 'start' }}
+                            className="relative text-left p-4 rounded-lg flex flex-col justify-between overflow-hidden shadow-lg h-72 border border-border-color"
                         >
                             <div
-                                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 opacity-50"
+                                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 opacity-30"
                                 style={{ backgroundImage: `url(${getBackgroundImageUrl(template.roomType)})` }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/10" />
                             
                             <div className="relative z-10 flex flex-col h-full text-white">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <RoomTypeIcon roomType={template.roomType} />
-                                        <p className="font-bold text-xl" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>{template.name}</p>
-                                    </div>
-                                    <div 
-                                        className="relative"
-                                        onMouseEnter={() => handleInfoMouseEnter(index)}
-                                        onMouseLeave={handleInfoMouseLeave}
-                                    >
-                                        <button onClick={(e) => handleInfoClick(e, index)} className="p-1 text-white/80 hover:text-white transition-colors" title="Quick Info">
-                                            <InfoIcon className="h-6 w-6" />
-                                        </button>
-                                        {isTooltipVisible && (
-                                            <div 
-                                              className="absolute top-full right-0 mt-2 w-60 p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-xl z-20 animate-fade-in-fast" 
-                                              onClick={e => e.stopPropagation()}
-                                            >
-                                                <p className="text-sm font-medium leading-snug">{template.description}</p>
-                                            </div>
-                                        )}
-                                    </div>
+                                <div>
+                                    <RoomTypeIcon roomType={template.roomType} />
+                                    <p className="font-bold text-xl font-display" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>{template.name}</p>
+                                    <p className="text-sm text-white/90 mt-2 leading-snug" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
+                                        {template.description}
+                                    </p>
                                 </div>
-                                <div className="flex-grow">
-                                    {/* This empty div pushes the buttons to the bottom */}
-                                </div>
+                                
+                                <div className="flex-grow" />
+                                
                                 <div className="space-y-2">
-                                  <p className="text-xs font-semibold text-white/90" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>Choose Specification:</p>
+                                  <p className="text-xs font-semibold text-white/90" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>SELECT TIER:</p>
                                   <div className="grid grid-cols-3 gap-2">
-                                      <button onClick={() => handleTemplateClick(template, 'Bronze')} className={`${tierButtonClasses} ${bronzeClasses}`}>Bronze</button>
-                                      <button onClick={() => handleTemplateClick(template, 'Silver')} className={`${tierButtonClasses} ${silverClasses}`}>Silver</button>
-                                      <button onClick={() => handleTemplateClick(template, 'Gold')} className={`${tierButtonClasses} ${goldClasses}`}>Gold</button>
+                                      <button onClick={() => handleTemplateClick(template, 'Bronze')} className={`${tierButtonClasses} ${bronzeClasses}`}>BRONZE</button>
+                                      <button onClick={() => handleTemplateClick(template, 'Silver')} className={`${tierButtonClasses} ${silverClasses}`}>SILVER</button>
+                                      <button onClick={() => handleTemplateClick(template, 'Gold')} className={`${tierButtonClasses} ${goldClasses}`}>GOLD</button>
                                   </div>
                                 </div>
                             </div>
@@ -345,22 +305,6 @@ const WelcomeScreen: React.FC = () => {
                     );
                 })}
             </div>
-            <button 
-                onClick={(e) => handleArrowClick(e, 'left')}
-                disabled={activeIndex === 0}
-                className="absolute top-1/2 left-0 -translate-y-1/2 ml-1 bg-white rounded-full p-2 shadow-md border border-gray-200 disabled:opacity-0 disabled:cursor-not-allowed hover:bg-gray-100 transition-all z-20"
-                aria-label="Scroll left"
-            >
-                <ChevronLeftIcon className="h-6 w-6 text-gray-700" />
-            </button>
-            <button 
-                onClick={(e) => handleArrowClick(e, 'right')}
-                disabled={activeIndex === TEMPLATES.length - 1}
-                className="absolute top-1/2 right-0 -translate-y-1/2 mr-1 bg-white rounded-full p-2 shadow-md border border-gray-200 disabled:opacity-0 disabled:cursor-not-allowed hover:bg-gray-100 transition-all z-20"
-                aria-label="Scroll right"
-            >
-                <ChevronRightIcon className="h-6 w-6 text-gray-700" />
-            </button>
           </div>
       </main>
     </div>

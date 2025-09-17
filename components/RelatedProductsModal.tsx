@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, ManuallyAddedEquipment, RelatedProduct, RelatedProductsPayload } from '../utils/types';
-import { getRelatedProducts } from '../services/geminiService';
+import { getRelatedProducts } from '../services/productService';
 import { productDatabase } from '../data/productDatabase';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -11,7 +11,6 @@ interface RelatedProductsModalProps {
   onSelectProduct: (product: Product) => void;
 }
 
-// A small sub-component for each item to keep the main component clean
 const RelatedItem: React.FC<{item: RelatedProduct, onSelect: () => void}> = ({ item, onSelect }) => (
     <div className="p-3 bg-white rounded-md border text-left group">
         <div className="flex justify-between items-start">
@@ -39,7 +38,6 @@ const RelatedProductsModal: React.FC<RelatedProductsModalProps> = ({ isOpen, onC
           setResults(data);
         } catch (e) {
           console.error("Failed to fetch related products", e);
-          // Handle error state in UI if necessary, for now we just show no results.
         } finally {
           setIsLoading(false);
         }

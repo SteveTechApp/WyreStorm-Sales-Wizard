@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import WelcomeScreen from './pages/WelcomeScreen';
@@ -15,30 +17,30 @@ const App: React.FC = () => {
 
   if (!isInitialLoadComplete) {
       return (
-          <div className="flex flex-col h-screen items-center justify-center">
+          <div className="flex flex-col h-screen items-center justify-center bg-background">
                <LoadingSpinner message="Initializing..." />
           </div>
       )
   }
 
   if (appState === 'generating-proposal') {
-    return <div className="flex flex-col h-screen items-center justify-center bg-gray-100"><LoadingSpinner context={loadingContext} /></div>;
+    return <div className="flex flex-col h-screen items-center justify-center bg-background"><LoadingSpinner context={loadingContext} /></div>;
   }
    if (appState === 'error') {
-     return <div className="flex flex-col h-screen items-center justify-center bg-gray-100"><ErrorDisplay error={error} onAcknowledge={handleNewProject} acknowledgeButtonText="Start Over" /></div>;
+     return <div className="flex flex-col h-screen items-center justify-center bg-background"><ErrorDisplay error={error} onAcknowledge={handleNewProject} acknowledgeButtonText="Start Over" /></div>;
   }
 
   return (
     <HashRouter>
-      <Routes>
-        <Route element={<AppLayout />}>
+      <AppLayout>
+        <Routes>
           <Route path="/" element={<WelcomeScreen />} />
           <Route path="/setup" element={<ProjectSetupScreen />} />
           <Route path="/agent" element={<AgentInputForm />} />
           <Route path="/design/:projectId" element={<DesignCoPilot />} />
-          <Route path="/proposal/:projectId" element={<ProposalDisplay />} />
-        </Route>
-      </Routes>
+          <Route path="/proposal/:projectId/:proposalId?" element={<ProposalDisplay />} />
+        </Routes>
+      </AppLayout>
     </HashRouter>
   );
 };
