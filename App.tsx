@@ -1,47 +1,27 @@
-
-
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import AppLayout from './components/AppLayout';
 import WelcomeScreen from './pages/WelcomeScreen';
 import ProjectSetupScreen from './pages/ProjectSetupScreen';
-import AgentInputForm from './pages/AgentInputForm';
 import DesignCoPilot from './pages/DesignCoPilot';
 import ProposalDisplay from './pages/ProposalDisplay';
-import AppLayout from './components/AppLayout';
-import LoadingSpinner from './components/LoadingSpinner';
-import ErrorDisplay from './components/ErrorDisplay';
-import { useAppContext } from './context/AppContext';
+import TrainingPage from './pages/TrainingPage';
+import TemplatesByVerticalPage from './pages/TemplatesByVerticalPage';
 
 const App: React.FC = () => {
-  const { isInitialLoadComplete, appState, error, handleNewProject, loadingContext } = useAppContext();
-
-  if (!isInitialLoadComplete) {
-      return (
-          <div className="flex flex-col h-screen items-center justify-center bg-background">
-               <LoadingSpinner message="Initializing..." />
-          </div>
-      )
-  }
-
-  if (appState === 'generating-proposal') {
-    return <div className="flex flex-col h-screen items-center justify-center bg-background"><LoadingSpinner context={loadingContext} /></div>;
-  }
-   if (appState === 'error') {
-     return <div className="flex flex-col h-screen items-center justify-center bg-background"><ErrorDisplay error={error} onAcknowledge={handleNewProject} acknowledgeButtonText="Start Over" /></div>;
-  }
-
   return (
-    <HashRouter>
+    <Router>
       <AppLayout>
         <Routes>
           <Route path="/" element={<WelcomeScreen />} />
           <Route path="/setup" element={<ProjectSetupScreen />} />
-          <Route path="/agent" element={<AgentInputForm />} />
           <Route path="/design/:projectId" element={<DesignCoPilot />} />
-          <Route path="/proposal/:projectId/:proposalId?" element={<ProposalDisplay />} />
+          <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
+          <Route path="/training" element={<TrainingPage />} />
+          <Route path="/templates/:verticalId" element={<TemplatesByVerticalPage />} />
         </Routes>
       </AppLayout>
-    </HashRouter>
+    </Router>
   );
 };
 

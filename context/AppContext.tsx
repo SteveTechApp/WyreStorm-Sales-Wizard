@@ -1,108 +1,67 @@
+import React, { createContext, useContext, ReactNode } from 'react';
+import { UserProvider, useUserContext } from './UserContext';
+import { ProjectProvider, useProjectContext } from './ProjectContext';
+import { GenerationProvider, useGenerationContext } from './GenerationContext';
+import { LocaleProvider, useLocaleContext } from './LocaleContext';
+import { ThemeProvider, useThemeContext } from './ThemeContext';
+import ProfileModal from '../components/ProfileModal';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ProjectData, Proposal, UserProfile, IncomingRequest, ProjectSetupData, ThemeName } from '../utils/types';
-import { useProjectManagement } from '../hooks/useProjectManagement';
-import { useProjectGeneration } from '../hooks/useProjectGeneration';
-import { useClientRequests } from '../hooks/useClientRequests';
-import { useUserProfile } from '../hooks/useUserProfile';
-import { themes } from '../data/themes';
+// This combines the types from all the individual contexts.
+type AppContextType = any; 
 
-type AppState = 'idle' | 'generating-proposal' | 'error';
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
-interface AppContextType {
-    appState: AppState;
-    setAppState: React.Dispatch<React.SetStateAction<AppState>>;
-    projectData: ProjectData | null;
-    error: string | null;
-    userProfile: UserProfile;
-    savedProjects: ProjectData[];
-    isQuickQuestionModalOpen: boolean;
-    setIsQuickQuestionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    loadingContext: 'template' | 'proposal' | null;
-    isInitialLoadComplete: boolean;
-    favouritedClients: string[];
-    incomingRequests: IncomingRequest[];
-    isProfileModalOpen: boolean;
-    setIsProfileModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    theme: ThemeName;
-    handleSetTheme: (theme: ThemeName) => void;
-    handleSaveUserProfile: (profile: UserProfile) => void;
-    handleSaveProject: (data: ProjectData) => void;
-    handleNewProject: () => void;
-    handleProjectSetupSubmit: (setupData: ProjectSetupData, navigate: (path: string) => void) => void;
-    handleAgentSubmit: (text: string, navigate: (path: string) => void) => Promise<void>;
-    handleGenerateProposal: (data: ProjectData, navigate: (path: string) => void) => Promise<void>;
-    handleDeleteProject: (projectId: string) => void;
-    handleLoadProject: (projectId: string, navigate: (path: string) => void) => void;
-    handleStartFromTemplate: (roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', templateName: string, participantCount: number, navigate: (path: string) => void) => Promise<void>;
-    handleToggleFavouriteClient: (clientName: string) => void;
-    handleConfirmRequest: (requestId: string, navigate: (path: string) => void) => Promise<void>;
-    handleRejectRequest: (requestId: string) => void;
-}
+const AppProviderInternal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const userContext = useUserContext();
+    const projectContext = useProjectContext();
+    const generationContext = useGenerationContext();
+    const localeContext = useLocaleContext();
+    const themeContext = useThemeContext();
 
-const AppContext = createContext<AppContextType | null>(null);
-
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
-    const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
-    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    
-    const { userProfile, handleSaveUserProfile } = useUserProfile(isInitialLoadComplete);
-    const theme = userProfile.theme;
-    
-    useEffect(() => {
-        const themeObject = themes[theme] || themes.wyrestorm;
-        const themeStyleTag = document.getElementById('app-theme');
-        if (themeStyleTag) {
-            const css = `:root { ${Object.entries(themeObject).map(([key, value]) => `${key}: ${value};`).join(' ')} }`;
-            themeStyleTag.innerHTML = css;
-        }
-        document.body.className = 'bg-background text-text-primary transition-colors duration-300';
-    }, [theme]);
-    
-    const handleSetTheme = (newTheme: ThemeName) => {
-        handleSaveUserProfile({ ...userProfile, theme: newTheme });
+    const combinedValue = {
+        ...userContext,
+        ...projectContext,
+        ...generationContext,
+        ...localeContext,
+        ...themeContext,
     };
 
-    const projectManagementData = useProjectManagement(isInitialLoadComplete, userProfile);
-    
-    const generationData = useProjectGeneration(
-        userProfile,
-        projectManagementData.handleSaveProject
+    return (
+        <AppContext.Provider value={combinedValue}>
+            {children}
+            <ProfileModal />
+        </AppContext.Provider>
     );
-
-    const clientRequestData = useClientRequests(
-        isInitialLoadComplete,
-        userProfile,
-        projectManagementData.handleSaveProject,
-        generationData.handleStartFromTemplate
-    );
-
-    useEffect(() => {
-        setIsInitialLoadComplete(true);
-    }, []);
-
-    const value: AppContextType = {
-        isInitialLoadComplete,
-        userProfile,
-        handleSaveUserProfile,
-        isProfileModalOpen,
-        setIsProfileModalOpen,
-        theme,
-        handleSetTheme,
-        ...projectManagementData,
-        ...generationData,
-        ...clientRequestData,
-        isQuickQuestionModalOpen,
-        setIsQuickQuestionModalOpen,
-    };
-
-    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export const useAppContext = (): AppContextType => {
+/**
+ * The main AppProvider component that should wrap the entire application.
+ * It sets up all the individual context providers in the correct order.
+ */
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    return (
+        <ThemeProvider>
+            <UserProvider>
+                <ProjectProvider>
+                    <GenerationProvider>
+                        <LocaleProvider>
+                            <AppProviderInternal>
+                                {children}
+                            </AppProviderInternal>
+                        </LocaleProvider>
+                    </GenerationProvider>
+                </ProjectProvider>
+            </UserProvider>
+        </ThemeProvider>
+    );
+};
+
+/**
+ * The main hook used by components to access the combined application state and actions.
+ */
+export const useAppContext = () => {
     const context = useContext(AppContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error('useAppContext must be used within an AppProvider');
     }
     return context;

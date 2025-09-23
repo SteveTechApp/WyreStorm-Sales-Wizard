@@ -1,134 +1,65 @@
-
 import React, { useState } from 'react';
-// FIX: Update react-router-dom imports for v6 compatibility.
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import { SparklesIcon } from '../components/Icons';
+import Logo from '../components/Logo';
 
 const AgentInputForm: React.FC = () => {
-  const { handleAgentSubmit } = useAppContext();
-  // FIX: Replaced useHistory with useNavigate for v6 compatibility.
-  const navigate = useNavigate();
-  const [text, setText] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
+    const [documentText, setDocumentText] = useState('');
+    const { handleAgentSubmit } = useAppContext();
+    const navigate = useNavigate();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      if (selectedFile.type.startsWith('text/') || selectedFile.name.endsWith('.md')) {
-        setFile(selectedFile);
-        setText(''); // Clear textarea if a file is chosen
-        setError(null);
-      } else {
-        setError('Please upload a text-based file (e.g., .txt, .md).');
-        setFile(null);
-      }
-    }
-  };
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-    if (file) {
-      setFile(null); // Clear file if user starts typing
-    }
-  };
-
-  const removeFile = () => {
-    setFile(null);
-    const fileInput = document.getElementById('file-upload') as HTMLInputElement;
-    if (fileInput) fileInput.value = ''; // Reset the file input
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    const processSubmit = (content: string) => {
-        if (content && content.trim()) {
-            // FIX: Use navigate for navigation in v6.
-            handleAgentSubmit(content, navigate);
-        } else {
-            setError('The provided content is empty.');
-        }
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!documentText.trim()) return;
+        handleAgentSubmit(documentText, navigate);
     };
 
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        processSubmit(event.target?.result as string);
-      };
-      reader.onerror = () => {
-        setError('Failed to read the file.');
-      };
-      reader.readAsText(file);
-    } else if (text.trim()) {
-      processSubmit(text);
-    }
-  };
+    const handlePasteExample = () => {
+        setDocumentText(`CLIENT: Innovate Corp
+PROJECT: Boardroom Refresh
 
-  const isSubmitDisabled = !text.trim() && !file;
+Hi team,
 
-  return (
-    <div className="bg-background-secondary p-8 rounded-lg border border-border-color shadow-md animate-fade-in">
-      <h2 className="text-2xl font-bold text-accent mb-2">Analyse Customer Requirements</h2>
-      <p className="text-text-secondary mb-6">
-        Upload an RFQ, tender, or meeting notes document. Alternatively, you can paste the text directly below. The AI will analyse it and pre-fill the questionnaire.
-      </p>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="file-upload" className="w-full cursor-pointer flex items-center justify-center gap-3 bg-background hover:bg-border-color text-text-primary font-bold py-3 px-6 rounded-lg text-lg transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-            <span>Upload Document</span>
-          </label>
-          <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept=".txt,.md,text/plain" />
-        </div>
+We need to upgrade our main boardroom. It's about 10m x 7m and needs to accommodate 12 people.
 
-        {file && (
-          <div className="mb-4 flex items-center justify-between p-3 bg-green-500/10 border border-green-500/30 rounded-md text-sm">
-            <div className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              <span className="font-medium text-text-primary">{file.name}</span>
+The main requirement is high-quality video conferencing (we use Zoom) and it needs to be super easy for guests to present from their laptops. A single USB-C cable solution would be ideal. We need a large, bright display, maybe 85" or bigger. Audio needs to be great for both local presentations and for people on the far end of a VC call.
+
+We'd also like a smaller huddle space for 4-6 people. This just needs a simple screen share capability, VC isn't a must-have for this one but would be nice.
+
+Our budget is flexible but we're looking for good value - something reliable that will last. Let me know what you can come up with.
+
+Thanks,
+Jane Doe
+Facilities Manager, Innovate Corp`);
+    };
+
+    return (
+        <div className="bg-background-secondary p-8 rounded-lg shadow-xl w-full max-w-3xl animate-fade-in border border-border-color">
+            <div className="text-center mb-6">
+                <Logo />
+                <h1 className="text-2xl font-bold text-text-primary mt-4">AI Project Agent</h1>
+                <p className="text-text-secondary mt-1">Paste a client brief, email, or requirements document below.</p>
             </div>
-            <button type="button" onClick={removeFile} className="text-text-secondary hover:text-red-600" aria-label="Remove file">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
-            </button>
-          </div>
-        )}
-        
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border-color"></div></div>
-          <div className="relative flex justify-center"><span className="bg-background-secondary px-3 text-sm font-medium text-text-secondary">OR</span></div>
+            <form onSubmit={handleSubmit}>
+                <textarea
+                    value={documentText}
+                    onChange={(e) => setDocumentText(e.target.value)}
+                    className="w-full h-64 p-3 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none resize-y"
+                    placeholder="Paste your document here..."
+                />
+                 <div className="text-right mt-2">
+                    <button type="button" onClick={handlePasteExample} className="text-sm text-primary hover:underline">
+                        Paste Example
+                    </button>
+                </div>
+                <button type="submit" disabled={!documentText.trim()} className="w-full mt-4 bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-3 px-4 rounded-md disabled:bg-gray-400 flex items-center justify-center gap-2">
+                    <SparklesIcon className="h-5 w-5" />
+                    Analyze and Build Project
+                </button>
+            </form>
         </div>
-
-        <textarea
-          value={text}
-          onChange={handleTextChange}
-          placeholder="Paste text here... e.g., 'The client needs a conference room setup with 3 laptop inputs...'"
-          className="w-full h-48 p-3 bg-input-bg border border-border-color rounded-md focus:ring-2 focus:ring-primary focus:outline-none transition-colors mb-4 resize-y text-text-primary"
-        />
-
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
-
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            // FIX: Use navigate for navigation in v6.
-            onClick={() => navigate('/')}
-            className="bg-background hover:bg-border-color text-text-primary font-bold py-3 px-6 rounded-lg text-lg transition-colors"
-          >
-            Back
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitDisabled}
-            className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-3 px-6 rounded-lg text-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            Parse Requirements
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+    );
 };
 
 export default AgentInputForm;

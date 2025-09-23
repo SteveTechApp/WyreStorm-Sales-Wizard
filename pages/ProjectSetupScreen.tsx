@@ -1,98 +1,67 @@
-
-
-import React, { useState, useEffect } from 'react';
-// FIX: Update react-router-dom imports for v6 compatibility.
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProjectSetupData } from '../utils/types';
 import { useAppContext } from '../context/AppContext';
+import { ProjectSetupData } from '../utils/types';
+import Logo from '../components/Logo';
 
 const ProjectSetupScreen: React.FC = () => {
-    const { handleProjectSetupSubmit } = useAppContext();
-    // FIX: Replaced useHistory with useNavigate for v6 compatibility.
-    const navigate = useNavigate();
+  const [setupData, setSetupData] = useState({ projectName: '', clientName: '' });
+  const { handleProjectSetupSubmit, t } = useAppContext();
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
-    const [formData, setFormData] = useState({
-        projectName: `New Project - ${new Date().toLocaleDateString()}`,
-        clientName: '',
-    });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!setupData.projectName.trim() || !setupData.clientName.trim()) {
+      setError('Both project name and client name are required.');
+      return;
+    }
+    setError('');
 
-    useEffect(() => {
-        try {
-            const savedDraft = localStorage.getItem('projectSetupDraft');
-            if (savedDraft) {
-                const parsedData = JSON.parse(savedDraft);
-                setFormData({
-                    projectName: parsedData.projectName || `New Project - ${new Date().toLocaleDateString()}`,
-                    clientName: parsedData.clientName || ''
-                });
-            }
-        } catch (e) {
-            console.error("Failed to load project setup draft:", e);
-        }
-    }, []);
+    const fullSetupData: ProjectSetupData = { ...setupData, rooms: [] };
+    handleProjectSetupSubmit(fullSetupData, navigate);
+  };
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            localStorage.setItem('projectSetupDraft', JSON.stringify(formData));
-        }, 500);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSetupData(prev => ({ ...prev, [name]: value }));
+  };
 
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [formData]);
-    
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+  return (
+    <div className="bg-background-secondary p-8 rounded-lg shadow-xl w-full max-w-xl animate-fade-in border border-border-color">
+      <div className="text-center mb-6">
+        <Logo />
+        <h1 className="text-2xl font-bold text-text-primary mt-4">{t('projectSetup.title')}</h1>
+        <p className="text-text-secondary mt-1">Create a blank project to design from scratch.</p>
+      </div>
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const setupData: ProjectSetupData = {
-            ...formData,
-            rooms: []
-        };
-        // FIX: Use navigate for navigation in v6.
-        handleProjectSetupSubmit(setupData, navigate);
-        localStorage.removeItem('projectSetupDraft');
-    };
-    
-    const handleBack = () => {
-        localStorage.removeItem('projectSetupDraft');
-        // FIX: Use navigate for navigation in v6.
-        navigate('/');
-    };
-
-    return (
-        <div className="bg-background-secondary p-8 rounded-lg border border-border-color shadow-md animate-fade-in w-full max-w-xl">
-            <h2 className="text-2xl font-bold text-accent mb-2">Create New Project</h2>
-            <p className="text-text-secondary mb-6">Enter the high-level project details. You'll add and configure rooms using the AI Room Wizard in the next step.</p>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="projectName" className="block text-sm font-medium text-text-secondary">Project Name</label>
-                        <input type="text" id="projectName" name="projectName" value={formData.projectName} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg text-text-primary" required />
-                    </div>
-                    <div>
-                        <label htmlFor="clientName" className="block text-sm font-medium text-text-secondary">Client Company Name</label>
-                        <input type="text" id="clientName" name="clientName" value={formData.clientName} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg text-text-primary" required />
-                    </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-border-color">
-                    <button type="button" onClick={handleBack} className="bg-background hover:bg-border-color text-text-primary font-bold py-2 px-6 rounded-lg">
-                        Back
-                    </button>
-                    <button type="submit" className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-6 rounded-lg">
-                        Start Designing
-                    </button>
-                </div>
-            </form>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="projectName" className="block text-sm font-medium text-text-secondary">{t('projectSetup.projectName')}</label>
+            <input
+              type="text" id="projectName" name="projectName" value={setupData.projectName} onChange={handleChange}
+              className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none"
+              placeholder="e.g., Acme Corp Boardroom Refresh"
+            />
+          </div>
+          <div>
+            <label htmlFor="clientName" className="block text-sm font-medium text-text-secondary">{t('projectSetup.clientName')}</label>
+            <input
+              type="text" id="clientName" name="clientName" value={setupData.clientName} onChange={handleChange}
+              className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none"
+              placeholder="e.g., Acme Corporation"
+            />
+          </div>
         </div>
-    );
+
+        {error && <p className="text-destructive text-sm">{error}</p>}
+        <button type="submit" className="w-full bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md transition-colors">
+          {t('buttons.createNewProject')}
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default ProjectSetupScreen;

@@ -8,15 +8,15 @@ export const themes: Record<ThemeName, Record<string, string>> = {
     '--color-accent-hover': '#00732f', // Darker Green
     '--color-destructive': '#d71a21', // WyreStorm Red for warnings/deletes
     '--color-destructive-hover': '#b8161c', // Darker Red
-    '--color-background': '#d1d5db', // gray-300 - provides contrast
-    '--color-background-secondary': '#f3f4f6', // gray-100 - for panels
-    '--color-text-primary': '#1f2937',
-    '--color-text-secondary': '#6b7280',
+    '--color-background': '#f9fafb', // gray-50 (Very light gray)
+    '--color-background-secondary': '#ffffff', // white (For panels)
+    '--color-text-primary': '#111827', // gray-900 (High contrast)
+    '--color-text-secondary': '#6b7280', // gray-500
     '--color-text-on-accent': '#ffffff',
-    '--color-border': '#e5e7eb',
+    '--color-border': '#e5e7eb', // gray-200
     '--color-shadow': 'rgba(0, 0, 0, 0.05)',
-    '--color-card': '#ffffff', // white - for cards inside panels
-    '--color-card-hover': '#f9fafb', // gray-50
+    '--color-card': '#ffffff',
+    '--color-card-hover': '#f9fafb',
     '--color-input-bg': '#ffffff',
   },
   dark: {
@@ -38,21 +38,21 @@ export const themes: Record<ThemeName, Record<string, string>> = {
     '--color-input-bg': '#121821',
   },
   light: {
-    '--color-primary': '#008A3A',
-    '--color-secondary': '#00732f',
-    '--color-accent': '#008A3A',
-    '--color-accent-hover': '#00732f',
-    '--color-destructive': '#d71a21',
-    '--color-destructive-hover': '#b8161c',
-    '--color-background': '#d1d5db', // gray-300
-    '--color-background-secondary': '#f3f4f6', // gray-100
-    '--color-text-primary': '#1f2937',
-    '--color-text-secondary': '#6b7280',
+    '--color-primary': '#2563eb', // Standard Blue 600
+    '--color-secondary': '#1d4ed8', // Darker Blue 700
+    '--color-accent': '#2563eb', // Standard Blue 600
+    '--color-accent-hover': '#1d4ed8', // Darker Blue 700
+    '--color-destructive': '#ef4444', // Red 500
+    '--color-destructive-hover': '#dc2626', // Red 600
+    '--color-background': '#f9fafb', // gray-50
+    '--color-background-secondary': '#ffffff', // white
+    '--color-text-primary': '#111827', // gray-900
+    '--color-text-secondary': '#6b7280', // gray-500
     '--color-text-on-accent': '#ffffff',
-    '--color-border': '#e5e7eb',
+    '--color-border': '#e5e7eb', // gray-200
     '--color-shadow': 'rgba(0, 0, 0, 0.05)',
-    '--color-card': '#ffffff', // white
-    '--color-card-hover': '#f9fafb', // gray-50
+    '--color-card': '#ffffff',
+    '--color-card-hover': '#f9fafb',
     '--color-input-bg': '#ffffff',
   }
 };

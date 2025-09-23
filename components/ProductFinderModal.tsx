@@ -1,8 +1,10 @@
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Product } from '../utils/types';
-import { findProducts } from '../services/productFinderService';
+import { findProducts } from '../services/productService';
+import LoadingSpinner from './LoadingSpinner';
+import ProductCard from './ProductCard';
 
 interface ProductFinderModalProps {
   isOpen: boolean;
@@ -12,58 +14,71 @@ interface ProductFinderModalProps {
 
 const ProductFinderModal: React.FC<ProductFinderModalProps> = ({ isOpen, onClose, onSelectProduct }) => {
   const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<Product[]>([]);
-
-  useEffect(() => {
-    if (isOpen) { // Reset on open
-        setQuery('');
-        setResults([]);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (query.trim().length > 2) {
-      const foundProducts = findProducts(query);
-      setResults(foundProducts);
-    } else {
-      setResults([]);
-    }
-  }, [query]);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    setIsLoading(true);
+    setError(null);
+    setResults([]);
+    try {
+      const foundProducts = await findProducts(query);
+      setResults(foundProducts);
+    } catch (err: any) {
+      setError(err.message || 'Failed to find products.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Find Product</h2>
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Search by SKU, name, or feature..."
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-          autoFocus
-        />
-        <div className="flex-grow overflow-y-auto max-h-[60vh] border rounded-md bg-gray-50">
+      <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-2xl m-4 flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+        <div className="flex-shrink-0">
+          <h2 className="text-2xl font-bold text-text-primary mb-4">Find a Product</h2>
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="e.g., '4K AVoIP receiver with Dante'"
+              className="flex-grow p-2 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none"
+              autoFocus
+            />
+            <button type="submit" disabled={isLoading} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md disabled:bg-gray-400">
+              {isLoading ? 'Searching...' : 'Search'}
+            </button>
+          </form>
+        </div>
+
+        <div className="mt-4 flex-grow overflow-y-auto pr-2">
+          {isLoading && <div className="flex justify-center pt-10"><LoadingSpinner message="Searching for products..." /></div>}
+          {error && <p className="text-destructive text-center">{error}</p>}
           {results.length > 0 ? (
-            <ul>
+            <div className="space-y-2">
               {results.map(product => (
-                <li key={product.sku} className="p-3 border-b bg-white hover:bg-gray-100 cursor-pointer" onClick={() => onSelectProduct(product)}>
-                  <p className="font-semibold text-gray-800">{product.name} <span className="text-sm font-normal text-gray-500">({product.sku})</span></p>
-                  <p className="text-xs text-gray-600 mt-1">{product.description}</p>
-                </li>
+                <div key={product.sku} className="prose max-w-none">
+                    <ProductCard product={product} />
+                     <div className="flex justify-end not-prose -mt-2 mr-3">
+                        <button onClick={() => onSelectProduct(product)} className="text-sm bg-primary/20 hover:bg-primary/30 text-primary font-semibold py-1 px-3 rounded-md transition-colors">
+                            Add to Room
+                        </button>
+                    </div>
+                </div>
               ))}
-            </ul>
-          ) : (
-            <div className="text-center text-gray-500 p-8">
-              {query.trim().length > 2 ? 'No products found.' : 'Enter a search term to find products.'}
             </div>
+          ) : (
+            !isLoading && !error && <p className="text-center text-text-secondary pt-10">No products found. Try a different search.</p>
           )}
         </div>
-        <div className="mt-6 flex justify-end">
-          <button type="button" onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
-            Close
-          </button>
+        
+        <div className="mt-6 flex justify-end flex-shrink-0">
+          <button type="button" onClick={onClose} className="bg-background-secondary hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Close</button>
         </div>
       </div>
     </div>

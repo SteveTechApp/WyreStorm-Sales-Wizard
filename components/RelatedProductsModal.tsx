@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
-import { Product, ManuallyAddedEquipment, RelatedProduct, RelatedProductsPayload } from '../utils/types';
+import { Product, RelatedProductsPayload, ManuallyAddedEquipment } from '../utils/types';
 import { getRelatedProducts } from '../services/productService';
-import { productDatabase } from '../data/productDatabase';
+import { useAppContext } from '../context/AppContext';
 import LoadingSpinner from './LoadingSpinner';
+import ProductCard from './ProductCard';
 
 interface RelatedProductsModalProps {
   isOpen: boolean;
@@ -11,59 +13,56 @@ interface RelatedProductsModalProps {
   onSelectProduct: (product: Product) => void;
 }
 
-const RelatedItem: React.FC<{item: RelatedProduct, onSelect: () => void}> = ({ item, onSelect }) => (
-    <div className="p-3 bg-white rounded-md border text-left group">
-        <div className="flex justify-between items-start">
-            <div>
-                <p className="font-bold text-gray-800 text-sm">{item.name}</p>
-                <p className="text-xs text-gray-500 font-mono">{item.sku}</p>
-            </div>
-            <button onClick={onSelect} className="text-sm font-medium text-green-600 hover:text-green-800 opacity-0 group-hover:opacity-100 transition-opacity">Add</button>
-        </div>
-        <p className="text-xs text-gray-600 mt-1 italic">"{item.reason}"</p>
-    </div>
-);
-
 const RelatedProductsModal: React.FC<RelatedProductsModalProps> = ({ isOpen, onClose, targetProduct, onSelectProduct }) => {
+  const { productDatabase, userProfile } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<RelatedProductsPayload | null>(null);
+  const [related, setRelated] = useState<RelatedProductsPayload | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen && targetProduct) {
+    if (isOpen && targetProduct && userProfile) {
       const fetchRelated = async () => {
         setIsLoading(true);
-        setResults(null);
+        setError(null);
+        setRelated(null);
         try {
-          const data = await getRelatedProducts(targetProduct);
-          setResults(data);
-        } catch (e) {
-          console.error("Failed to fetch related products", e);
+          const response = await getRelatedProducts(targetProduct, userProfile);
+          setRelated(response);
+        } catch (err: any) {
+          setError(err.message || "Failed to fetch related products.");
         } finally {
           setIsLoading(false);
         }
       };
       fetchRelated();
     }
-  }, [isOpen, targetProduct]);
+  }, [isOpen, targetProduct, userProfile]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !targetProduct) return null;
 
-  const handleSelect = (sku: string) => {
-    const product = productDatabase.find(p => p.sku === sku);
-    if (product) {
-      onSelectProduct(product);
-    }
-  };
-
-  const renderSection = (title: string, items: RelatedProduct[]) => {
-    if (items.length === 0) return null;
+  const renderProductList = (title: string, products: { sku: string; name: string; reason: string }[]) => {
+    if (products.length === 0) return null;
     return (
       <div>
-        <h3 className="text-md font-semibold text-gray-700 mb-2">{title}</h3>
-        <div className="space-y-2">
-          {items.map(item => (
-            <RelatedItem key={item.sku} item={item} onSelect={() => handleSelect(item.sku)} />
-          ))}
+        <h3 className="text-lg font-bold text-text-primary mb-2">{title}</h3>
+        <div className="space-y-3">
+          {products.map(rel => {
+            const productInfo = productDatabase.find(p => p.sku === rel.sku);
+            if (!productInfo) return <div key={rel.sku} className="text-sm text-destructive">Could not find product info for {rel.sku}</div>;
+            return (
+                <div key={rel.sku} className="bg-background-secondary p-2 rounded-md">
+                    <p className="text-xs text-text-secondary italic">"{rel.reason}"</p>
+                    <div className="prose max-w-none">
+                         <ProductCard product={productInfo} />
+                         <div className="flex justify-end not-prose -mt-2 mr-3">
+                            <button onClick={() => onSelectProduct(productInfo)} className="text-sm bg-primary/20 hover:bg-primary/30 text-primary font-semibold py-1 px-3 rounded-md transition-colors">
+                                Add to Room
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -71,29 +70,26 @@ const RelatedProductsModal: React.FC<RelatedProductsModalProps> = ({ isOpen, onC
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-gray-50 rounded-lg shadow-xl p-6 w-full max-w-2xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
-        <div className="border-b pb-3 mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Suggestions for:</h2>
-            <p className="text-md font-semibold text-[#008A3A]">{targetProduct?.name}</p>
-        </div>
-        
-        <div className="flex-grow overflow-y-auto max-h-[60vh] pr-2">
-          {isLoading && <LoadingSpinner message="Finding suggestions..." />}
-          {!isLoading && results && (
-            <div className="space-y-6 animate-fade-in-fast">
-              {renderSection("Suggested Alternatives", results.alternatives)}
-              {renderSection("Compatible Accessories", results.accessories)}
-              {results.alternatives.length === 0 && results.accessories.length === 0 && (
-                  <p className="text-center text-gray-500 py-8">No specific suggestions found for this item.</p>
-              )}
-            </div>
-          )}
+      <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-3xl m-4 flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+        <div className="flex-shrink-0">
+          <h2 className="text-2xl font-bold text-text-primary mb-1">Related Products</h2>
+          <p className="text-text-secondary mb-4">Showing suggestions for: <strong>{targetProduct.name}</strong></p>
         </div>
 
-        <div className="mt-6 flex justify-end">
-          <button type="button" onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
-            Close
-          </button>
+        <div className="flex-grow overflow-y-auto pr-2 space-y-6">
+          {isLoading && <div className="flex justify-center pt-10"><LoadingSpinner message="Finding suggestions..." /></div>}
+          {error && <p className="text-destructive text-center">{error}</p>}
+          {related && (
+            <>
+              {renderProductList('Alternatives', related.alternatives)}
+              {renderProductList('Accessories & Companions', related.accessories)}
+              {related.alternatives.length === 0 && related.accessories.length === 0 && <p className="text-center text-text-secondary pt-10">No specific suggestions found.</p>}
+            </>
+          )}
+        </div>
+        
+        <div className="mt-6 flex justify-end flex-shrink-0">
+          <button type="button" onClick={onClose} className="bg-background-secondary hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Close</button>
         </div>
       </div>
     </div>

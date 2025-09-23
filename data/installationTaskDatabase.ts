@@ -1,46 +1,7 @@
-import { InstallationTask } from '../utils/types';
-
-export const installationTaskDatabase: InstallationTask[] = [
-    {
-        id: 'rack-build',
-        name: 'Rack Build & Assembly',
-        description: 'Physical assembly of the equipment rack, including mounting shelves, power distribution, and ventilation.',
-        estimatedHours: 8,
-    },
-    {
-        id: 'device-install',
-        name: 'Device Installation',
-        description: 'Mounting and securing all in-room hardware, such as displays, projectors, speakers, and microphones.',
-        estimatedHours: 12,
-    },
-    {
-        id: 'cable-pull',
-        name: 'Cable Pulling & Termination',
-        description: 'Running all necessary low-voltage cabling between the rack and in-room termination points. Terminating all cable ends.',
-        estimatedHours: 16,
-    },
-    {
-        id: 'rack-wiring',
-        name: 'Rack Wiring & Integration',
-        description: 'Connecting all equipment within the rack according to the system diagram. Includes cable management.',
-        estimatedHours: 10,
-    },
-    {
-        id: 'control-prog',
-        name: 'Control System Programming',
-        description: 'Loading and configuring the control system code, including UI design and logic programming.',
-        estimatedHours: 20,
-    },
-    {
-        id: 'system-config',
-        name: 'System Configuration & Testing',
-        description: 'Configuring all network devices, DSP settings, and video scaling. Performing full system testing.',
-        estimatedHours: 8,
-    },
-    {
-        id: 'commissioning',
-        name: 'Commissioning & Handover',
-        description: 'Final testing with the client, providing user training, and delivering project documentation.',
-        estimatedHours: 4,
-    },
-];
+export const INSTALLATION_TASK_DATABASE = {
+    "Pre-Wire & First Fix": ["Run all low-voltage cabling", "Install back boxes and wall plates", "Coordinate with electrical contractor for power placement", "Verify all cable paths"],
+    "Rack Build & Assembly": ["Assemble equipment rack", "Install all rack-mountable equipment", "Fabricate and terminate all patch cabling", "Implement rack-based power management", "Perform initial power-up and configuration"],
+    "Room Integration": ["Mount displays, projectors, and screens", "Install speakers and connect wiring", "Install microphones and connect", "Install table boxes and terminate connections", "Connect all local room equipment"],
+    "Commissioning & Programming": ["Load and configure DSP settings", "Configure all network settings", "Upload and test control system programming", "Test all signal paths", "Calibrate display settings", "Perform acoustic testing"],
+    "Handover & Training": ["Conduct a final walkthrough", "Provide comprehensive training", "Deliver as-built documentation", "Hand over all system passwords"]
+};

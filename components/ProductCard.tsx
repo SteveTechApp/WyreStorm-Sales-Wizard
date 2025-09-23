@@ -1,45 +1,57 @@
-
-
-
 import React from 'react';
 import { Product } from '../utils/types';
+import { useAppContext } from '../context/AppContext';
 
-interface ProductCardProps {
-  product: Product;
-}
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+    const { toggleComparison, comparisonList, userProfile } = useAppContext();
+    const isComparing = comparisonList.some(p => p.sku === product.sku);
+    
+    const formatCurrency = (amount: number) => {
+        const currencyCode = userProfile?.currency || 'GBP';
+        // Use the appropriate locale for correct formatting conventions (e.g., symbol position)
+        // FIX: Use the user's selected language directly as the locale for formatting.
+        const locale = userProfile?.language || 'en-GB';
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currencyCode,
+        }).format(amount);
+    };
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const formatCurrency = (amount: number) => {
-    // Hardcode to GBP as user profile selection is removed.
-    const symbol = '£';
-    return `${symbol}${amount.toFixed(2)}`;
-  };
-  
-  const productUrl = `https://www.wyrestorm.com/product/${product.sku}`;
-
-  return (
-    <div className="p-3 my-2 bg-white border border-gray-200 rounded-lg shadow-sm not-prose">
-      <div className="flex justify-between items-start">
-        <div>
-          <h4 className="font-bold text-gray-800">{product.name}</h4>
-          <p className="text-xs font-mono text-gray-500">{product.sku} | {product.category}</p>
+    return (
+        <div className="bg-card p-3 my-2 rounded-lg border border-border-color not-prose flex gap-4 items-start">
+             {product.imageUrl && (
+                 <div className="w-20 h-20 bg-white rounded-md flex-shrink-0">
+                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
+                </div>
+             )}
+            <div className="flex-grow">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h4 className="font-bold text-text-primary">{product.name}</h4>
+                        <p className="text-xs font-mono text-text-secondary">{product.sku}</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="font-semibold text-text-primary">{formatCurrency(product.dealerPrice)}</p>
+                        <p className="text-xs text-text-secondary line-through">{formatCurrency(product.msrp)}</p>
+                    </div>
+                </div>
+                <p className="text-sm text-text-secondary mt-1">{product.description}</p>
+                <div className="mt-2 flex justify-between items-center">
+                    <div className="flex flex-wrap gap-1">
+                        {product.tags.slice(0, 3).map(tag => (
+                            <span key={tag} className="text-xs bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-full">{tag}</span>
+                        ))}
+                    </div>
+                     <button 
+                        onClick={() => toggleComparison(product)} 
+                        className={`text-xs font-semibold px-2 py-1 rounded-md ${isComparing ? 'bg-destructive/20 text-destructive' : 'bg-background-secondary hover:bg-border-color'}`}
+                    >
+                        {isComparing ? 'Remove from Compare' : 'Compare'}
+                    </button>
+                </div>
+            </div>
         </div>
-        <div className="text-right flex-shrink-0 ml-4">
-          <p className="text-sm font-semibold text-gray-800">{formatCurrency(product.dealerPrice)}</p>
-          <p className="text-xs text-gray-500">Dealer</p>
-        </div>
-      </div>
-      <p className="text-xs text-gray-600 my-2">{product.description}</p>
-      <a 
-        href={productUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline"
-      >
-        View Product Page →
-      </a>
-    </div>
-  );
+    );
 };
 
 export default ProductCard;

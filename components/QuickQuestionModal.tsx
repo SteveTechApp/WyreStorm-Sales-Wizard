@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { getQuickAnswer } from '../services/assistantService';
 import LoadingSpinner from './LoadingSpinner';
 import { ArrowUpRightIcon } from './Icons';
+import { useAppContext } from '../context/AppContext';
 
 interface QuickQuestionModalProps {
   isOpen: boolean;
@@ -9,6 +12,7 @@ interface QuickQuestionModalProps {
 }
 
 const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose }) => {
+  const { userProfile } = useAppContext();
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{ answer: string; sources: any[] } | null>(null);
@@ -33,30 +37,13 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
     setError(null);
 
     try {
-      const response = await getQuickAnswer(query);
+      const response = await getQuickAnswer(query, userProfile);
       setResult(response);
     } catch (e: any) {
       setError(e.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
-  };
-  
-  // Basic markdown to HTML renderer
-  const renderMarkdown = (text: string) => {
-    let html = text
-      .replace(/</g, "&lt;").replace(/>/g, "&gt;") // Sanitize basic HTML
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italics
-      .replace(/`([^`]+)`/g, '<code class="bg-gray-100 text-red-500 rounded px-1 py-0.5 text-sm">$1</code>') // Inline code
-      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold mt-4 mb-2">$1</h3>') // H3
-      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-4 mb-2">$1</h2>') // H2
-      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>') // H1
-      .replace(/^\s*\n\*/gm, '<ul>\n*')
-      .replace(/^(\*.+)\s*\n([^*])/gm, '$1\n</ul>\n\n$2')
-      .replace(/^\s*\*(.*)/gim, '<li class="ml-4 list-disc">$1</li>') // List items
-      .replace(/\n/g, '<br />'); // Newlines
-    return { __html: html };
   };
 
   if (!isOpen) return null;
@@ -89,7 +76,9 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
             {error && <p className="text-red-600">Error: {error}</p>}
             {result && (
                 <div className="animate-fade-in-fast">
-                    <div className="prose max-w-none" dangerouslySetInnerHTML={renderMarkdown(result.answer)} />
+                    <div className="prose max-w-none prose-p:text-gray-800">
+                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.answer}</ReactMarkdown>
+                    </div>
                     {result.sources && result.sources.length > 0 && (
                         <div className="mt-6 border-t pt-3">
                             <h4 className="font-semibold text-sm text-gray-600">Sources:</h4>
@@ -98,7 +87,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
                                     <li key={index}>
                                         <a href={source.web.uri} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
                                             <span>{source.web.title || source.web.uri}</span>
-                                            <ArrowUpRightIcon className="flex-shrink-0" />
+                                            <ArrowUpRightIcon className="flex-shrink-0 h-3 w-3" />
                                         </a>
                                     </li>
                                 ))}

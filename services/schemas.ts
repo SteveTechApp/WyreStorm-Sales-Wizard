@@ -1,122 +1,230 @@
-import { Type } from "@google/genai";
-import { UnitSystem } from "../utils/types";
+import { Type } from '@google/genai';
 
-export const proposalGenerationSchema = {
+const DESIGN_FEEDBACK_SCHEMA = {
     type: Type.OBJECT,
     properties: {
-        executiveSummary: { type: Type.STRING, description: "A high-level overview of the proposed solution, written for a non-technical executive." },
-        scopeOfWork: { type: Type.STRING, description: "A detailed description of what will be delivered, including key features and functionality for each room." },
-        equipmentList: {
+        feedback: {
             type: Type.ARRAY,
-            description: "A list of all required equipment with SKU, name, quantity, and pricing.",
             items: {
                 type: Type.OBJECT,
                 properties: {
-                    sku: { type: Type.STRING },
-                    name: { type: Type.STRING },
-                    quantity: { type: Type.INTEGER },
-                    dealerPrice: { type: Type.NUMBER },
-                    msrp: { type: Type.NUMBER },
-                }
-            }
-        },
-        installationPlan: {
-            type: Type.ARRAY,
-            description: "A list of installation tasks with descriptions and estimated hours.",
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    task: { type: Type.STRING },
-                    description: { type: Type.STRING },
-                    hours: { type: Type.NUMBER },
-                }
-            }
-        },
-        systemDiagram: {
-            type: Type.OBJECT,
-            description: "A structured representation of the system diagram, built from the final equipment list.",
-            properties: {
-                nodes: {
-                    type: Type.ARRAY,
-                    items: {
-                        type: Type.OBJECT,
-                        properties: { id: { type: Type.STRING }, label: { type: Type.STRING }, type: { type: Type.STRING }, group: { type: Type.STRING } }
+                    type: {
+                        type: Type.STRING,
+                        enum: ['Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial']
+                    },
+                    text: {
+                        type: Type.STRING
                     }
                 },
-                edges: {
-                    type: Type.ARRAY,
-                    items: {
-                        type: Type.OBJECT,
-                        properties: {
-                            from: { type: Type.STRING },
-                            to: { type: Type.STRING },
-                            label: { type: Type.STRING },
-                            type: { type: Type.STRING, description: "Can be one of: 'video', 'audio', 'control', 'usb', 'network'" }
-                        }
-                    }
-                },
-                groups: {
-                    type: Type.ARRAY,
-                    description: "An ordered list of group names for layout, e.g., ['Sources', 'Table', 'Rack', 'Display'].",
-                    items: { type: Type.STRING }
-                }
+                required: ['type', 'text']
             }
-        },
-        siteRequirements: {
-            type: Type.ARRAY,
-            description: "A list of prerequisites the client must provide (e.g., power, network ports).",
-            items: { type: Type.STRING }
-        },
-        furtherResources: {
-            type: Type.STRING,
-            description: "A markdown-formatted section with links to the WyreStorm Academy and relevant YouTube videos."
         }
     }
 };
 
-export const inspiredRoomDesignSchema = (unitSystem: UnitSystem) => ({
+const EQUIPMENT_ITEM_SCHEMA = {
     type: Type.OBJECT,
     properties: {
-        roomName: { type: Type.STRING },
-        roomType: { type: Type.STRING },
-        designTier: { type: Type.STRING },
-        maxParticipants: { type: Type.INTEGER },
-        functionalityStatement: { type: Type.STRING },
-        features: {
-            type: Type.ARRAY,
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    name: { type: Type.STRING },
-                    priority: { type: Type.STRING, description: "Can be one of: 'must-have', 'nice-to-have'" }
-                }
-            }
-        },
-        dimensions: {
-            type: Type.OBJECT,
-            description: `Room dimensions in ${unitSystem}.`,
-            properties: {
-                length: { type: Type.NUMBER },
-                width: { type: Type.NUMBER },
-                height: { type: Type.NUMBER },
-            }
+        sku: { type: Type.STRING, description: 'The product SKU from the database.' },
+        quantity: { type: Type.INTEGER, description: 'The number of units required.' },
+    },
+    required: ['sku', 'quantity']
+};
+
+const ROOM_DESIGNER_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        functionalityStatement: {
+            type: Type.STRING,
+            description: "A client-facing paragraph describing the room's capabilities."
         },
         manuallyAddedEquipment: {
             type: Type.ARRAY,
+            description: "The list of equipment selected for the room.",
+            items: EQUIPMENT_ITEM_SCHEMA
+        }
+    },
+    required: ['functionalityStatement', 'manuallyAddedEquipment']
+};
+
+const DIAGRAM_NODE_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        id: { type: Type.STRING, description: 'Product SKU' },
+        label: { type: Type.STRING, description: 'Product Name' },
+        type: { type: Type.STRING, description: 'Product Category' }
+    },
+    required: ['id', 'label', 'type']
+};
+
+const DIAGRAM_EDGE_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        from: { type: Type.STRING, description: 'Source node ID (SKU)' },
+        to: { type: Type.STRING, description: 'Target node ID (SKU)' },
+        label: { type: Type.STRING, description: 'Signal type description' },
+        type: {
+            type: Type.STRING,
+            enum: ['video', 'audio', 'control', 'usb', 'network']
+        }
+    },
+    required: ['from', 'to', 'label', 'type']
+};
+
+const ROOM_CONNECTIVITY_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        nodes: { type: Type.ARRAY, items: DIAGRAM_NODE_SCHEMA },
+        edges: { type: Type.ARRAY, items: DIAGRAM_EDGE_SCHEMA }
+    },
+    required: ['nodes', 'edges']
+};
+
+const ANCILLARY_COSTS_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        cables: { type: Type.NUMBER, description: "Estimated cost for all low-voltage cabling (HDMI, Cat6, speaker wire)." },
+        connectors: { type: Type.NUMBER, description: "Estimated cost for all connectors and terminations." },
+        containment: { type: Type.NUMBER, description: "Estimated cost for all cable containment (trunking, conduit, etc.)." },
+        fixings: { type: Type.NUMBER, description: "Estimated cost for all fixings (screws, mounts, brackets)." },
+        materials: { type: Type.NUMBER, description: "Estimated cost for other sundry materials." },
+    },
+    required: ['cables', 'connectors', 'containment', 'fixings', 'materials']
+};
+
+const PROPOSAL_GENERATION_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        executiveSummary: { type: Type.STRING },
+        scopeOfWork: { type: Type.STRING },
+        systemDiagram: ROOM_CONNECTIVITY_SCHEMA,
+        equipmentList: {
+            type: Type.ARRAY,
             items: {
                 type: Type.OBJECT,
                 properties: {
+                    roomName: { type: Type.STRING },
                     sku: { type: Type.STRING },
-                    name: { type: Type.STRING },
                     quantity: { type: Type.INTEGER },
-                    isAiGenerated: { type: Type.BOOLEAN, description: "Set to true for all equipment generated by this template." },
-                    dealerPrice: { type: Type.NUMBER, description: "The dealer price for the item, looked up from the product database."}
                 },
-                required: ['sku', 'name', 'quantity', 'isAiGenerated', 'dealerPrice']
+                required: ['roomName', 'sku', 'quantity']
             }
         },
-        requiredResolution: { type: Type.STRING, description: "Can be one of: '1080p', '4K30', '4K60'" },
-        hdrRequirements: { type: Type.STRING, description: "Can be one of: 'None', 'HDR10', 'Dolby Vision'" },
-        hdbasetStandard: { type: Type.STRING, description: "Can be one of: 'Auto', '2.0', '3.0'" },
-    }
-});
+        installationPlan: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    phase: { type: Type.STRING },
+                    tasks: { type: Type.ARRAY, items: { type: Type.STRING } }
+                },
+                required: ['phase', 'tasks']
+            }
+        },
+        pricing: {
+            type: Type.OBJECT,
+            properties: {
+                hardwareTotal: { type: Type.NUMBER },
+                laborTotal: { type: Type.NUMBER },
+                ancillaryTotal: { type: Type.NUMBER },
+                grandTotal: { type: Type.NUMBER },
+            },
+            required: ['hardwareTotal', 'laborTotal', 'ancillaryTotal', 'grandTotal']
+        },
+        suggestedImprovements: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    roomName: { type: Type.STRING },
+                    improvement: { type: Type.STRING },
+                    additionalCost: { type: Type.NUMBER },
+                },
+                required: ['roomName', 'improvement', 'additionalCost']
+            }
+        }
+    },
+    required: ['executiveSummary', 'scopeOfWork', 'systemDiagram', 'equipmentList', 'installationPlan', 'pricing']
+};
+
+const RELATED_PRODUCT_SUGGESTION_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        sku: { type: Type.STRING },
+        name: { type: Type.STRING },
+        reason: { type: Type.STRING }
+    },
+    required: ['sku', 'name', 'reason']
+};
+
+const RELATED_PRODUCTS_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        alternatives: { type: Type.ARRAY, items: RELATED_PRODUCT_SUGGESTION_SCHEMA },
+        accessories: { type: Type.ARRAY, items: RELATED_PRODUCT_SUGGESTION_SCHEMA }
+    },
+    required: ['alternatives', 'accessories']
+};
+
+const PRODUCT_FINDER_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        products: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: { sku: { type: Type.STRING } },
+                required: ['sku']
+            }
+        }
+    },
+    required: ['products']
+};
+
+const REQUIREMENT_ANALYSIS_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        projectName: { type: Type.STRING },
+        clientName: { type: Type.STRING },
+        rooms: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    roomName: { type: Type.STRING },
+                    roomType: { type: Type.STRING },
+                    designTier: { type: Type.STRING, enum: ['Bronze', 'Silver', 'Gold'] },
+                    maxParticipants: { type: Type.INTEGER },
+                    displayType: { type: Type.STRING, description: "The type of display, e.g., 'Projector' or 'LCD Panel'." },
+                    displayCount: { type: Type.INTEGER, description: "The number of displays." },
+                    features: {
+                        type: Type.ARRAY,
+                        items: {
+                            type: Type.OBJECT,
+                            properties: {
+                                name: { type: Type.STRING },
+                                priority: { type: Type.STRING, enum: ['must-have', 'nice-to-have'] }
+                            },
+                            required: ['name', 'priority']
+                        }
+                    },
+                    functionalityStatement: { type: Type.STRING }
+                },
+                required: ['roomName', 'roomType', 'designTier', 'maxParticipants', 'features', 'functionalityStatement']
+            }
+        }
+    },
+    required: ['projectName', 'clientName', 'rooms']
+};
+
+
+export const ALL_SCHEMAS = {
+    PROJECT_INSIGHTS_SCHEMA: DESIGN_FEEDBACK_SCHEMA,
+    ROOM_DESIGNER_SCHEMA,
+    ROOM_CONNECTIVITY_SCHEMA,
+    PROPOSAL_GENERATION_SCHEMA,
+    RELATED_PRODUCTS_SCHEMA,
+    PRODUCT_FINDER_SCHEMA,
+    REQUIREMENT_ANALYSIS_SCHEMA,
+    ANCILLARY_COSTS_SCHEMA,
+};

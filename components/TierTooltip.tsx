@@ -1,25 +1,36 @@
+
 import React from 'react';
-import { DESIGN_TIER_INFO } from '../data/constants';
-import { RoomData } from '../utils/types';
+import { DesignTier } from '../utils/types';
 
-interface TierTooltipProps {
-  tier: 'Bronze' | 'Silver' | 'Gold';
-}
+const TIER_DETAILS: Record<DesignTier, { color: string; description: string }> = {
+    Bronze: {
+        color: 'text-[#cd7f32]',
+        description: 'Focuses on core functionality and cost-effectiveness. Ideal for budget-conscious projects.'
+    },
+    Silver: {
+        color: 'text-gray-400',
+        description: 'A balance of performance and value, with enhanced features and flexibility. The most common choice.'
+    },
+    Gold: {
+        color: 'text-yellow-400',
+        description: 'Prioritizes performance, scalability, and cutting-edge features like AVoIP and networked audio.'
+    }
+};
 
-const TierTooltip: React.FC<TierTooltipProps> = ({ tier }) => {
-  const info = DESIGN_TIER_INFO[tier];
+const TierTooltip: React.FC<{ tier: DesignTier }> = ({ tier }) => {
+    const { color, description } = TIER_DETAILS[tier];
 
-  if (!info) return null;
-
-  return (
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-      <h4 className="font-bold text-sm mb-1">{info.title}</h4>
-      <p><span className="font-semibold">Focus:</span> {info.focus}</p>
-      <p><span className="font-semibold">Goal:</span> {info.goal}</p>
-      <p><span className="font-semibold">Hardware:</span> {info.hardware}</p>
-      <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
-    </div>
-  );
+    return (
+        <div className="relative group">
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${color}`} viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <div className="absolute bottom-full mb-2 w-48 p-2 bg-background-secondary text-text-primary text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 -translate-x-1/2 left-1/2">
+                <p className="font-bold">{tier} Tier</p>
+                <p>{description}</p>
+            </div>
+        </div>
+    );
 };
 
 export default TierTooltip;

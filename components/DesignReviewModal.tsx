@@ -8,6 +8,8 @@ interface DesignReviewModalProps {
   onClose: () => void;
   feedback: DesignFeedbackItem[] | null;
   isLoading: boolean;
+  title?: string;
+  subtitle?: string;
 }
 
 const FEEDBACK_STYLES: Record<string, any> = {
@@ -48,7 +50,7 @@ const FEEDBACK_STYLES: Record<string, any> = {
   }
 };
 
-const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, feedback, isLoading }) => {
+const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, feedback, isLoading, title, subtitle }) => {
   if (!isOpen) return null;
 
   const renderFeedbackCategory = (type: DesignFeedbackItem['type']) => {
@@ -75,8 +77,9 @@ const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl m-4" onClick={e => e.stopPropagation()}>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">AI Design Review</h2>
-        {isLoading && <LoadingSpinner message="Analysing Design..." />}
+        <h2 className="text-2xl font-bold text-gray-800">{title || 'AI Design Review'}</h2>
+        {subtitle && <p className="text-sm text-gray-500 mb-4 -mt-1">{subtitle}</p>}
+        {isLoading && <div className="min-h-[200px] flex items-center justify-center"><LoadingSpinner message="Analysing Design..." /></div>}
         {!isLoading && feedback && (
           <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-4">
             {renderFeedbackCategory('Warning')}

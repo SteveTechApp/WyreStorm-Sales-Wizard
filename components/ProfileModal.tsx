@@ -1,131 +1,103 @@
 
 import React, { useState, useEffect } from 'react';
-import { UserProfile } from '../utils/types';
+import { useAppContext } from '../context/AppContext';
+import { UserProfile, LanguageCode, LaborRate } from '../utils/types';
+import { SUPPORTED_LANGUAGES } from '../data/constants';
+import LaborRateManager from './profile/LaborRateManager';
 
-interface ProfileModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (profile: UserProfile) => void;
-  initialProfile: UserProfile | null;
-  isDismissable?: boolean;
-}
+const ProfileModal: React.FC = () => {
+  const { userProfile, isProfileModalOpen, onCloseProfile, handleUpdateProfile } = useAppContext();
+  
+  // Use a local state to manage form data, initialized from the context
+  const [profile, setProfile] = useState<UserProfile | null>(userProfile);
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onSave, initialProfile, isDismissable = true }) => {
-  const [profile, setProfile] = useState<UserProfile>(initialProfile || { name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'metric', theme: 'wyrestorm' });
-  const [errors, setErrors] = useState<{ email?: string; logo?: string }>({});
-
+  // Effect to sync local state when the modal opens or the profile in context changes
   useEffect(() => {
-    if (isOpen) {
-      if (initialProfile) {
-        setProfile(initialProfile);
-      } else {
-        setProfile({ name: '', company: '', email: '', logoUrl: '', currency: 'GBP', unitSystem: 'metric', theme: 'wyrestorm' });
-      }
-      setErrors({}); // Reset errors on open
+    if (isProfileModalOpen && userProfile) {
+      setProfile(JSON.parse(JSON.stringify(userProfile))); // Deep copy to avoid direct mutation
     }
-  }, [initialProfile, isOpen]);
+  }, [userProfile, isProfileModalOpen]);
+
+  if (!isProfileModalOpen || !profile) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setProfile(p => ({ ...p, [name]: value as any }));
-    if (name === 'email' && errors.email) {
-      const { email, ...rest } = errors;
-      setErrors(rest);
-    }
+    setProfile(prev => prev ? { ...prev, [name]: value } : null);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 1024 * 150) { // 150KB limit
-        setErrors(prev => ({ ...prev, logo: "Logo image is too large. Please use an image under 150KB." }));
-        e.target.value = '';
-        return;
-      }
-      
-      const { logo, ...rest } = errors;
-      setErrors(rest);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile(p => ({ ...p, logoUrl: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleLaborRatesChange = (rates: LaborRate[]) => {
+    setProfile(prev => prev ? { ...prev, laborRates: rates } : null);
   };
 
   const handleSave = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!profile.email || !emailRegex.test(profile.email)) {
-        setErrors(prev => ({...prev, email: "Please enter a valid email address."}));
-        return;
+    if (profile) {
+      handleUpdateProfile(profile);
+      onCloseProfile();
     }
-    onSave(profile);
   };
-  
-  const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (e.target === e.currentTarget && isDismissable) {
-          onClose();
-      }
-  };
-
-  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackgroundClick}>
-      <div className="bg-background-secondary rounded-lg shadow-xl p-6 w-full max-w-sm m-4" onClick={e => e.stopPropagation()}>
-        <h2 className="text-2xl font-bold text-text-primary mb-4">Your Wingman Profile</h2>
-        <p className="text-sm text-text-secondary mb-6">Your callsign and squadron details. This information will be used to customize your proposals.</p>
-        
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-text-secondary">Company Name</label>
-            <input type="text" id="company" name="company" value={profile.company} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg text-text-primary"/>
-          </div>
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-text-secondary">Your Name (Callsign)</label>
-            <input type="text" id="name" name="name" value={profile.name} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg text-text-primary"/>
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-text-secondary">Contact Email</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              value={profile.email} 
-              onChange={handleChange} 
-              className={`mt-1 w-full p-2 border rounded-md bg-input-bg text-text-primary ${errors.email ? 'border-red-500' : 'border-border-color'}`}
-              aria-invalid={!!errors.email}
-              aria-describedby="email-error"
-            />
-            {errors.email && <p id="email-error" className="text-red-600 text-xs mt-1">{errors.email}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-secondary">Company Logo</label>
-            <div className="mt-1 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-md bg-background flex items-center justify-center overflow-hidden border border-border-color">
-                {profile.logoUrl && <img src={profile.logoUrl} alt="Logo Preview" className="w-full h-full object-contain" />}
-              </div>
-              <label htmlFor="logo-upload" className="cursor-pointer text-sm text-text-secondary bg-background hover:bg-border-color py-2 px-3 rounded-md">
-                Upload Image
-                <input id="logo-upload" type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
-              </label>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onCloseProfile}>
+        <div className="bg-background-secondary rounded-lg shadow-xl p-6 w-full max-w-2xl m-4 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center border-b border-border-color pb-3 mb-4 flex-shrink-0">
+                <h2 className="text-2xl font-bold text-text-primary">Your Profile</h2>
+                <button type="button" onClick={onCloseProfile} className="text-gray-400 hover:text-gray-600 p-1 text-2xl leading-none">&times;</button>
             </div>
-            {errors.logo && <p className="text-red-600 text-xs mt-2">{errors.logo}</p>}
-          </div>
-        </div>
+            
+            <div className="overflow-y-auto pr-2 space-y-4 flex-grow">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-text-secondary">Your Name</label>
+                <input type="text" id="name" name="name" value={profile.name} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg"/>
+              </div>
+              <div>
+                <label htmlFor="company" className="block text-sm font-medium text-text-secondary">Company Name</label>
+                <input type="text" id="company" name="company" value={profile.company} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg"/>
+              </div>
+               <div>
+                <label htmlFor="logoUrl" className="block text-sm font-medium text-text-secondary">Company Logo URL</label>
+                <input type="text" id="logoUrl" name="logoUrl" value={profile.logoUrl} onChange={handleChange} placeholder="https://..." className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg"/>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label htmlFor="language" className="block text-sm font-medium text-text-secondary">Language</label>
+                    <select id="language" name="language" value={profile.language} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg">
+                      {SUPPORTED_LANGUAGES.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
+                    </select>
+                  </div>
+                   <div>
+                    <label htmlFor="currency" className="block text-sm font-medium text-text-secondary">Currency</label>
+                    <select id="currency" name="currency" value={profile.currency} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg">
+                      <option value="GBP">GBP (£)</option>
+                      <option value="USD">USD ($)</option>
+                      <option value="EUR">EUR (€)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="unitSystem" className="block text-sm font-medium text-text-secondary">Unit System</label>
+                    <select id="unitSystem" name="unitSystem" value={profile.unitSystem} onChange={handleChange} className="mt-1 w-full p-2 border border-border-color rounded-md bg-input-bg">
+                      <option value="metric">Metric</option>
+                      <option value="imperial">Imperial</option>
+                    </select>
+                  </div>
+              </div>
+               <div className="flex items-center justify-between pt-4 border-t border-border-color">
+                  <label htmlFor="showBackground" className="text-sm font-medium text-text-secondary">Show Background Image</label>
+                  <div className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="showBackground" className="sr-only peer"
+                          checked={profile.showBackground}
+                          onChange={e => setProfile(prev => prev ? { ...prev, showBackground: e.target.checked } : null)}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-primary dark:peer-focus:ring-accent peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </div>
+              </div>
+              <LaborRateManager initialRates={profile.laborRates} onChange={handleLaborRatesChange} />
+            </div>
 
-        <div className="mt-6 flex justify-end items-center">
-          <div className="flex gap-3">
-            <button type="button" onClick={onClose} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">
-                Cancel
-            </button>
-            <button type="button" onClick={handleSave} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">
-              Save Profile
-            </button>
-          </div>
+            <div className="mt-6 flex justify-end gap-3 flex-shrink-0 pt-4 border-t border-border-color">
+              <button type="button" onClick={onCloseProfile} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Cancel</button>
+              <button type="button" onClick={handleSave} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">Save Changes</button>
+            </div>
         </div>
-      </div>
     </div>
   );
 };

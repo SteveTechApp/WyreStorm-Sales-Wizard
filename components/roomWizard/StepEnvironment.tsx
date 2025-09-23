@@ -27,7 +27,12 @@ const StepEnvironment: React.FC<StepProps> = ({ answers, setAnswers }) => {
         const { value, checked } = e.target;
         setAnswers(prev => {
             const currentUseCases = prev.audioSystemDetails.useCases || [];
-            const newUseCases = checked ? [...currentUseCases, value] : currentUseCases.filter(c => c !== value);
+            // FIX: Cast the incoming string `value` to the expected literal union type.
+            // This ensures that when we add it to the array, the array's type remains
+            // `('speech_reinforcement' | ... )[]` instead of becoming a generic `string[]`.
+            const newUseCases = checked 
+                ? [...currentUseCases, value as (typeof currentUseCases)[number]] 
+                : currentUseCases.filter(c => c !== value);
             return { ...prev, audioSystemDetails: { ...prev.audioSystemDetails, useCases: newUseCases } };
         });
     };
@@ -72,7 +77,7 @@ const StepEnvironment: React.FC<StepProps> = ({ answers, setAnswers }) => {
                     <div className="flex flex-wrap gap-x-4 gap-y-2">
                         {AUDIO_USE_CASE_OPTIONS.map(opt => (
                             <label key={opt.value} className="flex items-center space-x-2 text-sm">
-                                <input type="checkbox" value={opt.value} checked={(answers.audioSystemDetails.useCases || []).includes(opt.value)} onChange={handleAudioUseCaseChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] border-gray-300" />
+                                <input type="checkbox" value={opt.value} checked={(answers.audioSystemDetails.useCases || []).includes(opt.value as any)} onChange={handleAudioUseCaseChange} className="h-4 w-4 rounded text-[#008A3A] focus:ring-[#00732f] border-gray-300" />
                                 <span>{opt.label}</span>
                             </label>
                         ))}

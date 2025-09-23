@@ -1,107 +1,110 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
-import { RoomWizardAnswers, RoomData, UnitSystem, ManuallyAddedEquipment, UserProfile } from "../utils/types";
-import { productDatabase } from '../data/productDatabase';
-import { AV_DESIGN_KNOWLEDGE_BASE } from "../data/technicalDatabase";
-import { inspiredRoomDesignSchema } from './schemas';
+import { GoogleGenAI } from '@google/genai';
+import { RoomData, UserProfile, ManuallyAddedEquipment, StructuredSystemDiagram, Product } from '../utils/types';
+import { ALL_SCHEMAS } from './schemas';
+import { PRODUCT_DATABASE } from '../data/productDatabase';
+import { TECHNICAL_DATABASE } from '../data/technicalDatabase';
+import { getLocalizationInstructions } from './localizationService';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
 /**
- * Generates a functionality statement for a room.
+ * Generates an equipment list and functionality statement for a room using AI.
  */
-export const generateRoomFunctionality = async (answers: RoomWizardAnswers) => {
-    const systemInstruction = "You are an AV system designer, acting as the user's trusted 'Wingman'. Your task is to generate a concise, one-sentence functionality statement based on the user's answers. The tone should be professional and clear, using UK English."
-    const prompt = `A user is configuring a ${answers.designTier} tier ${answers.roomType}. Based on this, provide a functionality statement. Respond in JSON format with one key: "functionalityStatement" (a string).`;
+export const generateRoomDesign = async (
+  roomData: RoomData,
+  userProfile: UserProfile
+): Promise<{ functionalityStatement: string; manuallyAddedEquipment: ManuallyAddedEquipment[] }> => {
+  const localizationInstruction = getLocalizationInstructions(userProfile);
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-            systemInstruction,
-            responseMimeType: "application/json",
-            responseSchema: { type: Type.OBJECT, properties: { functionalityStatement: { type: Type.STRING } } }
-        },
-    });
-
-    return JSON.parse(response.text);
-};
-
-/**
- * Generates an inspired room design based on a template.
- */
-export const generateInspiredRoomDesign = async (templateName: string, roomType: string, designTier: 'Bronze' | 'Silver' | 'Gold', participantCount: number, unitSystem: UnitSystem): Promise<Partial<RoomData>> => {
-    const systemInstruction = `You are an expert AV System Designer for WyreStorm, acting as the user's trusted "Wingman". Your task is to generate a flawless, pre-validated room object in JSON based on a template name. All text must be in UK English. This design should NOT produce any warnings when reviewed.
-    - Use your internal AV Design Knowledge Base to create a complete and functional system.
-    - Select appropriate features and technical specifications for the given tier. **Based on the equipment you select, you MUST populate the 'features' array with the corresponding feature names (e.g., if you choose a wireless casting device, add 'Wireless Presentation' to the features).**
-    - Provide typical and realistic room dimensions in ${unitSystem} for the specified room type and participant count.
-    - Select a full list of appropriate equipment from the product database to create a functional system.
-    - For all equipment you suggest, set the 'isAiGenerated' flag to true.
-    - For each equipment item, you MUST include the 'dealerPrice' by looking it up in the provided product database.
-    `;
-    const prompt = `
-        Template: "${templateName}", Room Type: ${roomType}, Design Tier: ${designTier}, Participant Count: ${participantCount}
-        Product Database: ${JSON.stringify(productDatabase, null, 2)}
-        AV Design Knowledge Base: ${AV_DESIGN_KNOWLEDGE_BASE}
-        Generate the room configuration JSON object now.
-    `;
-
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-            systemInstruction,
-            responseMimeType: "application/json",
-            responseSchema: inspiredRoomDesignSchema(unitSystem),
-            thinkingConfig: { thinkingBudget: 0 },
-        },
-    });
-
-    return JSON.parse(response.text);
-};
-
-/**
- * Gets an equipment suggestion list for a single room.
- */
-export const getRoomEquipmentSuggestion = async (roomData: RoomData, userProfile: UserProfile | null): Promise<ManuallyAddedEquipment[]> => {
-    const systemInstruction = `You are an expert AV System Designer for WyreStorm, acting as the user's trusted "Wingman". Your task is to generate a list of recommended equipment for a single room based on its configuration. Use UK English for any text.
-    - Use the provided room data, product database, and your extensive AV Design Knowledge Base.
-    - Select a full list of appropriate equipment to create a functional system.
-    - **Crucially, you MUST adhere to the user's requirements.** Prioritize 'must-have' features and strictly follow the specified technical requirements.
-    - For all equipment you suggest, set the 'isAiGenerated' flag to true.
-    - You MUST include the 'dealerPrice' for each item by looking it up from the provided product database.
-    - Return ONLY a valid JSON array of equipment items, adhering to the schema.
-    `;
-    const prompt = `
-        Room Data: ${JSON.stringify(roomData, null, 2)}
-        WyreStorm Product Database: ${JSON.stringify(productDatabase, null, 2)}
-        AV Design Knowledge Base: ${AV_DESIGN_KNOWLEDGE_BASE}
-        Generate the JSON array of equipment now.
-    `;
-
-    const roomEquipmentGenerationSchema = {
-        type: Type.ARRAY,
-        items: {
-            type: Type.OBJECT,
-            properties: {
-                sku: { type: Type.STRING },
-                name: { type: Type.STRING },
-                quantity: { type: Type.INTEGER },
-                isAiGenerated: { type: Type.BOOLEAN, description: "MUST be true for all items." },
-                dealerPrice: { type: Type.NUMBER, description: "The dealer price for the item, looked up from the product database." }
-            },
-            required: ['sku', 'name', 'quantity', 'isAiGenerated', 'dealerPrice']
-        }
-    };
+  const prompt = `
+    You are an expert AV System Designer tasked with selecting equipment for a specific room.
     
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash", contents: prompt,
-            config: { systemInstruction, responseMimeType: "application/json", responseSchema: roomEquipmentGenerationSchema, },
-        });
-        return JSON.parse(response.text.trim());
-    } catch (error) {
-         console.error("Error getting equipment suggestion:", error);
-        throw new Error("The AI failed to generate an equipment list.");
-    }
+    User Profile: ${JSON.stringify(userProfile)}
+    Room Data: ${JSON.stringify(roomData)}
+    Available Products (Product Database): ${JSON.stringify(PRODUCT_DATABASE)}
+    General Technical Info: ${TECHNICAL_DATABASE}
+
+    CRITICAL RULE: ${localizationInstruction}
+
+    **CORE DESIGN LOGIC:**
+    1.  **Analyze Room Data**: Pay close attention to 'designTier', 'roomType', 'features', and critically, 'displayCount'.
+    2.  **INTELLIGENT SWITCHER SELECTION**: This is a critical rule.
+        -   If 'displayCount' is 1, you MUST select a presentation switcher (e.g., SW-series, APO-series), NOT a matrix switcher (MX-series).
+        -   The choice of presentation switcher depends on the tier. For 'Bronze', a basic HDMI switcher is fine. For 'Silver' or 'Gold', select a more advanced multi-format switcher with USB-C and USB hosting capabilities.
+        -   If 'displayCount' is greater than 1, a matrix switcher (MX-series) is the appropriate choice.
+    3.  **Assume Sources & Peripherals**: Based on the 'roomType', assume and include common sources and peripherals to create a complete system.
+        -   For a 'Boardroom' or 'Conference Room', always include a dedicated Room PC, a PTZ camera (if VC is a feature), and a wireless presentation device.
+        -   For a 'Classroom' or 'Lecture Hall', include a Document Camera and a connection for a teacher's laptop.
+    4.  **Create a Complete System**: Ensure all necessary components are included. If you specify a HDBaseT transmitter, you MUST include a compatible HDBaseT receiver. If you include speakers, you MUST include an amplifier.
+    5.  **Write Functionality Statement**: Write a concise, client-facing paragraph describing what the user can do in the room with the system you've designed. This statement must also reflect the service level. For Silver, mention remote monitoring. For Gold, mention comprehensive documentation (as-built drawings) and proactive remote management.
+    6.  **Adhere to Schema**: Format your response strictly according to the provided JSON schema. Select product SKUs exactly as they appear in the database.
+  `;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: ALL_SCHEMAS.ROOM_DESIGNER_SCHEMA,
+    },
+  });
+
+  const design = JSON.parse(response.text);
+
+  // Map the SKUs from the AI response back to full product objects.
+  const populatedEquipment = design.manuallyAddedEquipment
+    .map((item: { sku: string; quantity: number }) => {
+      const productInfo = PRODUCT_DATABASE.find(p => p.sku === item.sku);
+      if (!productInfo) return null; // Filter out any hallucinated SKUs
+      return { ...productInfo, quantity: item.quantity };
+    })
+    .filter((item: Product | null): item is ManuallyAddedEquipment => item !== null);
+
+  return {
+    functionalityStatement: design.functionalityStatement,
+    manuallyAddedEquipment: populatedEquipment,
+  };
+};
+
+/**
+ * Generates a system connectivity diagram for a room using AI.
+ */
+export const generateRoomConnectivityDiagram = async (
+  roomData: RoomData,
+  userProfile: UserProfile
+): Promise<StructuredSystemDiagram> => {
+  const localizationInstruction = getLocalizationInstructions(userProfile);
+
+  const prompt = `
+    You are an expert AV System Designer creating a system block diagram based on an equipment list.
+    
+    Room Data (including equipment list): ${JSON.stringify(roomData)}
+    User Profile: ${JSON.stringify(userProfile)}
+
+    CRITICAL RULE: ${localizationInstruction}
+    
+    YOUR TASK:
+    1.  **Diagram Style**: Create a clear, logical diagram with a left-to-right signal flow. Group sources (like PCs, cameras) in a 'Sources' subgraph and displays in a 'Displays' subgraph. The central switching/processing equipment should be in the middle.
+    2.  **Create Nodes**: Each piece of equipment should be a node. The 'id' MUST be the product's SKU, 'label' its name, and 'type' its category.
+    3.  **Create Edges**: Create logical connections (edges) between the nodes.
+        -   Connect sources to inputs on a switcher or encoder.
+        -   Connect switcher/matrix outputs to extenders (TX) or directly to displays.
+        -   Connect extenders (TX) to receivers (RX).
+        -   Connect receivers (RX) to displays.
+        -   Connect speakers to amplifiers.
+        -   Connect network-based devices (AVoIP, Dante amps) to a conceptual "AV Network Switch" node. You may have to invent a node with id "network_switch", label "AV Network Switch", type "Infrastructure".
+    4.  **Label Edges**: Label each edge with the signal type being passed (e.g., "HDMI", "HDBaseT", "Dante Audio", "USB 3.0").
+    5.  **Adhere to Schema**: Format your response strictly according to the provided JSON schema.
+  `;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: ALL_SCHEMAS.ROOM_CONNECTIVITY_SCHEMA,
+    },
+  });
+
+  return JSON.parse(response.text);
 };

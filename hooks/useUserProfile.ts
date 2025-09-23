@@ -1,49 +1,44 @@
-import { useState, useEffect } from 'react';
-import { UserProfile } from '../utils/types';
 
-// Default profile for when one isn't saved in localStorage
-const defaultProfile: UserProfile = {
+import { useState } from 'react';
+import { useLocalStorage } from './useLocalStorage';
+import { UserProfile, LaborRate } from '../utils/types';
+import { v4 as uuidv4 } from 'uuid';
+
+const defaultLaborRates: LaborRate[] = [
+    { id: uuidv4(), role: 'AV Technician', rateType: 'Hourly', rate: 75 },
+    { id: uuidv4(), role: 'Lead Technician', rateType: 'Hourly', rate: 95 },
+    { id: uuidv4(), role: 'Programmer', rateType: 'Hourly', rate: 125 },
+    { id: uuidv4(), role: 'Project Manager', rateType: 'Day Rate', rate: 800 },
+];
+
+const initialProfile: UserProfile = {
     name: '',
-    company: 'My Company',
-    email: '',
+    company: '',
     logoUrl: '',
+    language: 'en-GB',
     currency: 'GBP',
     unitSystem: 'metric',
-    theme: 'wyrestorm',
+    laborRates: defaultLaborRates,
+    showBackground: true,
+    zoomLevel: 1,
 };
 
-export const useUserProfile = (isInitialLoadComplete: boolean) => {
-    const [userProfile, setUserProfile] = useState<UserProfile>(defaultProfile);
-    
-    // Load profile from localStorage on initial app load
-    useEffect(() => {
-        if (isInitialLoadComplete) {
-            try {
-                const savedProfile = localStorage.getItem('userProfile');
-                if (savedProfile) {
-                    const parsed = JSON.parse(savedProfile);
-                    setUserProfile({ ...defaultProfile, ...parsed });
-                }
-            } catch (e) {
-                console.error("Failed to load user profile from localStorage", e);
-                setUserProfile(defaultProfile);
-            }
-        }
-    }, [isInitialLoadComplete]);
+export const useUserProfile = () => {
+    const [userProfile, setUserProfile] = useLocalStorage<UserProfile>('userProfile', initialProfile);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-    // Function to save the profile to state and localStorage
-    const handleSaveUserProfile = (profile: UserProfile) => {
-        try {
-            const profileToSave = { ...userProfile, ...profile };
-            setUserProfile(profileToSave);
-            localStorage.setItem('userProfile', JSON.stringify(profileToSave));
-        } catch (e) {
-            console.error("Could not save profile. The logo image might be too large.", e);
-        }
+    const onOpenProfile = () => setIsProfileModalOpen(true);
+    const onCloseProfile = () => setIsProfileModalOpen(false);
+    
+    const handleUpdateProfile = (profile: UserProfile) => {
+        setUserProfile(profile);
     };
 
     return {
         userProfile,
-        handleSaveUserProfile,
+        handleUpdateProfile,
+        isProfileModalOpen,
+        onOpenProfile,
+        onCloseProfile,
     };
 };

@@ -1,65 +1,30 @@
-
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import Header from './Header';
-import QuickQuestionFAB from './QuickQuestionFAB';
+import Footer from './Footer';
 import QuickQuestionModal from './QuickQuestionModal';
-import ProfileModal from './ProfileModal';
-import { useAppContext } from '../context/AppContext';
+import ComparisonTray from './ComparisonTray';
+import ProductComparisonModal from './ProductComparisonModal';
 
-const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const { 
-        userProfile, 
-        handleSaveUserProfile,
-        isProfileModalOpen,
-        setIsProfileModalOpen,
-        savedProjects, 
-        handleLoadProject, 
-        handleNewProject, 
-        isQuickQuestionModalOpen,
-        setIsQuickQuestionModalOpen
-    } = useAppContext();
-    
-    const navigate = useNavigate();
-    
-    const handleNewProjectClick = () => {
-        handleNewProject();
-        navigate('/');
-    };
+interface AppLayoutProps {
+  children: React.ReactNode;
+}
 
-    const handleLoadProjectClick = (projectId: string) => {
-        handleLoadProject(projectId, navigate);
-    };
-
-    return (
-        <div className="flex flex-col h-screen font-sans">
-            <Header 
-                onNewProject={handleNewProjectClick} 
-                userProfile={userProfile}
-                savedProjects={savedProjects}
-                onLoadProject={handleLoadProjectClick}
-                onOpenProfileModal={() => setIsProfileModalOpen(true)}
-            />
-            <main className="flex-grow overflow-y-auto">
-                {children}
-            </main>
-            <QuickQuestionFAB onClick={() => setIsQuickQuestionModalOpen(true)} />
-            <QuickQuestionModal
-                isOpen={isQuickQuestionModalOpen}
-                onClose={() => setIsQuickQuestionModalOpen(false)}
-            />
-            <ProfileModal
-                isOpen={isProfileModalOpen}
-                onClose={() => setIsProfileModalOpen(false)}
-                onSave={(profile) => {
-                    handleSaveUserProfile(profile);
-                    setIsProfileModalOpen(false);
-                }}
-                initialProfile={userProfile}
-                isDismissable={true}
-            />
-        </div>
-    );
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
+  const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
+  
+  return (
+    <div className="flex flex-col min-h-screen bg-background text-text-primary font-sans">
+      <Header onQuickQuestionClick={() => setIsQuickQuestionModalOpen(true)} />
+      <main className="flex-grow flex flex-col pt-16 pb-20">
+        {children}
+      </main>
+      <Footer />
+      <QuickQuestionModal isOpen={isQuickQuestionModalOpen} onClose={() => setIsQuickQuestionModalOpen(false)} />
+      <ComparisonTray onCompare={() => setIsComparisonModalOpen(true)} />
+      <ProductComparisonModal isOpen={isComparisonModalOpen} onClose={() => setIsComparisonModalOpen(false)} />
+    </div>
+  );
 };
 
 export default AppLayout;
