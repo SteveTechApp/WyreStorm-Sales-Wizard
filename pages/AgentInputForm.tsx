@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
-import { SparklesIcon } from '../components/Icons';
-import Logo from '../components/Logo';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+import { SparklesIcon } from '../components/Icons.tsx';
+import Logo from '../components/Logo.tsx';
 
 const AgentInputForm: React.FC = () => {
     const [documentText, setDocumentText] = useState('');

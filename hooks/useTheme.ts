@@ -4,19 +4,22 @@ import { ThemeName } from '../utils/types';
 import { themes } from '../data/themes';
 
 export const useTheme = () => {
-    const [theme, setTheme] = useLocalStorage<ThemeName>('theme', 'dark');
+    const [theme, setTheme] = useLocalStorage<ThemeName>('theme', 'wyrestorm');
 
     useEffect(() => {
+        const themeProperties = themes[theme];
         const root = document.documentElement;
-        // Clear any existing theme properties
-        Object.keys(themes.dark).forEach(key => {
-            root.style.removeProperty(key);
-        });
 
-        const themeVariables = themes[theme];
-        Object.entries(themeVariables).forEach(([key, value]) => {
-            root.style.setProperty(key, value);
-        });
+        if (themeProperties) {
+            Object.entries(themeProperties).forEach(([key, value]) => {
+                root.style.setProperty(key, value);
+            });
+        }
+        
+        const allThemes = Object.keys(themes) as ThemeName[];
+        allThemes.forEach(t => root.classList.remove(t));
+        root.classList.add(theme);
+        
     }, [theme]);
 
     const handleSetTheme = (newTheme: ThemeName) => {

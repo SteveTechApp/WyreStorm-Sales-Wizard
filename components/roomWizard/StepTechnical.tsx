@@ -1,6 +1,8 @@
 import React from 'react';
-import { RoomWizardAnswers } from '../../utils/types';
-import { VIDEO_RESOLUTIONS, CONTROL_SYSTEMS } from '../../data/constants';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { RoomWizardAnswers } from '../../utils/types.ts';
+// FIX: Add file extension to satisfy module resolution for constants.ts
+import { VIDEO_RESOLUTIONS, CONTROL_SYSTEMS } from '../../data/constants.ts';
 
 interface StepProps {
     answers: RoomWizardAnswers;

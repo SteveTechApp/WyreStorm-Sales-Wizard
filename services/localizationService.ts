@@ -1,5 +1,5 @@
-import { UserProfile } from '../utils/types';
-import { SUPPORTED_LANGUAGES } from '../data/constants';
+import { UserProfile } from '../utils/types.ts';
+import { SUPPORTED_LANGUAGES } from '../data/constants.ts';
 
 /**
  * Generates a specific, forceful instruction for the AI model to ensure it uses the correct language and spelling conventions.

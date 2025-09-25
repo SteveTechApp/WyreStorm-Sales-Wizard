@@ -1,7 +1,7 @@
-
-import React, { useMemo } from 'react';
-import { StructuredSystemDiagram, DiagramNode } from '../utils/types';
-import MermaidDiagram from './MermaidDiagram';
+import React, { useMemo, useState } from 'react';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { StructuredSystemDiagram, DiagramNode } from '../utils/types.ts';
+import MermaidDiagram from './MermaidDiagram.tsx';
 
 interface SystemDiagramProps {
   diagram: StructuredSystemDiagram | null;
@@ -18,6 +18,7 @@ const SIGNAL_COLORS: Record<string, string> = {
 };
 
 const SystemDiagram: React.FC<SystemDiagramProps> = ({ diagram, onNodeClick }) => {
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
   const mermaidChart = useMemo(() => {
     if (!diagram || !diagram.nodes || diagram.nodes.length === 0) {
@@ -32,10 +33,8 @@ const SystemDiagram: React.FC<SystemDiagramProps> = ({ diagram, onNodeClick }) =
       // We also replace internal quotes to avoid breaking the string.
       const sanitizedLabel = `${node.label} (${node.type})`.replace(/"/g, '#quot;');
       chartString += `  ${node.id}["${sanitizedLabel}"];\n`;
-      if (onNodeClick) {
-        // The click function needs to call the globally available function set up by MermaidDiagram.
-        chartString += `  click ${node.id} call window.handleMermaidNodeClick("${node.id}");\n`;
-      }
+      // The click function needs to call the globally available function set up by MermaidDiagram.
+      chartString += `  click ${node.id} call window.handleMermaidNodeClick("${node.id}");\n`;
     });
 
     // Define edges
@@ -45,22 +44,34 @@ const SystemDiagram: React.FC<SystemDiagramProps> = ({ diagram, onNodeClick }) =
       chartString += `  ${edge.from} --"${sanitizedEdgeLabel}"--> ${edge.to};\n`;
     });
 
-    // Apply styles to edges based on their type
+    // Apply base styles to edges based on their type
     diagram.edges?.forEach((edge, index) => {
         const color = SIGNAL_COLORS[edge.type] || '#6b7280'; // Default color
         chartString += `  linkStyle ${index} stroke:${color},stroke-width:2px;\n`;
     });
+    
+    // If a node is selected, apply highlight styles, overriding the base styles
+    if (selectedNodeId) {
+        chartString += `  style ${selectedNodeId} stroke:#FFB800,stroke-width:4px;\n`;
+        diagram.edges?.forEach((edge, index) => {
+            if (edge.from === selectedNodeId || edge.to === selectedNodeId) {
+                chartString += `  linkStyle ${index} stroke:#FFB800,stroke-width:4px;\n`;
+            }
+        });
+    }
 
     return chartString;
-  }, [diagram, onNodeClick]);
+  }, [diagram, selectedNodeId]);
 
   // This handler adapts the string-based click event from Mermaid
-  // to the node-object-based event expected by the parent component, maintaining the API contract.
+  // to the node-object-based event expected by the parent component, and also manages selection state.
   const handleMermaidClick = (nodeId: string) => {
-    if (!onNodeClick || !diagram) return;
-    const node = diagram.nodes.find(n => n.id === nodeId);
-    if (node) {
-      onNodeClick(node);
+    setSelectedNodeId(prev => prev === nodeId ? null : nodeId); // Toggle or change selection
+    if (onNodeClick && diagram) {
+        const node = diagram.nodes.find(n => n.id === nodeId);
+        if (node) {
+          onNodeClick(node);
+        }
     }
   };
 

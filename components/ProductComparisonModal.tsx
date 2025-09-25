@@ -1,6 +1,8 @@
 import React from 'react';
-import { useAppContext } from '../context/AppContext';
-import { Product } from '../utils/types';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Product } from '../utils/types.ts';
 
 interface ProductComparisonModalProps {
   isOpen: boolean;
@@ -8,7 +10,7 @@ interface ProductComparisonModalProps {
 }
 
 const ProductComparisonModal: React.FC<ProductComparisonModalProps> = ({ isOpen, onClose }) => {
-    const { comparisonList, clearComparison, userProfile } = useAppContext();
+    const { comparisonList, userProfile } = useAppContext();
 
     if (!isOpen) return null;
 
@@ -52,7 +54,7 @@ const ProductComparisonModal: React.FC<ProductComparisonModalProps> = ({ isOpen,
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-            <div className="bg-background rounded-lg shadow-xl p-4 w-full max-w-6xl m-4 flex flex-col h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="bg-background rounded-lg shadow-xl p-3 w-full max-w-5xl m-4 flex flex-col h-[90vh]" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-center border-b border-border-color pb-3 mb-4 flex-shrink-0">
                     <h2 className="text-2xl font-bold text-text-primary">Compare Products</h2>
                     <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
@@ -92,8 +94,8 @@ const ProductComparisonModal: React.FC<ProductComparisonModalProps> = ({ isOpen,
                     </table>
                 </div>
                  <div className="mt-4 flex justify-end gap-3 pt-4 border-t border-border-color flex-shrink-0">
-                    <button type="button" onClick={clearComparison} className="bg-background-secondary hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Clear Comparison</button>
-                    <button type="button" onClick={onClose} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">Close</button>
+                    <button type="button" onClick={onClose} className="bg-background-secondary hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Close</button>
+                    <button type="button" onClick={onClose} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">Done</button>
                 </div>
             </div>
         </div>

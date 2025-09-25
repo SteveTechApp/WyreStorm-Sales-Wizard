@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { TRAINING_MODULES } from '../data/trainingContent';
-import { QuizAnswer } from '../utils/types';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import Certificate from '../components/training/Certificate';
-import { useAppContext } from '../context/AppContext';
-import TrainingContentView from '../components/training/TrainingContentView';
-import QuizView from '../components/training/QuizView';
+import { TRAINING_MODULES } from '../data/trainingContent.ts';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { QuizAnswer } from '../utils/types.ts';
+import { useLocalStorage } from '../hooks/useLocalStorage.ts';
+import Certificate from '../components/training/Certificate.tsx';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+import TrainingContentView from '../components/training/TrainingContentView.tsx';
+import QuizView from '../components/training/QuizView.tsx';
 
 type ViewMode = 'overview' | 'content' | 'quiz' | 'review';
 
@@ -47,72 +49,70 @@ const TrainingPage: React.FC = () => {
     }
 
     if (areAllModulesCompleted) {
+// FIX: Pass userProfile prop correctly to the Certificate component.
         return <Certificate userProfile={userProfile} onReset={handleResetProgress} />;
     }
-    
-    if (viewMode === 'content') {
-        return (
-            <div className="p-4 sm:p-6 lg:p-8 animate-fade-in flex-grow flex flex-col">
-                 <TrainingContentView module={currentModule} onQuizStart={() => setViewMode('quiz')} />
-            </div>
-        )
-    }
-    
-    if (viewMode === 'quiz' || viewMode === 'review') {
-        return (
-             <div className="p-4 sm:p-6 lg:p-8 animate-fade-in flex-grow flex flex-col">
-                <QuizView 
-                    key={currentModule.id} // Re-mount component when module changes
-                    module={currentModule} 
-                    onComplete={(answers) => handleModuleComplete(currentModule.id, answers)}
-                    isReviewMode={viewMode === 'review'}
-                    initialAnswers={quizAnswers[currentModule.id] || []}
-                />
-            </div>
-        )
-    }
+
+    const renderContent = () => {
+        switch (viewMode) {
+            case 'content':
+                return <TrainingContentView module={currentModule} onQuizStart={() => setViewMode('quiz')} />;
+            case 'quiz':
+                return <QuizView module={currentModule} onComplete={(answers) => handleModuleComplete(currentModuleId, answers)} isReviewMode={false} initialAnswers={[]} />;
+            case 'review':
+                return <QuizView module={currentModule} onComplete={() => setViewMode('overview')} isReviewMode={true} initialAnswers={quizAnswers[currentModuleId] || []} />;
+            case 'overview':
+            default:
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {TRAINING_MODULES.map((module, index) => {
+                            const isCompleted = completedModules.includes(module.id);
+                            const isLocked = index > 0 && !completedModules.includes(TRAINING_MODULES[index-1].id);
+                            return (
+                                <div key={module.id} className={`p-4 rounded-lg border-2 ${isLocked ? 'bg-background/50 border-border-color/50 text-text-secondary/50' : 'bg-background-secondary border-border-color'}`}>
+                                    <div className="flex justify-between items-start">
+                                        <h3 className={`font-bold text-lg ${isLocked ? '' : 'text-text-primary'}`}>{index+1}. {module.title}</h3>
+                                        {isCompleted && <span className="text-xs font-bold text-accent bg-accent/10 px-2 py-1 rounded-full">DONE</span>}
+                                    </div>
+                                    <div className="mt-4 flex gap-2">
+                                        <button 
+                                            onClick={() => { setCurrentModuleId(module.id); setViewMode('content'); }}
+                                            disabled={isLocked}
+                                            className="w-full text-sm bg-primary/20 hover:bg-primary/30 text-primary font-semibold py-2 px-3 rounded-md transition-colors disabled:opacity-50"
+                                        >
+                                            Start
+                                        </button>
+                                        {isCompleted && (
+                                            <button 
+                                                onClick={() => { setCurrentModuleId(module.id); setViewMode('review'); }}
+                                                className="w-full text-sm bg-background hover:bg-border-color text-text-secondary font-semibold py-2 px-3 rounded-md"
+                                            >
+                                                Review Quiz
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )
+        }
+    };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 animate-fade-in flex-grow flex flex-col">
-            <header className="mb-8 text-center">
-                <h1 className="text-3xl font-bold text-text-primary font-display">WyreStorm AV Essentials Training</h1>
-                <p className="text-text-secondary mt-1">Learn the fundamentals of AV technology. Complete modules in order to unlock the next.</p>
+        <div className="animate-fade-in flex-grow flex flex-col p-2 sm:p-4">
+            <header className="mb-6">
+                 <h1 className="text-3xl font-bold font-display text-text-primary">WyreStorm Essentials Training</h1>
+                 <p className="text-text-secondary mt-1">Complete all modules to receive your certificate.</p>
             </header>
-            
-            <div className="space-y-4 max-w-2xl mx-auto w-full">
-                {TRAINING_MODULES.map((module, index) => {
-                    const isCompleted = completedModules.includes(module.id);
-                    const isLocked = index > 0 && !completedModules.includes(TRAINING_MODULES[index - 1].id);
-                    const isCurrent = module.id === currentModuleId;
-
-                    return (
-                        <div key={module.id} className={`p-4 rounded-lg border flex items-center justify-between ${isLocked ? 'bg-background-secondary/50' : 'bg-background-secondary'}`}>
-                            <div>
-                                <h3 className={`font-bold text-lg ${isLocked ? 'text-text-secondary/50' : 'text-text-primary'}`}>{`Module ${index + 1}: ${module.title}`}</h3>
-                                {isCompleted && <p className="text-sm text-accent">✓ Completed</p>}
-                            </div>
-                            <div className="flex gap-2">
-                               {isCompleted && (
-                                    <button 
-                                        onClick={() => { setCurrentModuleId(module.id); setViewMode('review'); }}
-                                        className="text-sm font-semibold bg-primary/20 text-primary py-2 px-4 rounded-md hover:bg-primary/30"
-                                    >
-                                        Review Quiz
-                                    </button>
-                               )}
-                               {!isLocked && !isCompleted && (
-                                     <button 
-                                        onClick={() => { setCurrentModuleId(module.id); setViewMode('content'); }}
-                                        className="text-sm font-semibold bg-accent text-text-on-accent py-2 px-4 rounded-md hover:bg-accent-hover"
-                                    >
-                                        {isCurrent ? 'Continue' : 'Start'}
-                                    </button>
-                               )}
-                            </div>
-                        </div>
-                    )
-                })}
+            <div className="flex-grow">
+                {renderContent()}
             </div>
+             {completedModules.length > 0 && viewMode === 'overview' && (
+                <div className="mt-6 text-center">
+                    <button onClick={handleResetProgress} className="text-sm text-destructive hover:underline">Reset Progress</button>
+                </div>
+            )}
         </div>
     );
 };

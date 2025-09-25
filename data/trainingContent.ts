@@ -1,4 +1,4 @@
-import { TrainingModule } from '../utils/types';
+import { TrainingModule } from '../utils/types.ts';
 import { v4 as uuidv4 } from 'uuid';
 
 export const TRAINING_MODULES: TrainingModule[] = [
@@ -116,7 +116,104 @@ export const TRAINING_MODULES: TrainingModule[] = [
             }
         ]
     },
-     // Module 4: Video Walls
+    // Module 4: AV over IP Networking Fundamentals
+    {
+        id: uuidv4(),
+        title: 'AV over IP Networking Fundamentals',
+        contentPages: [
+            {
+                title: 'The Network is the Matrix: IP Basics',
+                content: `Every device on a network, including AVoIP encoders and decoders, needs a unique address to communicate. This is its **IP Address**. Think of it like a street address for a house.\n\n*   **IP Address:** A unique identifier (e.g., \`192.168.1.101\`).\n*   **Subnet Mask:** Defines the size of the local network (e.g., \`255.255.255.0\`).\n*   **Gateway:** The router's address that connects the local network to other networks (e.g., \`192.168.1.1\`).\n\nFor an AVoIP system to work, all encoders, decoders, and the control system (like an NHD-CTL-PRO) must be on the same IP subnet. This means the first three parts of their IP addresses usually match (e.g., \`192.168.1.xxx\`).`
+            },
+            {
+                title: 'Unicast vs. Multicast',
+                content: `When sending video over a network, how the data is addressed is critical for performance.\n\n*   **Unicast:** A one-to-one connection. The encoder sends a separate, identical stream of data to every single decoder that requests it. This is incredibly inefficient and quickly overwhelms the network and the encoder.\n\n*   **Multicast:** A one-to-many connection. The encoder sends out a single stream of video to a special multicast group address. The network switch is then responsible for duplicating that stream *only* to the decoders that have asked to join that group.\n\n**AVoIP systems rely on multicast** to distribute video efficiently without creating a network storm.`,
+                asset: {
+                    url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/unicast_vs_multicast.png',
+                    title: 'Unicast vs. Multicast Diagram',
+                    type: 'diagram'
+                }
+            },
+            {
+                title: 'Isolating Traffic with VLANs',
+                content: `A modern business network carries a lot of different traffic: emails, file transfers, internet browsing, and now, high-bandwidth video. Mixing all this traffic can lead to poor performance for everyone.\n\n**VLANs (Virtual LANs)** are a way to solve this. A VLAN logically divides a single physical network switch into multiple separate, virtual switches.\n\nIt is **best practice** to put all AVoIP encoders and decoders on their own dedicated VLAN. This:\n\n1.  **Ensures Performance:** The video traffic doesn't have to compete with other data for bandwidth.\n2.  **Increases Security:** Devices on the AV VLAN cannot see or access devices on the corporate data VLAN.\n3.  **Simplifies Management:** It's easier to manage and troubleshoot the AV system when it's logically separated.`
+            },
+            {
+                title: 'The Magic of IGMP Snooping',
+                content: `This is the single most important switch feature for a successful AVoIP deployment.\n\nBy default, a network switch doesn't understand multicast traffic. When it receives a multicast stream from an encoder, it treats it like a broadcast and sends it out of **every single port**. This is called flooding, and it will instantly crash your network by overwhelming every connected device with video data it didn't ask for.\n\n**IGMP Snooping** is a feature you enable on the switch that makes it "multicast-aware". The switch "snoops" on the conversations between the decoders and the network. When a decoder sends a message saying "I want to join multicast group 239.1.1.1" (an IGMP Join message), the switch makes a note.\n\nFrom then on, it will only send the video stream for that group to the specific port that decoder is connected to. It intelligently forwards the traffic instead of flooding it. **Without IGMP Snooping enabled, your AVoIP system will not work.**`,
+                asset: {
+                    url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/igmp_snooping.png',
+                    title: 'IGMP Snooping Diagram',
+                    type: 'diagram'
+                }
+            }
+        ],
+        quiz: [
+            {
+                question: 'Why is it highly recommended to place AVoIP devices on their own VLAN?',
+                options: ['To make them work faster', 'Because they use a different type of cable', 'To isolate video traffic from general data traffic for performance and security', 'So they can get a special IP address'],
+                correctAnswer: 'To isolate video traffic from general data traffic for performance and security',
+                explanation: 'Using a separate VLAN for AV traffic is a critical best practice to prevent high-bandwidth video from interfering with regular corporate data, ensuring reliability and security for both networks.'
+            },
+            {
+                question: 'What is the primary role of IGMP Snooping in an AVoIP system?',
+                options: ['It encrypts the video signal', 'It prevents the network switch from flooding all ports with video traffic', 'It assigns IP addresses to the decoders', 'It increases the video resolution'],
+                correctAnswer: 'It prevents the network switch from flooding all ports with video traffic',
+                explanation: 'IGMP Snooping is an essential switch feature that intelligently forwards multicast video streams only to the ports that have requested them, preventing a network-wide flood that would otherwise crash the system.'
+            },
+            {
+                question: 'Which traffic type is essential for efficiently sending a single video stream to multiple displays in an AVoIP system?',
+                options: ['Unicast', 'Broadcast', 'Multicast', 'Anycast'],
+                correctAnswer: 'Multicast',
+                explanation: 'Multicast is a one-to-many delivery method where the source sends a single stream, and the network duplicates it only for the destinations that need it. This is far more efficient than Unicast for AVoIP.'
+            }
+        ]
+    },
+    // Module 5: Reading Datasheets
+    {
+        id: uuidv4(),
+        title: 'Reading WyreStorm Datasheets',
+        contentPages: [
+            {
+                title: 'Why Datasheets Matter',
+                content: "A product datasheet is the single source of truth for its capabilities. It's an essential document for any system designer, providing the detailed technical specifications needed to ensure a product is the right fit for a project.\n\nReading a datasheet correctly allows you to:\n\n*   **Verify Compatibility:** Ensure the product supports the required video resolutions, content protection (HDCP), and audio formats.\n*   **Confirm Performance:** Check signal transmission distances and bandwidth capabilities.\n*   **Plan Installation:** Understand power requirements (like PoH), physical dimensions, and control options.\n\nFailing to check the datasheet can lead to costly mistakes and systems that don't perform as expected. Always check the specs before you add a product to your design!"
+            },
+            {
+                title: 'Decoding Key Specifications',
+                content: "Datasheets are packed with technical terms. Let's break down the most important ones.\n\n*   **Video Resolution & Chroma Subsampling:** Look for entries like `4K/60Hz 4:4:4`. This tells you the maximum resolution, refresh rate, and color detail the device can handle. `4:4:4` is crucial for sharp text from a PC source, while `4:2:0` is common for motion video and saves bandwidth.\n*   **HDCP (High-bandwidth Digital Content Protection):** This is digital copyright protection. For modern 4K sources like a Blu-ray player or streaming box, you need to see `HDCP 2.2` or higher listed for all devices in the signal path.\n*   **Transmission Distance (HDBaseT):** This is a critical spec. It's usually listed with different distances for different resolutions. For example: `1080p: 70m/230ft | 4K30: 40m/131ft`. **Always design to the lower 4K distance if 4K is a requirement.** These distances assume high-quality, well-terminated Cat6a cable.",
+                asset: {
+                    url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/datasheet_explained.png',
+                    title: 'Annotated WyreStorm Datasheet',
+                    type: 'diagram'
+                }
+            },
+            {
+                title: 'Power, Control & Connectivity',
+                content: "Beyond the main AV specs, these details are vital for a successful installation.\n\n*   **Power (PoH/PoC):** `PoH (Power over HDBaseT)` or `PoC (Power over Cable)` is a game-changer. It means only one of the two devices in an extender kit needs a power supply. The datasheet will specify the direction, for example: `PoH (TX powers RX)`. This means you only need a power outlet at the transmitter (source) end.\n*   **Control Passthrough:** Datasheets specify if control signals can be sent along with the AV. Look for `IR Passthrough` (for remote controls) and `RS-232 Passthrough` (for professional device control).\n*   **Audio:** Look for `Audio De-embed` or `Audio Breakout`. This allows you to extract the audio from the HDMI signal and send it to a separate amplifier or audio system. The datasheet will specify the connector type (e.g., S/PDIF, 3.5mm analog)."
+            }
+        ],
+        quiz: [
+            {
+                question: "A datasheet for an HDBaseT extender states transmission distances as '1080p: 70m | 4K: 40m'. What is the maximum reliable distance you should plan for if the client requires a 4K signal?",
+                options: ['100m', '70m', '40m', 'It depends on the cable'],
+                correctAnswer: '40m',
+                explanation: "While the cable quality is important, the datasheet specifies the electronic limitation of the device. You must always design based on the specified maximum distance for the required resolution, which is 40m for 4K in this case."
+            },
+            {
+                question: "An extender kit's datasheet says 'PoH (TX > RX)'. Which unit needs to be connected to the power supply?",
+                options: ['The Receiver (RX) unit', 'The Transmitter (TX) unit', 'Both units need power', 'Neither unit needs power'],
+                correctAnswer: 'The Transmitter (TX) unit',
+                explanation: "The direction 'TX > RX' indicates that the Transmitter powers the Receiver over the category cable. Therefore, only the Transmitter needs to be connected to the mains power supply."
+            },
+            {
+                question: "A client wants to show detailed spreadsheets from their PC on a large display. Which chroma subsampling spec is most important to look for in the datasheet?",
+                options: ['4:2:0', '4:2:2', '4:4:4', '8-bit color'],
+                correctAnswer: '4:4:4',
+                explanation: "'4:4:4' indicates full, uncompressed color information, which is critical for rendering computer-generated content like text and fine lines with maximum sharpness and clarity."
+            }
+        ]
+    },
+     // Module 6: Video Walls
     {
         id: uuidv4(),
         title: 'Advanced Display Systems: Video Walls',
@@ -157,7 +254,7 @@ export const TRAINING_MODULES: TrainingModule[] = [
             }
         ]
     },
-    // Module 5: Field Guides
+    // Module 7: Field Guides
     {
         id: uuidv4(),
         title: 'Field Guides & Checklists',

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { TrainingModule, TrainingContentPage } from '../../utils/types';
+import { TrainingModule, TrainingContentPage } from '../../utils/types.ts';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { DownloadIcon, ExternalLinkIcon } from '../Icons';
+import { DownloadIcon, ExternalLinkIcon } from '../Icons.tsx';
 
 interface TrainingContentViewProps {
     module: TrainingModule;

@@ -1,13 +1,15 @@
-import { useCallback } from 'react';
+// FIX: Import React to provide types like Dispatch and SetStateAction
+import React, { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { NavigateFunction } from 'react-router-dom';
-import { ProjectData, UserProfile, UserTemplate, IncomingRequest, RoomData, Proposal } from '../utils/types';
-import { useUserTemplates } from './useUserTemplates';
-import { generateProposal } from '../services/proposalService';
-import { analyzeRequirements } from '../services/projectAnalysisService';
-import { createNewRoom } from '../utils/utils';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { ProjectData, UserProfile, UserTemplate, IncomingRequest, RoomData, Proposal } from '../utils/types.ts';
+import { useUserTemplates } from './useUserTemplates.ts';
+import { generateProposal } from '../services/proposalService.ts';
+import { analyzeRequirements } from '../services/projectAnalysisService.ts';
+import { createNewRoom } from '../utils/utils.ts';
+import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
 
-// FIX: Added userProfile as a parameter to the hook to provide a stable context for the callbacks.
 const useProjectGeneration = (
     userProfile: UserProfile | null,
     setAppState: React.Dispatch<React.SetStateAction<string>>,
@@ -17,9 +19,11 @@ const useProjectGeneration = (
 ) => {
     const { userTemplates, handleSaveTemplate, handleDeleteTemplate } = useUserTemplates();
 
-    // FIX: Removed userProfile from signature; it's now accessed from the hook's scope.
     const handleGenerateProposal = useCallback(async (projectData: ProjectData, navigate: NavigateFunction) => {
-        if (!userProfile) return;
+        if (!userProfile) {
+            alert("User profile is not available.");
+            return;
+        };
         setLoadingContext('proposal');
         setAppState('generating');
         setError(null);
@@ -32,7 +36,7 @@ const useProjectGeneration = (
                 createdAt: new Date().toISOString()
             };
 
-            const updatedProject = { ...projectData, proposals: [...projectData.proposals, newProposal] };
+            const updatedProject = { ...projectData, proposals: [...(projectData.proposals || []), newProposal] };
             dispatchProjectAction({ type: 'UPDATE_PROJECT', payload: updatedProject });
             navigate(`/proposal/${projectData.projectId}/${newProposal.proposalId}`);
         } catch (e: any) {
@@ -41,13 +45,15 @@ const useProjectGeneration = (
             setAppState('error');
         } finally {
             setLoadingContext(null);
-            if (setAppState) setAppState('idle');
+            setAppState('idle');
         }
-    }, [setAppState, setError, setLoadingContext, dispatchProjectAction, userProfile]);
+    }, [userProfile, setAppState, setError, setLoadingContext, dispatchProjectAction]);
 
-    // FIX: Removed userProfile from signature.
     const handleAgentSubmit = useCallback(async (documentText: string, navigate: NavigateFunction) => {
-        if (!userProfile) return;
+        if (!userProfile) {
+             alert("User profile is not available.");
+            return;
+        }
         setLoadingContext('template');
         setAppState('generating');
         setError(null);
@@ -56,8 +62,7 @@ const useProjectGeneration = (
             
             const roomsWithDefaults: RoomData[] = setupData.rooms.map((room: any) => ({
                 ...createNewRoom(room.roomName),
-                ...room, // overwrite defaults with analyzed data
-                // Ensure display details from AI are used
+                ...room,
                 displayCount: room.displayCount || 1,
                 displayType: room.displayType || 'Display Not Specified',
             }));
@@ -71,7 +76,7 @@ const useProjectGeneration = (
                 unitSystem: userProfile.unitSystem,
                 notes: `Project generated from client brief on ${new Date().toLocaleDateString()}.`,
                 rooms: roomsWithDefaults,
-                productDatabase: [],
+                productDatabase: PRODUCT_DATABASE,
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 }
             };
 
@@ -84,37 +89,41 @@ const useProjectGeneration = (
             setAppState('error');
         } finally {
             setLoadingContext(null);
-            if (setAppState) setAppState('idle');
+            setAppState('idle');
         }
-    }, [setAppState, setError, setLoadingContext, userProfile, dispatchProjectAction]);
+    }, [userProfile, setAppState, setError, setLoadingContext, dispatchProjectAction]);
     
     const handleStartFromTemplate = useCallback((templateName: string, navigate: NavigateFunction) => {
-        console.log("handleStartFromTemplate called with:", templateName);
+        // This function seems to be a stub, redirecting to the setup page.
+        // It could be enhanced to pre-fill setup with template info.
         navigate('/setup');
     }, []);
 
-    // REFACTORED to create project immediately and navigate to designer
-    // FIX: Update function signature to accept optional projectDetails and use them when creating the new project.
     const handleCreateProjectFromTemplate = useCallback((template: UserTemplate, navigate: NavigateFunction, projectDetails?: { projectName: string, clientName: string }) => {
-        if (!userProfile) return;
+        if (!userProfile) {
+            alert("User profile is not available.");
+            return;
+        }
         setLoadingContext('template');
         setAppState('generating'); 
         
         setTimeout(() => {
             try {
                 const baseProjectName = template.templateName.replace(/\s\((Bronze|Silver|Gold)\)$/, '');
+                // Deep copy room data to prevent mutation of the template
+                const newRoomData = JSON.parse(JSON.stringify(template.roomData));
+                newRoomData.id = uuidv4(); // Assign a new ID to the room
+
                 const newProject: ProjectData = {
                     projectId: uuidv4(),
                     projectName: projectDetails?.projectName || `${baseProjectName} Project`,
-                    clientName: projectDetails?.clientName || 'New Client', // Placeholder client name
+                    clientName: projectDetails?.clientName || 'New Client',
                     lastSaved: new Date().toISOString(),
                     proposals: [],
                     unitSystem: userProfile.unitSystem,
                     notes: `Project started from template: ${template.templateName}`,
-                    rooms: [
-                        JSON.parse(JSON.stringify(template.roomData)) // Deep copy
-                    ],
-                    productDatabase: [],
+                    rooms: [newRoomData],
+                    productDatabase: PRODUCT_DATABASE,
                     ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 }
                 };
                 dispatchProjectAction({ type: 'LOAD_PROJECT', payload: newProject });
@@ -125,14 +134,16 @@ const useProjectGeneration = (
                 setAppState('error');
             } finally {
                  setLoadingContext(null);
-                 if (setAppState) setAppState('idle');
+                 setAppState('idle');
             }
         }, 500);
-    }, [setAppState, setError, setLoadingContext, userProfile, dispatchProjectAction]);
+    }, [userProfile, setAppState, setError, setLoadingContext, dispatchProjectAction]);
 
-    // FIX: Removed userProfile from signature.
     const handleAcceptRequest = useCallback((request: IncomingRequest, navigate: NavigateFunction) => {
-        if (!userProfile) return;
+        if (!userProfile) {
+            alert("User profile is not available.");
+            return;
+        }
         handleAgentSubmit(`Client: ${request.clientName}\nRequirements: ${request.description}`, navigate);
     }, [handleAgentSubmit, userProfile]);
 

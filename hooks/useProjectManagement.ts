@@ -1,63 +1,117 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useLocalStorage } from './useLocalStorage';
-import { useHistoryState } from './useHistoryState';
-import { ProjectData, ProjectSetupData, Product, Action, UserProfile, AncillaryCosts } from '../utils/types';
+import { useReducer, useEffect, useCallback, useState } from 'react';
+import { useLocalStorage } from './useLocalStorage.ts';
+import { useHistoryState } from './useHistoryState.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { NavigateFunction } from 'react-router-dom';
-import { PRODUCT_DATABASE } from '../data/productDatabase';
+// FIX: Import ProjectInfrastructure type.
+import { ProjectData, UserProfile, Product, ProjectSetupData, ManuallyAddedEquipment, AncillaryCosts, ProjectInfrastructure } from '../utils/types.ts';
+import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
+import { createNewRoom } from '../utils/utils.ts';
 
-const projectReducer = (state: ProjectData | null, action: Action): ProjectData | null => {
-    if (state === null && action.type !== 'LOAD_PROJECT') return null;
+type ProjectAction =
+    | { type: 'LOAD_PROJECT'; payload: ProjectData }
+    | { type: 'UPDATE_PROJECT'; payload: ProjectData }
+    | { type: 'ADD_ROOM'; payload: Omit<ProjectData['rooms'][0], 'id'> }
+    | { type: 'REMOVE_ROOM'; payload: string }
+    | { type: 'UPDATE_ROOM'; payload: ProjectData['rooms'][0] }
+    | { type: 'ADD_EQUIPMENT'; payload: { roomId: string; equipment: ManuallyAddedEquipment } }
+    | { type: 'REMOVE_EQUIPMENT'; payload: { roomId: string; sku: string } }
+    | { type: 'UPDATE_EQUIPMENT'; payload: { roomId: string; equipment: ManuallyAddedEquipment } }
+    | { type: 'UPDATE_NOTES'; payload: string }
+    | { type: 'UPDATE_PROJECT_DETAILS'; payload: { projectName: string; clientName: string } }
+    | { type: 'UPDATE_ANCILLARY_COSTS'; payload: AncillaryCosts }
+    // FIX: Add UPDATE_INFRASTRUCTURE action type.
+    | { type: 'UPDATE_INFRASTRUCTURE'; payload: ProjectInfrastructure };
+
+
+const projectReducer = (state: ProjectData | null, action: ProjectAction): ProjectData | null => {
+    if (!state && action.type !== 'LOAD_PROJECT') return null;
 
     switch (action.type) {
-        case 'LOAD_PROJECT': return action.payload;
-        case 'UPDATE_PROJECT': return { ...action.payload, lastSaved: new Date().toISOString() };
-        case 'UPDATE_PROJECT_DETAILS': return { ...state!, projectName: action.payload.projectName, clientName: action.payload.clientName, lastSaved: new Date().toISOString() };
-        case 'ADD_ROOM': return { ...state!, rooms: [...state!.rooms, action.payload], lastSaved: new Date().toISOString() };
-        case 'UPDATE_ROOM': return { ...state!, rooms: state!.rooms.map(r => r.id === action.payload.id ? action.payload : r), lastSaved: new Date().toISOString() };
-        case 'REMOVE_ROOM': return { ...state!, rooms: state!.rooms.filter(r => r.id !== action.payload), lastSaved: new Date().toISOString() };
-        case 'ADD_EQUIPMENT': {
+        case 'LOAD_PROJECT':
+        case 'UPDATE_PROJECT':
+            return { ...action.payload, lastSaved: new Date().toISOString() };
+        
+        case 'UPDATE_PROJECT_DETAILS':
+             if (!state) return null;
+            return { ...state, ...action.payload };
+
+        case 'ADD_ROOM':
+             if (!state) return null;
+            const newRoom = { ...action.payload, id: uuidv4() };
+            return { ...state, rooms: [...state.rooms, newRoom] };
+
+        case 'REMOVE_ROOM':
+             if (!state) return null;
+            return { ...state, rooms: state.rooms.filter(room => room.id !== action.payload) };
+
+        case 'UPDATE_ROOM':
+             if (!state) return null;
             return {
-                ...state!,
-                rooms: state!.rooms.map(room => {
+                ...state,
+                rooms: state.rooms.map(room => (room.id === action.payload.id ? action.payload : room)),
+            };
+        
+        case 'ADD_EQUIPMENT': {
+             if (!state) return null;
+            return {
+                ...state,
+                rooms: state.rooms.map(room => {
                     if (room.id === action.payload.roomId) {
                         const existingItem = room.manuallyAddedEquipment.find(item => item.sku === action.payload.equipment.sku);
                         if (existingItem) {
+                            // If item exists, just increase quantity
                             return { ...room, manuallyAddedEquipment: room.manuallyAddedEquipment.map(item => item.sku === action.payload.equipment.sku ? { ...item, quantity: item.quantity + 1 } : item) };
-                        } else {
-                            return { ...room, manuallyAddedEquipment: [...room.manuallyAddedEquipment, action.payload.equipment] };
                         }
+                        // Otherwise, add new item
+                        return { ...room, manuallyAddedEquipment: [...room.manuallyAddedEquipment, action.payload.equipment] };
                     }
                     return room;
                 }),
-                lastSaved: new Date().toISOString()
             };
         }
+
         case 'REMOVE_EQUIPMENT': {
-             return { ...state!, rooms: state!.rooms.map(room => room.id === action.payload.roomId ? { ...room, manuallyAddedEquipment: room.manuallyAddedEquipment.filter(item => item.sku !== action.payload.sku) } : room), lastSaved: new Date().toISOString() };
-        }
-        case 'UPDATE_EQUIPMENT': {
+             if (!state) return null;
             return {
-                ...state!,
-                rooms: state!.rooms.map(room => 
-                    room.id === action.payload.roomId 
-                        ? { 
-                            ...room, 
-                            manuallyAddedEquipment: room.manuallyAddedEquipment.map(item => 
-                                item.sku === action.payload.equipment.sku 
-                                    ? action.payload.equipment 
-                                    : item
-                            ) 
-                          } 
-                        : room
-                ),
-                lastSaved: new Date().toISOString()
+                ...state,
+                rooms: state.rooms.map(room => {
+                    if (room.id === action.payload.roomId) {
+                        return { ...room, manuallyAddedEquipment: room.manuallyAddedEquipment.filter(item => item.sku !== action.payload.sku) };
+                    }
+                    return room;
+                }),
             };
         }
-        case 'UPDATE_NOTES': return { ...state!, notes: action.payload, lastSaved: new Date().toISOString() };
-        case 'UPDATE_ANCILLARY_COSTS': return { ...state!, ancillaryCosts: action.payload, lastSaved: new Date().toISOString() };
-        case 'SET_RETEST_FLAG': return { ...state!, isRetest: action.payload };
-        default: return state;
+
+        case 'UPDATE_EQUIPMENT': {
+             if (!state) return null;
+            return {
+                ...state,
+                rooms: state.rooms.map(room => {
+                    if (room.id === action.payload.roomId) {
+                        return { ...room, manuallyAddedEquipment: room.manuallyAddedEquipment.map(item => item.sku === action.payload.equipment.sku ? action.payload.equipment : item) };
+                    }
+                    return room;
+                }),
+            };
+        }
+        
+        case 'UPDATE_NOTES':
+             if (!state) return null;
+            return { ...state, notes: action.payload };
+
+        case 'UPDATE_ANCILLARY_COSTS':
+             if (!state) return null;
+            return { ...state, ancillaryCosts: action.payload };
+
+        // FIX: Add case to handle infrastructure updates.
+        case 'UPDATE_INFRASTRUCTURE':
+             if (!state) return null;
+            return { ...state, infrastructure: action.payload };
+
+        default:
+            return state;
     }
 };
 
@@ -66,126 +120,116 @@ export const useProjectManagement = (userProfile: UserProfile | null) => {
     
     const { 
         state: projectData, 
-        setState: setProjectData, 
+        setState: setProjectDataWithHistory, 
         undo: undoProjectState, 
-        redo: redoProjectState,
-        canUndo: canUndoProject,
-        canRedo: canRedoProject
+        redo: redoProjectState, 
+        canUndo: canUndoProject, 
+        canRedo: canRedoProject 
     } = useHistoryState<ProjectData | null>(null);
-
-    const dispatchProjectAction = useCallback((action: Action) => {
-        const newState = projectReducer(projectData, action);
-        setProjectData(newState);
-    }, [projectData, setProjectData]);
     
-    const productDatabase: Product[] = PRODUCT_DATABASE;
-
-    const [appState, setAppState] = useState('idle');
+    const [appState, setAppState] = useState('idle'); // idle, loading, generating, error
     const [error, setError] = useState<string | null>(null);
     const [loadingContext, setLoadingContext] = useState<'template' | 'proposal' | null>(null);
+    const [comparisonList, setComparisonList] = useState<Product[]>([]);
     
-    const [comparisonList, setComparisonList] = useLocalStorage<Product[]>('comparisonList', []);
-
-    // --- START: Auto-saving logic ---
-    // Ref to hold the latest projectData for the interval-based save
-    const projectDataRef = React.useRef(projectData);
-    useEffect(() => {
-        projectDataRef.current = projectData;
-    }, [projectData]);
-
-    // Centralized function to save a project to local storage.
-    const saveProjectToStorage = useCallback((projectToSave: ProjectData | null) => {
-        if (!projectToSave) return;
-
-        setSavedProjects(prev => {
-            const updatedProjects = [...prev];
-            const existingIndex = updatedProjects.findIndex(p => p.projectId === projectToSave.projectId);
-
-            if (existingIndex > -1) {
-                // Prevent unnecessary writes if data hasn't changed.
-                if (JSON.stringify(updatedProjects[existingIndex]) === JSON.stringify(projectToSave)) {
-                    return prev;
+    const setAndSaveProjectData = useCallback((project: ProjectData | null) => {
+        setProjectDataWithHistory(project);
+        if (project) {
+            setSavedProjects(prev => {
+                const existingIndex = prev.findIndex(p => p.projectId === project.projectId);
+                const newSavedProjects = [...prev];
+                if (existingIndex > -1) {
+                    newSavedProjects[existingIndex] = project;
+                } else {
+                    newSavedProjects.push(project);
                 }
-                updatedProjects[existingIndex] = projectToSave;
-            } else {
-                updatedProjects.push(projectToSave);
-            }
-            return updatedProjects;
-        });
-    }, [setSavedProjects]);
-
-    // Debounced save triggered by any change in project data for responsiveness.
-    useEffect(() => {
-        if (projectData) {
-            const debouncedSave = setTimeout(() => {
-                saveProjectToStorage(projectData);
-            }, 500); // Short delay after user stops making changes.
-            return () => clearTimeout(debouncedSave);
+                return newSavedProjects;
+            });
         }
-    }, [projectData, saveProjectToStorage]);
-
-    // Interval-based save every 30 seconds as a backup.
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            if (projectDataRef.current) {
-                saveProjectToStorage(projectDataRef.current);
-            }
-        }, 30000); // 30 seconds
-
-        return () => clearInterval(intervalId);
-    }, [saveProjectToStorage]); // Runs once on mount and cleanup on unmount.
-    // --- END: Auto-saving logic ---
-
+    }, [setProjectDataWithHistory, setSavedProjects]);
+    
+    const dispatchProjectAction = useCallback((action: ProjectAction) => {
+        const newState = projectReducer(projectData, action);
+        if (newState !== projectData) {
+            setAndSaveProjectData(newState);
+        }
+    }, [projectData, setAndSaveProjectData]);
+    
     const handleLoadProject = useCallback((projectId: string) => {
         const projectToLoad = savedProjects.find(p => p.projectId === projectId);
         if (projectToLoad) {
-            // Load project into history state. We wrap it in a function to avoid setState treating our object as a function.
-            setProjectData(() => projectToLoad);
-        } else { 
-            setError("Project not found."); 
-            setAppState('error'); 
+            setProjectDataWithHistory(projectToLoad);
+        } else {
+            console.error(`Project with ID ${projectId} not found.`);
+            setError(`Project with ID ${projectId} not found.`);
+            setAppState('error');
         }
-    }, [savedProjects, setProjectData]);
+    }, [savedProjects, setProjectDataWithHistory, setError, setAppState]);
 
     const handleDeleteProject = useCallback((projectId: string) => {
         if (window.confirm('Are you sure you want to permanently delete this project?')) {
             setSavedProjects(prev => prev.filter(p => p.projectId !== projectId));
-            if (projectData?.projectId === projectId) dispatchProjectAction({ type: 'LOAD_PROJECT', payload: null as any });
+            if (projectData?.projectId === projectId) {
+                setProjectDataWithHistory(null);
+            }
         }
-    }, [projectData, setSavedProjects, dispatchProjectAction]);
+    }, [projectData, setSavedProjects, setProjectDataWithHistory]);
 
     const handleNewProjectClick = (navigate: NavigateFunction) => {
-        if (!userProfile?.name) { 
-             alert("Please complete your profile first."); 
-            return; 
-        }
+        setProjectDataWithHistory(null);
         navigate('/setup');
     };
 
     const handleProjectSetupSubmit = (setupData: ProjectSetupData, navigate: NavigateFunction) => {
         if (!userProfile) return;
-        const newProject: ProjectData = { 
-            ...setupData, 
-            projectId: uuidv4(), 
-            lastSaved: new Date().toISOString(), 
-            proposals: [], 
-            unitSystem: userProfile.unitSystem, 
-            notes: '', 
-            rooms: [], 
-            productDatabase: productDatabase,
-            ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 }
+        const newProject: ProjectData = {
+            projectId: uuidv4(),
+            projectName: setupData.projectName,
+            clientName: setupData.clientName,
+            lastSaved: new Date().toISOString(),
+            rooms: setupData.rooms.map(r => ({...createNewRoom(r.roomName), ...r})),
+            proposals: [],
+            unitSystem: userProfile.unitSystem,
+            notes: `Project created on ${new Date().toLocaleDateString()}.`,
+            ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
+            productDatabase: PRODUCT_DATABASE
         };
-        dispatchProjectAction({ type: 'LOAD_PROJECT', payload: newProject });
+        setAndSaveProjectData(newProject);
         navigate(`/design/${newProject.projectId}`);
     };
     
-    const toggleComparison = (product: Product) => setComparisonList(prev => prev.some(p => p.sku === product.sku) ? prev.filter(p => p.sku !== product.sku) : [...prev, product]);
-    const clearComparison = () => setComparisonList([]);
+    // Comparison Tray Logic
+    const toggleComparison = (product: Product) => {
+        setComparisonList(prev => 
+            prev.some(p => p.sku === product.sku)
+                ? prev.filter(p => p.sku !== product.sku)
+                : [...prev, product]
+        );
+    };
 
+    const clearComparison = () => setComparisonList([]);
+    
     return {
-        projectData, dispatchProjectAction, savedProjects, handleLoadProject, handleDeleteProject, handleNewProjectClick,
-        handleProjectSetupSubmit, productDatabase, appState, setAppState, error, setError,
-        loadingContext, setLoadingContext, comparisonList, toggleComparison, clearComparison,
-        undoProjectState, redoProjectState, canUndoProject, canRedoProject
+        projectData,
+        dispatchProjectAction,
+        savedProjects,
+        handleLoadProject,
+        handleDeleteProject,
+        handleNewProjectClick,
+        handleProjectSetupSubmit,
+        productDatabase: PRODUCT_DATABASE,
+        appState,
+        setAppState,
+        error,
+        setError,
+        loadingContext,
+        setLoadingContext,
+        comparisonList,
+        toggleComparison,
+        clearComparison,
+        undoProjectState,
+        redoProjectState,
+        canUndoProject,
+        canRedoProject,
     };
 };

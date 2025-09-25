@@ -1,6 +1,9 @@
 import React from 'react';
-import { Product } from '../utils/types';
-import { useAppContext } from '../context/AppContext';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Product } from '../utils/types.ts';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+import ImagePlaceholder from './ImagePlaceholder.tsx';
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     const { toggleComparison, comparisonList, userProfile } = useAppContext();
@@ -18,12 +21,10 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     };
 
     return (
-        <div className="bg-card p-3 my-2 rounded-lg border border-border-color not-prose flex gap-4 items-start">
-             {product.imageUrl && (
-                 <div className="w-20 h-20 bg-white rounded-md flex-shrink-0">
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
-                </div>
-             )}
+        <div className="bg-card p-2 my-2 rounded-lg border border-border-color not-prose flex gap-4 items-start">
+             <div className="w-16 h-16 bg-white rounded-md flex-shrink-0 overflow-hidden">
+                <ImagePlaceholder text={product.name} className="w-full h-full" />
+            </div>
             <div className="flex-grow">
                 <div className="flex justify-between items-start">
                     <div>

@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { RoomData } from '../utils/types';
-import StepBasicInfo from './roomWizard/StepBasicInfo';
-import StepFeatures from './roomWizard/StepFeatures';
-import StepTechnical from './roomWizard/StepTechnical';
-import StepEnvironment from './roomWizard/StepEnvironment';
-import StepBudget from './roomWizard/StepBudget';
-import { useAppContext } from '../context/AppContext';
-import { ROOM_TYPES } from '../data/constants';
-import { generateRoomDesign } from '../services/roomDesignerService';
-import { SparklesIcon } from './Icons';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { RoomData } from '../utils/types.ts';
+import StepBasicInfo from './roomWizard/StepBasicInfo.tsx';
+import StepFeatures from './roomWizard/StepFeatures.tsx';
+import StepTechnical from './roomWizard/StepTechnical.tsx';
+import StepEnvironment from './roomWizard/StepEnvironment.tsx';
+import StepBudget from './roomWizard/StepBudget.tsx';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+// FIX: Add file extension to satisfy module resolution for constants.ts
+import { ROOM_TYPES } from '../data/constants.ts';
+// FIX: Add file extension to satisfy module resolution for roomDesignerService.ts
+import { generateRoomDesign } from '../services/roomDesignerService.ts';
+import { SparklesIcon } from './Icons.tsx';
 
 interface RoomConfiguratorProps {
   room: RoomData;

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
-import { ProjectSetupData } from '../utils/types';
-import Logo from '../components/Logo';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { ProjectSetupData } from '../utils/types.ts';
+import Logo from '../components/Logo.tsx';
 
 const ProjectSetupScreen: React.FC = () => {
   const [setupData, setSetupData] = useState({ projectName: '', clientName: '' });

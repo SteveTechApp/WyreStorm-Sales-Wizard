@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useAppContext } from '../context/AppContext';
-import { ThemeName } from '../utils/types';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { ThemeName } from '../utils/types.ts';
 
 const THEME_OPTIONS: { id: ThemeName; label: string }[] = [
   { id: 'wyrestorm', label: 'WyreStorm' },
   { id: 'dark', label: 'Dark Mode' },
   { id: 'light', label: 'Light Mode' },
+  { id: 'cockpit', label: 'Cockpit' },
 ];
 
 const ThemeSelector: React.FC = () => {
@@ -37,7 +40,7 @@ const ThemeSelector: React.FC = () => {
         className="flex items-center gap-2 p-2 rounded-md hover:bg-background transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
       >
         <span className="text-sm font-medium text-text-secondary">{currentThemeLabel}</span>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
       </button>
 
       {isOpen && (

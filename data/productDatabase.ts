@@ -1,197 +1,26 @@
-import { Product } from '../utils/types';
+import { Product } from '../utils/types.ts';
+import { NEW_ARRIVALS } from './products/new-arrivals.ts';
+import { CONTROL_SOLUTIONS } from './products/control.ts';
+import { VIDEO_PROCESSORS } from './products/processors.ts';
+// FIX: Correctly import AVOIP_PRODUCTS from the avoip module.
+import { AVOIP_PRODUCTS } from './products/avoip.ts';
+import { UC_PRODUCTS } from './products/uc.ts';
+import { SWITCHERS_PRESENTATION, SWITCHERS_MATRIX } from './products/switchers.ts';
+import { AUDIO_SYSTEMS } from './products/audio.ts';
+import { EXTENDERS } from './products/extenders.ts';
+import { GENERIC_DEVICES } from './products/generic.ts';
+import { ACCESSORIES } from './products/accessories.ts';
 
 export const PRODUCT_DATABASE: Product[] = [
-    // --- Presentation Switchers ---
-    {
-        sku: 'SW-0401-H2',
-        name: '4x1 4K/60Hz 4:2:0 HDMI Switcher',
-        category: 'Presentation Switcher',
-        description: 'A simple and reliable 4-input HDMI switcher with auto-switching functionality. Ideal for basic meeting rooms.',
-        msrp: 450,
-        dealerPrice: 300,
-        tags: ['Switcher', 'HDMI', '4K', 'Bronze'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/SW-0401-H2.jpg',
-    },
-    {
-        sku: 'SW-510-TX',
-        name: '5-Input 4K HDBaseT Presentation Switcher',
-        category: 'Presentation Switcher',
-        description: '5-input HDBaseT/HDMI/VGA/DP switcher with scaling and CEC control. A workhorse for any modern meeting room.',
-        msrp: 1200,
-        dealerPrice: 800,
-        tags: ['HDBaseT', '4K', 'Switcher', 'CEC', 'Silver'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/SW-510-TX.jpg',
-    },
-    {
-        sku: 'SW-640L-TX-W',
-        name: '6-Input 4K/60Hz Presentation Switcher with USB-C',
-        category: 'Presentation Switcher',
-        description: 'Dual output 4K presentation switcher with wireless casting, USB-C, and USB host for peripherals. A high-performance solution for boardrooms.',
-        msrp: 2000,
-        dealerPrice: 1500,
-        tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/SW-640L-TX-W.jpg',
-    },
-
-    // --- Matrix Switchers ---
-    {
-        sku: 'MX-0804-EDU',
-        name: '8x4 Education Matrix Switcher',
-        category: 'Matrix Switcher',
-        description: 'An 8-input, 4-output matrix designed for classrooms with mic inputs and powerful audio mixing.',
-        msrp: 2800,
-        dealerPrice: 2100,
-        tags: ['Matrix', 'Education', 'Audio', 'Silver'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/MX-0804-EDU.jpg',
-    },
-    {
-        sku: 'MX-1007-HYB',
-        name: '10x7 Hybrid HDBaseT/HDMI Matrix Switcher',
-        category: 'Matrix Switcher',
-        description: 'A powerful hybrid matrix with 10 inputs (HDMI, HDBaseT) and 7 outputs, with integrated audio DSP. Ideal for large boardrooms or divisible spaces.',
-        msrp: 7500,
-        dealerPrice: 5500,
-        tags: ['Matrix', 'HDBaseT', 'DSP', '4K', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/MX-1007-HYB.jpg',
-    },
-
-    // --- AVoIP (NetworkHD) ---
-    {
-        sku: 'NHD-120-TX',
-        name: 'NHD 120 Series 4K AVoIP Encoder',
-        category: 'AVoIP Encoder',
-        description: 'Cost-effective 4K30 AVoIP encoder with low latency, ideal for large-scale distribution.',
-        msrp: 700,
-        dealerPrice: 500,
-        tags: ['AVoIP', '4K', 'NetworkHD', 'Silver'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/NHD-120-TX.png',
-    },
-     {
-        sku: 'NHD-120-RX',
-        name: 'NHD 120 Series 4K AVoIP Decoder',
-        category: 'AVoIP Decoder',
-        description: 'Cost-effective 4K30 AVoIP decoder with low latency. Does not support bezel correction for video walls.',
-        msrp: 700,
-        dealerPrice: 500,
-        tags: ['AVoIP', '4K', 'NetworkHD', 'Silver'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/NHD-120-RX.png',
-    },
-    {
-        sku: 'NHD-500-TX',
-        name: 'NHD 500 Series 4K60 4:4:4 AVoIP Encoder',
-        category: 'AVoIP Encoder',
-        description: 'High-performance JPEG-XS based AVoIP encoder with Dante/AES67 audio support.',
-        msrp: 1000,
-        dealerPrice: 750,
-        tags: ['AVoIP', '4K', 'Dante', 'NetworkHD', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/NHD-500-TX.png',
-    },
-    {
-        sku: 'NHD-500-RX',
-        name: 'NHD 500 Series 4K60 4:4:4 AVoIP Decoder',
-        category: 'AVoIP Decoder',
-        description: 'High-performance JPEG-XS based AVoIP decoder with video wall, KVM, and Dante support.',
-        msrp: 1000,
-        dealerPrice: 750,
-        tags: ['AVoIP', '4K', 'Dante', 'NetworkHD', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/NHD-500-RX.png',
-    },
-    {
-        sku: 'NHD-600-TRX',
-        name: 'NHD 600 Series 4K60 10GbE AVoIP Transceiver',
-        category: 'AVoIP Transceiver',
-        description: 'Flagship AVoIP transceiver for uncompressed 4K60 over 10GbE networks, with Dante and advanced video wall capabilities.',
-        msrp: 1500,
-        dealerPrice: 1100,
-        tags: ['AVoIP', '10GbE', '4K', 'NetworkHD', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/NHD-600-TRX.png',
-    },
-    {
-        sku: 'NHD-150-RX',
-        name: 'NHD 150 Series Multi-View Decoder',
-        category: 'AVoIP Decoder',
-        description: 'Specialized AVoIP decoder capable of displaying up to 9 sources on a single display, with dynamic windowing controlled by NHD-TOUCH.',
-        msrp: 1300,
-        dealerPrice: 950,
-        tags: ['AVoIP', 'Multiview', 'NetworkHD', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/NHD-150-RX.png',
-    },
-
-    // --- Unified Communications (UC) & Cameras ---
-    {
-        sku: 'APO-210-UC',
-        name: 'Apollo 210 UC Conferencing Speakerphone & Switcher',
-        category: 'Unified Communications',
-        description: 'All-in-one speakerphone, USB hub, and 4K presentation switcher with USB-C and wireless casting. Ideal for huddle and small conference rooms.',
-        msrp: 900,
-        dealerPrice: 600,
-        tags: ['USB-C', '4K', 'Speakerphone', 'UC', 'Silver'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/APO-210-UC.png',
-        audio: { dsp: true, speakerphone: true },
-    },
-    {
-        sku: 'CAM-200-PTZ',
-        name: '4K AI-Tracking PTZ Camera',
-        category: 'Camera',
-        description: '4K PTZ camera with auto-tracking, 12x optical zoom, and USB 3.0 output. Perfect for boardrooms and lecture halls.',
-        msrp: 1500,
-        dealerPrice: 1100,
-        tags: ['Camera', '4K', 'USB', 'PTZ', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/CAM-200-PTZ.png',
-    },
-    {
-        sku: 'APO-DG2',
-        name: 'Apollo USB-C Wireless Casting Dongle',
-        category: 'Accessory',
-        description: 'Plug-and-play USB-C dongle for wireless screen sharing with Apollo conferencing products.',
-        msrp: 200,
-        dealerPrice: 150,
-        tags: ['Casting', 'USB-C', 'UC'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/APO-DG2.png',
-    },
-
-    // --- Audio ---
-    {
-        sku: 'AMP-001-010',
-        name: '10W Compact Low-Impedance Amplifier',
-        category: 'Amplifier',
-        description: 'A tiny but powerful amplifier, perfect for driving local speakers in a small room or at a display.',
-        msrp: 300,
-        dealerPrice: 200,
-        tags: ['Audio', 'Amplifier', 'Bronze'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/AMP-001-010.jpg',
-    },
-    {
-        sku: 'AMP-210-D',
-        name: '2.1 Networked Audio Amplifier with Dante',
-        category: 'Amplifier',
-        description: '2x50W amplifier with Dante/AES67 input, DSP, and subwoofer out. Ideal for premium networked audio systems.',
-        msrp: 800,
-        dealerPrice: 550,
-        tags: ['Audio', 'Amplifier', 'Dante', 'DSP', 'Gold'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/AMP-210-D.png',
-        audio: { inputs: 'Dante, AES67, Line', outputs: '2.1 Speaker Level', dsp: true },
-    },
-
-    // --- Generic / Representative Devices (for design logic) ---
-    {
-        sku: 'GEN-PC',
-        name: 'Dedicated Room PC',
-        category: 'Source',
-        description: 'A dedicated in-room computer for running presentations and video conferencing software.',
-        msrp: 1000,
-        dealerPrice: 800,
-        tags: ['Source', 'PC'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/GEN-PC.png',
-    },
-    {
-        sku: 'GEN-DOC-CAM',
-        name: 'Document Camera',
-        category: 'Source',
-        description: 'A camera for displaying physical documents or objects to the main screen. Common in education.',
-        msrp: 500,
-        dealerPrice: 350,
-        tags: ['Source', 'Camera'],
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/products/GEN-DOC-CAM.png',
-    },
+    ...NEW_ARRIVALS,
+    ...CONTROL_SOLUTIONS,
+    ...VIDEO_PROCESSORS,
+    ...AVOIP_PRODUCTS,
+    ...UC_PRODUCTS,
+    ...SWITCHERS_PRESENTATION,
+    ...SWITCHERS_MATRIX,
+    ...AUDIO_SYSTEMS,
+    ...EXTENDERS,
+    ...GENERIC_DEVICES,
+    ...ACCESSORIES,
 ];

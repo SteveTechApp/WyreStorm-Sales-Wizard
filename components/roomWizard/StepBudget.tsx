@@ -1,6 +1,7 @@
 import React from 'react';
 import { RoomWizardAnswers } from '../../utils/types';
-import { useAppContext } from '../../context/AppContext';
+// FIX: Correct relative path and add file extension to satisfy module resolution
+import { useAppContext } from '../../context/AppContext.tsx';
 
 interface StepProps {
     answers: RoomWizardAnswers;

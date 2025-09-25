@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppContext } from '../context/AppContext';
-import { Product } from '../utils/types';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
 
 interface ComparisonTrayProps {
   onCompare: () => void;

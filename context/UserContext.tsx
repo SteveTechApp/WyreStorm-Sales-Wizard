@@ -1,7 +1,12 @@
 
+
+
+
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useUserProfile } from '../hooks/useUserProfile';
-import { UserProfile } from '../utils/types';
+// FIX: Add file extension to satisfy module resolution
+import { useUserProfile } from '../hooks/useUserProfile.ts';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { UserProfile } from '../utils/types.ts';
 
 interface UserContextType {
     userProfile: UserProfile | null;

@@ -1,64 +1,54 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { UserProvider, useUserContext } from './UserContext';
-import { ProjectProvider, useProjectContext } from './ProjectContext';
-import { GenerationProvider, useGenerationContext } from './GenerationContext';
-import { LocaleProvider, useLocaleContext } from './LocaleContext';
-import { ThemeProvider, useThemeContext } from './ThemeContext';
-import ProfileModal from '../components/ProfileModal';
+import { UserProvider, useUserContext } from './UserContext.tsx';
+import { ProjectProvider, useProjectContext } from './ProjectContext.tsx';
+import { GenerationProvider, useGenerationContext } from './GenerationContext.tsx';
+import { ThemeProvider, useThemeContext } from './ThemeContext.tsx';
+import { LocaleProvider, useLocaleContext } from './LocaleContext.tsx';
 
-// This combines the types from all the individual contexts.
-type AppContextType = any; 
+// Combine all context types into one
+type AppContextType = 
+    & ReturnType<typeof useUserContext>
+    & ReturnType<typeof useProjectContext>
+    & ReturnType<typeof useGenerationContext>
+    & ReturnType<typeof useThemeContext>
+    & ReturnType<typeof useLocaleContext>;
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const AppProviderInternal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const userContext = useUserContext();
-    const projectContext = useProjectContext();
-    const generationContext = useGenerationContext();
-    const localeContext = useLocaleContext();
-    const themeContext = useThemeContext();
-
-    const combinedValue = {
-        ...userContext,
-        ...projectContext,
-        ...generationContext,
-        ...localeContext,
-        ...themeContext,
-    };
+const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const user = useUserContext();
+    const project = useProjectContext();
+    const generation = useGenerationContext();
+    const theme = useThemeContext();
+    const locale = useLocaleContext();
+    
+    const value = { ...user, ...project, ...generation, ...theme, ...locale };
 
     return (
-        <AppContext.Provider value={combinedValue}>
+        <AppContext.Provider value={value}>
             {children}
-            <ProfileModal />
         </AppContext.Provider>
     );
 };
 
-/**
- * The main AppProvider component that should wrap the entire application.
- * It sets up all the individual context providers in the correct order.
- */
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return (
         <ThemeProvider>
             <UserProvider>
-                <ProjectProvider>
-                    <GenerationProvider>
-                        <LocaleProvider>
-                            <AppProviderInternal>
+                <LocaleProvider>
+                    <ProjectProvider>
+                        <GenerationProvider>
+                            <AppContextProvider>
                                 {children}
-                            </AppProviderInternal>
-                        </LocaleProvider>
-                    </GenerationProvider>
-                </ProjectProvider>
+                            </AppContextProvider>
+                        </GenerationProvider>
+                    </ProjectProvider>
+                </LocaleProvider>
             </UserProvider>
         </ThemeProvider>
     );
 };
 
-/**
- * The main hook used by components to access the combined application state and actions.
- */
 export const useAppContext = () => {
     const context = useContext(AppContext);
     if (context === undefined) {

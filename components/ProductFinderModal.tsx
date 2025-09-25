@@ -1,10 +1,13 @@
 
 
+
+
 import React, { useState } from 'react';
-import { Product } from '../utils/types';
-import { findProducts } from '../services/productService';
-import LoadingSpinner from './LoadingSpinner';
-import ProductCard from './ProductCard';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Product } from '../utils/types.ts';
+import { findProducts } from '../services/productService.ts';
+import LoadingSpinner from './LoadingSpinner.tsx';
+import ProductCard from './ProductCard.tsx';
 
 interface ProductFinderModalProps {
   isOpen: boolean;
@@ -38,7 +41,7 @@ const ProductFinderModal: React.FC<ProductFinderModalProps> = ({ isOpen, onClose
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-2xl m-4 flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+      <div className="bg-background rounded-lg shadow-xl p-4 w-full max-w-xl m-4 flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
         <div className="flex-shrink-0">
           <h2 className="text-2xl font-bold text-text-primary mb-4">Find a Product</h2>
           <form onSubmit={handleSearch} className="flex gap-2">

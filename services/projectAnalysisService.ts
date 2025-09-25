@@ -1,9 +1,10 @@
 import { GoogleGenAI } from '@google/genai';
-import { ProjectData, UserProfile, DesignFeedbackItem, ProjectSetupData, RoomData, AncillaryCosts } from "../utils/types";
-import { ALL_SCHEMAS } from './schemas';
-import { PRODUCT_DATABASE } from '../data/productDatabase';
-import { TECHNICAL_DATABASE } from '../data/technicalDatabase';
-import { getLocalizationInstructions } from './localizationService';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { ProjectData, UserProfile, DesignFeedbackItem, ProjectSetupData, RoomData, AncillaryCosts } from "../utils/types.ts";
+import { ALL_SCHEMAS } from './schemas.ts';
+import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
+import { TECHNICAL_DATABASE } from '../data/technicalDatabase.ts';
+import { getLocalizationInstructions } from './localizationService.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
@@ -21,10 +22,10 @@ export const getProjectInsights = async (projectData: ProjectData, userProfile: 
 
         Task: Analyze the entire project and provide feedback.
         -   **Design Flaws**: Look for incompatibilities or missing items (e.g., a transmitter without a receiver, speakers without an amplifier).
-        -   **Cost-Effectiveness**: Check for inefficient hardware choices. For example, if a room has only one display ('displayCount: 1') but uses a multi-output matrix switcher (MX-series), flag this as a 'Suggestion' and recommend a more appropriate presentation switcher (SW- or APO-series) to save cost.
+        -   **Cost-Effectiveness**: Check for inefficient hardware choices. For example, if the total number of displays (calculated by summing the 'quantity' of all 'output' items in a room's 'ioRequirements') is 1, but the design uses a multi-output matrix switcher (MX-series), flag this as a 'Suggestion' and recommend a more appropriate presentation switcher (SW- or APO-series) to save cost.
         -   **Service-Level Opportunities**: For Bronze or Silver tier rooms, suggest upgrading to include enhanced documentation (like as-built drawings for Silver) or remote management services (for Gold) as an 'Opportunity' to add value for the client.
         -   **Opportunities**: Identify chances for up-selling or adding features that align with the user's stated requirements.
-        -   **Categorize each piece of feedback** as 'Warning', 'Suggestion', 'Opportunity', 'Insight', or 'Financial'.
+        -   **Categorize each piece of feedback** as 'Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial'.
         -   Be concise and direct. Return an empty array if no feedback is necessary.
         -   Adhere strictly to the JSON schema.
     `;
@@ -66,7 +67,7 @@ export const getRoomReview = async (room: RoomData, project: ProjectData, userPr
 
         Task: Analyze ONLY the specified room and provide feedback.
         -   **Design Flaws**: Look for incompatibilities or missing items (e.g., a transmitter without a receiver, speakers without an amplifier). If the room has 'Video Conferencing' as a feature but is missing a camera, this is a 'Warning'.
-        -   **Cost-Effectiveness**: Check for inefficient hardware choices. For example, if the room has only one display ('displayCount: 1') but uses a multi-output matrix switcher (MX-series), flag this as a 'Suggestion' and recommend a more appropriate presentation switcher (SW- or APO-series) to save cost.
+        -   **Cost-Effectiveness**: Check for inefficient hardware choices. For example, if the total number of displays (calculated by summing the 'quantity' of all 'output' items in 'ioRequirements') is 1, but the design uses a multi-output matrix switcher (MX-series), flag this as a 'Suggestion' and recommend a more appropriate presentation switcher (SW- or APO-series) to save cost.
         -   **Service-Level Opportunities**: For Bronze or Silver tier rooms, suggest upgrading to include enhanced documentation (like as-built drawings for Silver) or remote management services (for Gold) as an 'Opportunity' to add value for the client.
         -   **Opportunities**: Identify chances for up-selling or adding features that align with the room's stated requirements.
         -   **Categorize each piece of feedback** as 'Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial'.

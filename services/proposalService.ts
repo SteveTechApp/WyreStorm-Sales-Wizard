@@ -1,11 +1,12 @@
 import { GoogleGenAI } from '@google/genai';
-import { ProjectData, UserProfile, Proposal } from "../utils/types";
-import { ALL_SCHEMAS } from './schemas';
-import { PRODUCT_DATABASE } from '../data/productDatabase';
-import { TECHNICAL_DATABASE } from '../data/technicalDatabase';
-import { INSTALLATION_TASK_DATABASE } from '../data/installationTaskDatabase';
-import { getLocalizationInstructions } from './localizationService';
-import { calculateProjectCosts } from '../utils/costCalculations';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { ProjectData, UserProfile, Proposal } from "../utils/types.ts";
+import { ALL_SCHEMAS } from './schemas.ts';
+import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
+import { TECHNICAL_DATABASE } from '../data/technicalDatabase.ts';
+import { INSTALLATION_TASK_DATABASE } from '../data/installationTaskDatabase.ts';
+import { getLocalizationInstructions } from './localizationService.ts';
+import { calculateProjectCosts } from '../utils/utils.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 

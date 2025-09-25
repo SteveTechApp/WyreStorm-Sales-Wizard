@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAppContext } from '../context/AppContext';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
 import { AncillaryCosts } from '../utils/types';
-import { calculateProjectCosts } from '../utils/costCalculations';
+import { calculateProjectCosts } from '../utils/utils';
 import { estimateAncillaryCosts } from '../services/projectAnalysisService';
 import { SparklesIcon } from './Icons';
 
@@ -23,7 +24,7 @@ const ProjectFinancialsModal: React.FC<ProjectFinancialsModalProps> = ({ isOpen,
 
   if (!isOpen || !projectData || !userProfile) return null;
 
-  const { hardwareTotal, laborTotal, ancillaryTotal, grandTotal } = calculateProjectCosts(projectData, userProfile);
+  const { hardwareTotal, laborTotal, ancillaryTotal, grandTotal } = calculateProjectCosts({ ...projectData, ancillaryCosts: costs }, userProfile);
 
   const handleEstimate = async () => {
     setIsEstimating(true);
@@ -45,7 +46,8 @@ const ProjectFinancialsModal: React.FC<ProjectFinancialsModalProps> = ({ isOpen,
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCosts(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+    // FIX: Cast name to keyof AncillaryCosts to satisfy TypeScript
+    setCosts(prev => ({ ...prev, [name as keyof AncillaryCosts]: parseFloat(value) || 0 }));
   };
   
   const formatCurrency = (amount: number) => {
@@ -61,7 +63,7 @@ const ProjectFinancialsModal: React.FC<ProjectFinancialsModalProps> = ({ isOpen,
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-background-secondary rounded-lg shadow-xl p-6 w-full max-w-3xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-background-secondary rounded-lg shadow-xl p-4 w-full max-w-2xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
         <h2 className="text-2xl font-bold text-text-primary mb-4">Project Financials</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

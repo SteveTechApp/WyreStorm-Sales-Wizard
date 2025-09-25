@@ -1,7 +1,8 @@
 import React from 'react';
-import { Product } from '../utils/types';
-import InfoModal from './InfoModal';
-import ProductCard from './ProductCard';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Product } from '../utils/types.ts';
+import InfoModal from './InfoModal.tsx';
+import ProductCard from './ProductCard.tsx';
 
 interface ProductInfoModalProps {
   isOpen: boolean;

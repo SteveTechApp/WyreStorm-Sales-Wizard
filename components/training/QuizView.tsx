@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrainingModule, QuizAnswer } from '../../utils/types';
+import { TrainingModule, QuizAnswer } from '../../utils/types.ts';
 
 interface QuizViewProps {
     module: TrainingModule;
@@ -71,32 +71,26 @@ const QuizView: React.FC<QuizViewProps> = ({ module, onComplete, isReviewMode, i
                                     }
 
                                     return (
-                                        <button
-                                            key={option}
-                                            onClick={() => !isSubmitted && setUserAnswers(prev => ({ ...prev, [index]: option }))}
-                                            disabled={isSubmitted}
-                                            className={`w-full text-left flex items-center p-3 rounded-lg border-2 transition-colors duration-200 ${optionClass} disabled:cursor-not-allowed`}
-                                        >
-                                            <div className={`w-4 h-4 rounded-full border-2 ${isSelected ? 'bg-primary border-primary' : 'border-text-secondary'} mr-3 flex-shrink-0`}></div>
-                                            <span className="flex-1 text-sm">{option}</span>
-                                        </button>
+                                        <div key={option} onClick={() => !isSubmitted && setUserAnswers(prev => ({ ...prev, [index]: option }))} className={`p-3 border rounded-md cursor-pointer transition-all ${optionClass}`}>
+                                            {option}
+                                        </div>
                                     );
                                 })}
                             </div>
                             {isSubmitted && (
-                                <div className="mt-2 p-3 bg-background rounded-md text-sm text-text-secondary italic">
-                                    <p><strong>Explanation:</strong> {q.explanation}</p>
+                                <div className="mt-3 p-3 bg-primary/5 rounded-md text-sm">
+                                    <p className="font-bold text-primary">Explanation:</p>
+                                    <p className="text-text-secondary">{q.explanation}</p>
                                 </div>
                             )}
                         </div>
                     );
                 })}
             </div>
-
             <footer className="mt-6 pt-4 border-t border-border-color flex justify-end">
-                {isSubmitted ? (
+                {isSubmitted || isReviewMode ? (
                     <button onClick={handleFinish} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-6 rounded-md">
-                        {isReviewMode ? 'Finish Review' : 'Finish Module'}
+                        {isReviewMode ? 'Back to Overview' : 'Finish & Continue'}
                     </button>
                 ) : (
                     <button onClick={handleSubmit} disabled={Object.keys(userAnswers).length !== module.quiz.length} className="bg-primary hover:bg-secondary text-text-on-accent font-bold py-2 px-6 rounded-md disabled:bg-gray-400">

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { LaborRate } from '../../utils/types';
-import { LABOR_ROLES, RATE_TYPES } from '../../data/constants';
-import { TrashIcon } from '../Icons';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { LaborRate } from '../../utils/types.ts';
+// FIX: Add file extension to satisfy module resolution for constants.ts
+import { LABOR_ROLES, RATE_TYPES } from '../../data/constants.ts';
+import { TrashIcon } from '../Icons.tsx';
 
 interface LaborRateManagerProps {
   initialRates: LaborRate[];

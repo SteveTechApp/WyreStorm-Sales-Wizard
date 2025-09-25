@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { IncomingRequest } from '../utils/types';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { IncomingRequest } from '../utils/types.ts';
 
 const useClientRequests = () => {
     const [requests, setRequests] = useState<IncomingRequest[]>([]);

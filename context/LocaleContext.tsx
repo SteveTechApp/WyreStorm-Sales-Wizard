@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
-import { useUserContext } from './UserContext';
-import { LanguageCode } from '../utils/types';
+import { useUserContext } from './UserContext.tsx';
+import { LanguageCode } from '../utils/types.ts';
 
 type Translations = Record<string, string>;
 

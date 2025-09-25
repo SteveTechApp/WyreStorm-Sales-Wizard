@@ -1,7 +1,9 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useProjectManagement } from '../hooks/useProjectManagement';
-import { useUserContext } from './UserContext';
-import { Product, ProjectData, ProjectSetupData } from '../utils/types';
+// FIX: Add file extension to satisfy module resolution
+import { useProjectManagement } from '../hooks/useProjectManagement.ts';
+import { useUserContext } from './UserContext.tsx';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Product, ProjectData, ProjectSetupData } from '../utils/types.ts';
 import { NavigateFunction } from 'react-router-dom';
 
 interface ProjectContextType {

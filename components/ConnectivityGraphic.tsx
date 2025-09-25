@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RoomData, StructuredSystemDiagram, DiagramNode, Product } from '../utils/types';
-import { useAppContext } from '../context/AppContext';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
 import { generateRoomConnectivityDiagram } from '../services/roomDesignerService';
 import SystemDiagram from './SystemDiagram';
 import ProductInfoModal from './ProductInfoModal';
@@ -12,7 +13,7 @@ interface ConnectivityGraphicProps {
 
 const ConnectivityGraphic: React.FC<ConnectivityGraphicProps> = ({ room }) => {
     const { userProfile, productDatabase } = useAppContext();
-    const [diagram, setDiagram] = useState<StructuredSystemDiagram | null>(null);
+    const [diagram, setDiagram] = useState<StructuredSystemDiagram | null>(room.systemDiagram || null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 

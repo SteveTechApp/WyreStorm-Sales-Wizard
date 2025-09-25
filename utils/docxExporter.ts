@@ -1,7 +1,8 @@
 import { Packer, Document, Paragraph, TextRun, HeadingLevel, ImageRun } from 'docx';
-import { Proposal, ProjectData, UserProfile } from './types';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Proposal, ProjectData, UserProfile } from './types.ts';
 
-type DocxImageType = 'png' | 'jpg' | 'gif' | 'bmp';
+type DocxImageType = 'png' | 'jpeg' | 'gif' | 'bmp';
 
 const getImageBuffer = async (url: string): Promise<{ data: string; type: DocxImageType } | undefined> => {
     try {
@@ -9,7 +10,7 @@ const getImageBuffer = async (url: string): Promise<{ data: string; type: DocxIm
             const mimeTypeMatch = url.match(/^data:image\/(png|jpeg|gif|bmp);base64,/);
             if (!mimeTypeMatch) throw new Error('Invalid data URL for image');
             
-            let type = mimeTypeMatch[1] === 'jpeg' ? 'jpg' : mimeTypeMatch[1];
+            let type = mimeTypeMatch[1] === 'jpeg' ? 'jpeg' : mimeTypeMatch[1];
             const base64 = url.replace(mimeTypeMatch[0], '');
             return { data: base64, type: type as DocxImageType };
         }
@@ -27,7 +28,7 @@ const getImageBuffer = async (url: string): Promise<{ data: string; type: DocxIm
         
         const contentType = response.headers.get('content-type') || 'image/png';
         const typeMatch = contentType.match(/image\/(png|jpeg|gif|bmp)/);
-        let type = (typeMatch ? (typeMatch[1] === 'jpeg' ? 'jpg' : typeMatch[1]) : 'png');
+        let type = (typeMatch ? (typeMatch[1] === 'jpeg' ? 'jpeg' : typeMatch[1]) : 'png');
 
         return { data, type: type as DocxImageType };
 

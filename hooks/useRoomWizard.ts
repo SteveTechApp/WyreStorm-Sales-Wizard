@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { RoomData, RoomWizardAnswers } from '../utils/types';
-import { createNewRoom } from '../utils/utils';
-import StepBasicInfo from '../components/roomWizard/StepBasicInfo';
-import StepFeatures from '../components/roomWizard/StepFeatures';
-import StepTechnical from '../components/roomWizard/StepTechnical';
-import StepEnvironment from '../components/roomWizard/StepEnvironment';
-import StepBudget from '../components/roomWizard/StepBudget';
+import { createNewRoom } from '../utils/utils.ts';
+import StepBasicInfo from '../components/roomWizard/StepBasicInfo.tsx';
+import StepFeatures from '../components/roomWizard/StepFeatures.tsx';
+import StepTechnical from '../components/roomWizard/StepTechnical.tsx';
+import StepEnvironment from '../components/roomWizard/StepEnvironment.tsx';
+import StepBudget from '../components/roomWizard/StepBudget.tsx';
 
 const STEPS = [
   { title: 'Basic Info', component: StepBasicInfo },
@@ -41,8 +41,8 @@ export const useRoomWizard = ({ onSave, onClose }: UseRoomWizardProps) => {
     // to Omit 'id'. We retrieve the 'id' from the initial full RoomData object
     // created when the wizard was initialized.
     const finalRoomData: RoomData = {
+      ...initialRoom,
       ...answers,
-      id: initialRoom.id,
       roomType: answers.roomType === 'Other' ? answers.customRoomType || 'Custom' : answers.roomType,
       functionalityStatement: '', 
       manuallyAddedEquipment: [],
@@ -51,10 +51,13 @@ export const useRoomWizard = ({ onSave, onClose }: UseRoomWizardProps) => {
     delete (finalRoomData as any).customRoomType;
     onSave(finalRoomData);
     onClose();
-  }, [answers, onSave, onClose, initialRoom.id]);
+  }, [answers, onSave, onClose, initialRoom]);
 
   const isNextDisabled = useMemo(() => {
-    return currentStep === 0 && (!answers.roomName.trim() || (answers.roomType === 'Other' && !answers.customRoomType?.trim()));
+    if (currentStep !== 0) return false;
+    const isRoomNameMissing = !answers.roomName.trim();
+    const isCustomRoomTypeMissing = answers.roomType === 'Other' && !answers.customRoomType?.trim();
+    return isRoomNameMissing || isCustomRoomTypeMissing;
   }, [currentStep, answers.roomName, answers.roomType, answers.customRoomType]);
 
   const CurrentStepComponent = STEPS[currentStep].component;

@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
-import { Proposal, Product, DiagramNode } from '../utils/types';
-import LoadingSpinner from '../components/LoadingSpinner';
-import SystemDiagram from '../components/SystemDiagram';
-import { exportProposalToDocx } from '../utils/docxExporter';
-import { translateText } from '../services/assistantService';
-import ProductInfoModal from '../components/ProductInfoModal';
-import InfoModal from '../components/InfoModal';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Proposal, Product, DiagramNode } from '../utils/types.ts';
+import LoadingSpinner from '../components/LoadingSpinner.tsx';
+import SystemDiagram from '../components/SystemDiagram.tsx';
+import { exportProposalToDocx } from '../utils/docxExporter.ts';
+import { translateText } from '../services/assistantService.ts';
+import ProductInfoModal from '../components/ProductInfoModal.tsx';
+import InfoModal from '../components/InfoModal.tsx';
 
 const ProposalDisplay: React.FC = () => {
     const { projectId, proposalId } = useParams<{ projectId: string, proposalId: string }>();

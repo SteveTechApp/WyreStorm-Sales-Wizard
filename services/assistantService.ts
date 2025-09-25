@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
-import { UserProfile } from '../utils/types';
-import { getLocalizationInstructions } from './localizationService';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { UserProfile } from '../utils/types.ts';
+import { getLocalizationInstructions } from './localizationService.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 

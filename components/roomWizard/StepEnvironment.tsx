@@ -1,12 +1,14 @@
 import React from 'react';
-import { RoomWizardAnswers } from '../../utils/types';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { RoomWizardAnswers } from '../../utils/types.ts';
 import {
     WALL_CONSTRUCTION_OPTIONS,
     CONTAINMENT_OPTIONS,
     AUDIO_SPEAKER_LAYOUT_OPTIONS,
     AUDIO_SYSTEM_TYPE_OPTIONS,
     AUDIO_USE_CASE_OPTIONS,
-} from '../../data/constants';
+// FIX: Add file extension to satisfy module resolution for constants.ts
+} from '../../data/constants.ts';
 
 interface StepProps {
     answers: RoomWizardAnswers;
@@ -16,7 +18,7 @@ interface StepProps {
 const StepEnvironment: React.FC<StepProps> = ({ answers, setAnswers }) => {
     
     const handleConstructionChange = (field: keyof typeof answers.constructionDetails, value: string) => {
-        setAnswers(prev => ({ ...prev, constructionDetails: { ...prev.constructionDetails, [field]: value } }));
+        setAnswers(prev => ({ ...prev, constructionDetails: { ...prev.constructionDetails, [field]: value as any } }));
     };
 
     const handleAudioDetailsChange = (field: keyof typeof answers.audioSystemDetails, value: string) => {

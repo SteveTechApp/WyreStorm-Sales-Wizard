@@ -1,6 +1,6 @@
 import React from 'react';
-import { UserProfile } from '../../utils/types';
-import Logo from '../Logo';
+import { UserProfile } from '../../utils/types.ts';
+import Logo from '../Logo.tsx';
 
 interface CertificateProps {
     userProfile: UserProfile;

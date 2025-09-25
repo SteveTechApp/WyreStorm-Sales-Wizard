@@ -37,6 +37,7 @@ const PROPOSAL_MESSAGES = [
     "Finalising proposal document...",
 ];
 
+// FIX: Removed explicit JSX.Element return type to fix namespace error. React.FC handles this.
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message, context }) => {
     const messages = context === 'template' ? TEMPLATE_MESSAGES : context === 'proposal' ? PROPOSAL_MESSAGES : [];
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);

@@ -1,10 +1,15 @@
 
+
+
+
 import React, { useState, useEffect } from 'react';
-import { Product, RelatedProductsPayload, ManuallyAddedEquipment } from '../utils/types';
-import { getRelatedProducts } from '../services/productService';
-import { useAppContext } from '../context/AppContext';
-import LoadingSpinner from './LoadingSpinner';
-import ProductCard from './ProductCard';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { Product, RelatedProductsPayload, ManuallyAddedEquipment } from '../utils/types.ts';
+import { getRelatedProducts } from '../services/productService.ts';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+import LoadingSpinner from './LoadingSpinner.tsx';
+import ProductCard from './ProductCard.tsx';
 
 interface RelatedProductsModalProps {
   isOpen: boolean;
@@ -70,7 +75,7 @@ const RelatedProductsModal: React.FC<RelatedProductsModalProps> = ({ isOpen, onC
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-3xl m-4 flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+      <div className="bg-background rounded-lg shadow-xl p-4 w-full max-w-2xl m-4 flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
         <div className="flex-shrink-0">
           <h2 className="text-2xl font-bold text-text-primary mb-1">Related Products</h2>
           <p className="text-text-secondary mb-4">Showing suggestions for: <strong>{targetProduct.name}</strong></p>

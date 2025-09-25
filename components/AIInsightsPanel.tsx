@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { useAppContext } from '../context/AppContext';
-import { DesignFeedbackItem, RoomData } from '../utils/types';
-import { getProjectInsights, getRoomReview } from '../services/projectAnalysisService';
-import LoadingSpinner from './LoadingSpinner';
-import { SparklesIcon } from './Icons';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { DesignFeedbackItem, RoomData } from '../utils/types.ts';
+import { getProjectInsights, getRoomReview } from '../services/projectAnalysisService.ts';
+import LoadingSpinner from './LoadingSpinner.tsx';
+import { SparklesIcon } from './Icons.tsx';
 
 const FEEDBACK_STYLES: Record<string, any> = {
   Warning: { icon: '⚠️', color: 'text-red-500' },

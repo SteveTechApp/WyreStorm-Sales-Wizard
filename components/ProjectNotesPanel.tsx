@@ -1,51 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { useAppContext } from '../context/AppContext';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAppContext } from '../context/AppContext.tsx';
+
+// Simple debounce hook for auto-saving
+const useDebounce = <T,>(value: T, delay: number): T => {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+};
+
 
 const ProjectNotesPanel: React.FC = () => {
-  const { projectData, dispatchProjectAction } = useAppContext();
-  // Initialize state with project notes, or empty string if not available.
-  const [notes, setNotes] = useState(projectData?.notes || '');
+    const { projectData, dispatchProjectAction } = useAppContext();
+    const [notes, setNotes] = useState(projectData?.notes || '');
+    const debouncedNotes = useDebounce(notes, 500);
 
-  // Effect to update local state if the notes in the context change (e.g., due to undo/redo or loading a new project).
-  useEffect(() => {
-    if (projectData && projectData.notes !== notes) {
-      setNotes(projectData.notes);
-    }
-  // This dependency array ensures this effect only runs when the source of truth (projectData.notes) changes.
-  // Not including `notes` here prevents potential infinite loops.
-  }, [projectData?.notes]);
+    useEffect(() => {
+        setNotes(projectData?.notes || '');
+    }, [projectData?.notes, projectData?.projectId]);
 
-  // Effect to debounce saving to the global state.
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      // Only dispatch an update if the local notes have actually changed from what's in the global state.
-      if (projectData && notes !== projectData.notes) {
-        dispatchProjectAction({ type: 'UPDATE_NOTES', payload: notes });
-      }
-    }, 500); // 500ms delay after user stops typing.
+    const handleSave = useCallback(() => {
+        if (projectData && notes !== projectData.notes) {
+            dispatchProjectAction({ type: 'UPDATE_NOTES', payload: notes });
+        }
+    }, [dispatchProjectAction, notes, projectData]);
+    
+    useEffect(() => {
+        if (debouncedNotes !== projectData?.notes) {
+            handleSave();
+        }
+    }, [debouncedNotes, projectData?.notes, handleSave]);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [notes, projectData, dispatchProjectAction]);
+    if (!projectData) return null;
 
-
-  if (!projectData) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">No project loaded.</p>
-      </div>
+        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
+            <h2 className="text-xl font-bold text-text-primary font-display mb-3">
+                Project Notes
+            </h2>
+            <p className="text-sm text-text-secondary mb-3">
+                Use this space for internal notes, client feedback, or site survey details. Your notes are saved automatically.
+            </p>
+            <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="flex-grow w-full p-3 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none resize-none"
+                placeholder="Start typing your notes here..."
+            />
+        </div>
     );
-  }
-
-  return (
-      <textarea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        placeholder="Add project notes here. They will be saved automatically and will not appear on the client proposal."
-        className="w-full h-full p-3 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none resize-none"
-      />
-  );
 };
+
 
 export default ProjectNotesPanel;

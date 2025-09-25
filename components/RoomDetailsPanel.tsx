@@ -2,19 +2,25 @@ import React from 'react';
 import { RoomData } from '../utils/types';
 import { BuildingIcon, UsersIcon, TvIcon, WrenchIcon, SpeakerWaveIcon, ListBulletIcon } from './Icons';
 import TierTooltip from './TierTooltip';
+import { useAppContext } from '../context/AppContext.tsx';
+import Gauge from './cockpit/Gauge';
 
-const DetailItem: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode; }> = ({ icon, label, value }) => (
-    <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 text-text-secondary mt-1">{icon}</div>
-        <div>
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</p>
-            <div className="text-sm font-semibold text-text-primary">{value}</div>
+const DetailItem: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode; className?: string; }> = ({ icon, label, value, className = '' }) => {
+    return (
+        <div className={`flex items-start gap-3 ${className}`}>
+            <div className="flex-shrink-0 text-text-secondary mt-1">{icon}</div>
+            <div>
+                <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</p>
+                <div className="text-sm font-semibold text-text-primary">{value}</div>
+            </div>
         </div>
-    </div>
-);
+    );
+};
+
 
 const RoomDetailsPanel: React.FC<{ room: RoomData }> = ({ room }) => {
-    const { dimensions, maxParticipants, displayType, displayCount, constructionDetails, audioSystemDetails, features, designTier } = room;
+    const { theme } = useAppContext();
+    const { dimensions, maxParticipants, constructionDetails, audioSystemDetails, features, designTier, ioRequirements } = room;
     const unit = 'm';
 
     const featureList = features.map(f => (
@@ -23,8 +29,37 @@ const RoomDetailsPanel: React.FC<{ room: RoomData }> = ({ room }) => {
         </span>
     ));
 
+    const outputs = ioRequirements.filter(p => p.type === 'output');
+    const displayValue = outputs.length > 0
+        ? outputs.map(o => `${o.quantity}x ${o.name}`).join(', ')
+        : 'Not specified';
+    
+    if (theme === 'cockpit') {
+        return (
+            <div className="bg-slate-800/50 p-3 rounded-lg border-2 border-slate-700 grid grid-cols-2 md:grid-cols-5 gap-3 font-mono">
+                <Gauge icon={<BuildingIcon />} label="Dimensions" value={`${dimensions.length}x${dimensions.width}x${dimensions.height}${unit}`} />
+                <Gauge icon={<UsersIcon />} label="Capacity" value={`${maxParticipants}`} />
+                <Gauge icon={<TvIcon />} label="Display" value={displayValue} />
+                <Gauge icon={<WrenchIcon />} label="Walls" value={constructionDetails.wallConstruction} />
+                <Gauge icon={<SpeakerWaveIcon />} label="Audio" value={audioSystemDetails.speakerLayout} />
+                 <div className="bg-black/50 p-3 rounded-md border-2 border-slate-700 flex flex-col items-center justify-center text-center shadow-inner shadow-black h-full col-span-2 md:col-span-5">
+                    <div className="flex items-center gap-2 mb-2">
+                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tier & Features</p>
+                         <div className="flex items-center gap-1 text-xs font-semibold text-accent">
+                            <TierTooltip tier={designTier} />
+                            <span>{designTier}</span>
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1 justify-center">
+                        {featureList.length > 0 ? featureList : <span className="text-sm text-slate-400">No specific features.</span>}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="bg-card p-3 rounded-lg border border-border-color grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3">
+        <div className="bg-card p-2 rounded-lg border border-border-color grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-2">
             <DetailItem 
                 icon={<BuildingIcon className="h-5 w-5"/>} 
                 label="Dimensions" 
@@ -38,7 +73,7 @@ const RoomDetailsPanel: React.FC<{ room: RoomData }> = ({ room }) => {
             <DetailItem 
                 icon={<TvIcon className="h-5 w-5"/>} 
                 label="Display" 
-                value={displayCount && displayType ? `${displayCount}x ${displayType}` : 'Not specified'}
+                value={displayValue}
             />
             <DetailItem 
                 icon={<WrenchIcon className="h-5 w-5"/>} 

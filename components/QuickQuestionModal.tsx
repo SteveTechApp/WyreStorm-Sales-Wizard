@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { getQuickAnswer } from '../services/assistantService';
-import LoadingSpinner from './LoadingSpinner';
-import { ArrowUpRightIcon } from './Icons';
-import { useAppContext } from '../context/AppContext';
+import LoadingSpinner from './LoadingSpinner.tsx';
+import { ArrowUpRightIcon } from './Icons.tsx';
+// FIX: Add file extension to satisfy module resolution
+import { useAppContext } from '../context/AppContext.tsx';
 
 interface QuickQuestionModalProps {
   isOpen: boolean;
@@ -50,7 +51,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg shadow-xl p-4 w-full max-w-xl m-4 flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center border-b pb-3 mb-4">
             <h2 className="text-2xl font-bold text-gray-800">Ask a Quick Question</h2>
             <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 text-2xl leading-none">&times;</button>

@@ -1,110 +1,97 @@
 import { GoogleGenAI } from '@google/genai';
-import { RoomData, UserProfile, ManuallyAddedEquipment, StructuredSystemDiagram, Product } from '../utils/types';
-import { ALL_SCHEMAS } from './schemas';
-import { PRODUCT_DATABASE } from '../data/productDatabase';
-import { TECHNICAL_DATABASE } from '../data/technicalDatabase';
-import { getLocalizationInstructions } from './localizationService';
+import { RoomData, UserProfile, StructuredSystemDiagram, ManuallyAddedEquipment } from "../utils/types.ts";
+import { ALL_SCHEMAS } from './schemas.ts';
+import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
+import { TECHNICAL_DATABASE } from '../data/technicalDatabase.ts';
+import { getLocalizationInstructions } from './localizationService.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
-/**
- * Generates an equipment list and functionality statement for a room using AI.
- */
-export const generateRoomDesign = async (
-  roomData: RoomData,
-  userProfile: UserProfile
-): Promise<{ functionalityStatement: string; manuallyAddedEquipment: ManuallyAddedEquipment[] }> => {
-  const localizationInstruction = getLocalizationInstructions(userProfile);
-
-  const prompt = `
-    You are an expert AV System Designer tasked with selecting equipment for a specific room.
-    
-    User Profile: ${JSON.stringify(userProfile)}
-    Room Data: ${JSON.stringify(roomData)}
-    Available Products (Product Database): ${JSON.stringify(PRODUCT_DATABASE)}
-    General Technical Info: ${TECHNICAL_DATABASE}
-
-    CRITICAL RULE: ${localizationInstruction}
-
-    **CORE DESIGN LOGIC:**
-    1.  **Analyze Room Data**: Pay close attention to 'designTier', 'roomType', 'features', and critically, 'displayCount'.
-    2.  **INTELLIGENT SWITCHER SELECTION**: This is a critical rule.
-        -   If 'displayCount' is 1, you MUST select a presentation switcher (e.g., SW-series, APO-series), NOT a matrix switcher (MX-series).
-        -   The choice of presentation switcher depends on the tier. For 'Bronze', a basic HDMI switcher is fine. For 'Silver' or 'Gold', select a more advanced multi-format switcher with USB-C and USB hosting capabilities.
-        -   If 'displayCount' is greater than 1, a matrix switcher (MX-series) is the appropriate choice.
-    3.  **Assume Sources & Peripherals**: Based on the 'roomType', assume and include common sources and peripherals to create a complete system.
-        -   For a 'Boardroom' or 'Conference Room', always include a dedicated Room PC, a PTZ camera (if VC is a feature), and a wireless presentation device.
-        -   For a 'Classroom' or 'Lecture Hall', include a Document Camera and a connection for a teacher's laptop.
-    4.  **Create a Complete System**: Ensure all necessary components are included. If you specify a HDBaseT transmitter, you MUST include a compatible HDBaseT receiver. If you include speakers, you MUST include an amplifier.
-    5.  **Write Functionality Statement**: Write a concise, client-facing paragraph describing what the user can do in the room with the system you've designed. This statement must also reflect the service level. For Silver, mention remote monitoring. For Gold, mention comprehensive documentation (as-built drawings) and proactive remote management.
-    6.  **Adhere to Schema**: Format your response strictly according to the provided JSON schema. Select product SKUs exactly as they appear in the database.
-  `;
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: ALL_SCHEMAS.ROOM_DESIGNER_SCHEMA,
-    },
-  });
-
-  const design = JSON.parse(response.text);
-
-  // Map the SKUs from the AI response back to full product objects.
-  const populatedEquipment = design.manuallyAddedEquipment
-    .map((item: { sku: string; quantity: number }) => {
-      const productInfo = PRODUCT_DATABASE.find(p => p.sku === item.sku);
-      if (!productInfo) return null; // Filter out any hallucinated SKUs
-      return { ...productInfo, quantity: item.quantity };
-    })
-    .filter((item: Product | null): item is ManuallyAddedEquipment => item !== null);
-
-  return {
-    functionalityStatement: design.functionalityStatement,
-    manuallyAddedEquipment: populatedEquipment,
-  };
+type RoomDesignResult = {
+    functionalityStatement: string;
+    manuallyAddedEquipment: { sku: string; quantity: number }[];
 };
 
-/**
- * Generates a system connectivity diagram for a room using AI.
- */
-export const generateRoomConnectivityDiagram = async (
-  roomData: RoomData,
-  userProfile: UserProfile
-): Promise<StructuredSystemDiagram> => {
-  const localizationInstruction = getLocalizationInstructions(userProfile);
+export const generateRoomDesign = async (roomData: RoomData, userProfile: UserProfile): Promise<RoomDesignResult> => {
+    const localizationInstruction = getLocalizationInstructions(userProfile);
 
-  const prompt = `
-    You are an expert AV System Designer creating a system block diagram based on an equipment list.
+    const prompt = `
+        You are a world-class AV System Designer. Your task is to select the appropriate WyreStorm products for a given room, based on its requirements.
+
+        User Profile (for context): ${JSON.stringify(userProfile)}
+        Room Data: ${JSON.stringify(roomData)}
+        Available Products: ${JSON.stringify(PRODUCT_DATABASE.map(p => ({ sku: p.sku, name: p.name, category: p.category, tags: p.tags, description: p.description, dealerPrice: p.dealerPrice })))}
+        Technical Info: ${TECHNICAL_DATABASE}
+        
+        CRITICAL RULE: ${localizationInstruction}
+
+        **Design Logic:**
+        1.  **Analyze Room Requirements:** Thoroughly review the room's type, design tier, features, and technical details.
+        2.  **I/O Analysis:** Base your core component selection on the 'ioRequirements' array. The number of inputs and outputs, their connection types, distribution methods, and distances are paramount.
+        3.  **Video Wall Logic:** If the 'videoWallConfig' object is present, you MUST design a system to drive that specific video wall.
+            - For \`technology: 'processor_vw'\`, select a dedicated video wall processor (e.g., SW-0204-VW) that matches the layout (e.g., a 2x2 layout requires 4 outputs).
+            - For \`technology: 'avoip_500e'\`, select one NHD-500-E-RX decoder per screen in the wall (quantity = layout.rows * layout.cols).
+            - For \`technology: 'avoip_600'\`, select one NHD-600-TRX transceiver per screen in the wall.
+            - For other technologies, make a logical product choice based on the available product database.
+        4.  **Select Core Components:**
+            *   **Switching:** Based on the number of inputs and outputs from 'ioRequirements', choose the most appropriate presentation switcher (SW-series, APO-series) or matrix switcher (MX-series).
+            *   **Extension:** If 'distributionType' is 'HDBaseT' or 'AVoIP', or if distances are long, select the correct extenders or NetworkHD components.
+            *   **Audio:** If the room requires more than display audio, select an amplifier (AMP-series) and potentially microphones. If 'Video Conferencing' is a feature, a speakerphone (HALO, APO-series) or a camera (CAM-series) is essential.
+            *   **Control:** For complex rooms, a control system might be needed (SYN-series).
+        5.  **Tier-Based Selection:**
+            *   **Bronze:** Focus on cost-effective, reliable solutions. Use entry-level 4K extenders and switchers.
+            *   **Silver:** Balance of price and performance. Use mid-range HDBaseT solutions, Apollo UC devices, and products with more robust features.
+            *   **Gold:** Prioritize performance and features. Select high-end matrixes, AVoIP (NetworkHD), and advanced control systems.
+        6.  **Create Equipment List:** Compile a list of all necessary products with their SKUs and quantities. Ensure you include all parts of a system (e.g., both a transmitter and a receiver for an extender).
+        7.  **Write Functionality Statement:** Write a concise, client-facing paragraph describing what the end-user will be able to do in the finished room.
+        8.  **Schema Adherence:** Return the data strictly following the provided JSON schema.
+    `;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: ALL_SCHEMAS.ROOM_DESIGNER_SCHEMA,
+        },
+    });
     
-    Room Data (including equipment list): ${JSON.stringify(roomData)}
-    User Profile: ${JSON.stringify(userProfile)}
+    return JSON.parse(response.text);
+};
 
-    CRITICAL RULE: ${localizationInstruction}
-    
-    YOUR TASK:
-    1.  **Diagram Style**: Create a clear, logical diagram with a left-to-right signal flow. Group sources (like PCs, cameras) in a 'Sources' subgraph and displays in a 'Displays' subgraph. The central switching/processing equipment should be in the middle.
-    2.  **Create Nodes**: Each piece of equipment should be a node. The 'id' MUST be the product's SKU, 'label' its name, and 'type' its category.
-    3.  **Create Edges**: Create logical connections (edges) between the nodes.
-        -   Connect sources to inputs on a switcher or encoder.
-        -   Connect switcher/matrix outputs to extenders (TX) or directly to displays.
-        -   Connect extenders (TX) to receivers (RX).
-        -   Connect receivers (RX) to displays.
-        -   Connect speakers to amplifiers.
-        -   Connect network-based devices (AVoIP, Dante amps) to a conceptual "AV Network Switch" node. You may have to invent a node with id "network_switch", label "AV Network Switch", type "Infrastructure".
-    4.  **Label Edges**: Label each edge with the signal type being passed (e.g., "HDMI", "HDBaseT", "Dante Audio", "USB 3.0").
-    5.  **Adhere to Schema**: Format your response strictly according to the provided JSON schema.
-  `;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: ALL_SCHEMAS.ROOM_CONNECTIVITY_SCHEMA,
-    },
-  });
+export const generateRoomConnectivityDiagram = async (roomData: RoomData, userProfile: UserProfile): Promise<StructuredSystemDiagram> => {
+    const localizationInstruction = getLocalizationInstructions(userProfile);
 
-  return JSON.parse(response.text);
+    const prompt = `
+        You are an expert AV System Designer. Create a logical system diagram for the provided room and its equipment list.
+
+        User Profile (for context): ${JSON.stringify(userProfile)}
+        Room Data: ${JSON.stringify(roomData)}
+        Technical Info: ${TECHNICAL_DATABASE}
+        
+        CRITICAL RULE: ${localizationInstruction}
+
+        **Diagram Logic:**
+        1.  **Identify Nodes:** Each piece of equipment in the 'manuallyAddedEquipment' list is a node. Use the product's SKU as the node 'id', its name as the 'label', and its category as the 'type'. Also add generic nodes for each input defined in 'ioRequirements' (e.g., 'Lectern PC', 'Guest Laptop') and for each output (e.g., 'Main Display', 'Video Wall'). If a video wall is defined in 'videoWallConfig', create a single 'Video Wall' node.
+        2.  **Create Edges:** Connect the nodes logically based on signal flow.
+            *   Connect sources (laptops, cameras) to inputs on switchers or transmitters.
+            *   Connect outputs of switchers to inputs on displays or receivers.
+            *   Connect HDBaseT transmitters to receivers.
+            *   Connect AVoIP encoders and decoders to a central 'Network Switch' node.
+        3.  **Label Edges:** Label the connection with the signal type (e.g., "HDMI", "USB-C", "HDBaseT", "CAT6a").
+        4.  **Type Edges:** Classify the edge 'type' as one of: 'video', 'audio', 'control', 'usb', 'network'.
+        5.  **Schema Adherence:** Return the data strictly following the provided JSON schema. Ensure all equipment from the list is represented in the diagram.
+    `;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: ALL_SCHEMAS.ROOM_CONNECTIVITY_SCHEMA,
+        },
+    });
+
+    return JSON.parse(response.text);
 };

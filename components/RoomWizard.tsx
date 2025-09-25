@@ -1,7 +1,8 @@
 import React from 'react';
-import { RoomData } from '../utils/types';
-import WizardNavigation from './roomWizard/WizardNavigation';
-import { useRoomWizard } from '../hooks/useRoomWizard';
+// FIX: Add file extension to satisfy module resolution for types.ts
+import { RoomData } from '../utils/types.ts';
+import WizardNavigation from './roomWizard/WizardNavigation.tsx';
+import { useRoomWizard } from '../hooks/useRoomWizard.ts';
 
 interface RoomWizardProps {
   onSave: (roomData: RoomData) => void;
