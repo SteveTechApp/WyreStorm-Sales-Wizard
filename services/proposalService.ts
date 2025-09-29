@@ -1,57 +1,99 @@
 import { GoogleGenAI } from '@google/genai';
-// FIX: Add file extension to satisfy module resolution for types.ts
-import { ProjectData, UserProfile, Proposal } from "../utils/types.ts";
-import { ALL_SCHEMAS } from './schemas.ts';
-import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
-import { TECHNICAL_DATABASE } from '../data/technicalDatabase.ts';
-import { INSTALLATION_TASK_DATABASE } from '../data/installationTaskDatabase.ts';
+import { ProjectData, UserProfile, Proposal, StructuredSystemDiagram } from '../utils/types.ts';
+import { PROPOSAL_GENERATION_SCHEMA, PROPOSAL_GENERATION_ZOD_SCHEMA } from './schemas.ts';
 import { getLocalizationInstructions } from './localizationService.ts';
-import { calculateProjectCosts } from '../utils/utils.ts';
+import { cleanAndParseJson } from '../utils/utils.ts';
+import { calculatePricing } from '../utils/pricingUtils.ts';
+import { INSTALLATION_TASK_DATABASE } from '../data/installationTaskDatabase.ts';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-export const generateProposal = async (projectData: ProjectData, userProfile: UserProfile): Promise<Omit<Proposal, 'proposalId' | 'version' | 'createdAt'>> => {
-    const pricing = calculateProjectCosts(projectData, userProfile);
-    const localizationInstruction = getLocalizationInstructions(userProfile);
+const generateProposalPrompt = (project: ProjectData, userProfile: UserProfile | null): string => {
+    const localization = getLocalizationInstructions(userProfile);
+    const equipmentList = project.rooms.flatMap(room =>
+        room.manuallyAddedEquipment.map(eq => ({
+            room: room.roomName,
+            sku: eq.sku,
+            name: eq.name,
+            quantity: eq.quantity,
+        }))
+    );
+    const uniqueEquipment = Array.from(new Map(equipmentList.map(item => [item.sku, item])).values());
 
-    const prompt = `
-        You are a professional AV Sales Engineer writing a client-facing proposal document.
-        User Profile: ${JSON.stringify(userProfile)}
-        Project Data: ${JSON.stringify(projectData)}
-        Available Products: ${JSON.stringify(PRODUCT_DATABASE)}
-        Technical Info: ${TECHNICAL_DATABASE}
-        Standard Installation Tasks: ${JSON.stringify(INSTALLATION_TASK_DATABASE)}
-        Calculated Pricing (for reference): ${JSON.stringify(pricing)}
+    return `
+        You are an expert AV proposal writer for WyreStorm. Your task is to generate a professional proposal document based on the provided project data.
+        ${localization}
 
-        CRITICAL RULE: ${localizationInstruction}
+        Project Details:
+        - Project Name: ${project.projectName}
+        - Client Name: ${project.clientName}
+        - Rooms:
+        ${project.rooms.map(room => `  - ${room.roomName} (${room.roomType}, ${room.designTier} Tier): ${room.functionalityStatement}`).join('\n')}
+        - Equipment List (across all rooms): ${JSON.stringify(uniqueEquipment, null, 2)}
 
-        IMPORTANT INSTRUCTIONS:
-        1.  **Executive Summary:** Write a compelling, professional summary. Start by thanking the client (${projectData.clientName}) for the opportunity and then briefly outline the proposed solution's benefits.
-        2.  **Scope of Work:** Write a detailed scope of work. Use the functionality statements from each room as a starting point. Be specific but professional.
-        3.  **Incorporate Service Levels:** For projects containing Silver or Gold tier rooms, ensure the 'Scope of Work' reflects the associated value-added services. Silver tiers include standard documentation and remote monitoring. Gold tiers include a comprehensive documentation package (as-built diagrams, rack layouts, cable schedules) and proactive remote management services. Detail these deliverables clearly to justify the value.
-        4.  **System Diagram:** Create a single, logical system diagram that connects all equipment across all rooms in the project. Use the product SKUs as node IDs. Represent signal flow clearly (video, audio, control, etc.). Link sources to switchers, switchers to displays, etc.
-        5.  **Equipment List:** Consolidate the equipment from all rooms into a single list. Ensure quantities are aggregated correctly.
-        6.  **Installation Plan:** Create a high-level installation plan based on the "Standard Installation Tasks". Select relevant phases and tasks for this specific project.
-        7.  **Pricing:** Use the provided calculated pricing values directly. Do not invent your own. The ancillary total is a budget for materials like cables, connectors and fixings.
-        
-        8.  **Suggested Improvements Section (CONDITIONAL):**
-            -   **Check Condition**: First, check if any room in the project has a designTier of 'Bronze' or 'Silver'.
-            -   **Generate Section**: If and ONLY IF such rooms exist, you MUST generate a 'suggestedImprovements' array. If all rooms are 'Gold', this field must be omitted from the JSON.
-            -   **Content**: For each 'Bronze' or 'Silver' room, create one improvement suggestion. Propose an upgrade to the next tier (Bronze to Silver, Silver to Gold). Describe the key benefits, focusing on functionality and service level (e.g., "Upgrading to Silver adds professional VC and enhanced documentation.").
-            -   **Cost Calculation**: To estimate the 'additionalCost', identify the key product changes required for the upgrade (e.g., replacing a basic switcher with an advanced one). Find the 'dealerPrice' of the current and upgraded products in the 'PRODUCT_DATABASE' and calculate the hardware cost difference. Add an estimated 15% to this difference for associated labour. The final 'additionalCost' must be this total estimated amount.
+        Available Installation Tasks (use these to build the plan):
+        ${JSON.stringify(INSTALLATION_TASK_DATABASE, null, 2)}
 
-        9.  **Tone & Language:** Write in a professional, persuasive, and clear tone.
-        10. **Schema:** Adhere strictly to the JSON schema provided.
+        Your Tasks:
+        1.  **executiveSummary**: Write a compelling, client-facing summary. It should be confident, professional, and highlight how the proposed WyreStorm solution meets the client's needs.
+        2.  **scopeOfWork**: Write a detailed scope of work. Describe what will be delivered in each room, referencing the functionality statements. Be clear and comprehensive.
+        3.  **installationPlan**: Create a logical, phased installation plan using tasks from the database provided. Group tasks into logical phases (e.g., "Pre-Wire", "Rack Build", "Room Integration", "Commissioning").
+        4.  **suggestedImprovements**: Based on the project scope, suggest 1-2 valuable upsell opportunities. For each, provide the 'roomName' it applies to, an 'improvement' description, and an estimated 'additionalCost'. Examples: suggest upgrading a Silver room to Gold with AVoIP, adding a control system, or suggesting ceiling mics for better audio.
+
+        Return only valid JSON that conforms to the schema. Do not include markdown formatting or explanations.
     `;
+};
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: ALL_SCHEMAS.PROPOSAL_GENERATION_SCHEMA,
-        },
-    });
+type GeneratedProposalData = Omit<Proposal, 'proposalId' | 'version' | 'createdAt' | 'systemDiagram' | 'equipmentList' | 'pricing'>;
 
-    return JSON.parse(response.text);
+export const generateProposal = async (project: ProjectData, userProfile: UserProfile | null): Promise<GeneratedProposalData & { systemDiagram?: StructuredSystemDiagram, equipmentList: Proposal['equipmentList'], pricing: Proposal['pricing'] }> => {
+    const prompt = generateProposalPrompt(project, userProfile);
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+                responseSchema: PROPOSAL_GENERATION_SCHEMA,
+            },
+        });
+
+        const text = response.text;
+        if (!text) {
+            throw new Error("Empty AI response for proposal generation.");
+        }
+
+        const parsedJson = cleanAndParseJson(text);
+        const validatedData = PROPOSAL_GENERATION_ZOD_SCHEMA.parse(parsedJson);
+
+        const pricing = calculatePricing(project, userProfile!);
+        
+        const equipmentList = project.rooms
+            .flatMap(room => room.manuallyAddedEquipment)
+            .reduce((acc, item) => {
+                const existing = acc.find(i => i.sku === item.sku);
+                if (existing) {
+                    existing.quantity += item.quantity;
+                } else {
+                    acc.push({ sku: item.sku, name: item.name, quantity: item.quantity });
+                }
+                return acc;
+            }, [] as { sku: string; name: string; quantity: number }[])
+            .sort((a, b) => a.name.localeCompare(b.name));
+            
+        // For simplicity, we'll take the diagram from the first room that has one.
+        const systemDiagram = project.rooms.find(r => r.systemDiagram)?.systemDiagram;
+
+        return {
+            ...validatedData,
+            equipmentList,
+            pricing,
+            systemDiagram,
+        };
+
+    } catch (error) {
+        console.error("Error generating proposal:", error);
+        throw new Error("Failed to generate proposal due to an API or data validation error.");
+    }
 };

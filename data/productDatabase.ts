@@ -1,26 +1,26 @@
 import { Product } from '../utils/types.ts';
-import { NEW_ARRIVALS } from './products/new-arrivals.ts';
-import { CONTROL_SOLUTIONS } from './products/control.ts';
-import { VIDEO_PROCESSORS } from './products/processors.ts';
-// FIX: Correctly import AVOIP_PRODUCTS from the avoip module.
-import { AVOIP_PRODUCTS } from './products/avoip.ts';
-import { UC_PRODUCTS } from './products/uc.ts';
-import { SWITCHERS_PRESENTATION, SWITCHERS_MATRIX } from './products/switchers.ts';
+
+import { ACCESSORIES } from './products/accessories.ts';
 import { AUDIO_SYSTEMS } from './products/audio.ts';
+import { AVOIP_PRODUCTS } from './products/avoip.ts';
+import { CONTROL_SOLUTIONS } from './products/control.ts';
 import { EXTENDERS } from './products/extenders.ts';
 import { GENERIC_DEVICES } from './products/generic.ts';
-import { ACCESSORIES } from './products/accessories.ts';
+import { NEW_ARRIVALS } from './products/new-arrivals.ts';
+import { VIDEO_PROCESSORS } from './products/processors.ts';
+import { SWITCHERS_MATRIX, SWITCHERS_PRESENTATION } from './products/switchers.ts';
+import { UC_SOLUTIONS } from './products/uc.ts';
 
 export const PRODUCT_DATABASE: Product[] = [
-    ...NEW_ARRIVALS,
-    ...CONTROL_SOLUTIONS,
-    ...VIDEO_PROCESSORS,
-    ...AVOIP_PRODUCTS,
-    ...UC_PRODUCTS,
-    ...SWITCHERS_PRESENTATION,
-    ...SWITCHERS_MATRIX,
+    ...ACCESSORIES,
     ...AUDIO_SYSTEMS,
+    ...AVOIP_PRODUCTS,
+    ...CONTROL_SOLUTIONS,
     ...EXTENDERS,
     ...GENERIC_DEVICES,
-    ...ACCESSORIES,
+    ...NEW_ARRIVALS,
+    ...VIDEO_PROCESSORS,
+    ...SWITCHERS_MATRIX,
+    ...SWITCHERS_PRESENTATION,
+    ...UC_SOLUTIONS,
 ];

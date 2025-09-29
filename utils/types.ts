@@ -1,5 +1,5 @@
 export type DesignTier = 'Bronze' | 'Silver' | 'Gold';
-export type LanguageCode = 'en-GB' | 'en-US' | 'fr-FR' | 'es-ES' | 'de-DE';
+export type LanguageCode = 'en-GB' | 'en-US' | 'en-AU' | 'fr-FR' | 'es-ES' | 'de-DE';
 export type ThemeName = 'wyrestorm' | 'dark' | 'light' | 'cockpit';
 
 export interface Feature {
@@ -101,6 +101,8 @@ export interface Product {
         dsp?: boolean;
         speakerphone?: boolean;
     };
+    status?: 'active' | 'legacy' | 'eol';
+    legacyReason?: string;
 }
 
 export interface LaborRate {
@@ -136,7 +138,8 @@ export interface Proposal {
     createdAt: string;
     executiveSummary: string;
     scopeOfWork: string;
-    systemDiagram: StructuredSystemDiagram;
+    // FIX: Made systemDiagram optional to align with generation logic where a diagram may not exist.
+    systemDiagram?: StructuredSystemDiagram;
     equipmentList: { sku: string; name: string; quantity: number }[];
     installationPlan: { phase: string; tasks: string[] }[];
     pricing: {
@@ -152,7 +155,6 @@ export interface Proposal {
     }[];
 }
 
-// FIX: Add ProjectInfrastructure interface for network settings.
 export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;
     enableTouchAppPreview: boolean;
@@ -170,17 +172,22 @@ export interface ProjectData {
     notes: string;
     ancillaryCosts: AncillaryCosts;
     productDatabase: Product[];
-    // FIX: Add optional infrastructure property to ProjectData.
     infrastructure?: ProjectInfrastructure;
+    budget?: number;
+    timeline?: string;
 }
 
 export interface ProjectSetupData {
     projectName: string;
     clientName: string;
     rooms: Omit<RoomData, 'id'>[];
+    budget?: number;
+    timeline?: string;
 }
 
-export type RoomWizardAnswers = Omit<RoomData, 'id' | 'functionalityStatement' | 'manuallyAddedEquipment' | 'systemDiagram'>;
+// FIX: The original type was too restrictive, omitting fields that are actually present on the object.
+// This new type only omits fields that are not part of the wizard's state.
+export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram'>;
 
 export interface DesignFeedbackItem {
     type: 'Warning' | 'Suggestion' | 'Opportunity' | 'Insight' | 'Financial';

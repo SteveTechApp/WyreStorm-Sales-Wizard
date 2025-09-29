@@ -1,0 +1,63 @@
+import { v4 as uuidv4 } from 'uuid';
+import { UserTemplate } from '../../utils/types.ts';
+
+export const CORPORATE_TEMPLATES: UserTemplate[] = [
+    {
+        templateId: uuidv4(),
+        templateName: 'Small Huddle Space (Silver)',
+        description: 'A simple, cost-effective setup for 2-4 people with wireless casting and a single display.',
+        vertical: 'Corporate',
+        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/corporate_huddle.jpg',
+        roomData: {
+            id: '',
+            roomName: 'Huddle Space',
+            roomType: 'Huddle Space',
+            designTier: 'Silver',
+            dimensions: { length: 4, width: 3, height: 2.7 },
+            maxParticipants: 4,
+            ioRequirements: [],
+            displayType: 'single',
+            displayCount: 1,
+            features: [
+                { name: 'Wireless Presentation', priority: 'must-have' },
+                { name: 'Video Conferencing', priority: 'nice-to-have' },
+            ],
+            functionalityStatement: 'A simple collaboration space for small teams. Users can connect via a single USB-C cable for charging and BYOM video conferencing, or cast wirelessly from any device. An all-in-one video bar provides audio and a wide-angle camera.',
+            manuallyAddedEquipment: [],
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking' },
+            audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'] },
+            technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)' },
+            budget: 7500,
+        },
+    },
+     {
+        templateId: uuidv4(),
+        templateName: 'Executive Boardroom (Gold)',
+        description: 'A high-performance system for a large boardroom with dual displays, advanced audio, and touch panel control.',
+        vertical: 'Corporate',
+        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/corporate_conference.jpg',
+        roomData: {
+            id: '',
+            roomName: 'Executive Boardroom',
+            roomType: 'Boardroom',
+            designTier: 'Gold',
+            dimensions: { length: 12, width: 6, height: 3 },
+            maxParticipants: 16,
+            ioRequirements: [],
+            displayType: 'dual_display',
+            displayCount: 2,
+            features: [
+                { name: 'Video Conferencing', priority: 'must-have' },
+                { name: 'Wireless Presentation', priority: 'must-have' },
+                { name: 'Speech Reinforcement', priority: 'must-have' },
+                { name: 'Multi-Display Support', priority: 'must-have' },
+            ],
+            functionalityStatement: 'A premium, fully-featured boardroom designed for executive meetings. It supports dual 4K displays and includes multiple connection points (HDMI/USB-C) at the table. A powerful presentation switcher handles all signals, including wireless casting. Ceiling microphones and speakers provide crystal-clear audio for all participants. The entire room is managed via a simple, intuitive touch panel.',
+            manuallyAddedEquipment: [],
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes' },
+            audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'video_conferencing', 'program_audio'] },
+            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C', 'DisplayPort'], controlSystem: 'Touch Panel' },
+            budget: 35000,
+        },
+    },
+];

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// FIX: Add file extension to satisfy module resolution
-import { useAppContext } from '../context/AppContext.tsx';
-import { SparklesIcon } from '../components/Icons.tsx';
-import Logo from '../components/Logo.tsx';
+import { useGenerationContext } from '../context/GenerationContext.tsx';
 
 const AgentInputForm: React.FC = () => {
     const [documentText, setDocumentText] = useState('');
-    const { handleAgentSubmit } = useAppContext();
+    const { handleAgentSubmit } = useGenerationContext();
     const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -16,48 +13,48 @@ const AgentInputForm: React.FC = () => {
         handleAgentSubmit(documentText, navigate);
     };
 
-    const handlePasteExample = () => {
-        setDocumentText(`CLIENT: Innovate Corp
-PROJECT: Boardroom Refresh
+    const loadSampleBrief = () => {
+        setDocumentText(`
+Client: Acme Corp
+Project: Boardroom Tech Refresh
 
 Hi team,
 
-We need to upgrade our main boardroom. It's about 10m x 7m and needs to accommodate 12 people.
-
-The main requirement is high-quality video conferencing (we use Zoom) and it needs to be super easy for guests to present from their laptops. A single USB-C cable solution would be ideal. We need a large, bright display, maybe 85" or bigger. Audio needs to be great for both local presentations and for people on the far end of a VC call.
-
-We'd also like a smaller huddle space for 4-6 people. This just needs a simple screen share capability, VC isn't a must-have for this one but would be nice.
-
-Our budget is flexible but we're looking for good value - something reliable that will last. Let me know what you can come up with.
+We need to upgrade our main boardroom. It seats 16 people. 
+The main requirement is to improve our video conferencing experience. We use Zoom primarily.
+We need a dual-display setup, probably 85-inch screens. 
+It's crucial that people can easily share content from their laptops, both Apple and Windows devices. A simple, one-cable connection like USB-C would be ideal. Wireless sharing is a nice-to-have.
+Audio is also a big problem right now; people on the far end can't hear everyone clearly. We need better microphones and speakers.
+The room should be controlled by a simple touch panel on the table.
+Our budget for this is around $25,000.
+We want a high-end, reliable 'Gold' tier solution.
 
 Thanks,
-Jane Doe
-Facilities Manager, Innovate Corp`);
+John Smith
+        `);
     };
 
     return (
-        <div className="bg-background-secondary p-8 rounded-lg shadow-xl w-full max-w-3xl animate-fade-in border border-border-color">
-            <div className="text-center mb-6">
-                <Logo />
-                <h1 className="text-2xl font-bold text-text-primary mt-4">AI Project Agent</h1>
-                <p className="text-text-secondary mt-1">Paste a client brief, email, or requirements document below.</p>
+        <div className="max-w-4xl mx-auto animate-fade-in-fast">
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Analyze Intel</h1>
+                <p className="text-lg text-text-secondary">Paste your client's RFQ, email, or field notes. The AI will parse the intel and build a sortie plan.</p>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="mfd-panel">
                 <textarea
                     value={documentText}
                     onChange={(e) => setDocumentText(e.target.value)}
-                    className="w-full h-64 p-3 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none resize-y"
-                    placeholder="Paste your document here..."
+                    placeholder="// PASTE INTEL HERE..."
+                    className="w-full h-80 p-4 border-2 border-border-color rounded-none bg-input-bg focus:outline-none focus:border-accent resize-y"
                 />
-                 <div className="text-right mt-2">
-                    <button type="button" onClick={handlePasteExample} className="text-sm text-primary hover:underline">
-                        Paste Example
+                <div className="mt-4 flex justify-between items-center">
+                    <button type="button" onClick={loadSampleBrief} className="text-sm font-medium text-accent hover:underline uppercase">
+                        Load Sample Intel
+                    </button>
+                    <button type="submit" className="btn btn-primary text-lg">
+                        Analyze & Build Sortie
                     </button>
                 </div>
-                <button type="submit" disabled={!documentText.trim()} className="w-full mt-4 bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-3 px-4 rounded-md disabled:bg-gray-400 flex items-center justify-center gap-2">
-                    <SparklesIcon className="h-5 w-5" />
-                    Analyze and Build Project
-                </button>
             </form>
         </div>
     );

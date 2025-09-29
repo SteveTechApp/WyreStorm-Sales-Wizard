@@ -1,40 +1,49 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, SetStateAction } from 'react';
 
-export const useHistoryState = <T>(initialState: T) => {
-    const [history, setHistory] = useState<T[]>([initialState]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+export const useHistoryState = <T>(initialState: T): {
+    state: T;
+    setState: (newState: SetStateAction<T>) => void;
+    undo: () => void;
+    redo: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
+} => {
+    const [state, _setState] = useState(initialState);
+    const history = useRef<T[]>([initialState]);
+    const pointer = useRef(0);
 
-    const state = history[currentIndex];
-
-    const setState = useCallback((newState: T | ((prevState: T) => T)) => {
-        const resolvedState = newState instanceof Function ? newState(history[currentIndex]) : newState;
+    const setState = useCallback((action: SetStateAction<T>) => {
+        const newState = action instanceof Function ? action(history.current[pointer.current]) : action;
         
-        // If the state is the same, do nothing to prevent unnecessary history entries.
-        if (JSON.stringify(resolvedState) === JSON.stringify(history[currentIndex])) {
-            return;
+        if (JSON.stringify(history.current[pointer.current]) !== JSON.stringify(newState)) {
+            const newHistory = history.current.slice(0, pointer.current + 1);
+            newHistory.push(newState);
+            history.current = newHistory;
+            pointer.current = history.current.length - 1;
+            _setState(newState);
         }
-
-        const newHistory = history.slice(0, currentIndex + 1);
-        newHistory.push(resolvedState);
-
-        setHistory(newHistory);
-        setCurrentIndex(newHistory.length - 1);
-    }, [currentIndex, history]);
+    }, []);
 
     const undo = useCallback(() => {
-        if (currentIndex > 0) {
-            setCurrentIndex(prevIndex => prevIndex - 1);
+        if (pointer.current > 0) {
+            pointer.current--;
+            _setState(history.current[pointer.current]);
         }
-    }, [currentIndex]);
+    }, []);
 
     const redo = useCallback(() => {
-        if (currentIndex < history.length - 1) {
-            setCurrentIndex(prevIndex => prevIndex + 1);
+        if (pointer.current < history.current.length - 1) {
+            pointer.current++;
+            _setState(history.current[pointer.current]);
         }
-    }, [currentIndex, history.length]);
+    }, []);
 
-    const canUndo = currentIndex > 0;
-    const canRedo = currentIndex < history.length - 1;
-
-    return { state, setState, undo, redo, canUndo, canRedo };
+    return {
+        state,
+        setState,
+        undo,
+        redo,
+        canUndo: pointer.current > 0,
+        canRedo: pointer.current < history.current.length - 1,
+    };
 };

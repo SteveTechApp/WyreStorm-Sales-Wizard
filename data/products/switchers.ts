@@ -1,4 +1,4 @@
-import { Product } from '../../utils/types';
+import { Product } from '../../utils/types.ts';
 
 export const SWITCHERS_PRESENTATION: Product[] = [
     {
@@ -7,6 +7,8 @@ export const SWITCHERS_PRESENTATION: Product[] = [
         category: 'Presentation Switcher',
         description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs, featuring auto-switching and wireless casting support via the included APO-DG2 dongle.',
         msrp: 600, dealerPrice: 400, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze'],
+        status: 'legacy',
+        legacyReason: 'This is a basic switcher. For more inputs or advanced features like dual-view, consider models like the SW-510-TX or SW-640L-TX-W.',
     },
     {
         sku: 'SW-0401-H2',

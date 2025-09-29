@@ -1,163 +1,181 @@
-// FIX: Import React to provide types like Dispatch and SetStateAction
-import React, { useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { NavigateFunction } from 'react-router-dom';
-// FIX: Add file extension to satisfy module resolution for types.ts
-import { ProjectData, UserProfile, UserTemplate, IncomingRequest, RoomData, Proposal } from '../utils/types.ts';
-import { useUserTemplates } from './useUserTemplates.ts';
-import { generateProposal } from '../services/proposalService.ts';
+import { useNavigate } from 'react-router-dom';
+import { useProjectContext } from '../context/ProjectContext.tsx';
+import { useUserContext } from '../context/UserContext.tsx';
+import { ProjectData, ProjectSetupData, RoomData, UserTemplate, ManuallyAddedEquipment } from '../utils/types.ts';
 import { analyzeRequirements } from '../services/projectAnalysisService.ts';
+import { designRoom, generateDiagram } from '../services/roomDesignerService.ts';
+import { generateProposal } from '../services/proposalService.ts';
 import { createNewRoom } from '../utils/utils.ts';
+import { v4 as uuidv4 } from 'uuid';
+import toast from 'react-hot-toast';
 import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
 
-const useProjectGeneration = (
-    userProfile: UserProfile | null,
-    setAppState: React.Dispatch<React.SetStateAction<string>>,
-    setError: React.Dispatch<React.SetStateAction<string | null>>,
-    setLoadingContext: React.Dispatch<React.SetStateAction<'template' | 'proposal' | null>>,
-    dispatchProjectAction: React.Dispatch<any>
-) => {
-    const { userTemplates, handleSaveTemplate, handleDeleteTemplate } = useUserTemplates();
+export const useProjectGeneration = () => {
+    // FIX: Destructured `getState` from the context to access the latest project state in async functions.
+    const { dispatchProjectAction, setAppState, setLoadingContext, getState } = useProjectContext();
+    const { userProfile } = useUserContext();
 
-    const handleGenerateProposal = useCallback(async (projectData: ProjectData, navigate: NavigateFunction) => {
-        if (!userProfile) {
-            alert("User profile is not available.");
-            return;
-        };
-        setLoadingContext('proposal');
+    const withLoading = async (context: 'template' | 'proposal' | 'design' | 'diagram' | 'default', action: () => Promise<void>) => {
         setAppState('generating');
-        setError(null);
+        setLoadingContext(context);
         try {
-            const proposalContent = await generateProposal(projectData, userProfile);
-            const newProposal: Proposal = {
-                ...proposalContent,
-                proposalId: uuidv4(),
-                version: (projectData.proposals?.length || 0) + 1,
-                createdAt: new Date().toISOString()
-            };
-
-            const updatedProject = { ...projectData, proposals: [...(projectData.proposals || []), newProposal] };
-            dispatchProjectAction({ type: 'UPDATE_PROJECT', payload: updatedProject });
-            navigate(`/proposal/${projectData.projectId}/${newProposal.proposalId}`);
-        } catch (e: any) {
-            console.error(e);
-            setError(`Failed to generate proposal: ${e.message}`);
+            await action();
+        } catch (error) {
+            console.error(`Error during generation context '${context}':`, error);
+            toast.error(error instanceof Error ? error.message : 'An unexpected error occurred.');
             setAppState('error');
         } finally {
-            setLoadingContext(null);
             setAppState('idle');
+            setLoadingContext('default');
         }
-    }, [userProfile, setAppState, setError, setLoadingContext, dispatchProjectAction]);
+    };
 
-    const handleAgentSubmit = useCallback(async (documentText: string, navigate: NavigateFunction) => {
-        if (!userProfile) {
-             alert("User profile is not available.");
-            return;
-        }
-        setLoadingContext('template');
-        setAppState('generating');
-        setError(null);
-        try {
-            const setupData = await analyzeRequirements(documentText, userProfile);
-            
-            const roomsWithDefaults: RoomData[] = setupData.rooms.map((room: any) => ({
-                ...createNewRoom(room.roomName),
-                ...room,
-                displayCount: room.displayCount || 1,
-                displayType: room.displayType || 'Display Not Specified',
-            }));
+    const handleAgentSubmit = async (documentText: string, navigate: ReturnType<typeof useNavigate>) => {
+        await withLoading('template', async () => {
+            const requirements = await analyzeRequirements(documentText, userProfile);
+            const newProject: ProjectData = {
+                projectId: uuidv4(),
+                projectName: requirements.projectName,
+                clientName: requirements.clientName,
+                lastSaved: new Date().toISOString(),
+                // FIX: Provided default values for required fields to satisfy the RoomData type, while allowing the AI-extracted data to override them.
+                rooms: requirements.rooms.map((roomStub, index) => ({
+                    ...createNewRoom(),
+                    id: uuidv4(),
+                    roomName: `Room ${index + 1}`,
+                    roomType: 'Other',
+                    designTier: 'Silver',
+                    ...roomStub
+                })),
+                proposals: [],
+                unitSystem: 'metric',
+                notes: `Generated from client brief:\n\n${documentText}`,
+                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
+                productDatabase: PRODUCT_DATABASE,
+            };
+            dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
+            toast.success('Project created from client brief!');
+            navigate(`/design/${newProject.projectId}`);
+        });
+    };
 
+    const handleProjectSetupSubmit = async (setupData: ProjectSetupData, navigate: ReturnType<typeof useNavigate>) => {
+       await withLoading('template', async () => {
             const newProject: ProjectData = {
                 projectId: uuidv4(),
                 projectName: setupData.projectName,
                 clientName: setupData.clientName,
                 lastSaved: new Date().toISOString(),
+                rooms: setupData.rooms.map(roomStub => ({
+                    ...createNewRoom(),
+                    id: uuidv4(),
+                    ...roomStub
+                })),
                 proposals: [],
-                unitSystem: userProfile.unitSystem,
-                notes: `Project generated from client brief on ${new Date().toLocaleDateString()}.`,
-                rooms: roomsWithDefaults,
+                unitSystem: 'metric',
+                notes: '',
+                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 productDatabase: PRODUCT_DATABASE,
-                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 }
+                budget: setupData.budget,
+                timeline: setupData.timeline,
+            };
+            dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
+            toast.success('Project created!');
+            navigate(`/design/${newProject.projectId}`);
+       });
+    };
+    
+    const handleStartFromTemplate = (template: UserTemplate, navigate: ReturnType<typeof useNavigate>) => {
+         withLoading('template', async () => {
+            const newProject: ProjectData = {
+                projectId: uuidv4(),
+                projectName: `${template.templateName} Project`,
+                clientName: 'New Client',
+                lastSaved: new Date().toISOString(),
+                rooms: [{...template.roomData, id: uuidv4()}],
+                proposals: [],
+                unitSystem: 'metric',
+                notes: `Started from template: ${template.templateName}`,
+                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
+                productDatabase: PRODUCT_DATABASE,
+            };
+            dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
+            toast.success(`Project started from "${template.templateName}" template!`);
+            navigate(`/design/${newProject.projectId}`);
+        });
+    }
+
+    const handleDesignRoom = async (roomId: string) => {
+        // FIX: Used the `getState` function from context to ensure the most recent project data is used, avoiding stale state issues in closures.
+        const project = getState().projectData;
+        if (!project) return;
+        const roomToDesign = project.rooms.find(r => r.id === roomId);
+        if (!roomToDesign) return;
+
+        await withLoading('design', async () => {
+            const result = await designRoom(roomToDesign, project.productDatabase);
+            const fullEquipment: ManuallyAddedEquipment[] = result.manuallyAddedEquipment.map(item => {
+                const product = project.productDatabase.find(p => p.sku === item.sku);
+                return {
+                    ...product!,
+                    quantity: item.quantity,
+                }
+            });
+
+            const updatedRoom: RoomData = {
+                ...roomToDesign,
+                functionalityStatement: result.functionalityStatement,
+                manuallyAddedEquipment: fullEquipment
             };
 
-            dispatchProjectAction({ type: 'LOAD_PROJECT', payload: newProject });
-            navigate(`/design/${newProject.projectId}`);
-
-        } catch (e: any) {
-            console.error(e);
-            setError(`Failed to analyze document: ${e.message}`);
-            setAppState('error');
-        } finally {
-            setLoadingContext(null);
-            setAppState('idle');
-        }
-    }, [userProfile, setAppState, setError, setLoadingContext, dispatchProjectAction]);
+            dispatchProjectAction({ type: 'UPDATE_ROOM', payload: updatedRoom });
+            toast.success(`AI has designed room: ${roomToDesign.roomName}`);
+        });
+    };
     
-    const handleStartFromTemplate = useCallback((templateName: string, navigate: NavigateFunction) => {
-        // This function seems to be a stub, redirecting to the setup page.
-        // It could be enhanced to pre-fill setup with template info.
-        navigate('/setup');
-    }, []);
-
-    const handleCreateProjectFromTemplate = useCallback((template: UserTemplate, navigate: NavigateFunction, projectDetails?: { projectName: string, clientName: string }) => {
-        if (!userProfile) {
-            alert("User profile is not available.");
+    const handleGenerateDiagram = async (roomId: string) => {
+        // FIX: Used the `getState` function from context to ensure the most recent project data is used.
+        const project = getState().projectData;
+        if (!project) return;
+        const roomToUpdate = project.rooms.find(r => r.id === roomId);
+        if (!roomToUpdate || roomToUpdate.manuallyAddedEquipment.length === 0) {
+            toast.error("Please design the room and add equipment before generating a diagram.");
             return;
         }
-        setLoadingContext('template');
-        setAppState('generating'); 
-        
-        setTimeout(() => {
-            try {
-                const baseProjectName = template.templateName.replace(/\s\((Bronze|Silver|Gold)\)$/, '');
-                // Deep copy room data to prevent mutation of the template
-                const newRoomData = JSON.parse(JSON.stringify(template.roomData));
-                newRoomData.id = uuidv4(); // Assign a new ID to the room
 
-                const newProject: ProjectData = {
-                    projectId: uuidv4(),
-                    projectName: projectDetails?.projectName || `${baseProjectName} Project`,
-                    clientName: projectDetails?.clientName || 'New Client',
-                    lastSaved: new Date().toISOString(),
-                    proposals: [],
-                    unitSystem: userProfile.unitSystem,
-                    notes: `Project started from template: ${template.templateName}`,
-                    rooms: [newRoomData],
-                    productDatabase: PRODUCT_DATABASE,
-                    ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 }
-                };
-                dispatchProjectAction({ type: 'LOAD_PROJECT', payload: newProject });
-                navigate(`/design/${newProject.projectId}`);
-            } catch (e: any) {
-                console.error("Failed to create project from template", e);
-                setError(`Failed to create project from template: ${e.message}`);
-                setAppState('error');
-            } finally {
-                 setLoadingContext(null);
-                 setAppState('idle');
-            }
-        }, 500);
-    }, [userProfile, setAppState, setError, setLoadingContext, dispatchProjectAction]);
+        await withLoading('diagram', async () => {
+            const diagram = await generateDiagram(roomToUpdate);
+            const updatedRoom: RoomData = { ...roomToUpdate, systemDiagram: diagram };
+            dispatchProjectAction({ type: 'UPDATE_ROOM', payload: updatedRoom });
+            toast.success(`System diagram generated for ${roomToUpdate.roomName}`);
+        });
+    };
 
-    const handleAcceptRequest = useCallback((request: IncomingRequest, navigate: NavigateFunction) => {
-        if (!userProfile) {
-            alert("User profile is not available.");
+    const handleGenerateProposal = async (projectData: ProjectData, navigate: ReturnType<typeof useNavigate>) => {
+        if (projectData.rooms.length === 0 || projectData.rooms.every(r => r.manuallyAddedEquipment.length === 0)) {
+            toast.error("Please add at least one room with equipment before generating a proposal.");
             return;
         }
-        handleAgentSubmit(`Client: ${request.clientName}\nRequirements: ${request.description}`, navigate);
-    }, [handleAgentSubmit, userProfile]);
-
+        await withLoading('proposal', async () => {
+            const generatedData = await generateProposal(projectData, userProfile);
+            const newProposal = {
+                ...generatedData,
+                proposalId: uuidv4(),
+                version: (projectData.proposals?.length || 0) + 1,
+                createdAt: new Date().toISOString(),
+            };
+            dispatchProjectAction({ type: 'ADD_PROPOSAL', payload: newProposal });
+            toast.success('Proposal generated!');
+            navigate(`/proposal/${projectData.projectId}/${newProposal.proposalId}`);
+        });
+    };
 
     return {
-        handleGenerateProposal,
         handleAgentSubmit,
-        userTemplates,
-        handleSaveTemplate,
-        handleDeleteTemplate,
+        handleProjectSetupSubmit,
         handleStartFromTemplate,
-        handleCreateProjectFromTemplate,
-        handleAcceptRequest,
+        handleDesignRoom,
+        handleGenerateDiagram,
+        handleGenerateProposal,
     };
 };
-
-export default useProjectGeneration;

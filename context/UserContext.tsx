@@ -1,41 +1,23 @@
-
-
-
-
 import React, { createContext, useContext, ReactNode } from 'react';
-// FIX: Add file extension to satisfy module resolution
-import { useUserProfile } from '../hooks/useUserProfile.ts';
-// FIX: Add file extension to satisfy module resolution for types.ts
-import { UserProfile } from '../utils/types.ts';
+import { useUserProfile } from '../hooks/useUserProfile';
 
-interface UserContextType {
-    userProfile: UserProfile | null;
-    handleUpdateProfile: (profile: UserProfile) => void;
-    isProfileModalOpen: boolean;
-    onOpenProfile: () => void;
-    onCloseProfile: () => void;
-}
+export type UserContextType = ReturnType<typeof useUserProfile>;
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const userProfileData = useUserProfile();
-    // The hook returns a non-nullable profile, but we'll allow null in the context type for flexibility.
-    const value = {
-      ...userProfileData,
-      userProfile: userProfileData.userProfile,
-    };
-    return (
-        <UserContext.Provider value={value}>
-            {children}
-        </UserContext.Provider>
-    );
+  const userProfileData = useUserProfile();
+  return (
+    <UserContext.Provider value={userProfileData}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUserContext = () => {
-    const context = useContext(UserContext);
-    if (context === undefined) {
-        throw new Error('useUserContext must be used within a UserProvider');
-    }
-    return context;
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUserContext must be used within a UserProvider');
+  }
+  return context;
 };

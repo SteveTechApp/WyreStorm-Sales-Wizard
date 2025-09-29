@@ -1,76 +1,65 @@
-import { useState, useCallback, useMemo } from 'react';
-import { RoomData, RoomWizardAnswers } from '../utils/types';
+import { useState, useEffect } from 'react';
+import { RoomData, RoomWizardAnswers } from '../utils/types.ts';
 import { createNewRoom } from '../utils/utils.ts';
-import StepBasicInfo from '../components/roomWizard/StepBasicInfo.tsx';
-import StepFeatures from '../components/roomWizard/StepFeatures.tsx';
-import StepTechnical from '../components/roomWizard/StepTechnical.tsx';
-import StepEnvironment from '../components/roomWizard/StepEnvironment.tsx';
-import StepBudget from '../components/roomWizard/StepBudget.tsx';
+import { v4 as uuidv4 } from 'uuid';
 
-const STEPS = [
-  { title: 'Basic Info', component: StepBasicInfo },
-  { title: 'Features', component: StepFeatures },
-  { title: 'Technical', component: StepTechnical },
-  { title: 'Environment', component: StepEnvironment },
-  { title: 'Budget', component: StepBudget },
-];
-
-interface UseRoomWizardProps {
-  onSave: (roomData: RoomData) => void;
-  onClose: () => void;
-}
-
-export const useRoomWizard = ({ onSave, onClose }: UseRoomWizardProps) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  
-  // Store the full initial RoomData object to preserve its generated ID.
-  const [initialRoom] = useState(() => createNewRoom(''));
-  // The wizard's 'answers' state is initialized from the full object.
-  const [answers, setAnswers] = useState<RoomWizardAnswers & { customRoomType?: string }>(initialRoom);
-
-  const handleNext = useCallback(() => {
-    setCurrentStep(s => Math.min(s + 1, STEPS.length - 1));
-  }, []);
-
-  const handlePrev = useCallback(() => {
-    setCurrentStep(s => Math.max(s - 1, 0));
-  }, []);
-  
-  const handleSave = useCallback(() => {
-    // FIX: The 'id' property was missing because the 'answers' state object is typed
-    // to Omit 'id'. We retrieve the 'id' from the initial full RoomData object
-    // created when the wizard was initialized.
-    const finalRoomData: RoomData = {
-      ...initialRoom,
-      ...answers,
-      roomType: answers.roomType === 'Other' ? answers.customRoomType || 'Custom' : answers.roomType,
-      functionalityStatement: '', 
-      manuallyAddedEquipment: [],
+const createInitialAnswers = (initialData: RoomData | null): RoomWizardAnswers => {
+    if (initialData) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, systemDiagram, ...rest } = initialData;
+        return rest;
+    }
+    const newRoomBase = createNewRoom();
+    return {
+        ...newRoomBase,
+        roomName: 'New Room',
+        roomType: 'Conference Room',
+        designTier: 'Silver',
     };
-    // Clean up temporary property before saving
-    delete (finalRoomData as any).customRoomType;
-    onSave(finalRoomData);
-    onClose();
-  }, [answers, onSave, onClose, initialRoom]);
+};
 
-  const isNextDisabled = useMemo(() => {
-    if (currentStep !== 0) return false;
-    const isRoomNameMissing = !answers.roomName.trim();
-    const isCustomRoomTypeMissing = answers.roomType === 'Other' && !answers.customRoomType?.trim();
-    return isRoomNameMissing || isCustomRoomTypeMissing;
-  }, [currentStep, answers.roomName, answers.roomType, answers.customRoomType]);
+const TOTAL_STEPS = 5; // Basic Info, Features, Environment, Technical, Budget
 
-  const CurrentStepComponent = STEPS[currentStep].component;
+export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: RoomData) => void) => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [answers, setAnswers] = useState<RoomWizardAnswers>(() => createInitialAnswers(initialData));
 
-  return {
-    currentStep,
-    totalSteps: STEPS.length,
-    answers,
-    setAnswers,
-    handleNext,
-    handlePrev,
-    handleSave,
-    isNextDisabled,
-    CurrentStepComponent,
-  };
+    useEffect(() => {
+        setAnswers(createInitialAnswers(initialData));
+    }, [initialData]);
+
+    const updateAnswers = (newAnswers: Partial<RoomWizardAnswers>) => {
+        setAnswers(prev => ({ ...prev, ...newAnswers }));
+    };
+
+    const handleNext = () => {
+        setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS - 1));
+    };
+
+    const handlePrev = () => {
+        setCurrentStep(prev => Math.max(prev - 1, 0));
+    };
+
+    const handleSave = () => {
+        const finalRoomData: RoomData = {
+            ...answers,
+            id: initialData?.id || uuidv4(),
+            systemDiagram: initialData?.systemDiagram,
+        };
+        onSave(finalRoomData);
+    };
+
+    const isFirstStep = currentStep === 0;
+    const isLastStep = currentStep === TOTAL_STEPS - 1;
+
+    return {
+        currentStep,
+        answers,
+        updateAnswers,
+        handleNext,
+        handlePrev,
+        handleSave,
+        isFirstStep,
+        isLastStep,
+    };
 };

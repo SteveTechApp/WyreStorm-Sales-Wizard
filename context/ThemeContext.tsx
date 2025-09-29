@@ -2,7 +2,8 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { useTheme } from '../hooks/useTheme.ts';
 import { ThemeName } from '../utils/types.ts';
 
-interface ThemeContextType {
+// FIX: Exported ThemeContextType
+export interface ThemeContextType {
     theme: ThemeName;
     handleSetTheme: (theme: ThemeName) => void;
 }

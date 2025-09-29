@@ -1,40 +1,42 @@
-import React from 'react';
-// FIX: Add file extension to satisfy module resolution
-import { useAppContext } from '../context/AppContext.tsx';
+import React, { useState } from 'react';
+import { useProjectContext } from '../context/ProjectContext.tsx';
+import ProductComparisonModal from './ProductComparisonModal.tsx';
 
-interface ComparisonTrayProps {
-  onCompare: () => void;
-}
+const ComparisonTray: React.FC = () => {
+  const { comparisonList, clearComparison, toggleComparison } = useProjectContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const ComparisonTray: React.FC<ComparisonTrayProps> = ({ onCompare }) => {
-  const { comparisonList, toggleComparison, clearComparison } = useAppContext();
-
-  if (comparisonList.length === 0) return null;
+  if (comparisonList.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background-secondary border-t border-border-color shadow-lg z-40 p-3 animate-fade-in-fast h-[72px]">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 h-full">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-          <span className="font-bold text-text-primary flex-shrink-0">Comparing:</span>
-          {comparisonList.map(product => (
-            <div key={product.sku} className="bg-card border border-border-color rounded-full py-1 px-3 flex items-center gap-2 text-sm flex-shrink-0">
-              <span className="text-text-secondary">{product.name}</span>
-              <button onClick={() => toggleComparison(product)} className="text-text-secondary/50 hover:text-destructive">&times;</button>
+    <>
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl z-40 animate-fade-in-up">
+        <div className="bg-background-secondary border-t border-x border-border-color rounded-t-lg shadow-2xl p-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <h4 className="font-bold">Compare Products ({comparisonList.length}/4)</h4>
+            <div className="flex gap-2">
+                {comparisonList.map(p => (
+                    <div key={p.sku} className="relative group bg-background rounded-md p-1 px-2 text-xs">
+                        {p.sku}
+                        <button onClick={() => toggleComparison(p)} className="absolute -top-1 -right-1 bg-destructive text-white rounded-full h-4 w-4 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100">&times;</button>
+                    </div>
+                ))}
             </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={clearComparison} className="text-sm font-medium text-text-secondary hover:text-destructive">Clear All</button>
-          <button 
-            onClick={onCompare} 
-            disabled={comparisonList.length < 2}
-            className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            Compare ({comparisonList.length})
-          </button>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={clearComparison} className="text-sm font-medium text-text-secondary hover:underline">Clear</button>
+            <button onClick={() => setIsModalOpen(true)} disabled={comparisonList.length < 2} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50">Compare</button>
+          </div>
         </div>
       </div>
-    </div>
+      <ProductComparisonModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        products={comparisonList}
+      />
+    </>
   );
 };
 

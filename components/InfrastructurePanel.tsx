@@ -3,8 +3,10 @@ import NetworkInfrastructurePanel from './NetworkInfrastructurePanel.tsx';
 
 const InfrastructurePanel: React.FC = () => {
     return (
-        <div className="space-y-6 max-w-3xl mx-auto">
+        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
+            <h3 className="font-bold text-lg mb-4 text-text-primary">Project Infrastructure</h3>
             <NetworkInfrastructurePanel />
+            {/* Other infrastructure panels could go here */}
         </div>
     );
 };

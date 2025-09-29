@@ -1,5 +1,8 @@
-// This component is a placeholder and is not used in the application.
-// The primary implementation is located in /components/training/QuizView.tsx.
-// This file can be safely deleted.
-const Quiz = () => null;
+import React from 'react';
+
+// This is a placeholder component.
+const Quiz: React.FC = () => {
+    return null;
+};
+
 export default Quiz;

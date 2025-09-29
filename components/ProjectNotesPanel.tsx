@@ -1,64 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useAppContext } from '../context/AppContext.tsx';
-
-// Simple debounce hook for auto-saving
-const useDebounce = <T,>(value: T, delay: number): T => {
-    const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, delay]);
-
-    return debouncedValue;
-};
-
+import React, { useState } from 'react';
+import { useProjectContext } from '../context/ProjectContext.tsx';
+import ProjectNotesModal from './ProjectNotesModal.tsx';
 
 const ProjectNotesPanel: React.FC = () => {
-    const { projectData, dispatchProjectAction } = useAppContext();
-    const [notes, setNotes] = useState(projectData?.notes || '');
-    const debouncedNotes = useDebounce(notes, 500);
+    const { projectData } = useProjectContext();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        setNotes(projectData?.notes || '');
-    }, [projectData?.notes, projectData?.projectId]);
-
-    const handleSave = useCallback(() => {
-        if (projectData && notes !== projectData.notes) {
-            dispatchProjectAction({ type: 'UPDATE_NOTES', payload: notes });
-        }
-    }, [dispatchProjectAction, notes, projectData]);
-    
-    useEffect(() => {
-        if (debouncedNotes !== projectData?.notes) {
-            handleSave();
-        }
-    }, [debouncedNotes, projectData?.notes, handleSave]);
-
-    if (!projectData) return null;
+    const notesPreview = projectData?.notes ? `${projectData.notes.substring(0, 200)}...` : 'No project notes yet.';
 
     return (
         <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
-            <h2 className="text-xl font-bold text-text-primary font-display mb-3">
-                Project Notes
-            </h2>
-            <p className="text-sm text-text-secondary mb-3">
-                Use this space for internal notes, client feedback, or site survey details. Your notes are saved automatically.
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="font-bold text-lg text-text-primary">Project Notes</h3>
+                <button onClick={() => setIsModalOpen(true)} className="text-sm font-semibold text-accent hover:underline">
+                    Edit
+                </button>
+            </div>
+            <p className="text-sm text-text-secondary flex-grow whitespace-pre-wrap">
+                {notesPreview}
             </p>
-            <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="flex-grow w-full p-3 border border-border-color rounded-md bg-input-bg focus:ring-1 focus:ring-primary focus:outline-none resize-none"
-                placeholder="Start typing your notes here..."
+             <ProjectNotesModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
             />
         </div>
     );
 };
-
 
 export default ProjectNotesPanel;

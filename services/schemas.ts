@@ -1,250 +1,195 @@
 import { Type } from '@google/genai';
+import { z } from 'zod';
 
-export const ALL_SCHEMAS = {
-    ROOM_DESIGNER_SCHEMA: {
+export const ROOM_DESIGN_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    functionalityStatement: { type: Type.STRING },
+    manuallyAddedEquipment: {
+      type: Type.ARRAY,
+      items: {
         type: Type.OBJECT,
         properties: {
-            functionalityStatement: { type: Type.STRING },
-            manuallyAddedEquipment: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        sku: { type: Type.STRING },
-                        quantity: { type: Type.INTEGER },
-                    },
-                    required: ['sku', 'quantity'],
-                },
-            },
+          sku: { type: Type.STRING },
+          quantity: { type: Type.INTEGER },
         },
-        required: ['functionalityStatement', 'manuallyAddedEquipment'],
+        required: ['sku', 'quantity'],
+      },
     },
-    ROOM_CONNECTIVITY_SCHEMA: {
+  },
+  required: ['functionalityStatement', 'manuallyAddedEquipment'],
+};
+
+export const SYSTEM_DIAGRAM_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    nodes: {
+      type: Type.ARRAY,
+      items: {
         type: Type.OBJECT,
         properties: {
-            nodes: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        id: { type: Type.STRING },
-                        label: { type: Type.STRING },
-                        type: { type: Type.STRING },
-                    },
-                    required: ['id', 'label', 'type'],
-                },
-            },
-            edges: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        from: { type: Type.STRING },
-                        to: { type: Type.STRING },
-                        label: { type: Type.STRING },
-                        type: { type: Type.STRING },
-                    },
-                    required: ['from', 'to', 'label', 'type'],
-                },
-            },
+          id: { type: Type.STRING },
+          label: { type: Type.STRING },
+          type: { type: Type.STRING },
         },
-        required: ['nodes', 'edges'],
+        required: ['id', 'label', 'type'],
+      },
     },
-    PROJECT_INSIGHTS_SCHEMA: {
+    edges: {
+      type: Type.ARRAY,
+      items: {
         type: Type.OBJECT,
         properties: {
-            feedback: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        type: { type: Type.STRING, enum: ['Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial'] },
-                        text: { type: Type.STRING },
-                    },
-                    required: ['type', 'text'],
-                },
-            },
+          from: { type: Type.STRING },
+          to: { type: Type.STRING },
+          label: { type: Type.STRING },
+          type: { type: Type.STRING },
         },
-        required: ['feedback'],
+        required: ['from', 'to', 'label', 'type'],
+      },
     },
-    REQUIREMENT_ANALYSIS_SCHEMA: {
+  },
+  required: ['nodes', 'edges'],
+};
+
+export const PROPOSAL_GENERATION_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    executiveSummary: { type: Type.STRING },
+    scopeOfWork: { type: Type.STRING },
+    installationPlan: {
+      type: Type.ARRAY,
+      items: {
         type: Type.OBJECT,
         properties: {
-            projectName: { type: Type.STRING },
-            clientName: { type: Type.STRING },
-            rooms: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        roomName: { type: Type.STRING },
-                        roomType: { type: Type.STRING },
-                        designTier: { type: Type.STRING, enum: ['Bronze', 'Silver', 'Gold'] },
-                        maxParticipants: { type: Type.INTEGER },
-                        displayType: { type: Type.STRING },
-                        displayCount: { type: Type.INTEGER },
-                        features: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    name: { type: Type.STRING },
-                                    priority: { type: Type.STRING, enum: ['must-have', 'nice-to-have'] },
-                                },
-                                required: ['name', 'priority'],
-                            },
-                        },
-                        functionalityStatement: { type: Type.STRING },
-                    },
-                    required: ['roomName', 'roomType', 'designTier', 'maxParticipants', 'displayType', 'displayCount', 'features', 'functionalityStatement'],
-                },
-            },
+          phase: { type: Type.STRING },
+          tasks: { type: Type.ARRAY, items: { type: Type.STRING } },
         },
-        required: ['projectName', 'clientName', 'rooms'],
+        required: ['phase', 'tasks'],
+      },
     },
-    PROPOSAL_GENERATION_SCHEMA: {
+     suggestedImprovements: {
+      type: Type.ARRAY,
+      items: {
         type: Type.OBJECT,
         properties: {
-            executiveSummary: { type: Type.STRING },
-            scopeOfWork: { type: Type.STRING },
-            systemDiagram: {
+            roomName: { type: Type.STRING },
+            improvement: { type: Type.STRING },
+            additionalCost: { type: Type.NUMBER },
+        },
+        required: ['roomName', 'improvement', 'additionalCost'],
+      },
+    }
+  },
+  required: ['executiveSummary', 'scopeOfWork', 'installationPlan'],
+};
+
+export const PROPOSAL_GENERATION_ZOD_SCHEMA = z.object({
+  executiveSummary: z.string(),
+  scopeOfWork: z.string(),
+  installationPlan: z.array(z.object({
+    phase: z.string(),
+    tasks: z.array(z.string()),
+  })),
+  suggestedImprovements: z.optional(z.array(z.object({
+    roomName: z.string(),
+    improvement: z.string(),
+    additionalCost: z.number(),
+  }))),
+});
+
+export const PROJECT_INSIGHTS_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        feedback: {
+            type: Type.ARRAY,
+            items: {
                 type: Type.OBJECT,
                 properties: {
-                    nodes: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.OBJECT,
-                            properties: {
-                                id: { type: Type.STRING },
-                                label: { type: Type.STRING },
-                                type: { type: Type.STRING },
-                            },
-                            required: ['id', 'label', 'type'],
-                        },
-                    },
-                    edges: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.OBJECT,
-                            properties: {
-                                from: { type: Type.STRING },
-                                to: { type: Type.STRING },
-                                label: { type: Type.STRING },
-                                type: { type: Type.STRING },
-                            },
-                            required: ['from', 'to', 'label', 'type'],
-                        },
-                    },
+                    type: { type: Type.STRING, enum: ['Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial'] },
+                    text: { type: Type.STRING },
                 },
-                required: ['nodes', 'edges'],
+                required: ['type', 'text'],
             },
-            equipmentList: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        sku: { type: Type.STRING },
-                        name: { type: Type.STRING },
-                        quantity: { type: Type.INTEGER },
-                    },
-                    required: ['sku', 'name', 'quantity'],
-                },
-            },
-            installationPlan: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        phase: { type: Type.STRING },
-                        tasks: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                        },
-                    },
-                    required: ['phase', 'tasks'],
-                },
-            },
-            pricing: {
+        },
+    },
+    required: ['feedback'],
+};
+
+export const ROOM_REVIEW_SCHEMA = PROJECT_INSIGHTS_SCHEMA;
+
+export const REQUIREMENTS_ANALYSIS_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    projectName: { type: Type.STRING },
+    clientName: { type: Type.STRING },
+    rooms: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          roomName: { type: Type.STRING },
+          roomType: { type: Type.STRING },
+          designTier: { type: Type.STRING, enum: ['Bronze', 'Silver', 'Gold'] },
+          // other fields from RoomData can be added here if needed
+        },
+        required: ['roomName', 'roomType', 'designTier'],
+      },
+    },
+  },
+  required: ['projectName', 'clientName', 'rooms'],
+};
+
+export const ANCILLARY_COSTS_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        cables: { type: Type.NUMBER },
+        connectors: { type: Type.NUMBER },
+        containment: { type: Type.NUMBER },
+        fixings: { type: Type.NUMBER },
+        materials: { type: Type.NUMBER },
+    },
+    required: ['cables', 'connectors', 'containment', 'fixings', 'materials'],
+};
+
+export const PRODUCT_FINDER_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        skus: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+        },
+    },
+    required: ['skus'],
+};
+
+export const RELATED_PRODUCTS_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        alternatives: {
+            type: Type.ARRAY,
+            items: {
                 type: Type.OBJECT,
                 properties: {
-                    hardwareTotal: { type: Type.NUMBER },
-                    laborTotal: { type: Type.NUMBER },
-                    ancillaryTotal: { type: Type.NUMBER },
-                    grandTotal: { type: Type.NUMBER },
+                    sku: { type: Type.STRING },
+                    name: { type: Type.STRING },
+                    reason: { type: Type.STRING },
                 },
-                required: ['hardwareTotal', 'laborTotal', 'ancillaryTotal', 'grandTotal'],
-            },
-            suggestedImprovements: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        roomName: { type: Type.STRING },
-                        improvement: { type: Type.STRING },
-                        additionalCost: { type: Type.NUMBER },
-                    },
-                    required: ['roomName', 'improvement', 'additionalCost'],
-                },
+                required: ['sku', 'name', 'reason'],
             },
         },
-        required: ['executiveSummary', 'scopeOfWork', 'systemDiagram', 'equipmentList', 'installationPlan', 'pricing'],
-    },
-    ANCILLARY_COSTS_SCHEMA: {
-        type: Type.OBJECT,
-        properties: {
-            cables: { type: Type.NUMBER },
-            connectors: { type: Type.NUMBER },
-            containment: { type: Type.NUMBER },
-            fixings: { type: Type.NUMBER },
-            materials: { type: Type.NUMBER },
-        },
-        required: ['cables', 'connectors', 'containment', 'fixings', 'materials'],
-    },
-     PRODUCT_FINDER_SCHEMA: {
-        type: Type.OBJECT,
-        properties: {
-            products: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        sku: { type: Type.STRING },
-                        reason: { type: Type.STRING },
-                    },
-                    required: ['sku', 'reason'],
+        accessories: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    sku: { type: Type.STRING },
+                    name: { type: Type.STRING },
+                    reason: { type: Type.STRING },
                 },
+                required: ['sku', 'name', 'reason'],
             },
         },
-        required: ['products'],
     },
-    RELATED_PRODUCTS_SCHEMA: {
-        type: Type.OBJECT,
-        properties: {
-            alternatives: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        sku: { type: Type.STRING },
-                        name: { type: Type.STRING },
-                        reason: { type: Type.STRING },
-                    },
-                    required: ['sku', 'name', 'reason'],
-                },
-            },
-            accessories: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        sku: { type: Type.STRING },
-                        name: { type: Type.STRING },
-                        reason: { type: Type.STRING },
-                    },
-                    required: ['sku', 'name', 'reason'],
-                },
-            },
-        },
-        required: ['alternatives', 'accessories'],
-    },
+    required: ['alternatives', 'accessories'],
 };

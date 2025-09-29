@@ -1,31 +1,29 @@
 import React from 'react';
-// FIX: Add file extension to satisfy module resolution
-import { useAppContext } from '../context/AppContext.tsx';
-import { MagnifyingGlassPlusIcon } from './Icons';
-
-const ZOOM_LEVELS = [1, 1.25, 1.5, 2];
+import { useUserContext } from '../context/UserContext.tsx';
 
 const ZoomControlFAB: React.FC = () => {
-    const { userProfile, handleUpdateProfile } = useAppContext();
+    const { userProfile, updateUserProfile } = useUserContext();
 
-    if (!userProfile) return null;
-
-    const handleZoomClick = () => {
-        const currentZoomIndex = ZOOM_LEVELS.indexOf(userProfile.zoomLevel);
-        const nextZoomIndex = (currentZoomIndex + 1) % ZOOM_LEVELS.length;
-        const nextZoomLevel = ZOOM_LEVELS[nextZoomIndex];
-        handleUpdateProfile({ ...userProfile, zoomLevel: nextZoomLevel });
+    const handleZoom = (direction: 'in' | 'out' | 'reset') => {
+        let newZoom = userProfile.zoomLevel;
+        if (direction === 'in') {
+            newZoom = Math.min(200, newZoom + 10);
+        } else if (direction === 'out') {
+            newZoom = Math.max(50, newZoom - 10);
+        } else {
+            newZoom = 100;
+        }
+        updateUserProfile({ ...userProfile, zoomLevel: newZoom });
+        // You would typically apply this zoom level to a specific container's transform: scale property.
+        // For this example, we'll just store it.
     };
 
     return (
-        <button
-            onClick={handleZoomClick}
-            title={`Set text size to ${Math.round(userProfile.zoomLevel * 100)}%`}
-            className="fixed bottom-24 right-6 bg-background-secondary hover:bg-border-color text-text-primary rounded-full p-3 shadow-lg z-40 border border-border-color flex items-center justify-center"
-        >
-            <MagnifyingGlassPlusIcon className="h-5 w-5" />
-            <span className="text-xs font-semibold ml-1">{Math.round(userProfile.zoomLevel * 100)}%</span>
-        </button>
+        <div className="fixed bottom-20 right-6 z-40 flex flex-col gap-2">
+            <button onClick={() => handleZoom('in')} className="bg-background-secondary rounded-full p-2 shadow-lg hover:bg-border-color">+</button>
+            <button onClick={() => handleZoom('reset')} className="bg-background-secondary rounded-full p-2 shadow-lg hover:bg-border-color text-xs">{userProfile.zoomLevel}%</button>
+            <button onClick={() => handleZoom('out')} className="bg-background-secondary rounded-full p-2 shadow-lg hover:bg-border-color">-</button>
+        </div>
     );
 };
 

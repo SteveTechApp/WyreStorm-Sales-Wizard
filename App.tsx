@@ -1,42 +1,35 @@
-
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import AppLayout from './components/AppLayout.tsx';
 import WelcomeScreen from './pages/WelcomeScreen.tsx';
-import AgentInputForm from './pages/AgentInputForm.tsx';
 import ProjectSetupScreen from './pages/ProjectSetupScreen.tsx';
-// FIX: Add file extension to satisfy module resolution for DesignCoPilot.tsx.
+import AgentInputForm from './pages/AgentInputForm.tsx';
 import DesignCoPilot from './pages/DesignCoPilot.tsx';
 import ProposalDisplay from './pages/ProposalDisplay.tsx';
-// FIX: Add file extension to satisfy module resolution for TrainingPage.tsx
 import TrainingPage from './pages/TrainingPage.tsx';
-// FIX: Add file extension to satisfy module resolution
-import { useAppContext } from './context/AppContext.tsx';
-import LoadingSpinner from './components/LoadingSpinner.tsx';
+import NotFoundPage from './pages/NotFoundPage.tsx';
+import { useProjectContext } from './context/ProjectContext.tsx';
+import ContextualLoadingUI from './components/loading/ContextualLoadingUI.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 
-const App: React.FC = () => {
-    const { appState, loadingContext } = useAppContext();
+export default function App() {
+    const { appState } = useProjectContext();
+    const isGenerating = appState === 'generating';
 
     return (
-        <Router>
-            {appState === 'generating' && (
-                <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-[100]">
-                    <LoadingSpinner context={loadingContext} />
-                </div>
-            )}
+        <ErrorBoundary>
             <AppLayout>
                 <Routes>
                     <Route path="/" element={<WelcomeScreen />} />
-                    <Route path="/agent" element={<div className="flex-grow flex items-center justify-center p-4"><AgentInputForm /></div>} />
-                    <Route path="/setup" element={<div className="flex-grow flex items-center justify-center p-4"><ProjectSetupScreen /></div>} />
+                    <Route path="/setup" element={<ProjectSetupScreen />} />
+                    <Route path="/agent" element={<AgentInputForm />} />
                     <Route path="/design/:projectId" element={<DesignCoPilot />} />
                     <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
                     <Route path="/training" element={<TrainingPage />} />
-                    <Route path="*" element={<Navigate to="/" />} />
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </AppLayout>
-        </Router>
+            {isGenerating && <ContextualLoadingUI />}
+        </ErrorBoundary>
     );
-};
-
-export default App;
+}

@@ -1,33 +1,50 @@
-import { GoogleGenAI } from '@google/genai';
-// FIX: Add file extension to satisfy module resolution for types.ts
+import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
+import { TECHNICAL_DATABASE } from '../data/technicalDatabase.ts';
 import { UserProfile } from '../utils/types.ts';
 import { getLocalizationInstructions } from './localizationService.ts';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-export const getQuickAnswer = async (query: string, userProfile: UserProfile | null): Promise<{ answer: string; sources: any[] }> => {
-    const localizationInstruction = getLocalizationInstructions(userProfile);
+/**
+ * Asks the AI a technical question using the WyreStorm knowledge base.
+ * Injects structured localization instructions based on the user's profile.
+ * @param query The user's technical question.
+ * @param userProfile The user's profile, for language/style enforcement.
+ * @returns A concise AI answer as a string.
+ */
+export const askQuickQuestion = async (
+  query: string,
+  userProfile: UserProfile | null
+): Promise<string> => {
+    if (!process.env.API_KEY) {
+        console.error("API_KEY is not set in environment variables.");
+        throw new Error("The application is not configured correctly. Please contact support.");
+    }
+
+    const localizationInstructions = getLocalizationInstructions(userProfile);
 
     const prompt = `
-        You are an expert AV systems designer specializing in WyreStorm products. Answer the user query based on your knowledge and Google Search. Prioritize WyreStorm website info. Keep the answer concise.
-        CRITICAL RULE: ${localizationInstruction}
-        Query: "${query}"
-    `;
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: { tools: [{ googleSearch: {} }] },
-    });
-    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-    return { answer: response.text, sources };
-};
+${localizationInstructions}
 
-export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
-    if (!text) return '';
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `Translate the following text into ${targetLanguage}. Do not add any commentary or preamble, just return the translated text:\n\n---\n\n${text}`,
-        config: { temperature: 0.1 }
-    });
-    return response.text;
+You are a helpful AI assistant for WyreStorm, a professional AV manufacturer. Your instructions are to answer the user's question based *only* on the information in the KNOWLEDGE BASE provided below. If the answer is not in the knowledge base, you must respond with the exact phrase: "I don't have information on that topic." Your answers should be concise, to the point, and use markdown for formatting if it helps clarity.
+
+--- KNOWLEDGE BASE ---
+${TECHNICAL_DATABASE}
+---
+
+User Question: "${query}"
+
+Answer:
+`;
+
+    try {
+        const response: GenerateContentResponse = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+        return response.text;
+    } catch (error) {
+        console.error("Error asking quick question:", error);
+        throw new Error("Failed to get an answer from the AI assistant.");
+    }
 };

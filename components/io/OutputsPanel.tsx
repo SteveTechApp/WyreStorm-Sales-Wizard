@@ -1,57 +1,26 @@
-import React, { useState } from 'react';
-import { RoomData, Product } from '../../utils/types';
-import IoPanel from './IoPanel';
-import IoDeviceCard from './IoDeviceCard';
-import ProductFinderModal from '../ProductFinderModal';
-// FIX: Remove non-existent ArrowUpTrayIcon from import.
-import { TvIcon } from './io-icons';
+import React from 'react';
+// FIX: Use specific context hook instead of general useAppContext
+import { useProjectContext } from '../../context/ProjectContext.tsx';
+import IoDeviceCard from './IoDeviceCard.tsx';
 
+const OutputsPanel: React.FC = () => {
+    // FIX: Destructure from the correct, specific context
+    const { projectData, activeRoomId } = useProjectContext();
+    const room = projectData?.rooms.find(r => r.id === activeRoomId);
+    const outputs = room?.ioRequirements.filter(io => io.type === 'output') || [];
 
-interface OutputsPanelProps {
-  room: RoomData;
-  onAttemptAddProduct: (product: Product) => void;
-}
-
-const OUTPUT_CATEGORIES = ['Display', 'Projector', 'AVoIP Decoder', 'Amplifier', 'Video Processor', 'Extender'];
-
-const OutputsPanel: React.FC<OutputsPanelProps> = ({ room, onAttemptAddProduct }) => {
-  const [isProductFinderOpen, setIsProductFinderOpen] = useState(false);
-  const outputDevices = room.manuallyAddedEquipment.filter(p => OUTPUT_CATEGORIES.includes(p.category));
-
-  const handleSelectProduct = (product: Product) => {
-    onAttemptAddProduct(product);
-    setIsProductFinderOpen(false);
-  };
-
-  return (
-    <>
-        <IoPanel 
-            title="Outputs & Displays" 
-            Icon={TvIcon}
-            onAdd={() => setIsProductFinderOpen(true)}
-            addLabel="Add Output"
-        >
-            {outputDevices.length > 0 ? (
-                outputDevices.map(item => (
-                    <IoDeviceCard 
-                        key={item.sku} 
-                        room={room} 
-                        item={item} 
-                        attributes={['mountingType']}
-                        onAttemptAddProduct={onAttemptAddProduct}
-                    />
-                ))
-            ) : (
-                <p className="text-center text-text-secondary py-4 text-sm">No output devices added.</p>
-            )}
-        </IoPanel>
-        <ProductFinderModal 
-            isOpen={isProductFinderOpen} 
-            onClose={() => setIsProductFinderOpen(false)} 
-            onSelectProduct={handleSelectProduct} 
-        />
-    </>
-  );
+    return (
+        <div className="p-4 bg-background-secondary rounded-lg border border-border-color">
+            <h3 className="font-bold text-lg mb-4">Outputs</h3>
+            <div className="space-y-3">
+                {outputs.length > 0 ? (
+                    outputs.map(output => <IoDeviceCard key={output.id} point={output} />)
+                ) : (
+                    <p className="text-sm text-text-secondary text-center py-4">No outputs defined for this room.</p>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default OutputsPanel;

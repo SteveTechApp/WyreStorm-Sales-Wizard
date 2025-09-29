@@ -1,48 +1,37 @@
 import React from 'react';
-import { RoomWizardAnswers } from '../../utils/types';
-// FIX: Correct relative path and add file extension to satisfy module resolution
-import { useAppContext } from '../../context/AppContext.tsx';
+import { RoomWizardAnswers } from '../../utils/types.ts';
+import { useUserContext } from '../../context/UserContext.tsx';
 
-interface StepProps {
-    answers: RoomWizardAnswers;
-    setAnswers: React.Dispatch<React.SetStateAction<RoomWizardAnswers & { customRoomType?: string }>>;
+interface StepBudgetProps {
+  answers: RoomWizardAnswers;
+  updateAnswers: (newAnswers: Partial<RoomWizardAnswers>) => void;
 }
 
-const StepBudget: React.FC<StepProps> = ({ answers, setAnswers }) => {
-    const { userProfile } = useAppContext();
-    const currencySymbol = userProfile?.currency === 'USD' ? '$' : userProfile?.currency === 'EUR' ? '€' : '£';
-    
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAnswers(prev => ({ ...prev, budget: parseFloat(e.target.value) || 0 }));
-    };
+const StepBudget: React.FC<StepBudgetProps> = ({ answers, updateAnswers }) => {
+  const { userProfile } = useUserContext();
 
-    return (
-        <section className="animate-fade-in-fast space-y-6">
-            <h3 className="font-semibold text-lg text-gray-700">Budget (Optional)</h3>
-            <p className="text-sm text-gray-500">
-                Providing an approximate hardware budget helps the AI select appropriately priced equipment for the chosen design tier.
-            </p>
-            <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-700">
-                    Target Hardware Budget ({userProfile?.currency})
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">{currencySymbol}</span>
-                    </div>
-                    <input
-                        type="number"
-                        name="budget"
-                        id="budget"
-                        className="focus:ring-primary focus:border-primary block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="0.00"
-                        value={answers.budget || ''}
-                        onChange={handleChange}
-                    />
-                </div>
-            </div>
-        </section>
-    );
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-4 text-text-primary">Budget</h2>
+      <p className="text-text-secondary mb-6">Specify the target budget for this room's equipment and installation. This helps the AI select appropriate products.</p>
+      <div>
+        <label htmlFor="budget" className="block text-sm font-medium text-text-secondary">Target Budget ({userProfile.currency})</label>
+        <div className="relative mt-1">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <span className="text-gray-500 sm:text-sm">{userProfile.currency === 'GBP' ? '£' : userProfile.currency === 'USD' ? '$' : '€'}</span>
+          </div>
+          <input
+            type="number"
+            id="budget"
+            value={answers.budget}
+            onChange={(e) => updateAnswers({ budget: Number(e.target.value) })}
+            className="w-full p-2 pl-7 border rounded-md bg-input-bg"
+            placeholder="5000"
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default StepBudget;

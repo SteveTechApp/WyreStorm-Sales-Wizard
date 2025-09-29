@@ -1,38 +1,52 @@
 import React from 'react';
 import { IOPoint } from '../../utils/types.ts';
-import { TrashIcon, PencilIcon, DuplicateIcon } from '../Icons.tsx';
 
 interface IOPointEditorProps {
-    point: IOPoint;
-    unit: 'm' | 'ft';
-    onEdit: (id: string) => void;
+    points: IOPoint[];
+    onAdd: (type: 'input' | 'output') => void;
+    onEdit: (point: IOPoint) => void;
     onRemove: (id: string) => void;
-    onDuplicate: (id: string) => void;
 }
 
-const IOPointEditor: React.FC<IOPointEditorProps> = ({ point, unit, onEdit, onRemove, onDuplicate }) => {
-    const displayDetails = [
-        point.displayType && point.displayType !== 'single' ? point.displayType.replace(/_/g, ' ') : null,
-        point.connectionType,
-        point.distributionType,
-        `${point.distance}${unit}`
-    ].filter(Boolean).join(' | ');
+const IOPointEditor: React.FC<IOPointEditorProps> = ({ points, onAdd, onEdit, onRemove }) => {
+    const inputs = points.filter(p => p.type === 'input');
+    const outputs = points.filter(p => p.type === 'output');
 
     return (
-        <div className="flex items-center gap-3 p-2 bg-background/50 rounded-lg border border-border-color/50 hover:border-border-color group animate-fade-in-fast">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-sm">
-                {point.quantity}x
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold">Inputs</h3>
+                    <button onClick={() => onAdd('input')} className="text-sm font-semibold text-accent">+ Add Input</button>
+                </div>
+                <div className="space-y-2 p-2 bg-background rounded-md border">
+                    {inputs.length > 0 ? inputs.map(p => (
+                        <div key={p.id} className="flex justify-between items-center p-2 bg-background-secondary rounded">
+                            <span>{p.quantity}x {p.name}</span>
+                            <div className="flex gap-2">
+                                <button onClick={() => onEdit(p)} className="text-xs">Edit</button>
+                                <button onClick={() => onRemove(p.id)} className="text-xs text-destructive">Del</button>
+                            </div>
+                        </div>
+                    )) : <p className="text-xs text-text-secondary text-center p-2">No inputs defined.</p>}
+                </div>
             </div>
-            <div className="flex-grow min-w-0">
-                <p className="font-semibold text-text-primary truncate">{point.name}</p>
-                <p className="text-xs text-text-secondary capitalize truncate">
-                    {displayDetails}
-                </p>
-            </div>
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                <button type="button" onClick={() => onDuplicate(point.id)} className="p-2 text-text-secondary hover:text-primary" title="Duplicate"><DuplicateIcon className="h-4 w-4" /></button>
-                <button type="button" onClick={() => onEdit(point.id)} className="p-2 text-text-secondary hover:text-primary" title="Edit"><PencilIcon className="h-4 w-4" /></button>
-                <button type="button" onClick={() => onRemove(point.id)} className="p-2 text-text-secondary hover:text-destructive" title="Remove"><TrashIcon className="h-4 w-4" /></button>
+             <div>
+                <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold">Outputs</h3>
+                    <button onClick={() => onAdd('output')} className="text-sm font-semibold text-accent">+ Add Output</button>
+                </div>
+                <div className="space-y-2 p-2 bg-background rounded-md border">
+                     {outputs.length > 0 ? outputs.map(p => (
+                        <div key={p.id} className="flex justify-between items-center p-2 bg-background-secondary rounded">
+                            <span>{p.quantity}x {p.name}</span>
+                            <div className="flex gap-2">
+                                <button onClick={() => onEdit(p)} className="text-xs">Edit</button>
+                                <button onClick={() => onRemove(p.id)} className="text-xs text-destructive">Del</button>
+                            </div>
+                        </div>
+                    )) : <p className="text-xs text-text-secondary text-center p-2">No outputs defined.</p>}
+                </div>
             </div>
         </div>
     );

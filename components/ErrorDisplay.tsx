@@ -1,22 +1,28 @@
 import React from 'react';
 
 interface ErrorDisplayProps {
-  error: string | null;
-  onAcknowledge: () => void;
-  acknowledgeButtonText: string;
+  message: string;
+  onRetry?: () => void;
 }
 
-const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error, onAcknowledge, acknowledgeButtonText }) => {
+const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ message, onRetry }) => {
   return (
-    <div className="text-center p-8 bg-white rounded-lg border border-red-200 shadow-lg w-full max-w-2xl mx-auto animate-fade-in">
-      <h2 className="text-2xl font-bold text-red-600 mb-3">An Error Occurred</h2>
-      <p className="text-gray-600 mb-6">{error}</p>
-      <button 
-        onClick={onAcknowledge} 
-        className="bg-[#008A3A] hover:bg-[#00732f] text-white font-bold py-2 px-6 rounded-lg"
-      >
-        {acknowledgeButtonText}
-      </button>
+    <div className="flex flex-col items-center justify-center h-full text-center p-4">
+      <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-8 max-w-md">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-destructive mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 className="mt-4 text-xl font-bold text-destructive">An Error Occurred</h2>
+        <p className="mt-2 text-text-secondary">{message}</p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="mt-6 bg-accent hover:bg-accent-hover text-white font-bold py-2 px-6 rounded-lg"
+          >
+            Try Again
+          </button>
+        )}
+      </div>
     </div>
   );
 };

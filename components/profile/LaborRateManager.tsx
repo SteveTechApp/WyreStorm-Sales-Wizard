@@ -1,74 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-// FIX: Add file extension to satisfy module resolution for types.ts
+import React from 'react';
 import { LaborRate } from '../../utils/types.ts';
-// FIX: Add file extension to satisfy module resolution for constants.ts
+import { useUserContext } from '../../context/UserContext.tsx';
 import { LABOR_ROLES, RATE_TYPES } from '../../data/constants.ts';
-import { TrashIcon } from '../Icons.tsx';
+import { v4 as uuidv4 } from 'uuid';
 
 interface LaborRateManagerProps {
-  initialRates: LaborRate[];
-  onChange: (rates: LaborRate[]) => void;
+    laborRates: LaborRate[];
+    setLaborRates: (newRates: LaborRate[]) => void;
 }
 
-const LaborRateManager: React.FC<LaborRateManagerProps> = ({ initialRates, onChange }) => {
-  const [rates, setRates] = useState<LaborRate[]>(initialRates);
-  
-  useEffect(() => {
-    onChange(rates);
-  }, [rates, onChange]);
+const LaborRateManager: React.FC<LaborRateManagerProps> = ({ laborRates, setLaborRates }) => {
+    const { userProfile } = useUserContext();
 
-  const addRate = () => {
-    setRates([...rates, { id: uuidv4(), role: 'Technician', rateType: 'Hourly', rate: 75 }]);
-  };
+    const handleUpdate = (id: string, field: keyof LaborRate, value: string | number) => {
+        const newRates = laborRates.map(rate => 
+            rate.id === id ? { ...rate, [field]: value } : rate
+        );
+        setLaborRates(newRates);
+    };
+    
+    const handleAdd = () => {
+        const newRate: LaborRate = {
+            id: uuidv4(),
+            role: 'New Role',
+            rateType: 'Hourly',
+            rate: 50,
+        };
+        setLaborRates([...laborRates, newRate]);
+    };
+    
+    const handleRemove = (id: string) => {
+        setLaborRates(laborRates.filter(rate => rate.id !== id));
+    };
 
-  const updateRate = (id: string, field: keyof Omit<LaborRate, 'id'>, value: string | number) => {
-    setRates(rates.map(rate => rate.id === id ? { ...rate, [field]: value } : rate));
-  };
-  
-  const removeRate = (id: string) => {
-    setRates(rates.filter(rate => rate.id !== id));
-  };
-
-  return (
-    <div className="pt-4 border-t border-border-color">
-      <div className="flex justify-between items-center mb-2">
-        <label className="block text-sm font-medium text-text-secondary">Labor Rates</label>
-        <button type="button" onClick={addRate} className="text-sm bg-primary/20 text-primary font-semibold py-1 px-3 rounded-md hover:bg-primary/30">
-          Add Rate
-        </button>
-      </div>
-      <div className="space-y-2">
-        {rates.map(rate => (
-          <div key={rate.id} className="grid grid-cols-8 gap-2 items-center">
-            <select
-                value={rate.role}
-                onChange={(e) => updateRate(rate.id, 'role', e.target.value)}
-                className="col-span-3 p-2 border border-border-color rounded-md bg-input-bg text-sm"
-            >
-                {LABOR_ROLES.map(role => <option key={role} value={role}>{role}</option>)}
-            </select>
-            <select
-                value={rate.rateType}
-                onChange={(e) => updateRate(rate.id, 'rateType', e.target.value)}
-                className="col-span-2 p-2 border border-border-color rounded-md bg-input-bg text-sm"
-            >
-                 {RATE_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-            </select>
-             <input
-                type="number"
-                value={rate.rate}
-                onChange={(e) => updateRate(rate.id, 'rate', parseFloat(e.target.value) || 0)}
-                className="col-span-2 p-2 border border-border-color rounded-md bg-input-bg text-sm"
-             />
-             <button onClick={() => removeRate(rate.id)} className="col-span-1 p-2 text-text-secondary hover:text-destructive">
-                <TrashIcon className="h-5 w-5 mx-auto" />
-             </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    return (
+        <div className="space-y-3">
+            {laborRates.map(rate => (
+                <div key={rate.id} className="grid grid-cols-[2fr,1fr,1fr,auto] gap-3 items-center">
+                    <select value={rate.role} onChange={e => handleUpdate(rate.id, 'role', e.target.value)} className="w-full p-2 border rounded-md bg-input-bg">
+                        {LABOR_ROLES.map(role => <option key={role} value={role}>{role}</option>)}
+                        {!LABOR_ROLES.includes(rate.role) && <option value={rate.role}>{rate.role}</option>}
+                    </select>
+                    <select value={rate.rateType} onChange={e => handleUpdate(rate.id, 'rateType', e.target.value)} className="w-full p-2 border rounded-md bg-input-bg">
+                        {RATE_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                    </select>
+                    <div className="relative">
+                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">{userProfile.currency}</span>
+                         <input type="number" value={rate.rate} onChange={e => handleUpdate(rate.id, 'rate', parseFloat(e.target.value) || 0)} className="w-full p-2 pl-10 border rounded-md bg-input-bg" />
+                    </div>
+                    <button type="button" onClick={() => handleRemove(rate.id)} className="text-destructive hover:underline text-sm">Remove</button>
+                </div>
+            ))}
+            <button type="button" onClick={handleAdd} className="text-sm font-medium text-accent hover:underline">+ Add Rate</button>
+        </div>
+    );
 };
 
 export default LaborRateManager;

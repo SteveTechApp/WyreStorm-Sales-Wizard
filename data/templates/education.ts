@@ -1,0 +1,61 @@
+import { v4 as uuidv4 } from 'uuid';
+import { UserTemplate } from '../../utils/types.ts';
+
+export const EDUCATION_TEMPLATES: UserTemplate[] = [
+    {
+        templateId: uuidv4(),
+        templateName: 'Interactive Classroom (Silver)',
+        description: 'A modern classroom with an interactive display, wireless casting, and voice reinforcement.',
+        vertical: 'Education',
+        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/classroom.jpg',
+        roomData: {
+            id: '',
+            roomName: 'Standard Classroom',
+            roomType: 'Classroom',
+            designTier: 'Silver',
+            dimensions: { length: 10, width: 8, height: 3 },
+            maxParticipants: 30,
+            ioRequirements: [],
+            displayType: 'single',
+            displayCount: 1,
+            features: [
+                { name: 'Wireless Presentation', priority: 'must-have' },
+                { name: 'Speech Reinforcement', priority: 'must-have' },
+            ],
+            functionalityStatement: 'An engaging learning environment where the instructor can present from a fixed lectern PC or cast wirelessly from a tablet while moving around the room. A ceiling-mounted microphone provides clear voice lift, and a simple wall-plate controller manages system power and source selection.',
+            manuallyAddedEquipment: [],
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking' },
+            audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'] },
+            technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'Simple Keypad' },
+            budget: 15000,
+        },
+    },
+    {
+        templateId: uuidv4(),
+        templateName: 'University Lecture Hall (Gold)',
+        description: 'A large venue system with projection, lecture capture, and multiple sources for higher education.',
+        vertical: 'Education',
+        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/lecture_hall.jpg',
+        roomData: {
+            id: '',
+            roomName: 'Lecture Hall 101',
+            roomType: 'Lecture Hall',
+            designTier: 'Gold',
+            dimensions: { length: 20, width: 25, height: 8 },
+            maxParticipants: 200,
+            ioRequirements: [],
+            displayType: 'projector',
+            displayCount: 2,
+            features: [
+                { name: 'Speech Reinforcement', priority: 'must-have' },
+                 { name: 'Multi-Display Support', priority: 'must-have' },
+            ],
+            functionalityStatement: 'A comprehensive AV system for a large university lecture hall. It features dual laser projectors for main content and confidence monitoring. An advanced presentation switcher at the lectern accommodates various sources including a resident PC, document camera, and guest laptops. The system integrates with a lecture capture platform to record and stream classes. A distributed audio system ensures every student hears clearly, and a touch panel provides the lecturer with full control.',
+            manuallyAddedEquipment: [],
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'floor_boxes' },
+            audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'] },
+            technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort', 'SDI'], controlSystem: 'Touch Panel' },
+            budget: 75000,
+        },
+    },
+];

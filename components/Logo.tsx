@@ -1,26 +1,18 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Logo: React.FC = () => {
+const Logo: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className="flex items-center gap-3" aria-label="WyreStorm Wingman Logo">
-      <svg width="32" height="32" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" className="text-accent flex-shrink-0">
-        <path
-          fill="currentColor"
-          d="M20 2.5L37.5 20L20 37.5L12.5 30L22.5 20L12.5 10L20 2.5Z"
-        />
-        <path
-          fill="currentColor"
-          opacity="0.6"
-          d="M2.5 20L12.5 30L20 22.5L10 12.5L2.5 20Z"
-        />
-      </svg>
-      <div 
-        className="text-2xl tracking-normal font-display"
-      >
-        <span className="font-bold text-accent">WyreStorm</span>
-        <span className="font-medium text-text-primary ml-2">Wingman</span>
-      </div>
-    </div>
+    <Link to="/" className={`flex items-center gap-2 text-xl font-bold ${className}`}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-accent">
+            <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M2 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 22V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M22 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M17 4.5L7 9.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      <span className="text-text-primary uppercase">Wingman OS</span>
+    </Link>
   );
 };
 

@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
-import Header from './Header.tsx';
+import React, { ReactNode } from 'react';
+import DefaultHeader from './header/DefaultHeader.tsx';
+import CockpitHeader from './cockpit/CockpitHeader.tsx';
 import Footer from './Footer.tsx';
-import QuickQuestionModal from './QuickQuestionModal.tsx';
+import QuickQuestionFAB from './QuickQuestionFAB.tsx';
 import ComparisonTray from './ComparisonTray.tsx';
-import ProductComparisonModal from './ProductComparisonModal.tsx';
+import { useThemeContext } from '../context/ThemeContext.tsx';
 
 interface AppLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const [isQuickQuestionModalOpen, setIsQuickQuestionModalOpen] = useState(false);
-  const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
+  const { theme } = useThemeContext();
+  const isCockpit = theme === 'cockpit';
+
+  const layoutClass = "min-h-screen text-text-primary flex flex-col";
+  // This special background is only for the cockpit theme. Other themes use the variable from the theme file.
+  const cockpitBg = "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black";
   
   return (
-    <div className="flex flex-col min-h-screen bg-background text-text-primary font-sans">
-      <Header onQuickQuestionClick={() => setIsQuickQuestionModalOpen(true)} />
-      <main className="flex-grow flex flex-col pt-16 pb-20 w-full">
-         <div className="w-full max-w-5xl mx-auto flex-grow flex flex-col px-2 sm:px-4">
-            {children}
-        </div>
+    <div className={`${layoutClass} ${isCockpit ? cockpitBg : 'bg-background'}`}>
+      {isCockpit ? <CockpitHeader /> : <DefaultHeader />}
+      <main className="flex-grow container mx-auto p-4 md:p-6">
+        {children}
       </main>
-      <Footer />
-      <QuickQuestionModal isOpen={isQuickQuestionModalOpen} onClose={() => setIsQuickQuestionModalOpen(false)} />
-      <ComparisonTray onCompare={() => setIsComparisonModalOpen(true)} />
-      <ProductComparisonModal isOpen={isComparisonModalOpen} onClose={() => setIsComparisonModalOpen(false)} />
+      {!isCockpit && <Footer />}
+      {!isCockpit && <QuickQuestionFAB />}
+      {!isCockpit && <ComparisonTray />}
     </div>
   );
 };

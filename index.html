@@ -1,135 +1,30 @@
-<!DOCTYPE html>
-<html lang="en" class="">
-<head>
+<!doctype html>
+<html lang="en">
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WyreStorm Wingman</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://aistudiocdn.com/react@^19.1.1",
-        "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-        "react/": "https://aistudiocdn.com/react@^19.1.1/",
-        "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.1",
-        "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
-        "remark-gfm": "https://aistudiocdn.com/remark-gfm@^4.0.1",
-        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0",
-        "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
-        "docx": "https://aistudiocdn.com/docx@^9.5.1"
-      }
-    }
-    </script>
-    <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Exo 2', 'sans-serif'],
-            mono: ['"Courier New"', 'monospace'],
-          },
-          colors: {
-            'background': 'var(--background)',
-            'background-secondary': 'var(--background-secondary)',
-            'text-primary': 'var(--text-primary)',
-            'text-secondary': 'var(--text-secondary)',
-            'text-on-accent': 'var(--text-on-accent)',
-            'border-color': 'var(--border-color)',
-            'accent': 'var(--accent)',
-            'accent-hover': 'var(--accent-hover)',
-            'primary': 'var(--primary)',
-            'secondary': 'var(--secondary)',
-            'destructive': 'var(--destructive)',
-            'card': 'var(--card)',
-            'input-bg': 'var(--input-bg)',
-          },
-           animation: {
-            'radar-sweep': 'radar-sweep 4s linear infinite',
-            'blip-pulse': 'blip-pulse 1.5s infinite',
-           },
-           keyframes: {
-            'radar-sweep': {
-              '0%': { transform: 'rotate(0deg)' },
-              '100%': { transform: 'rotate(360deg)' },
-            },
-            'blip-pulse': {
-              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-              '50%': { opacity: '0.5', transform: 'scale(0.8)' },
-            }
-          }
-        }
-      }
-    }
-    </script>
-    <style>
-      /* Base styles */
-      :root {
-        /* Default to dark theme variables */
-        --background: #111827;
-        --background-secondary: #1F2937;
-        --text-primary: #F9FAFB;
-        --text-secondary: #9CA3AF;
-        --text-on-accent: #FFFFFF;
-        --border-color: #374151;
-        --accent: #10B981;
-        --accent-hover: #059669;
-        --primary: #3B82F6;
-        --destructive': '#EF4444';
-        --card': '#1F2937';
-        --input-bg': '#374151';
-      }
-      body {
-        font-family: 'Inter', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        background-color: var(--background);
-      }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: var(--background); }
-      ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-      ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-       /* Decorative Backgrounds */
-      html.show-background.theme-wyrestorm::before,
-      html.show-background.theme-dark::before,
-      html.show-background.theme-light::before {
-        content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background-size: cover; background-position: center; z-index: -1; opacity: 0.1;
-      }
-       html.show-background.theme-wyrestorm::before {
-        background-image: url('https://storage.googleapis.com/wyrestorm-wingman-assets/backgrounds/wyrestorm_bg.png');
-      }
-       html.show-background.theme-dark::before {
-        background-image: url('https://storage.googleapis.com/wyrestorm-wingman-assets/backgrounds/dark_bg.png');
-      }
-       html.show-background.theme-light::before {
-        background-image: url('https://storage.googleapis.com/wyrestorm-wingman-assets/backgrounds/light_bg.png');
-      }
-
-      /* Scanline effect for MFDs in cockpit theme */
-      .mfd-screen::after {
-        content: " ";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-        z-index: 2;
-        background-size: 100% 2px, 3px 100%;
-        pointer-events: none;
-      }
-    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^18.3.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^18.3.1/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^6.27.0",
+    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.4.1",
+    "react/": "https://aistudiocdn.com/react@^18.3.1/",
+    "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0",
+    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.21.0",
+    "zod": "https://aistudiocdn.com/zod@^4.1.11",
+    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^10.18.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.417.0"
+  }
+}
+</script>
 </head>
-<body>
+  <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-</body>
+  </body>
 </html>

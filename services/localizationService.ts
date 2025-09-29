@@ -1,24 +1,51 @@
 import { UserProfile } from '../utils/types.ts';
 import { SUPPORTED_LANGUAGES } from '../data/constants.ts';
 
+interface LanguageRule {
+  code: string;
+  name: string;
+  example?: string; // Optional style, formality, or spelling guidance
+}
+
 /**
- * Generates a specific, forceful instruction for the AI model to ensure it uses the correct language and spelling conventions.
- * @param userProfile The user's profile, which contains the selected language.
- * @returns A string to be injected into the AI prompt.
+ * Generates a fully structured, strict AI prompt template based on the user's language.
+ * Handles all English variants dynamically and supports non-English languages with style rules.
+ * @param userProfile The user's profile containing the selected language.
+ * @returns A structured instruction string for AI prompt injection.
  */
 export const getLocalizationInstructions = (userProfile: UserProfile | null): string => {
-    const defaultLang = { code: 'en-GB', name: 'British English' };
-    const langCode = userProfile?.language || defaultLang.code;
-    
-    const lang = SUPPORTED_LANGUAGES.find(l => l.code === langCode);
-    const langName = lang ? lang.name.split(' (')[0] : defaultLang.name;
+  const defaultLang: LanguageRule = { code: 'en-GB', name: 'British English' };
+  const langCode = userProfile?.language || defaultLang.code;
 
-    if (langCode === 'en-GB') {
-        return "You MUST use British English spelling and terminology (e.g., colour, analyse, centre). This is a strict, non-negotiable rule.";
-    }
-    if (langCode === 'en-US') {
-        return "You MUST use American English spelling and terminology (e.g., color, analyze, center). This is a strict, non-negotiable rule.";
-    }
+  const lang: LanguageRule = SUPPORTED_LANGUAGES.find(l => l.code === langCode) || defaultLang;
 
-    return `You MUST generate your entire response in ${langName}. Adherence to this language is mandatory.`;
+  let languageSection: string;
+  let styleSection: string;
+
+  // English variant handling
+  if (langCode.startsWith('en-')) {
+    const region = langCode.split('-')[1]; // e.g., GB, US, AU
+    languageSection = `Language: English (${region})`;
+    styleSection = `Spelling and terminology: Follow standard ${region} conventions (e.g., ${region === 'GB' ? 'colour, centre, analyse' : region === 'US' ? 'color, center, analyze' : 'colour, centre, analyse'}).`;
+  } else {
+    // Non-English languages
+    languageSection = `Language: ${lang.name} (${lang.code})`;
+    styleSection = lang.example ? `Style/Guidelines: ${lang.example}` : 'Style/Guidelines: Follow standard conventions for this language.';
+  }
+
+  // Structured prompt template
+  return `
+INSTRUCTION:
+-------------------------
+${languageSection}
+${styleSection}
+Enforcement: Adherence to this language and style is STRICT and MANDATORY. Do not deviate.
+
+EXAMPLES:
+${langCode.startsWith('en-') ? 'Use variant-specific spelling and terminology as above.' : lang.example ?? 'Follow the standard grammar and style rules for this language.'}
+
+NOTES:
+- Responses must fully respect the selected language and style.
+- Any deviation is unacceptable.
+`;
 };

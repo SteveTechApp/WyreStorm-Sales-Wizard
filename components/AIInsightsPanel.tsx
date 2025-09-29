@@ -1,91 +1,86 @@
-import React, { useState, useCallback } from 'react';
-// FIX: Add file extension to satisfy module resolution
-import { useAppContext } from '../context/AppContext.tsx';
-// FIX: Add file extension to satisfy module resolution for types.ts
-import { DesignFeedbackItem, RoomData } from '../utils/types.ts';
-import { getProjectInsights, getRoomReview } from '../services/projectAnalysisService.ts';
+import React, { useState } from 'react';
+import { useProjectContext } from '../context/ProjectContext.tsx';
+import { useUserContext } from '../context/UserContext.tsx';
+import { reviewRoom, analyzeProject } from '../services/projectAnalysisService.ts';
+import { DesignFeedbackItem } from '../utils/types.ts';
+import DesignReviewModal from './DesignReviewModal.tsx';
 import LoadingSpinner from './LoadingSpinner.tsx';
-import { SparklesIcon } from './Icons.tsx';
 
-const FEEDBACK_STYLES: Record<string, any> = {
-  Warning: { icon: '⚠️', color: 'text-red-500' },
-  Suggestion: { icon: '💡', color: 'text-blue-500' },
-  Opportunity: { icon: '🚀', color: 'text-green-500' },
-  Insight: { icon: '🔍', color: 'text-gray-500' },
-  Financial: { icon: '💰', color: 'text-purple-500' },
-};
+const AIInsightsPanel: React.FC = () => {
+    const { projectData, activeRoomId } = useProjectContext();
+    const { userProfile } = useUserContext();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [feedback, setFeedback] = useState<DesignFeedbackItem[]>([]);
+    const [modalTitle, setModalTitle] = useState('');
 
-interface AIInsightsPanelProps {
-  selectedRoom: RoomData | null | undefined;
-}
+    const activeRoom = projectData?.rooms.find(r => r.id === activeRoomId);
 
-const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ selectedRoom }) => {
-  const { projectData, userProfile } = useAppContext();
-  const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState<DesignFeedbackItem[] | null>(null);
+    const handleReviewRoom = async () => {
+        if (!activeRoom || !projectData) return;
+        setIsLoading(true);
+        try {
+            const result = await reviewRoom(activeRoom, projectData, userProfile);
+            setFeedback(result);
+            setModalTitle(`Design Review: ${activeRoom.roomName}`);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Failed to review room:", error);
+            alert("An error occurred while reviewing the room.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-  const handleReview = useCallback(async (scope: 'project' | 'room') => {
-    if (!projectData || !userProfile) return;
-    if (scope === 'room' && !selectedRoom) return;
+    const handleAnalyzeProject = async () => {
+        if (!projectData) return;
+        setIsLoading(true);
+        try {
+            const result = await analyzeProject(projectData, userProfile);
+            setFeedback(result);
+            setModalTitle(`Project Analysis: ${projectData.projectName}`);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Failed to analyze project:", error);
+            alert("An error occurred while analyzing the project.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    setIsLoading(true);
-    setFeedback(null);
-    try {
-      const results = scope === 'project'
-        ? await getProjectInsights(projectData, userProfile)
-        : await getRoomReview(selectedRoom!, projectData, userProfile);
-      setFeedback(results);
-    } catch (error) {
-      console.error(error);
-      setFeedback([{ type: 'Warning', text: 'Failed to get insights. Please try again.' }]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [projectData, userProfile, selectedRoom]);
-
-  return (
-    <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
-      <div className="flex justify-between items-center mb-3">
-        <h2 className="text-xl font-bold text-text-primary font-display flex items-center gap-2">
-          <SparklesIcon className="h-6 w-6 text-accent" />
-          AI Design Review
-        </h2>
-      </div>
-      <div className="flex gap-2 mb-3">
-        <button onClick={() => handleReview('project')} disabled={isLoading} className="flex-1 text-sm bg-primary/20 hover:bg-primary/30 text-primary font-semibold py-2 px-3 rounded-md transition-colors disabled:opacity-50">
-          Review Project
-        </button>
-        <button onClick={() => handleReview('room')} disabled={isLoading || !selectedRoom} className="flex-1 text-sm bg-primary/20 hover:bg-primary/30 text-primary font-semibold py-2 px-3 rounded-md transition-colors disabled:opacity-50">
-          Review Room
-        </button>
-      </div>
-
-      <div className="flex-grow overflow-y-auto bg-background p-2 rounded-md border border-border-color min-h-0">
-        {isLoading && <div className="flex justify-center items-center h-full"><LoadingSpinner message="Analyzing..." /></div>}
-        {!isLoading && feedback && (
-          feedback.length > 0 ? (
-            <ul className="space-y-3">
-              {feedback.map((item, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm">
-                  <span className={`flex-shrink-0 ${FEEDBACK_STYLES[item.type]?.color}`}>{FEEDBACK_STYLES[item.type]?.icon}</span>
-                  <span className="text-text-secondary">{item.text}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="flex justify-center items-center h-full text-center text-text-secondary">
-              <p>No issues found. Click a button above to start a review.</p>
-            </div>
-          )
-        )}
-         {!isLoading && !feedback && (
-             <div className="flex justify-center items-center h-full text-center text-text-secondary">
-                <p>Click a button above to get AI-powered feedback on your design.</p>
-            </div>
-         )}
-      </div>
-    </div>
-  );
+    return (
+        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
+            <h3 className="font-bold text-lg mb-4 text-text-primary">AI Wingman</h3>
+            {isLoading ? (
+                <div className="flex-grow flex items-center justify-center">
+                    <LoadingSpinner />
+                </div>
+            ) : (
+                <div className="space-y-3">
+                    <button 
+                        onClick={handleReviewRoom} 
+                        disabled={!activeRoom} 
+                        className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Review Current Room
+                    </button>
+                    <button 
+                        onClick={handleAnalyzeProject}
+                        disabled={!projectData || projectData.rooms.length === 0}
+                        className="w-full bg-background hover:bg-border-color text-text-primary font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Analyze Full Project
+                    </button>
+                </div>
+            )}
+            <DesignReviewModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                feedbackItems={feedback}
+                title={modalTitle}
+            />
+        </div>
+    );
 };
 
 export default AIInsightsPanel;

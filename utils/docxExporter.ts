@@ -1,67 +1,30 @@
-import { Packer, Document, Paragraph, TextRun, HeadingLevel, ImageRun } from 'docx';
-// FIX: Add file extension to satisfy module resolution for types.ts
-import { Proposal, ProjectData, UserProfile } from './types.ts';
+// This is a placeholder for a DOCX exporting utility.
+// In a real application, this would use a library like docx.js to generate a .docx file.
 
-type DocxImageType = 'png' | 'jpeg' | 'gif' | 'bmp';
+import { Proposal, ProjectData } from './types';
 
-const getImageBuffer = async (url: string): Promise<{ data: string; type: DocxImageType } | undefined> => {
-    try {
-        if (url.startsWith('data:image')) {
-            const mimeTypeMatch = url.match(/^data:image\/(png|jpeg|gif|bmp);base64,/);
-            if (!mimeTypeMatch) throw new Error('Invalid data URL for image');
-            
-            let type = mimeTypeMatch[1] === 'jpeg' ? 'jpeg' : mimeTypeMatch[1];
-            const base64 = url.replace(mimeTypeMatch[0], '');
-            return { data: base64, type: type as DocxImageType };
-        }
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+export const exportProposalToDocx = (proposal: Proposal, project: ProjectData) => {
+  console.log("Exporting proposal to DOCX:", { proposal, project });
+  
+  // Create a dummy text content to simulate the export
+  let content = `PROPOSAL: ${project.projectName}\n\n`;
+  content += `CLIENT: ${project.clientName}\n`;
+  content += `VERSION: ${proposal.version}\n\n`;
+  content += `## Executive Summary\n${proposal.executiveSummary}\n\n`;
+  content += `## Scope of Work\n${proposal.scopeOfWork}\n\n`;
+  content += `## Equipment List\n`;
+  proposal.equipmentList.forEach(item => {
+      content += `- ${item.name} (SKU: ${item.sku}) - Qty: ${item.quantity}\n`;
+  });
 
-        const arrayBuffer = await response.arrayBuffer();
-        let binary = '';
-        const bytes = new Uint8Array(arrayBuffer);
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        const data = window.btoa(binary);
-        
-        const contentType = response.headers.get('content-type') || 'image/png';
-        const typeMatch = contentType.match(/image\/(png|jpeg|gif|bmp)/);
-        let type = (typeMatch ? (typeMatch[1] === 'jpeg' ? 'jpeg' : typeMatch[1]) : 'png');
+  // Create a blob and trigger download
+  const blob = new Blob([content], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${project.projectName}_Proposal_v${proposal.version}.txt`; // .txt for this mock
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
-        return { data, type: type as DocxImageType };
-
-    } catch (e) {
-        console.error("Failed to process image for document:", e);
-        return undefined;
-    }
-};
-
-export const exportProposalToDocx = async (projectData: ProjectData, proposal: Proposal, userProfile: UserProfile | null) => {
-    const logoImage = userProfile?.logoUrl ? await getImageBuffer(userProfile.logoUrl) : undefined;
-    
-    const doc = new Document({
-        sections: [{
-            children: [
-                new Paragraph({
-                    children: [ new TextRun({ text: projectData.projectName, bold: true, size: 48 }) ],
-                }),
-                new Paragraph({ text: `Proposal for: ${projectData.clientName}`, heading: HeadingLevel.HEADING_2 }),
-                ...(logoImage ? [new Paragraph({ children: [ new ImageRun({ type: logoImage.type, data: logoImage.data, transformation: { width: 100, height: 100 } }) ] })] : []),
-                new Paragraph({ text: "Executive Summary", heading: HeadingLevel.HEADING_1 }),
-                ...proposal.executiveSummary.split('\n').map(p => new Paragraph(p)),
-            ],
-        }],
-    });
-    
-    Packer.toBlob(doc).then(blob => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${projectData.projectName.replace(/\s/g, '_')}_v${proposal.version}.docx`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    });
+  alert('Proposal exported as a plain text file (DOCX export is a mock).');
 };

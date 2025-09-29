@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface EOLWarningModalProps {
   isOpen: boolean;
@@ -8,10 +8,30 @@ interface EOLWarningModalProps {
 }
 
 const EOLWarningModal: React.FC<EOLWarningModalProps> = ({ isOpen, onClose, onConfirm, message }) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            onClose();
+        }
+    };
+    if (isOpen) {
+        window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+  
   if (!isOpen) return null;
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+        onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
       <div className="bg-background-secondary rounded-lg shadow-xl p-6 w-full max-w-md m-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-4">
             <div className="flex-shrink-0 h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">

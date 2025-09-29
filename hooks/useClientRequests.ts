@@ -1,20 +1,34 @@
-import { useState, useEffect } from 'react';
-// FIX: Add file extension to satisfy module resolution for types.ts
-import { IncomingRequest } from '../utils/types.ts';
+import { useState } from 'react';
+import { IncomingRequest } from '../utils/types';
+import { useLocalStorage } from './useLocalStorage';
+import { v4 as uuidv4 } from 'uuid';
 
-const useClientRequests = () => {
-    const [requests, setRequests] = useState<IncomingRequest[]>([]);
+const MOCK_REQUESTS: IncomingRequest[] = [
+    {
+        requestId: uuidv4(),
+        clientName: 'Global Corp',
+        description: 'We need to upgrade 10 of our medium conference rooms with dual-screen 4K video conferencing capabilities. Wireless presentation is a must-have. Please provide a proposal for a standardized solution.',
+        status: 'tentative',
+        createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2, // 2 days ago
+    },
+    {
+        requestId: uuidv4(),
+        clientName: 'State University',
+        description: 'Request for proposal: AV system for new lecture hall. Capacity 200 students. Requires large projector, speech reinforcement, and ability to record lectures. Existing control system is Crestron.',
+        status: 'tentative',
+        createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5, // 5 days ago
+    },
+];
 
-    useEffect(() => {
-        const mockRequests: IncomingRequest[] = [
-            { requestId: 'req-1', clientName: 'Innovate Corp', description: 'New boardroom AV refresh, 12 seats, 4K VC required.', status: 'tentative', createdAt: Date.now() - 86400000 },
-            { requestId: 'req-2', clientName: 'Global Tech Inc', description: '5x Huddle rooms, simple BYOD setup.', status: 'confirmed', createdAt: Date.now() - 172800000 },
-             { requestId: 'req-3', clientName: 'Education First', description: 'Campus-wide upgrade for 30 classrooms.', status: 'tentative', createdAt: Date.now() - 259200000 },
-        ];
-        setRequests(mockRequests);
-    }, []);
+export const useClientRequests = () => {
+    const [requests, setRequests] = useLocalStorage<IncomingRequest[]>('clientRequests', MOCK_REQUESTS);
 
-    return { requests };
+    const dismissRequest = (requestId: string) => {
+        setRequests(prev => prev.filter(req => req.requestId !== requestId));
+    };
+
+    return {
+        requests,
+        dismissRequest,
+    };
 };
-
-export default useClientRequests;

@@ -1,30 +1,28 @@
-import { useEffect } from 'react';
-import { useLocalStorage } from './useLocalStorage';
-import { ThemeName } from '../utils/types';
-import { themes } from '../data/themes';
+import { useEffect, useCallback } from 'react';
+import { useLocalStorage } from './useLocalStorage.ts';
+import { ThemeName } from '../utils/types.ts';
+import { themes } from '../data/themes.ts';
+
+const defaultTheme: ThemeName = 'wyrestorm';
 
 export const useTheme = () => {
-    const [theme, setTheme] = useLocalStorage<ThemeName>('theme', 'wyrestorm');
+    const [theme, setTheme] = useLocalStorage<ThemeName>('theme', defaultTheme);
 
     useEffect(() => {
-        const themeProperties = themes[theme];
-        const root = document.documentElement;
+        const root = window.document.documentElement;
+        const newTheme = themes[theme];
 
-        if (themeProperties) {
-            Object.entries(themeProperties).forEach(([key, value]) => {
-                root.style.setProperty(key, value);
-            });
-        }
-        
-        const allThemes = Object.keys(themes) as ThemeName[];
-        allThemes.forEach(t => root.classList.remove(t));
+        Object.entries(newTheme).forEach(([property, value]) => {
+            root.style.setProperty(property, value);
+        });
+
+        root.classList.remove(...Object.keys(themes).map(String));
         root.classList.add(theme);
-        
     }, [theme]);
 
-    const handleSetTheme = (newTheme: ThemeName) => {
-        setTheme(newTheme);
-    };
+    const handleSetTheme = useCallback((newThemeName: ThemeName) => {
+        setTheme(newThemeName);
+    }, [setTheme]);
 
     return { theme, handleSetTheme };
 };

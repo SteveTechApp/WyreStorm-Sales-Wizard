@@ -1,6 +1,6 @@
 import React from 'react';
-import InfoModal from './InfoModal.tsx';
-import TierIcon from './TierIcon.tsx';
+import InfoModal from './InfoModal';
+import TierIcon from './TierIcon';
 
 interface TierInfoModalProps {
   isOpen: boolean;

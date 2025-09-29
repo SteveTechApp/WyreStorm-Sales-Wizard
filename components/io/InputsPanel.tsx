@@ -1,56 +1,26 @@
-import React, { useState } from 'react';
-import { RoomData, Product } from '../../utils/types';
-import IoPanel from './IoPanel';
-import IoDeviceCard from './IoDeviceCard';
-import ProductFinderModal from '../ProductFinderModal';
-import { ArrowDownTrayIcon, SignalIcon } from './io-icons';
+import React from 'react';
+// FIX: Use specific context hook instead of general useAppContext
+import { useProjectContext } from '../../context/ProjectContext.tsx';
+import IoDeviceCard from './IoDeviceCard.tsx';
 
-interface InputsPanelProps {
-  room: RoomData;
-  onAttemptAddProduct: (product: Product) => void;
-}
+const InputsPanel: React.FC = () => {
+    // FIX: Destructure from the correct, specific context
+    const { projectData, activeRoomId } = useProjectContext();
+    const room = projectData?.rooms.find(r => r.id === activeRoomId);
+    const inputs = room?.ioRequirements.filter(io => io.type === 'input') || [];
 
-const INPUT_CATEGORIES = ['Source', 'AVoIP Encoder', 'Presentation Switcher', 'Matrix Switcher', 'Microphone', 'Extender'];
-
-const InputsPanel: React.FC<InputsPanelProps> = ({ room, onAttemptAddProduct }) => {
-  const [isProductFinderOpen, setIsProductFinderOpen] = useState(false);
-  const inputDevices = room.manuallyAddedEquipment.filter(p => INPUT_CATEGORIES.includes(p.category));
-
-  const handleSelectProduct = (product: Product) => {
-    onAttemptAddProduct(product);
-    setIsProductFinderOpen(false);
-  };
-  
-  return (
-    <>
-      <IoPanel 
-        title="Inputs & Sources" 
-        Icon={ArrowDownTrayIcon} 
-        onAdd={() => setIsProductFinderOpen(true)}
-        addLabel="Add Source"
-      >
-        {inputDevices.length > 0 ? (
-          inputDevices.map(item => (
-            <IoDeviceCard 
-              key={item.sku} 
-              room={room} 
-              item={item} 
-              attributes={['connectionType', 'distributionType']} 
-              onAttemptAddProduct={onAttemptAddProduct}
-              isInputPanel
-            />
-          ))
-        ) : (
-          <p className="text-center text-text-secondary py-4 text-sm">No input devices added.</p>
-        )}
-      </IoPanel>
-      <ProductFinderModal 
-        isOpen={isProductFinderOpen} 
-        onClose={() => setIsProductFinderOpen(false)} 
-        onSelectProduct={handleSelectProduct} 
-      />
-    </>
-  );
+    return (
+        <div className="p-4 bg-background-secondary rounded-lg border border-border-color">
+            <h3 className="font-bold text-lg mb-4">Inputs</h3>
+            <div className="space-y-3">
+                {inputs.length > 0 ? (
+                    inputs.map(input => <IoDeviceCard key={input.id} point={input} />)
+                ) : (
+                    <p className="text-sm text-text-secondary text-center py-4">No inputs defined for this room.</p>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default InputsPanel;

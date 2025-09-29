@@ -1,64 +1,56 @@
 import { ThemeName } from '../utils/types.ts';
 
-type ThemeProperties = {
-  [key: string]: string;
-};
-
-export const themes: Record<ThemeName, ThemeProperties> = {
+export const themes: Record<ThemeName, Record<string, string>> = {
   wyrestorm: {
-    '--background': '#F0F2F5', // Light grey
-    '--background-secondary': '#FFFFFF',
-    '--text-primary': '#1F2937', // Dark grey
-    '--text-secondary': '#6B7280', // Medium grey
-    '--text-on-accent': '#FFFFFF',
-    '--border-color': '#E5E7EB', // Light grey border
-    '--accent': '#008A3A', // Wyrestorm Green
-    '--accent-hover': '#00732F',
-    '--primary': '#005EB8', // Wyrestorm Blue
-    '--destructive': '#DC2626', // Red
-    '--card': '#FFFFFF',
-    '--input-bg': '#F9FAFB', // Very light grey
+    '--background': '#ffffff',
+    '--background-secondary': '#f3f4f6',
+    '--text-primary': '#111827',
+    '--text-secondary': '#6b7280',
+    '--text-on-accent': '#ffffff',
+    '--accent': '#e6007e',
+    '--accent-hover': '#c10069',
+    '--primary': '#008a3a',
+    '--destructive': '#dc2626',
+    '--border-color': '#e5e7eb',
+    '--input-bg': '#ffffff',
   },
   dark: {
-    '--background': '#111827', // Very dark grey
-    '--background-secondary': '#1F2937', // Dark grey
-    '--text-primary': '#F9FAFB', // Off-white
-    '--text-secondary': '#9CA3AF', // Lighter grey
-    '--text-on-accent': '#FFFFFF',
-    '--border-color': '#374151', // Darker grey border
-    '--accent': '#10B981', // Emerald green
-    '--accent-hover': '#059669',
-    '--primary': '#3B82F6', // Blue
-    '--destructive': '#EF4444', // Red
-    '--card': '#1F2937',
+    '--background': '#111827',
+    '--background-secondary': '#1f2937',
+    '--text-primary': '#f9fafb',
+    '--text-secondary': '#9ca3af',
+    '--text-on-accent': '#000000',
+    '--accent': '#f472b6',
+    '--accent-hover': '#ec4899',
+    '--primary': '#34d399',
+    '--destructive': '#f87171',
+    '--border-color': '#374151',
     '--input-bg': '#374151',
   },
   light: {
-    '--background': '#F9FAFB', // Off-white
-    '--background-secondary': '#FFFFFF',
-    '--text-primary': '#111827', // Almost black
-    '--text-secondary': '#6B7280', // Medium grey
-    '--text-on-accent': '#FFFFFF',
-    '--border-color': '#D1D5DB', // Grey border
-    '--accent': '#008A3A', // Wyrestorm Green
-    '--accent-hover': '#00732F',
-    '--primary': '#005EB8', // Wyrestorm Blue
-    '--destructive': '#DC2626', // Red
-    '--card': '#FFFFFF',
-    '--input-bg': '#FFFFFF',
+    '--background': '#f9fafb',
+    '--background-secondary': '#ffffff',
+    '--text-primary': '#1f2937',
+    '--text-secondary': '#6b7280',
+    '--text-on-accent': '#ffffff',
+    '--accent': '#3b82f6',
+    '--accent-hover': '#2563eb',
+    '--primary': '#10b981',
+    '--destructive': '#ef4444',
+    '--border-color': '#d1d5db',
+    '--input-bg': '#ffffff',
   },
   cockpit: {
-    '--background': '#111317', // Main cockpit dark background
-    '--background-secondary': '#242830', // Panel color
-    '--text-primary': '#E5E8E0', // Off-white for text
-    '--text-secondary': '#8A94A0', // Dimmer gray text
-    '--text-on-accent': '#111317', // Black text for bright buttons
-    '--border-color': '#4A5568', // Panel border color
-    '--accent': '#FFB800', // Amber/Yellow for warnings/accents
-    '--accent-hover': '#D99A00',
-    '--primary': '#33FF77', // CRT Green for displays
-    '--destructive': '#D20000', // Bright Red for important switches
-    '--card': 'rgba(17, 24, 39, 0.7)', // Slightly transparent dark card
-    '--input-bg': '#0A0C0F', // Very dark input background
+    '--background': '#0f172a', // slate-900
+    '--background-secondary': '#1e293b', // slate-800
+    '--text-primary': '#e2e8f0', // slate-200
+    '--text-secondary': '#94a3b8', // slate-400
+    '--text-on-accent': '#000000',
+    '--accent': '#f59e0b', // amber-500
+    '--accent-hover': '#f5b040',
+    '--primary': '#34d399', // emerald-400
+    '--destructive': '#ef4444', // red-500
+    '--border-color': '#334155', // slate-700
+    '--input-bg': '#334155',
   },
 };

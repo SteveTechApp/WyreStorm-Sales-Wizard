@@ -1,36 +1,26 @@
 import React from 'react';
-import { ManuallyAddedEquipment } from '../../utils/types';
-import { CONNECTION_TYPES, DISTRIBUTION_TYPES, MOUNTING_TYPES } from '../../data/constants';
-
-type AttributeType = 'connectionType' | 'distributionType' | 'mountingType';
+import { ChevronDownIcon } from '../Icons.tsx';
 
 interface DeviceAttributeSelectorProps {
   label: string;
-  type: AttributeType;
   value: string;
-  onUpdate: (field: keyof ManuallyAddedEquipment, value: string) => void;
+  options?: string[];
+  onChange?: (newValue: string) => void;
 }
 
-const OPTIONS_MAP: Record<AttributeType, string[]> = {
-  connectionType: CONNECTION_TYPES,
-  distributionType: DISTRIBUTION_TYPES,
-  mountingType: MOUNTING_TYPES,
-};
-
-const DeviceAttributeSelector: React.FC<DeviceAttributeSelectorProps> = ({ label, type, value, onUpdate }) => {
-  const options = OPTIONS_MAP[type];
-  
+const DeviceAttributeSelector: React.FC<DeviceAttributeSelectorProps> = ({ label, value, options, onChange }) => {
   return (
-    <div className="flex items-center gap-1.5">
-      <label className="text-xs font-medium text-text-secondary">{label}:</label>
-      <select
+    <div className="relative">
+      <select 
+        className="appearance-none bg-background-secondary text-xs font-medium rounded-full py-1 pl-3 pr-8 border border-transparent hover:border-border-color"
         value={value}
-        onChange={(e) => onUpdate(type, e.target.value)}
-        className="text-xs border border-border-color rounded-md bg-input-bg p-1 focus:ring-1 focus:ring-primary focus:outline-none"
+        onChange={(e) => onChange && onChange(e.target.value)}
+        disabled={!onChange}
       >
-        <option value="">Not Set</option>
-        {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+        <option value={value}>{value}</option>
+        {options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
+      <ChevronDownIcon className="h-4 w-4 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary" />
     </div>
   );
 };
