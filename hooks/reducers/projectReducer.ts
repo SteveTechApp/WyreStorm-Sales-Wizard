@@ -1,4 +1,4 @@
-import { ProjectData, RoomData, Proposal, AncillaryCosts, ProjectInfrastructure, ManuallyAddedEquipment } from '../../utils/types';
+import { ProjectData, RoomData, Proposal, AncillaryCosts, ProjectInfrastructure, ManuallyAddedEquipment } from '../../utils/types.ts';
 
 export type ProjectAction =
   | { type: 'SET_PROJECT'; payload: ProjectData }

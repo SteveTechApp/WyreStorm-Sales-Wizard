@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
 
 export const useProjectGeneration = () => {
-    // FIX: Destructured `getState` from the context to access the latest project state in async functions.
     const { dispatchProjectAction, setAppState, setLoadingContext, getState } = useProjectContext();
     const { userProfile } = useUserContext();
 
@@ -38,7 +37,6 @@ export const useProjectGeneration = () => {
                 projectName: requirements.projectName,
                 clientName: requirements.clientName,
                 lastSaved: new Date().toISOString(),
-                // FIX: Provided default values for required fields to satisfy the RoomData type, while allowing the AI-extracted data to override them.
                 rooms: requirements.rooms.map((roomStub, index) => ({
                     ...createNewRoom(),
                     id: uuidv4(),
@@ -106,7 +104,6 @@ export const useProjectGeneration = () => {
     }
 
     const handleDesignRoom = async (roomId: string) => {
-        // FIX: Used the `getState` function from context to ensure the most recent project data is used, avoiding stale state issues in closures.
         const project = getState().projectData;
         if (!project) return;
         const roomToDesign = project.rooms.find(r => r.id === roomId);
@@ -134,7 +131,6 @@ export const useProjectGeneration = () => {
     };
     
     const handleGenerateDiagram = async (roomId: string) => {
-        // FIX: Used the `getState` function from context to ensure the most recent project data is used.
         const project = getState().projectData;
         if (!project) return;
         const roomToUpdate = project.rooms.find(r => r.id === roomId);

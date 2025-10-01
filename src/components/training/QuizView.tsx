@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrainingModule, QuizAnswer } from '../../utils/types';
+import { TrainingModule, QuizAnswer } from '@/utils/types';
 
 interface QuizViewProps {
   module: TrainingModule;

@@ -1,11 +1,6 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-
-import { ThemeProvider } from './context/ThemeContext.tsx';
-import { UserProvider } from './context/UserContext.tsx';
-import { ProjectProvider, useProjectContext } from './context/ProjectContext.tsx';
-import { GenerationProvider } from './context/GenerationContext.tsx';
+import { Routes, Route } from 'react-router-dom';
+import { useProjectContext } from './context/ProjectContext.tsx';
 
 import AppLayout from './components/AppLayout.tsx';
 import WelcomeScreen from './pages/WelcomeScreen.tsx';
@@ -19,9 +14,7 @@ import NotFoundPage from './pages/NotFoundPage.tsx';
 import ContextualLoadingUI from './components/loading/ContextualLoadingUI.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 
-// This component contains the actual application UI and logic.
-// It is separated so it can be wrapped by the context providers and consume their state.
-const AppContent: React.FC = () => {
+const App: React.FC = () => {
     const { appState } = useProjectContext();
     const isGenerating = appState === 'generating';
 
@@ -43,30 +36,4 @@ const AppContent: React.FC = () => {
     );
 };
 
-// This is the main exported App component. It sets up the router and all context providers.
-export default function App() {
-    return (
-        <HashRouter>
-            <ThemeProvider>
-                <UserProvider>
-                    <ProjectProvider>
-                        <GenerationProvider>
-                            <AppContent />
-                            <Toaster 
-                                position="bottom-right" 
-                                toastOptions={{
-                                    style: {
-                                        background: 'var(--background-secondary)',
-                                        color: 'var(--text-primary)',
-                                        border: '2px solid var(--border-color)',
-                                        fontFamily: 'monospace'
-                                    }
-                                }}
-                            />
-                        </GenerationProvider>
-                    </ProjectProvider>
-                </UserProvider>
-            </ThemeProvider>
-        </HashRouter>
-    );
-}
+export default App;

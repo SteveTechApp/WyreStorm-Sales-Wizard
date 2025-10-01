@@ -1,5 +1,4 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-// FIX: Corrected import path
 import { useProjectManagement, ProjectManagementType } from '../hooks/useProjectManagement.ts';
 
 const ProjectContext = createContext<ProjectManagementType | undefined>(undefined);

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext.tsx';
-// FIX: Corrected import path
 import ProjectWorkspace from '../components/ProjectWorkspace.tsx';
 import ProjectEmptyState from '../components/ProjectEmptyState.tsx';
 import LoadingSpinner from '../components/LoadingSpinner.tsx';

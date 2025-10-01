@@ -8,7 +8,6 @@ import ProposalSection from './proposal/ProposalSection.tsx';
 import EditableSection from './proposal/EditableSection.tsx';
 import EquipmentTable from './proposal/EquipmentTable.tsx';
 import PricingTable from './proposal/PricingTable.tsx';
-// FIX: Corrected import path
 import SystemDiagram from './SystemDiagram.tsx';
 import { exportProposalToDocx } from '../utils/docxExporter.ts';
 import { exportEquipmentListToCsv } from '../utils/csvExporter.ts';

@@ -2,7 +2,6 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { useTheme } from '../hooks/useTheme.ts';
 import { ThemeName } from '../utils/types.ts';
 
-// FIX: Exported ThemeContextType
 export interface ThemeContextType {
     theme: ThemeName;
     handleSetTheme: (theme: ThemeName) => void;
@@ -22,7 +21,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 export const useThemeContext = () => {
     const context = useContext(ThemeContext);
     if (context === undefined) {
-        throw new Error('useThemeContext must be used within a ThemeProvider');
+        throw new Error('useThemeContext must be used within a ThemeProvider. This is a critical error in the application setup.');
     }
     return context;
 };
