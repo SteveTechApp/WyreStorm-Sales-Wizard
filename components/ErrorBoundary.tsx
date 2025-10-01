@@ -1,9 +1,10 @@
 
-import React from 'react';
+
+import React, { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -11,6 +12,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
+// FIX: Explicitly use React.Component to avoid potential import resolution issues causing `this.props` to be undefined.
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   // Use a class property for state initialization to ensure correct type inference.
   state: ErrorBoundaryState = {
@@ -18,23 +20,22 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     error: null,
   };
 
-  public static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // You can also log the error to an error reporting service
     console.error("Uncaught error:", error, errorInfo);
   }
 
-  public render() {
+  render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }
 
-    // FIX: Access this.props.children directly to resolve type inference issue.
     return this.props.children;
   }
 }

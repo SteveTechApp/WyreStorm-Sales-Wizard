@@ -1,31 +1,74 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CockpitGauge, CockpitFan, CockpitFlame } from "../Icons";
 import { Panel } from "../Panel";
 import { SafeSwitch } from "../controls/GuardedSwitch";
-import { ToggleSwitch } from "../controls/ToggleSwitch";
 import { LatchButton } from "../controls/LatchButton";
 import { RotaryDial } from "../controls/RotaryDial";
+import { Tooltip } from "../ui/Tooltip";
+import { useGenerationContext } from "@/context/GenerationContext";
+import { useProjectContext } from "@/context/ProjectContext";
+import { useUserContext } from "@/context/UserContext";
+import { ToggleSwitch } from "../controls/ToggleSwitch";
+import ProjectFinancialsModal from "@/components/ProjectFinancialsModal";
 
 export function EnginePanel() {
-  const [leftOn, setLeftOn] = useState(false);
-  const [rightOn, setRightOn] = useState(false);
-  const [afterburner, setAfterburner] = useState(false);
-  const [cooling, setCooling] = useState(true);
-  const [rpm, setRpm] = useState(62);
+  const navigate = useNavigate();
+  const { handleGenerateProposal } = useGenerationContext();
+  const { projectData } = useProjectContext();
+  const { userProfile, updateUserProfile } = useUserContext();
+
+  const [isFinancialsOpen, setIsFinancialsOpen] = useState(false);
+
+  const canGenerateProposal = projectData && projectData.rooms.length > 0 && projectData.rooms.some(r => r.manuallyAddedEquipment.length > 0);
 
   return (
-    <Panel title="ENGINES" icon={<CockpitGauge className="size-4" />}>
-      <div className="grid gap-4">
-        <div className="grid grid-cols-2 gap-3">
-          <SafeSwitch id="eng-left" label="LEFT ENGINE" isSafe={!leftOn} onToggle={(newSafeState) => setLeftOn(!newSafeState)} danger />
-          <SafeSwitch id="eng-right" label="RIGHT ENGINE" isSafe={!rightOn} onToggle={(newSafeState) => setRightOn(!newSafeState)} danger />
+    <>
+      <Panel title="SYSTEM &amp; FLIGHT" icon={<CockpitGauge className="size-4" />}>
+        <div className="grid gap-4">
+          <div className="grid grid-cols-2 gap-3">
+            <Tooltip content="Plan a new project from scratch.">
+              <SafeSwitch id="new-sortie-manual" label="NEW SORTIE (MANUAL)" isSafe={true} onToggle={() => navigate('/setup')} />
+            </Tooltip>
+            <Tooltip content="Create a project by analyzing a client brief.">
+              <SafeSwitch id="new-sortie-intel" label="NEW SORTIE (INTEL)" isSafe={true} onToggle={() => navigate('/agent')} />
+            </Tooltip>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+             <Tooltip content="View project cost summary and ancillary costs.">
+                <div>
+                  <ToggleSwitch id="financials" label="FINANCIALS" checked={isFinancialsOpen} onChange={setIsFinancialsOpen} icon={<CockpitFan className="size-4" />} />
+                </div>
+            </Tooltip>
+            <Tooltip content="Generate the final proposal for the client. Requires a project with at least one designed room.">
+              <div>
+                <LatchButton 
+                  id="generate-report" 
+                  label="GENERATE REPORT" 
+                  active={false} 
+                  onToggle={() => {
+                    if (canGenerateProposal && projectData) {
+                      handleGenerateProposal(projectData, navigate);
+                    }
+                  }} 
+                  icon={<CockpitFlame className="size-4" />} 
+                />
+              </div>
+            </Tooltip>
+          </div>
+          <Tooltip content="Adjust the UI zoom level.">
+            <RotaryDial 
+              id="zoom-level" 
+              label="UI ZOOM" 
+              min={50} 
+              max={150} 
+              value={userProfile.zoomLevel} 
+              onChange={newZoom => updateUserProfile({...userProfile, zoomLevel: newZoom})} 
+            />
+          </Tooltip>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <ToggleSwitch id="cooling" label="COOLING" checked={cooling} onChange={setCooling} icon={<CockpitFan className="size-4" />} />
-          <LatchButton id="afterburner" label="AFTERBURNER" active={afterburner} onToggle={setAfterburner} icon={<CockpitFlame className="size-4" />} />
-        </div>
-        <RotaryDial id="throttle" label="THROTTLE" min={0} max={100} value={rpm} onChange={setRpm} />
-      </div>
-    </Panel>
+      </Panel>
+      <ProjectFinancialsModal isOpen={isFinancialsOpen} onClose={() => setIsFinancialsOpen(false)} />
+    </>
   );
 }
