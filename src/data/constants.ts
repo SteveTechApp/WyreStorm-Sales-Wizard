@@ -47,18 +47,18 @@ export const RATE_TYPES: ('Hourly' | 'Day Rate')[] = ['Hourly', 'Day Rate'];
 
 export const VERTICAL_MARKETS = [
     { verticalId: 'all', name: 'All', icon: SparklesIcon },
-    { verticalId: 'corp', name: 'Corporate', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/corporate_conference.jpg', icon: BuildingIcon },
-    { verticalId: 'edu', name: 'Education', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/classroom.jpg', icon: EducationIcon },
-    { verticalId: 'gov', name: 'Government', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/council_chamber.jpg', icon: GovernmentIcon },
-    { verticalId: 'hos', name: 'Hospitality', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/sports_bar.jpg', icon: HospitalityIcon },
-    { verticalId: 'ret', name: 'Retail', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/retail_signage.jpg', icon: RetailIcon },
-    { verticalId: 'res', name: 'Residential', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/residential.jpg', icon: ResidentialIcon },
-    { verticalId: 'tra', name: 'Transportation', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/transportation.jpg', icon: TransportationIcon },
-    { verticalId: 'ven', name: 'Large Venue', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/large_venue.jpg', icon: LargeVenueIcon },
-    { verticalId: 'ind', name: 'Industrial', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/oil_gas_ops.jpg', icon: IndustrialIcon },
-    { verticalId: 'gam', name: 'Gaming', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/casino_floor.jpg', icon: GamingIcon },
-    { verticalId: 'how', name: 'House of Worship', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/house_of_worship.jpg', icon: HouseOfWorshipIcon },
-    { verticalId: 'cmd', name: 'Command & Control', imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/command_center.jpg', icon: CommandCenterIcon },
+    { verticalId: 'corp', name: 'Corporate', imageUrl: '', icon: BuildingIcon },
+    { verticalId: 'edu', name: 'Education', imageUrl: '', icon: EducationIcon },
+    { verticalId: 'gov', name: 'Government', imageUrl: '', icon: GovernmentIcon },
+    { verticalId: 'hos', name: 'Hospitality', imageUrl: '', icon: HospitalityIcon },
+    { verticalId: 'ret', name: 'Retail', imageUrl: '', icon: RetailIcon },
+    { verticalId: 'res', name: 'Residential', imageUrl: '', icon: ResidentialIcon },
+    { verticalId: 'tra', name: 'Transportation', imageUrl: '', icon: TransportationIcon },
+    { verticalId: 'ven', name: 'Large Venue', imageUrl: '', icon: LargeVenueIcon },
+    { verticalId: 'ind', name: 'Industrial', imageUrl: '', icon: IndustrialIcon },
+    { verticalId: 'gam', name: 'Gaming', imageUrl: '', icon: GamingIcon },
+    { verticalId: 'how', name: 'House of Worship', imageUrl: '', icon: HouseOfWorshipIcon },
+    { verticalId: 'cmd', name: 'Command & Control', imageUrl: '', icon: CommandCenterIcon },
 ];
 
 export const COMMON_FEATURES = [

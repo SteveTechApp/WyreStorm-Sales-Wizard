@@ -4,29 +4,64 @@ import { Panel } from "../Panel.tsx";
 import { SafeSwitch } from "../controls/GuardedSwitch.tsx";
 import { MomentaryButton } from "../controls/MomentaryButton.tsx";
 import { ToggleSwitch } from "../controls/ToggleSwitch.tsx";
+import { Tooltip } from "../ui/Tooltip.tsx";
+import { useGenerationContext } from "../../../context/GenerationContext.tsx";
+import { useProjectContext } from "../../../context/ProjectContext.tsx";
+import { analyzeProject } from "../../../services/projectAnalysisService.ts";
+import { useUserContext } from "../../../context/UserContext.tsx";
+import ProductFinderModal from "../../ProductFinderModal.tsx";
+import DesignReviewModal from "../../DesignReviewModal.tsx";
+import { DesignFeedbackItem, ManuallyAddedEquipment } from "../../../utils/types.ts";
+import toast from "react-hot-toast";
 
 export function WeaponsPanel() {
-  const [masterArm, setMasterArm] = useState(false);
-  const [missileSel, setMissileSel] = useState<"SPARROW" | "SIDEWINDER" | "PHOENIX">("SIDEWINDER");
-  const [laser, setLaser] = useState(false);
+  const [aiAssist, setAiAssist] = useState(true);
+  const [isFinderOpen, setIsFinderOpen] = useState(false);
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [analysisFeedback, setAnalysisFeedback] = useState<DesignFeedbackItem[]>([]);
+
+  const { handleDesignRoom, handleGenerateDiagram } = useGenerationContext();
+  const { projectData, activeRoomId, dispatchProjectAction } = useProjectContext();
+  const { userProfile } = useUserContext();
+
+  const handleAnalyze = async () => {
+    if (!projectData) { toast.error("Load a project before analyzing."); return; }
+    try {
+      const feedback = await analyzeProject(projectData, userProfile);
+      setAnalysisFeedback(feedback); setIsAnalysisOpen(true);
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Failed to analyze project."); }
+  };
+
+  const handleAddProducts = (skus: string[]) => {
+    if (!activeRoomId || !projectData) return;
+    skus.forEach(sku => {
+        const product = projectData?.productDatabase.find(p => p.sku === sku);
+        if (product) {
+            const equip: ManuallyAddedEquipment = { ...product, quantity: 1 };
+            dispatchProjectAction({ type: 'ADD_EQUIPMENT_TO_ROOM', payload: { roomId: activeRoomId, equipment: equip } });
+        }
+    });
+    setIsFinderOpen(false);
+  };
+  
+  const isActionDisabled = !aiAssist || !projectData;
 
   return (
-    <Panel title="WEAPONS" icon={<CockpitRocket className="size-4" />} tone="danger">
-      <div className="grid gap-4">
-        <SafeSwitch id="master-arm" label="MASTER ARM" isSafe={!masterArm} onToggle={(newSafeState) => setMasterArm(!newSafeState)} danger />
-        <div className="grid grid-cols-3 gap-3">
-          {(["SPARROW", "SIDEWINDER", "PHOENIX"] as const).map((m) => (
-            <MomentaryButton key={m} id={`msl-${m}`} label={m} onPress={() => setMissileSel(m)} active={missileSel === m} />
-          ))}
-        </div>
-        <ToggleSwitch id="laser" label="LASER" checked={laser} onChange={setLaser} icon={<CockpitLampCeiling className="size-4" />} />
-        <div className="rounded-md border border-red-500/40 bg-red-950/20 p-3 text-red-200">
-          <div className="flex items-center gap-2 text-sm">
-            <CockpitAlertTriangle className="size-4" />
-            <span>WEAPON RELEASE REQUIRES MASTER ARM + TYPE SELECT</span>
+    <>
+      <Panel title="AI WINGMAN" icon={<CockpitRocket className="size-4" />} tone="danger">
+        <div className="grid gap-4">
+          <Tooltip content="Enable/Disable all AI-powered design actions."><SafeSwitch id="ai-assist" label="AI ASSIST" isSafe={!aiAssist} onToggle={setAiAssist} danger /></Tooltip>
+          <div className="grid grid-cols-3 gap-3">
+            <Tooltip content="Let the AI select equipment for the current room."><div><MomentaryButton id="ai-design" label="DESIGN ROOM" onPress={() => activeRoomId && handleDesignRoom(activeRoomId)} disabled={isActionDisabled} /></div></Tooltip>
+            <Tooltip content="Generate a system connectivity diagram."><div><MomentaryButton id="ai-diagram" label="GEN DIAGRAM" onPress={() => activeRoomId && handleGenerateDiagram(activeRoomId)} disabled={isActionDisabled} /></div></Tooltip>
+            <Tooltip content="Get AI feedback on the entire project."><div><MomentaryButton id="ai-analyze" label="ANALYZE" onPress={handleAnalyze} active={isAnalysisOpen} disabled={isActionDisabled} /></div></Tooltip>
           </div>
+          <Tooltip content="Use AI to search for products."><div><ToggleSwitch id="product-finder" label="PRODUCT FINDER" checked={isFinderOpen} onChange={setIsFinderOpen} icon={<CockpitLampCeiling className="size-4" />} disabled={isActionDisabled} /></div></Tooltip>
+          <div className="rounded-md border border-red-500/40 bg-red-950/20 p-3 text-red-200"><div className="flex items-center gap-2 text-sm"><CockpitAlertTriangle className="size-4" /><span>AI ACTIONS REQUIRE AI ASSIST TO BE ARMED</span></div></div>
         </div>
-      </div>
-    </Panel>
+      </Panel>
+      <ProductFinderModal isOpen={isFinderOpen} onClose={() => setIsFinderOpen(false)} onAddProducts={handleAddProducts} />
+      <DesignReviewModal isOpen={isAnalysisOpen} onClose={() => setIsAnalysisOpen(false)} feedbackItems={analysisFeedback} title="Project Analysis" />
+    </>
   );
 }

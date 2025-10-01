@@ -1,48 +1,69 @@
-import React, { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+
+import { ThemeProvider } from '@/context/ThemeContext';
+import { UserProvider } from '@/context/UserContext';
+import { ProjectProvider, useProjectContext } from '@/context/ProjectContext';
+import { GenerationProvider } from '@/context/GenerationContext';
+
 import AppLayout from '@/components/AppLayout';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import { useProjectContext } from '@/context/ProjectContext';
+import WelcomeScreen from '@/pages/WelcomeScreen';
+import ProjectSetupScreen from '@/pages/ProjectSetupScreen';
+import AgentInputForm from '@/pages/AgentInputForm';
+import DesignCoPilot from '@/pages/DesignCoPilot';
+import ProposalDisplay from '@/pages/ProposalDisplay';
+import TrainingPage from '@/pages/TrainingPage';
+import NotFoundPage from '@/pages/NotFoundPage';
+
 import ContextualLoadingUI from '@/components/loading/ContextualLoadingUI';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
-const WelcomeScreen = lazy(() => import('@/pages/WelcomeScreen'));
-const ProjectSetupScreen = lazy(() => import('@/pages/ProjectSetupScreen'));
-const AgentInputForm = lazy(() => import('@/pages/AgentInputForm'));
-const DesignCoPilot = lazy(() => import('@/pages/DesignCoPilot'));
-const ProposalDisplay = lazy(() => import('@/pages/ProposalDisplay'));
-const TrainingPage = lazy(() => import('@/pages/TrainingPage'));
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+const AppContent: React.FC = () => {
+    const { appState } = useProjectContext();
+    const isGenerating = appState === 'generating';
 
-const suspenseFallback = (
-  <div className="flex h-full w-full items-center justify-center p-10">
-    <LoadingSpinner />
-  </div>
-);
+    return (
+        <ErrorBoundary>
+            <AppLayout>
+                <Routes>
+                    <Route path="/" element={<WelcomeScreen />} />
+                    <Route path="/setup" element={<ProjectSetupScreen />} />
+                    <Route path="/agent" element={<AgentInputForm />} />
+                    <Route path="/design/:projectId" element={<DesignCoPilot />} />
+                    <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
+                    <Route path="/training" element={<TrainingPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+            </AppLayout>
+            {isGenerating && <ContextualLoadingUI />}
+        </ErrorBoundary>
+    );
+};
 
 export default function App() {
-  const { appState } = useProjectContext();
-  const isGenerating = appState === 'generating';
-
-  return (
-    <ErrorBoundary>
-      <AppLayout>
-        <Suspense fallback={suspenseFallback}>
-          <Routes>
-            <Route path="/" element={<WelcomeScreen />} />
-            <Route path="/setup" element={<ProjectSetupScreen />} />
-            <Route path="/agent" element={<AgentInputForm />} />
-            <Route path="/design/:projectId" element={<DesignCoPilot />} />
-            <Route
-              path="/proposal/:projectId/:proposalId"
-              element={<ProposalDisplay />}
-            />
-            <Route path="/training" element={<TrainingPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </AppLayout>
-      {isGenerating && <ContextualLoadingUI />}
-    </ErrorBoundary>
-  );
+    return (
+        <HashRouter>
+            <ThemeProvider>
+                <UserProvider>
+                    <ProjectProvider>
+                        <GenerationProvider>
+                            <AppContent />
+                            <Toaster 
+                                position="bottom-right" 
+                                toastOptions={{
+                                    style: {
+                                        background: 'var(--background-secondary)',
+                                        color: 'var(--text-primary)',
+                                        border: '2px solid var(--border-color)',
+                                        fontFamily: 'monospace'
+                                    }
+                                }}
+                            />
+                        </GenerationProvider>
+                    </ProjectProvider>
+                </UserProvider>
+            </ThemeProvider>
+        </HashRouter>
+    );
 }

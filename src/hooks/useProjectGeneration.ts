@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 import { PRODUCT_DATABASE } from '@/data/productDatabase';
 
 export const useProjectGeneration = () => {
-    // Use `getState` from context to access the latest project state in async functions.
     const { dispatchProjectAction, setAppState, setLoadingContext, getState } = useProjectContext();
     const { userProfile } = useUserContext();
 

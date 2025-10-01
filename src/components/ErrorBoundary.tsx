@@ -10,9 +10,12 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-// FIX: The ErrorBoundary class now extends React.Component to have access to `this.props` and `this.state`.
+// FIX: The ErrorBoundary class must extend React.Component to be a valid React component and have access to `this.props`.
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  state: ErrorBoundaryState = { hasError: false, error: null };
+  state: ErrorBoundaryState = {
+    hasError: false,
+    error: null,
+  };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
@@ -31,6 +34,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         />
       );
     }
+
     return this.props.children;
   }
 }

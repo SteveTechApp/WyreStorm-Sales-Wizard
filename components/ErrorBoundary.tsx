@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface ErrorBoundaryProps {
@@ -10,8 +10,8 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-// FIX: The ErrorBoundary class now extends React.Component to have access to `this.props` and `this.state`.
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+// FIX: The ErrorBoundary class must extend React.Component to be a valid React component and have access to `this.props`.
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = {
     hasError: false,
     error: null,
