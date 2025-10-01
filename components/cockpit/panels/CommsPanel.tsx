@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Radio, ChevronDown, ChevronUp, PauseOctagon } from "lucide-react";
+import { CockpitRadio, CockpitChevronDown, CockpitChevronUp, CockpitPauseOctagon } from "../Icons.tsx";
 import { Panel } from "../Panel.tsx";
 import { Button } from "../ui/Button.tsx";
 import { ToggleSwitch } from "../controls/ToggleSwitch.tsx";
@@ -10,24 +10,24 @@ export function CommsPanel() {
   const [squelch, setSquelch] = useState(true);
 
   return (
-    <Panel title="COMMS" icon={<Radio className="size-4" />}>
+    <Panel title="COMMS" icon={<CockpitRadio className="size-4" />}>
       <div className="grid gap-4">
         <div className="flex items-center justify-between rounded-md border border-zinc-700/60 bg-zinc-900/60 p-3">
           <span className="text-xs tracking-wider text-zinc-300">CHANNEL</span>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" className="border-zinc-600" onClick={() => setChan((c) => Math.max(1, c - 1))} aria-label="Previous channel">
-              <ChevronDown className="size-4" />
+              <CockpitChevronDown className="size-4" />
             </Button>
             <div className="min-w-14 rounded bg-black/60 px-3 py-1 text-center font-mono text-lg tabular-nums text-[#39FF14] shadow-[inset_0_0_8px_rgba(57,255,20,0.25)]">
               {chan.toString().padStart(2, "0")}
             </div>
             <Button variant="outline" size="icon" className="border-zinc-600" onClick={() => setChan((c) => Math.min(20, c + 1))} aria-label="Next channel">
-              <ChevronUp className="size-4" />
+              <CockpitChevronUp className="size-4" />
             </Button>
           </div>
         </div>
         <ToggleSwitch id="squelch" label="SQUELCH" checked={squelch} onChange={setSquelch} />
-        <MomentaryButton id="comm-check" label="COMMS CHECK" onPress={() => console.log("Comms check… beep")} icon={<PauseOctagon className="size-4" />} />
+        <MomentaryButton id="comm-check" label="COMMS CHECK" onPress={() => console.log("Comms check… beep")} icon={<CockpitPauseOctagon className="size-4" />} />
       </div>
     </Panel>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Radar, Power } from "lucide-react";
+import { CockpitRadar, CockpitPower } from "../Icons.tsx";
 import { Panel } from "../Panel.tsx";
 import { ToggleSwitch } from "../controls/ToggleSwitch.tsx";
 import { RotaryDial } from "../controls/RotaryDial.tsx";
@@ -12,10 +12,10 @@ export function NavigationPanel() {
   const [heading, setHeading] = useState(270);
 
   return (
-    <Panel title="NAVIGATION" icon={<Radar className="size-4" />}>
+    <Panel title="NAVIGATION" icon={<CockpitRadar className="size-4" />}>
       <div className="grid gap-4">
         <div className="grid grid-cols-3 gap-3">
-          <ToggleSwitch id="ap" label="AUTO‑PILOT" checked={apOn} onChange={setApOn} icon={<Power className="size-4" />} />
+          <ToggleSwitch id="ap" label="AUTO‑PILOT" checked={apOn} onChange={setApOn} icon={<CockpitPower className="size-4" />} />
           <ToggleSwitch id="ils" label="ILS" checked={ils} onChange={setIls} />
           <ToggleSwitch id="radar" label="RADAR" checked={radar} onChange={setRadar} />
         </div>

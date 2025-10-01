@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface RotaryDialProps {
     id?: string;
@@ -10,12 +10,9 @@ interface RotaryDialProps {
 }
 
 export const RotaryDial: React.FC<RotaryDialProps> = ({ id, label, min, max, value, onChange }) => {
-  const [dragging, setDragging] = useState(false);
-
-  function clamp(v: number) { return Math.max(min, Math.min(max, v)); }
-  function step(delta: number) { onChange(clamp(value + delta)); }
+  const clamp = (v: number) => Math.max(min, Math.min(max, v));
+  const step = (delta: number) => onChange(clamp(value + delta));
   
-  // Map value to rotation within a ~270 degree arc for the needle
   const rotation = ((value - min) / (max - min)) * 270 - 135;
 
   return (
@@ -31,15 +28,7 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({ id, label, min, max, val
           aria-valuenow={value}
           tabIndex={0}
           onKeyDown={(e) => { if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); }}
-          onMouseDown={() => setDragging(true)}
-          onMouseUp={() => setDragging(false)}
-          onMouseLeave={() => setDragging(false)}
-          onMouseMove={(e) => { 
-              if (!dragging) return; 
-              const delta = Math.sign(e.movementX); 
-              if (delta !== 0) step(delta);
-          }}
-          className="relative grid size-16 cursor-grab place-items-center rounded-full border border-zinc-600/60 bg-zinc-800 text-zinc-200 shadow-[inset_0_-6px_16px_rgba(0,0,0,0.35)] active:cursor-grabbing"
+          className="relative grid size-16 cursor-default place-items-center rounded-full border border-zinc-600/60 bg-zinc-800 text-zinc-200 shadow-[inset_0_-6px_16px_rgba(0,0,0,0.35)]"
         >
           <div className="absolute inset-2 rounded-full border border-zinc-500/40" />
            <div 

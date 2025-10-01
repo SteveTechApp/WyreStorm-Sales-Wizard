@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
@@ -11,15 +12,11 @@ interface ErrorBoundaryState {
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  // FIX: Reverted to a constructor for state initialization to resolve a type error
-  // where `this.props` was not being correctly inferred on the component instance.
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
-  }
+  // Use a class property for state initialization to ensure correct type inference.
+  state: ErrorBoundaryState = {
+    hasError: false,
+    error: null,
+  };
 
   public static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Update state so the next render will show the fallback UI.
@@ -37,7 +34,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }
 
-    return this.props.children;
+    // FIX: Destructuring props to ensure correct type inference for children.
+    const { children } = this.props;
+    return children;
   }
 }
 

@@ -1,21 +1,23 @@
 import React, { useState, useId } from 'react';
-import { ShieldAlert } from "lucide-react";
+import { CockpitShieldAlert } from "../Icons.tsx";
 
 /**
- * A safety-covered switch, refactored to use pure CSS transitions
- * to prevent library conflicts causing useRef errors.
+ * A safety-covered switch, refactored to use a 'safe' state for clarity
+ * and pure CSS transitions to prevent library conflicts.
  */
-export function GuardedSwitch({ id, label, armed, onChange, danger }: { id?: string; label: string; armed: boolean; onChange: (v: boolean) => void; danger?: boolean }) {
+export function SafeSwitch({ id, label, isSafe, onToggle, danger }: { id?: string; label: string; isSafe: boolean; onToggle: (v: boolean) => void; danger?: boolean }) {
   const [isCoverOpen, setIsCoverOpen] = useState(false);
   const inputId = id || useId();
+  const isArmed = !isSafe;
+
   const border = danger ? "border-red-500/50" : "border-zinc-600/60";
-  const glow = danger && armed ? "shadow-[0_0_16px_rgba(239,68,68,0.35)]" : "";
+  const glow = danger && isArmed ? "shadow-[0_0_16px_rgba(239,68,68,0.35)]" : "";
 
   return (
     <div className={`relative select-none rounded-md ${border} bg-zinc-900/60 p-3 ${glow} border`} aria-live="polite">
       <div className="mb-2 flex items-center justify-between text-xs text-zinc-200">
         <span>{label}</span>
-        <span className={`font-mono ${armed ? "text-red-300" : "text-zinc-400"}`}>{armed ? "ARMED" : "SAFE"}</span>
+        <span className={`font-mono ${isArmed ? "text-red-300" : "text-zinc-400"}`}>{isArmed ? "ARMED" : "SAFE"}</span>
       </div>
       <div className="relative h-10">
         <button
@@ -33,18 +35,18 @@ export function GuardedSwitch({ id, label, armed, onChange, danger }: { id?: str
         <button
           id={inputId}
           disabled={!isCoverOpen}
-          onClick={() => onChange(!armed)}
+          onClick={() => onToggle(!isSafe)}
           className={`absolute left-2 top-2 z-0 h-6 w-12 rounded-md border text-xs font-medium tracking-wider transition ${
-            armed ? "border-red-400/70 bg-red-900/40 text-red-100" : "border-zinc-600/60 bg-zinc-900/80 text-zinc-200"
+            isArmed ? "border-red-400/70 bg-red-900/40 text-red-100" : "border-zinc-600/60 bg-zinc-900/80 text-zinc-200"
           } ${!isCoverOpen ? "opacity-60" : "hover:bg-zinc-800/70 active:scale-[0.98]"}`}
           aria-label={label}
         >
-          {armed ? "SAFE" : "ARM"}
+          {isArmed ? "SAFE" : "ARM"}
         </button>
       </div>
       {!isCoverOpen && (
         <div className="mt-2 flex items-center gap-2 text-[11px] text-zinc-400">
-          <ShieldAlert className="size-3.5" />
+          <CockpitShieldAlert className="size-3.5" />
           <span>LIFT COVER TO ARM</span>
         </div>
       )}

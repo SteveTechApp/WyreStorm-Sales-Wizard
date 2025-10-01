@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Radar } from "lucide-react";
+import { CockpitRadar } from "./Icons.tsx";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card.tsx";
 
 interface StatDisplayProps {
@@ -39,7 +39,7 @@ export function HUDHeader() {
     <Card className="backdrop-blur supports-[backdrop-filter]:bg-zinc-950/40">
       <CardHeader className="pb-2">
         <CardTitle className="text-center font-mono text-sm tracking-widest text-[#39FF14]">
-          <span className="inline-flex items-center gap-2">F-14 TOMCAT • VIRTUAL COCKPIT HUD <Radar className="size-4" /></span>
+          <span className="inline-flex items-center gap-2">F-14 TOMCAT • VIRTUAL COCKPIT HUD <CockpitRadar className="size-4" /></span>
         </CardTitle>
       </CardHeader>
       <CardContent>
