@@ -11,6 +11,7 @@ import { useProjectContext } from "@/context/ProjectContext";
 import { useUserContext } from "@/context/UserContext";
 import { ToggleSwitch } from "../controls/ToggleSwitch";
 import ProjectFinancialsModal from "@/components/ProjectFinancialsModal";
+import toast from "react-hot-toast";
 
 export function EnginePanel() {
   const navigate = useNavigate();
@@ -21,6 +22,14 @@ export function EnginePanel() {
   const [isFinancialsOpen, setIsFinancialsOpen] = useState(false);
 
   const canGenerateProposal = projectData && projectData.rooms.length > 0 && projectData.rooms.some(r => r.manuallyAddedEquipment.length > 0);
+
+  const onGenerateProposal = () => {
+      if (canGenerateProposal && projectData) {
+        handleGenerateProposal(projectData, navigate);
+      } else {
+        toast.error("A designed room with equipment is required to generate a report.");
+      }
+  };
 
   return (
     <>
@@ -36,35 +45,14 @@ export function EnginePanel() {
           </div>
           <div className="grid grid-cols-2 gap-3">
              <Tooltip content="View project cost summary and ancillary costs.">
-                <div>
-                  <ToggleSwitch id="financials" label="FINANCIALS" checked={isFinancialsOpen} onChange={setIsFinancialsOpen} icon={<CockpitFan className="size-4" />} />
-                </div>
+                <div><ToggleSwitch id="financials" label="FINANCIALS" checked={isFinancialsOpen} onChange={setIsFinancialsOpen} icon={<CockpitFan className="size-4" />} /></div>
             </Tooltip>
-            <Tooltip content="Generate the final proposal for the client. Requires a project with at least one designed room.">
-              <div>
-                <LatchButton 
-                  id="generate-report" 
-                  label="GENERATE REPORT" 
-                  active={false} 
-                  onToggle={() => {
-                    if (canGenerateProposal && projectData) {
-                      handleGenerateProposal(projectData, navigate);
-                    }
-                  }} 
-                  icon={<CockpitFlame className="size-4" />} 
-                />
-              </div>
+            <Tooltip content="Generate the final proposal for the client.">
+              <div><LatchButton id="generate-report" label="GENERATE REPORT" active={false} onToggle={onGenerateProposal} icon={<CockpitFlame className="size-4" />} /></div>
             </Tooltip>
           </div>
           <Tooltip content="Adjust the UI zoom level.">
-            <RotaryDial 
-              id="zoom-level" 
-              label="UI ZOOM" 
-              min={50} 
-              max={150} 
-              value={userProfile.zoomLevel} 
-              onChange={newZoom => updateUserProfile({...userProfile, zoomLevel: newZoom})} 
-            />
+            <RotaryDial id="zoom-level" label="UI ZOOM" min={50} max={150} value={userProfile.zoomLevel} onChange={newZoom => updateUserProfile({...userProfile, zoomLevel: newZoom})} />
           </Tooltip>
         </div>
       </Panel>

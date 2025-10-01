@@ -7,7 +7,7 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Sports Bar (AVoIP)',
         description: 'A flexible AVoIP system for distributing multiple broadcast sources to many displays.',
         vertical: 'Hospitality',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/sports_bar.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Main Bar Area',

@@ -51,11 +51,6 @@ export const MODULE_4_NETWORKING: TrainingModule = {
         '- **Analogy:** A radio station. You only hear it if you tune your radio to that specific frequency.',
         '- **Use Case:** This is the magic behind AVoIP. An encoder sends its video stream to a multicast address. Decoders that want to show that video subscribe to that address. The network switch (with IGMP Snooping) makes sure the stream only goes to the subscribed decoders.'
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/unicast_multicast.png',
-        title: 'Unicast vs Multicast Diagram',
-        type: 'diagram',
-      },
     },
     {
       title: 'VLANs (Virtual LANs)',

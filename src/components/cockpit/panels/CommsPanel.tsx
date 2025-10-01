@@ -45,43 +45,33 @@ export function CommsPanel() {
     <>
       <Panel title="COMMS &amp; DATA" icon={<CockpitRadio className="size-4" />}>
         <div className="grid gap-4">
-          <div className="rounded-md border border-zinc-700/60 bg-zinc-900/60 p-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs tracking-wider text-zinc-300">RECENT SORTIE</span>
-              <div className="flex items-center gap-2">
-                <Tooltip content="Previous Project">
-                  <Button variant="outline" size="icon" className="border-zinc-600" onClick={() => cycleProject('down')} aria-label="Previous project">
-                    <CockpitChevronDown className="size-4" />
-                  </Button>
-                </Tooltip>
-                <Tooltip content="Next Project">
-                  <Button variant="outline" size="icon" className="border-zinc-600" onClick={() => cycleProject('up')} aria-label="Next project">
-                    <CockpitChevronUp className="size-4" />
-                  </Button>
-                </Tooltip>
+          <Tooltip content="Cycle through and load recent projects.">
+            <div className="rounded-md border border-zinc-700/60 bg-zinc-900/60 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs tracking-wider text-zinc-300">RECENT SORTIE</span>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="icon" className="border-zinc-600" onClick={() => cycleProject('down')} aria-label="Previous project"><CockpitChevronDown className="size-4" /></Button>
+                    <Button variant="outline" size="icon" className="border-zinc-600" onClick={() => cycleProject('up')} aria-label="Next project"><CockpitChevronUp className="size-4" /></Button>
+                </div>
               </div>
-            </div>
-            <div className="mt-2 min-h-[4rem] rounded bg-black/60 p-2 text-center font-mono text-sm text-[#39FF14] shadow-[inset_0_0_8px_rgba(57,255,20,0.25)]">
-              {selectedProject ? selectedProject.projectName : "NO SORTIES FOUND"}
-            </div>
-            <Button variant="solid" className="mt-2 w-full" onClick={handleLoadProject} disabled={!selectedProject}>LOAD SORTIE</Button>
-          </div>
-          <Tooltip content="View and edit project-wide notes.">
-            <div>
-              <ToggleSwitch id="notes" label="PROJECT NOTES" checked={isNotesOpen} onChange={setIsNotesOpen} />
+              <div className="mt-2 min-h-[4rem] rounded bg-black/60 p-2 text-center font-mono text-sm text-[#39FF14] shadow-[inset_0_0_8px_rgba(57,255,20,0.25)]">
+                {selectedProject ? selectedProject.projectName : "NO SORTIES FOUND"}
+              </div>
+              <Button variant="solid" className="mt-2 w-full" onClick={handleLoadProject} disabled={!selectedProject}>LOAD SORTIE</Button>
             </div>
           </Tooltip>
+          <Tooltip content="View and edit project-wide notes.">
+            <div><ToggleSwitch id="notes" label="PROJECT NOTES" checked={isNotesOpen} onChange={setIsNotesOpen} /></div>
+          </Tooltip>
           <Tooltip content="Display application information and version.">
-            <div>
-              <MomentaryButton id="about-wingman" label="ABOUT WINGMAN" onPress={() => setIsAboutOpen(true)} icon={<CockpitPauseOctagon className="size-4" />} />
-            </div>
+            <div><MomentaryButton id="about-wingman" label="ABOUT WINGMAN" onPress={() => setIsAboutOpen(true)} icon={<CockpitPauseOctagon className="size-4" />} /></div>
           </Tooltip>
         </div>
       </Panel>
       <ProjectNotesModal isOpen={isNotesOpen} onClose={() => setIsNotesOpen(false)} />
       <InfoModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} title="About Wingman OS">
         <p><strong>Version:</strong> 0.1.0 (F-14 Cockpit Theme)</p>
-        <p className="mt-2">AI-powered copilot for WyreStorm AV system design. Built to accelerate training and proposal generation.</p>
+        <p className="mt-2">AI-powered copilot for WyreStorm AV system design.</p>
       </InfoModal>
     </>
   );

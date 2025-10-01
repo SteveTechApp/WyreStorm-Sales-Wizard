@@ -7,7 +7,7 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         templateName: 'Digital Signage (AVoIP)',
         description: 'A scalable AVoIP solution for distributing promotional content to multiple screens in a retail environment.',
         vertical: 'Retail',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/retail_signage.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Store-Wide Signage',

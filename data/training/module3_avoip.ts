@@ -20,11 +20,6 @@ export const MODULE_3_AVOIP: TrainingModule = {
         '- **Flexibility:** Any source can be sent to any display, or to all displays simultaneously (multicasting). This is perfect for applications like sports bars, command centers, and digital signage.',
         '- **Distance:** The distance is limited only by the network infrastructure itself, which can easily span entire buildings or campuses using fiber optic cable.'
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/avoip_system.png',
-        title: 'AVoIP System Diagram',
-        type: 'diagram',
-      },
     },
     {
       title: 'WyreStorm NetworkHD Series',

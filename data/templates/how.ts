@@ -7,7 +7,7 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         templateName: 'House of Worship (Silver)',
         description: 'A multi-screen system for displaying lyrics and live video, with easy control for volunteers.',
         vertical: 'House of Worship',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/house_of_worship.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Main Sanctuary',

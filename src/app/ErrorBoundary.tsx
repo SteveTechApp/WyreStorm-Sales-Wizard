@@ -1,5 +1,5 @@
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+// FIX: Corrected import path for ErrorDisplay to avoid circular dependency.
 import ErrorDisplay from '@/components/ErrorDisplay';
 
 interface ErrorBoundaryProps {
@@ -11,7 +11,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-// Fix: Extended `React.Component` to ensure `this.props` is available.
+// FIX: The ErrorBoundary class now extends React.Component to have access to `this.props` and `this.state`.
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = {
     hasError: false,

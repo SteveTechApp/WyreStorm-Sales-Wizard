@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AppLayout from '@/components/AppLayout';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { useProjectContext } from '@/context/ProjectContext';
 import ContextualLoadingUI from '@/components/loading/ContextualLoadingUI';
-import ErrorBoundary from '@/components/ErrorBoundary';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const WelcomeScreen = lazy(() => import('@/pages/WelcomeScreen'));
@@ -14,7 +14,7 @@ const ProposalDisplay = lazy(() => import('@/pages/ProposalDisplay'));
 const TrainingPage = lazy(() => import('@/pages/TrainingPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
-const SuspenseFallback = () => (
+const suspenseFallback = (
   <div className="flex h-full w-full items-center justify-center p-10">
     <LoadingSpinner />
   </div>
@@ -27,13 +27,16 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AppLayout>
-        <Suspense fallback={<SuspenseFallback />}>
+        <Suspense fallback={suspenseFallback}>
           <Routes>
             <Route path="/" element={<WelcomeScreen />} />
             <Route path="/setup" element={<ProjectSetupScreen />} />
             <Route path="/agent" element={<AgentInputForm />} />
             <Route path="/design/:projectId" element={<DesignCoPilot />} />
-            <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
+            <Route
+              path="/proposal/:projectId/:proposalId"
+              element={<ProposalDisplay />}
+            />
             <Route path="/training" element={<TrainingPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

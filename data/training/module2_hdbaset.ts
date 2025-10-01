@@ -21,11 +21,6 @@ export const MODULE_2_HDBASET: TrainingModule = {
         '- **Transmitter (TX):** Connects to the source device (e.g., laptop, media player). It converts the AV and control signals into a format that can be sent over the category cable.',
         '- **Receiver (RX):** Connects to the display device (e.g., TV, projector). It converts the signal back into its original format.'
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/hdbaset_tx_rx.png',
-        title: 'HDBaseT Transmitter and Receiver',
-        type: 'diagram',
-      },
     },
     {
       title: 'HDBaseT Classes & Versions',
@@ -72,11 +67,6 @@ export const MODULE_2_HDBASET: TrainingModule = {
         '',
         '**Practical Application:** In a conference room, you could have a transmitter in the table and a receiver behind the display. With a single Cat6 cable, you can send video, provide a wired network jack at the table, control the display\'s power, and power the receiver, eliminating the need for an electrician to install an outlet behind the TV.'
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/5-play.png',
-        title: 'HDBaseT 5-Play Features',
-        type: 'diagram',
-      },
     },
   ],
   quiz: [

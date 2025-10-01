@@ -23,11 +23,6 @@ export const MODULE_5_DATASHEETS: TrainingModule = {
         '',
         "**Example for APO-210-UC:** The overview would explain that it's designed for medium-sized conference rooms, combining switching, scaling, speakerphone, and wireless casting into one device to simplify BYOM (Bring Your Own Meeting) setups."
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/datasheet_header.png',
-        title: 'Example Datasheet Header',
-        type: 'image',
-      },
     },
     {
       title: 'Key Specifications',
@@ -80,11 +75,6 @@ export const MODULE_5_DATASHEETS: TrainingModule = {
         '',
         "**Example:** The APO-210-UC being **Zoom Certified** is a major selling point, as it assures the customer it will work reliably with their chosen UC platform."
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/datasheet_diagram.png',
-        title: 'Example Connectivity Diagram',
-        type: 'diagram',
-      },
     },
   ],
   quiz: [

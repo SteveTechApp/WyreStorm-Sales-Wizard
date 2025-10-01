@@ -7,7 +7,7 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Interactive Classroom (Silver)',
         description: 'A modern classroom with an interactive display, wireless casting, and voice reinforcement.',
         vertical: 'Education',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/classroom.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Standard Classroom',
@@ -35,7 +35,7 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'University Lecture Hall (Gold)',
         description: 'A large venue system with projection, lecture capture, and multiple sources for higher education.',
         vertical: 'Education',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/lecture_hall.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Lecture Hall 101',

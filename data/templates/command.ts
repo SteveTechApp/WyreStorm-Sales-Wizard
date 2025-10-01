@@ -7,7 +7,7 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
         templateName: 'NOC Video Wall (Gold)',
         description: 'A high-performance AVoIP video wall for a Network Operations Center with multiple sources.',
         vertical: 'Command & Control',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/command_center.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Network Operations Center',

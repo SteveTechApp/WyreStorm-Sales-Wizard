@@ -7,7 +7,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Home Theater (Gold)',
         description: 'A high-end home cinema with 4K projection, immersive audio, and simple control.',
         vertical: 'Residential',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/residential.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Home Cinema',

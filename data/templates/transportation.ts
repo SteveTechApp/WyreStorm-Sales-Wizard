@@ -7,7 +7,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Airport Digital Signage (AVoIP)',
         description: 'A highly scalable and reliable AVoIP system for displaying flight information and advertising.',
         vertical: 'Transportation',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/transportation.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Terminal Signage System',

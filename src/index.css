@@ -1,0 +1,83 @@
+:root {
+  --background: #ffffff;
+  --background-secondary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-on-accent: #ffffff;
+  --accent: #e6007e;
+  --accent-hover: #c10069;
+  --primary: #008a3a;
+  --destructive: #dc2626;
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+
+  /* Gauge defaults */
+  --gauge-percentage-deg: 0deg;
+  --gauge-angle-deg: -135deg;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-text-primary transition-colors duration-300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .mfd-panel {
+    @apply p-6 bg-background-secondary rounded-none border-2;
+    border-color: var(--border-color);
+  }
+  .btn {
+    @apply font-bold py-2 px-4 rounded-none transition-colors duration-200 uppercase tracking-wider;
+  }
+  .btn-primary {
+    @apply text-text-on-accent;
+    background-color: var(--accent);
+  }
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+  }
+  .btn-secondary {
+    @apply text-text-primary border-2;
+    background-color: var(--background);
+    border-color: var(--border-color);
+  }
+  .btn-secondary:hover {
+     background-color: var(--background-secondary);
+  }
+  /* Styles for the refactored Gauge component */
+  .gauge-face {
+    @apply w-full h-full rounded-full transition-all;
+    background: conic-gradient(from -135deg, 
+      var(--accent) 0deg var(--gauge-percentage-deg, 0deg), 
+      var(--border-color) var(--gauge-percentage-deg, 0deg) 270deg, 
+      transparent 270deg 360deg);
+    mask: radial-gradient(transparent 36px, black 37px);
+    -webkit-mask: radial-gradient(transparent 36px, black 37px);
+  }
+  .gauge-needle {
+    @apply absolute top-1/2 left-1/2 w-0.5 h-9 bg-text-primary origin-bottom transition-transform duration-200;
+    transform: translateX(-50%) translateY(-100%) rotate(var(--gauge-angle-deg, -135deg));
+  }
+  .gauge-center-point {
+    @apply absolute top-1/2 left-1/2 w-2.5 h-2.5 bg-text-primary rounded-full -translate-x-1/2 -translate-y-1/2;
+  }
+}
+
+@layer utilities {
+  .mfd-screen {
+    box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.1), 0 0 5px rgba(57, 255, 20, 0.2);
+    background-image: linear-gradient(rgba(0,0,0,0.25) 50%, transparent 50%);
+    background-size: 100% 4px;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+}

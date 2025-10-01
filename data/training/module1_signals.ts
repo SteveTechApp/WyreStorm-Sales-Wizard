@@ -21,11 +21,6 @@ export const MODULE_1_SIGNALS: TrainingModule = {
         '',
         '**Key Takeaway:** Higher resolution means a sharper, more detailed image, but it also requires more bandwidth to transmit.'
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/resolution_comparison.png',
-        title: 'Resolution Comparison Chart',
-        type: 'image',
-      },
     },
     {
       title: 'Chroma Subsampling',
@@ -43,11 +38,6 @@ export const MODULE_1_SIGNALS: TrainingModule = {
         '',
         "**Why it Matters:** While 4:2:0 is fine for movies, it can make text and fine lines (like in a spreadsheet) look blurry or have color artifacts. For presentation systems, **4:4:4 is always preferred** to ensure maximum clarity."
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/chroma_subsampling.png',
-        title: 'Chroma Subsampling Visualized',
-        type: 'diagram',
-      },
     },
     {
       title: 'HDCP - Content Protection',

@@ -7,7 +7,7 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         templateName: 'Small Huddle Space (Silver)',
         description: 'A simple, cost-effective setup for 2-4 people with wireless casting and a single display.',
         vertical: 'Corporate',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/corporate_huddle.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Huddle Space',
@@ -35,7 +35,7 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         templateName: 'Executive Boardroom (Gold)',
         description: 'A high-performance system for a large boardroom with dual displays, advanced audio, and touch panel control.',
         vertical: 'Corporate',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/corporate_conference.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Executive Boardroom',

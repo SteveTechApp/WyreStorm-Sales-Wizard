@@ -7,7 +7,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Council Chamber (Gold)',
         description: 'A formal meeting space with delegate microphones, video conferencing, and broadcast capabilities.',
         vertical: 'Government',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/council_chamber.jpg',
+        imageUrl: '',
         roomData: {
             id: uuidv4(),
             roomName: 'City Council Chamber',

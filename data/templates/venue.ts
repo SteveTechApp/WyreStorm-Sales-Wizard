@@ -7,7 +7,7 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         templateName: 'Auditorium (HDBaseT)',
         description: 'A projection-based system for corporate auditoriums with multiple inputs and speech reinforcement.',
         vertical: 'Large Venue',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/large_venue.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Corporate Auditorium',

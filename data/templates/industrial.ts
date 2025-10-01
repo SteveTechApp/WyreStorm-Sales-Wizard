@@ -7,7 +7,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Process Control Room (Gold)',
         description: 'A zero-latency AVoIP system for displaying critical SCADA and telemetry data in an industrial control room.',
         vertical: 'Industrial',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/oil_gas_ops.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Operations Control Center',

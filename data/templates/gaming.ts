@@ -7,7 +7,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         templateName: 'Casino Floor (AVoIP)',
         description: 'A large-scale, highly reliable AVoIP system for 24/7 content distribution across a casino floor.',
         vertical: 'Gaming',
-        imageUrl: 'https://storage.googleapis.com/wyrestorm-wingman-assets/templates/casino_floor.jpg',
+        imageUrl: '',
         roomData: {
             id: '',
             roomName: 'Casino Main Floor',

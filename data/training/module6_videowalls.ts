@@ -23,11 +23,6 @@ export const MODULE_6_VIDEOWALLS: TrainingModule = {
         '- **Cons:** Significantly more expensive, lower resolution per area (defined by "pixel pitch"), more complex to install and calibrate.',
         '- **Use Case:** Large-scale advertising billboards, concert stages, high-end broadcast studios, and premium boardrooms.'
       ].join('\n'),
-      asset: {
-        url: 'https://storage.googleapis.com/wyrestorm-wingman-assets/training/videowall_types.png',
-        title: 'LCD vs dvLED Video Wall',
-        type: 'image',
-      },
     },
     {
       title: 'Key Design Considerations',
