@@ -1,6 +1,6 @@
 
 import React from 'react';
-import ErrorDisplay from './ErrorDisplay.tsx';
+import ErrorDisplay from '@/components/ErrorDisplay';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
