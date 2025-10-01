@@ -1,0 +1,31 @@
+import {
+  BuildingIcon,
+  EducationIcon,
+  GovernmentIcon,
+  HospitalityIcon,
+  RetailIcon,
+  ResidentialIcon,
+  TransportationIcon,
+  LargeVenueIcon,
+  IndustrialIcon,
+  GamingIcon,
+  HouseOfWorshipIcon,
+  CommandCenterIcon,
+  SparklesIcon,
+} from '@/components/icons/VerticalIcons';
+
+export const VERTICAL_MARKETS = [
+  { verticalId: 'all', name: 'All', icon: SparklesIcon },
+  { verticalId: 'corp', name: 'Corporate', icon: BuildingIcon },
+  { verticalId: 'edu', name: 'Education', icon: EducationIcon },
+  { verticalId: 'gov', name: 'Government', icon: GovernmentIcon },
+  { verticalId: 'hos', name: 'Hospitality', icon: HospitalityIcon },
+  { verticalId: 'ret', name: 'Retail', icon: RetailIcon },
+  { verticalId: 'res', name: 'Residential', icon: ResidentialIcon },
+  { verticalId: 'tra', name: 'Transportation', icon: TransportationIcon },
+  { verticalId: 'ven', name: 'Large Venue', icon: LargeVenueIcon },
+  { verticalId: 'ind', name: 'Industrial', icon: IndustrialIcon },
+  { verticalId: 'gam', name: 'Gaming', icon: GamingIcon },
+  { verticalId: 'how', name: 'House of Worship', icon: HouseOfWorshipIcon },
+  { verticalId: 'cmd', name: 'Command & Control', icon: CommandCenterIcon },
+];

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/cockpit/ui/Card';
 
-// FIX: Refactored to use React.FC with an explicit props interface to resolve typing issues in consuming components.
 interface PanelProps {
   title: string;
   icon?: React.ReactNode;

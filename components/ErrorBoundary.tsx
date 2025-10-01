@@ -1,6 +1,4 @@
-
-
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface ErrorBoundaryProps {
@@ -12,9 +10,8 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-// FIX: Explicitly use React.Component to avoid potential import resolution issues causing `this.props` to be undefined.
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  // Use a class property for state initialization to ensure correct type inference.
+// Fix: The ErrorBoundary class must extend React.Component to have access to props.
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = {
     hasError: false,
     error: null,
