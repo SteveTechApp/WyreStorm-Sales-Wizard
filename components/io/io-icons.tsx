@@ -1,5 +1,8 @@
 import React from 'react';
-import { IconProps } from './io-types';
+
+interface IconProps {
+  className?: string;
+}
 
 export const HdmiIcon: React.FC<IconProps> = ({ className }) => <span className={className}>HDMI</span>;
 export const UsbCIcon: React.FC<IconProps> = ({ className }) => <span className={className}>USB-C</span>;

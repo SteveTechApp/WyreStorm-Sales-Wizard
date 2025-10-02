@@ -5,7 +5,7 @@ import { CockpitShieldAlert } from "../Icons.tsx";
  * A safety-covered switch, refactored to use a 'safe' state for clarity
  * and pure CSS transitions to prevent library conflicts.
  */
-export function SafeSwitch({ id, label, isSafe, onToggle, danger }: { id?: string; label: string; isSafe: boolean; onToggle: (v: boolean) => void; danger?: boolean }) {
+export function SafeSwitch({ id, label, isSafe, onToggle, danger }: { id?: string; label: string; isSafe: boolean; onToggle: () => void; danger?: boolean }) {
   const [isCoverOpen, setIsCoverOpen] = useState(false);
   const inputId = id || useId();
   const isArmed = !isSafe;
@@ -35,7 +35,7 @@ export function SafeSwitch({ id, label, isSafe, onToggle, danger }: { id?: strin
         <button
           id={inputId}
           disabled={!isCoverOpen}
-          onClick={() => onToggle(!isSafe)}
+          onClick={onToggle}
           className={`absolute left-2 top-2 z-0 h-6 w-12 rounded-md border text-xs font-medium tracking-wider transition ${
             isArmed ? "border-red-400/70 bg-red-900/40 text-red-100" : "border-zinc-600/60 bg-zinc-900/80 text-zinc-200"
           } ${!isCoverOpen ? "opacity-60" : "hover:bg-zinc-800/70 active:scale-[0.98]"}`}

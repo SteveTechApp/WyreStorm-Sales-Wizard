@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RoomWizardAnswers } from '../../utils/types';
+import { RoomWizardAnswers } from '../../utils/types.ts';
 import {
   WALL_CONSTRUCTION_OPTIONS,
   CONTAINMENT_OPTIONS,
@@ -25,6 +25,20 @@ const StepEnvironment: React.FC<StepEnvironmentProps> = ({ answers, updateAnswer
   const handleAudioChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     updateAnswers({ audioSystemDetails: { ...answers.audioSystemDetails, [name]: value } });
+  };
+
+  const handleUseCaseChange = (useCase: ('speech_reinforcement' | 'program_audio' | 'video_conferencing')) => {
+    const currentUseCases = answers.audioSystemDetails.useCases;
+    const newUseCases = currentUseCases.includes(useCase)
+        ? currentUseCases.filter(uc => uc !== useCase)
+        : [...currentUseCases, useCase];
+    
+    updateAnswers({ 
+        audioSystemDetails: { 
+            ...answers.audioSystemDetails, 
+            useCases: newUseCases 
+        } 
+    });
   };
 
   return (
@@ -72,6 +86,25 @@ const StepEnvironment: React.FC<StepEnvironmentProps> = ({ answers, updateAnswer
               </select>
             </div>
           </div>
+           <div className="mt-6">
+            <label className="block text-sm font-medium text-text-secondary">Audio Use Cases (select multiple)</label>
+            <div className="flex flex-wrap gap-2 mt-2">
+                {AUDIO_USE_CASE_OPTIONS.map(opt => (
+                <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => handleUseCaseChange(opt.value as any)}
+                    className={`px-3 py-1.5 text-sm rounded-md border ${
+                    answers.audioSystemDetails.useCases.includes(opt.value as any)
+                        ? 'bg-accent/10 border-accent text-accent'
+                        : 'bg-background hover:bg-border-color border-border-color'
+                    }`}
+                >
+                    {opt.label}
+                </button>
+                ))}
+            </div>
+           </div>
         </div>
       </div>
       <AudioDesignGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />

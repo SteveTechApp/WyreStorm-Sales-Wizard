@@ -1,13 +1,11 @@
 import React from 'react';
 
-// FIX: Refactored to use React.FC to ensure special props like `key` are correctly handled when mapping over this component.
 type MomentaryButtonProps = {
   id?: string;
   label: string;
   onPress: () => void;
   active?: boolean;
   icon?: React.ReactNode;
-  // FIX: Add disabled prop to allow disabling the button.
   disabled?: boolean;
 };
 

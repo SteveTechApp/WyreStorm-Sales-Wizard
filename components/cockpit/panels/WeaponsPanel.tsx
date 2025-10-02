@@ -50,7 +50,7 @@ export function WeaponsPanel() {
     <>
       <Panel title="AI WINGMAN" icon={<CockpitRocket className="size-4" />} tone="danger">
         <div className="grid gap-4">
-          <Tooltip content="Enable/Disable all AI-powered design actions."><SafeSwitch id="ai-assist" label="AI ASSIST" isSafe={!aiAssist} onToggle={setAiAssist} danger /></Tooltip>
+          <Tooltip content="Enable/Disable all AI-powered design actions."><SafeSwitch id="ai-assist" label="AI ASSIST" isSafe={!aiAssist} onToggle={() => setAiAssist(p => !p)} danger /></Tooltip>
           <div className="grid grid-cols-3 gap-3">
             <Tooltip content="Let the AI select equipment for the current room."><div><MomentaryButton id="ai-design" label="DESIGN ROOM" onPress={() => activeRoomId && handleDesignRoom(activeRoomId)} disabled={isActionDisabled} /></div></Tooltip>
             <Tooltip content="Generate a system connectivity diagram."><div><MomentaryButton id="ai-diagram" label="GEN DIAGRAM" onPress={() => activeRoomId && handleGenerateDiagram(activeRoomId)} disabled={isActionDisabled} /></div></Tooltip>

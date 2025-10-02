@@ -1,7 +1,5 @@
 import React from 'react';
-// FIX: Corrected import path
 import RoomConfigurator from '../RoomConfigurator.tsx';
-// FIX: Corrected import path
 import SystemDiagram from '../SystemDiagram.tsx';
 import VisualRoomPlanner from '../VisualRoomPlanner.tsx';
 import IoPanel from '../io/IoPanel.tsx';

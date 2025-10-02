@@ -1,5 +1,4 @@
 import React from 'react';
-// FIX: Use specific context hook instead of general useAppContext
 import { useProjectContext } from '../../context/ProjectContext.tsx';
 import { PlusIcon } from '../Icons.tsx';
 
@@ -8,7 +7,6 @@ interface AssignedInputsProps {
 }
 
 const AssignedInputs: React.FC<AssignedInputsProps> = ({ outputId }) => {
-    // FIX: Destructure from the correct, specific context
     const { projectData, activeRoomId } = useProjectContext();
     const room = projectData?.rooms.find(r => r.id === activeRoomId);
     

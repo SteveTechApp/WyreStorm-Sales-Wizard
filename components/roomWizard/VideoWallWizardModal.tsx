@@ -47,7 +47,6 @@ const VideoWallWizardModal: React.FC<VideoWallWizardModalProps> = ({ isOpen, onC
     onClose();
   };
 
-  // FIX: Create a handler that merges partial updates to satisfy child component prop types.
   const updateConfig = (newConfig: Partial<VideoWallConfig>) => {
     setConfig(prev => ({...prev, ...newConfig}));
   };

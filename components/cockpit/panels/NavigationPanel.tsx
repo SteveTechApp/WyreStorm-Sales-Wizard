@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CockpitRadar, CockpitPower } from "../Icons.tsx";
 import { Panel } from "../Panel.tsx";
 import { ToggleSwitch } from "../controls/ToggleSwitch.tsx";
+import { MomentaryButton } from "../controls/MomentaryButton.tsx";
 import { RotaryDial } from "../controls/RotaryDial.tsx";
 import { GearLever } from "../controls/GearLever.tsx";
 import { Tooltip } from "../ui/Tooltip.tsx";
@@ -41,7 +42,7 @@ export function NavigationPanel() {
         <div className="grid gap-4">
           <div className="grid grid-cols-3 gap-3">
             <Tooltip content="Ask the AI a quick technical or product question."><ToggleSwitch id="quick-question" label="QUICK Q" checked={isQuickQuestionOpen} onChange={setIsQuickQuestionOpen} icon={<CockpitPower className="size-4" />} /></Tooltip>
-            <Tooltip content="Access the Wingman training modules."><ToggleSwitch id="training" label="TRAINING" checked={false} onChange={() => navigate('/training')} /></Tooltip>
+            <Tooltip content="Access the Wingman training modules."><div><MomentaryButton id="training" label="TRAINING" onPress={() => navigate('/training')} /></div></Tooltip>
             <Tooltip content="Edit your user profile and settings."><ToggleSwitch id="profile" label="PROFILE" checked={isProfileOpen} onChange={setIsProfileOpen} /></Tooltip>
           </div>
           <Tooltip content="Cycle through the different rooms in your project.">

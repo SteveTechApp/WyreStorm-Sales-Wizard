@@ -16,12 +16,18 @@ const TemplateGroupCard: React.FC<TemplateGroupCardProps> = ({ verticalId, templ
   const Icon = verticalInfo.icon;
 
   return (
-    <div className="bg-background border border-border-color rounded-lg overflow-hidden">
-      <div className="p-4 flex items-center gap-3 bg-background-secondary border-b border-border-color">
-        <Icon className="h-6 w-6 text-accent" />
-        <h3 className="font-bold text-lg text-text-primary">{verticalInfo.name}</h3>
+    <div className="bg-background border border-border-color rounded-lg overflow-hidden flex flex-col">
+      <div className="relative group">
+        <img src={verticalInfo.imageUrl} alt={verticalInfo.name} className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="flex items-center gap-3">
+            <Icon className="h-6 w-6 text-white" />
+            <h3 className="font-bold text-lg text-white drop-shadow-md">{verticalInfo.name}</h3>
+          </div>
+        </div>
       </div>
-      <div className="p-4 space-y-2">
+      <div className="p-4 space-y-2 flex-grow">
         {templates.map(template => (
           <button
             key={template.templateId}

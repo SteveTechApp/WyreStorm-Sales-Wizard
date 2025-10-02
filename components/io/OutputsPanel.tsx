@@ -1,10 +1,8 @@
 import React from 'react';
-// FIX: Use specific context hook instead of general useAppContext
 import { useProjectContext } from '../../context/ProjectContext.tsx';
 import IoDeviceCard from './IoDeviceCard.tsx';
 
 const OutputsPanel: React.FC = () => {
-    // FIX: Destructure from the correct, specific context
     const { projectData, activeRoomId } = useProjectContext();
     const room = projectData?.rooms.find(r => r.id === activeRoomId);
     const outputs = room?.ioRequirements.filter(io => io.type === 'output') || [];
