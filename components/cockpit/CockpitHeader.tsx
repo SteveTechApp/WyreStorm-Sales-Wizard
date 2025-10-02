@@ -13,6 +13,7 @@ const CockpitHeader: React.FC = () => {
         <nav className="flex items-center gap-2">
             <NavLink to="/" className={navLinkClass} end>FLIGHT DECK</NavLink>
             <NavLink to="/setup" className={navLinkClass}>NEW SORTIE</NavLink>
+            <NavLink to="/video-generator" className={navLinkClass}>VIDEO GEN</NavLink>
             <NavLink to="/training" className={navLinkClass}>TRAINING</NavLink>
         </nav>
       </div>

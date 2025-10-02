@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useProjectContext } from './context/ProjectContext.tsx';
 
 import AppLayout from './components/AppLayout.tsx';
-import WelcomeScreen from './pages/WelcomeScreen.tsx';
-import ProjectSetupScreen from './pages/ProjectSetupScreen.tsx';
-import AgentInputForm from './pages/AgentInputForm.tsx';
-import DesignCoPilot from './pages/DesignCoPilot.tsx';
-import ProposalDisplay from './pages/ProposalDisplay.tsx';
-import TrainingPage from './pages/TrainingPage.tsx';
-import NotFoundPage from './pages/NotFoundPage.tsx';
-
-import ContextualLoadingUI from './components/loading/ContextualLoadingUI.tsx';
+import LoadingSpinner from './components/LoadingSpinner.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
+import ContextualLoadingUI from './components/loading/ContextualLoadingUI.tsx';
+
+// Lazy load all page components
+const WelcomeScreen = lazy(() => import('./pages/WelcomeScreen.tsx'));
+const ProjectSetupScreen = lazy(() => import('./pages/ProjectSetupScreen.tsx'));
+const AgentInputForm = lazy(() => import('./pages/AgentInputForm.tsx'));
+const DesignCoPilot = lazy(() => import('./pages/DesignCoPilot.tsx'));
+const ProposalDisplay = lazy(() => import('./pages/ProposalDisplay.tsx'));
+const TrainingPage = lazy(() => import('./pages/TrainingPage.tsx'));
+const VideoGeneratorPage = lazy(() => import('./pages/VideoGeneratorPage.tsx'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx'));
+
+const suspenseFallback = (
+    <div className="flex h-full w-full items-center justify-center p-10">
+        <LoadingSpinner />
+    </div>
+);
 
 const App: React.FC = () => {
     const { appState } = useProjectContext();
@@ -21,15 +30,18 @@ const App: React.FC = () => {
     return (
         <ErrorBoundary>
             <AppLayout>
-                <Routes>
-                    <Route path="/" element={<WelcomeScreen />} />
-                    <Route path="/setup" element={<ProjectSetupScreen />} />
-                    <Route path="/agent" element={<AgentInputForm />} />
-                    <Route path="/design/:projectId" element={<DesignCoPilot />} />
-                    <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
-                    <Route path="/training" element={<TrainingPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                </Routes>
+                <Suspense fallback={suspenseFallback}>
+                    <Routes>
+                        <Route path="/" element={<WelcomeScreen />} />
+                        <Route path="/setup" element={<ProjectSetupScreen />} />
+                        <Route path="/agent" element={<AgentInputForm />} />
+                        <Route path="/design/:projectId" element={<DesignCoPilot />} />
+                        <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
+                        <Route path="/training" element={<TrainingPage />} />
+                        <Route path="/video-generator" element={<VideoGeneratorPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                </Suspense>
             </AppLayout>
             {isGenerating && <ContextualLoadingUI />}
         </ErrorBoundary>

@@ -138,7 +138,6 @@ export interface Proposal {
     createdAt: string;
     executiveSummary: string;
     scopeOfWork: string;
-    // FIX: Made systemDiagram optional to align with generation logic where a diagram may not exist.
     systemDiagram?: StructuredSystemDiagram;
     equipmentList: { sku: string; name: string; quantity: number }[];
     installationPlan: { phase: string; tasks: string[] }[];
@@ -185,8 +184,6 @@ export interface ProjectSetupData {
     timeline?: string;
 }
 
-// FIX: The original type was too restrictive, omitting fields that are actually present on the object.
-// This new type only omits fields that are not part of the wizard's state.
 export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram'>;
 
 export interface DesignFeedbackItem {

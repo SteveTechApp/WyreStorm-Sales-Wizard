@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useUserProfile } from '../hooks/useUserProfile';
+import { useUserProfile } from '../hooks/useUserProfile.ts';
 
 export type UserContextType = ReturnType<typeof useUserProfile>;
 

@@ -1,7 +1,7 @@
 import { useReducer, useState, useEffect, useCallback, useRef } from 'react';
-import { ProjectData, Product } from '../utils/types';
-import { useLocalStorage } from './useLocalStorage';
-import { projectReducer, ProjectAction } from './reducers/projectReducer.ts';
+import { ProjectData, Product } from '../utils/types.ts';
+import { useLocalStorage } from './useLocalStorage.ts';
+import { projectReducer } from './reducers/projectReducer.ts';
 import toast from 'react-hot-toast';
 
 export type AppState = 'idle' | 'loading' | 'generating' | 'error';

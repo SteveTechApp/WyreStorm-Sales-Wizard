@@ -35,7 +35,7 @@ export const createNewRoom = (): Omit<RoomData, 'roomName' | 'roomType' | 'desig
  * @throws An error if the JSON is malformed.
  */
 export const cleanAndParseJson = (text: string): any => {
-  const cleaned = text.trim().replace(/^```(?:json)?|```$/g, '');
+  const cleaned = text.trim().replace(/^`{3}(?:json)?|`{3}$/g, '');
   try {
     return JSON.parse(cleaned);
   } catch (err) {

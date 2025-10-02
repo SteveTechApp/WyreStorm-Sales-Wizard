@@ -1,4 +1,3 @@
-// FIX: Imported Dispatch and SetStateAction to resolve React namespace error.
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 function getStorageValue<T>(key: string, defaultValue: T): T {

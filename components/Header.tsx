@@ -26,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({ onOpenProfile }) => {
         <nav className="flex items-center gap-2">
           <NavLink to="/" className={navLinkClass} end>Dashboard</NavLink>
           <NavLink to="/setup" className={navLinkClass}>New Project</NavLink>
+          <NavLink to="/video-generator" className={navLinkClass}>Video Gen</NavLink>
           <NavLink to="/training" className={navLinkClass}>Training</NavLink>
         </nav>
         <div className="flex items-center gap-4">
