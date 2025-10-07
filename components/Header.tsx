@@ -2,19 +2,12 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeSelector from './ThemeSelector';
-import { useThemeContext } from '../context/ThemeContext';
 
 interface HeaderProps {
   onOpenProfile: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onOpenProfile }) => {
-  const { theme } = useThemeContext();
-
-  if (theme === 'cockpit') {
-    // This case is now handled by AppLayout, but this provides a safe fallback.
-    return null; 
-  }
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `py-2 px-3 rounded-md text-sm font-medium ${isActive ? 'bg-background text-text-primary' : 'text-text-secondary hover:bg-background-secondary/50 hover:text-text-primary'}`;
