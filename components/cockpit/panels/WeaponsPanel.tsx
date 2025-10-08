@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState } from 'react';
 import { CockpitRocket, CockpitAlertTriangle, CockpitLampCeiling } from "../Icons.tsx";
 import { Panel } from "../Panel.tsx";
 import { SafeSwitch } from "../controls/GuardedSwitch.tsx";

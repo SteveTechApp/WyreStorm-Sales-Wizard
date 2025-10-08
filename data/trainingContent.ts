@@ -7,6 +7,9 @@ import { MODULE_5_DATASHEETS } from './training/module5_datasheets.ts';
 import { MODULE_6_VIDEOWALLS } from './training/module6_videowalls.ts';
 import { MODULE_7_FIELD_GUIDES } from './training/module7_field_guides.ts';
 import { MODULE_8_BANT } from './training/module8_bant.ts';
+import { MODULE_9_TROUBLESHOOTING } from './training/module9_troubleshooting.ts';
+import { MODULE_10_APIS } from './training/module10_apis.ts';
+import { MODULE_11_INSTALLATION } from './training/module11_installation.ts';
 
 export const TRAINING_MODULES: TrainingModule[] = [
     MODULE_1_SIGNALS,
@@ -16,5 +19,8 @@ export const TRAINING_MODULES: TrainingModule[] = [
     MODULE_5_DATASHEETS,
     MODULE_6_VIDEOWALLS,
     MODULE_7_FIELD_GUIDES,
-    MODULE_8_BANT
+    MODULE_8_BANT,
+    MODULE_9_TROUBLESHOOTING,
+    MODULE_10_APIS,
+    MODULE_11_INSTALLATION,
 ];

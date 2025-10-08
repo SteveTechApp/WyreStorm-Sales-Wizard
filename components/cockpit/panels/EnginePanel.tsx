@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { CockpitGauge, CockpitFan, CockpitFlame } from "../Icons.tsx";
 import { Panel } from "../Panel.tsx";

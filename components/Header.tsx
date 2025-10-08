@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Logo from './Logo';
-import ThemeSelector from './ThemeSelector';
+import Logo from './Logo.tsx';
+import ThemeSelector from './ThemeSelector.tsx';
 
 interface HeaderProps {
   onOpenProfile: () => void;

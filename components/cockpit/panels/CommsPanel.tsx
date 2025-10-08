@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from 'react';
 import { CockpitRadio, CockpitChevronDown, CockpitChevronUp, CockpitPauseOctagon } from "../Icons.tsx";
 import { Panel } from "../Panel.tsx";
 import { Button } from "../ui/Button.tsx";

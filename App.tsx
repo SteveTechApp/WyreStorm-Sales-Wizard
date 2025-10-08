@@ -1,10 +1,10 @@
 
-
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useProjectContext } from './context/ProjectContext.tsx';
 
-import AppLayout from './components/AppLayout.tsx';
+// FIX: Corrected the import path to the single, authoritative AppLayout.
+import AppLayout from './components/layout/AppLayout.tsx';
 import LoadingSpinner from './components/LoadingSpinner.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import ContextualLoadingUI from './components/loading/ContextualLoadingUI.tsx';

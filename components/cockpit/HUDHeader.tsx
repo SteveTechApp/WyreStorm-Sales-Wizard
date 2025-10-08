@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { CockpitRadar } from "./Icons.tsx";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card.tsx";
 

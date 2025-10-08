@@ -2,7 +2,7 @@
 // F‑14 Cockpit UI — Main component for the Wingman OS dashboard.
 // This version is refactored to use a modular component structure to resolve React instance conflicts.
 
-import React from "react";
+import React from 'react';
 import { HUDHeader } from './HUDHeader.tsx';
 import { EnginePanel } from './panels/EnginePanel.tsx';
 import { WeaponsPanel } from './panels/WeaponsPanel.tsx';
