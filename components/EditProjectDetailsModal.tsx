@@ -49,7 +49,7 @@ const EditProjectDetailsModal: React.FC<EditProjectDetailsModalProps> = ({ isOpe
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
       <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
         <div className="p-4 border-b border-border-color">
           <h2 className="text-xl font-bold text-text-primary">Edit Project Details</h2>

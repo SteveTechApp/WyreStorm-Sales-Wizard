@@ -2,7 +2,7 @@ import React, { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface State {
@@ -11,10 +11,8 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Refactored to use a class property for state initialization.
-  // This is a modern and concise way to set initial state and resolves
-  // the TypeScript errors related to `this.state` and `this.props`.
-  public state: State = {
+  // FIX: Using a class property to initialize state. This is a more modern and concise approach that avoids potential issues with `this` context inside the constructor.
+  state: State = {
     hasError: false,
     error: null,
   };

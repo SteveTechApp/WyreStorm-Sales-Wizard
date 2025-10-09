@@ -31,7 +31,7 @@ const EOLWarningModal: React.FC<EOLWarningModalProps> = ({ isOpen, onClose, onCo
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
       <div className="bg-background-secondary rounded-lg shadow-xl p-6 w-full max-w-md m-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-4">
             <div className="flex-shrink-0 h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">

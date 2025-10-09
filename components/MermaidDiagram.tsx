@@ -15,7 +15,9 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ definition, onNodeClick
       containerRef.current.innerHTML = '';
       
       try {
-        const theme = document.documentElement.classList.contains('dark') || document.documentElement.classList.contains('cockpit') ? 'dark' : 'neutral';
+        const docClasses = document.documentElement.classList;
+        const isDarkTheme = docClasses.contains('dark');
+        const theme = isDarkTheme ? 'dark' : 'neutral';
 
         mermaid.initialize({ 
             startOnLoad: false, 

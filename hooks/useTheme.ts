@@ -4,25 +4,36 @@ import { ThemeName } from '../utils/types.ts';
 import { themes } from '../data/themes.ts';
 
 const defaultTheme: ThemeName = 'wyrestorm';
+const validThemes: ThemeName[] = Object.keys(themes) as ThemeName[];
 
 export const useTheme = () => {
     const [theme, setTheme] = useLocalStorage<ThemeName>('theme', defaultTheme);
 
+    // Sanitize the theme from localStorage. If it's not a valid theme (e.g., an old 'cockpit' value),
+    // fall back to the default theme. This prevents errors from trying to load a removed theme.
+    const activeTheme = validThemes.includes(theme) ? theme : defaultTheme;
+
     useEffect(() => {
         const root = window.document.documentElement;
-        const newTheme = themes[theme];
+        
+        const newTheme = themes[activeTheme];
 
         Object.entries(newTheme).forEach(([property, value]) => {
             root.style.setProperty(property, value);
         });
 
-        root.classList.remove(...Object.keys(themes).map(String));
-        root.classList.add(theme);
-    }, [theme]);
+        // Clean up any old theme classes (including the removed 'cockpit' theme) and add the current valid one.
+        root.classList.remove(...validThemes, 'cockpit');
+        root.classList.add(activeTheme);
+    }, [activeTheme]);
 
     const handleSetTheme = useCallback((newThemeName: ThemeName) => {
-        setTheme(newThemeName);
+        // Ensure only valid themes can be set.
+        if (validThemes.includes(newThemeName)) {
+            setTheme(newThemeName);
+        }
     }, [setTheme]);
 
-    return { theme, handleSetTheme };
+    // Return the sanitized `activeTheme` so the rest of the app never sees an invalid theme name.
+    return { theme: activeTheme, handleSetTheme };
 };

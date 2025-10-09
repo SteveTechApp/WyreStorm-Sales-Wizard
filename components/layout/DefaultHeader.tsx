@@ -14,7 +14,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ onOpenProfile }) => {
     `py-2 px-3 rounded-md text-sm font-medium ${isActive ? 'bg-background text-text-primary' : 'text-text-secondary hover:bg-background-secondary/50 hover:text-text-primary'}`;
 
   return (
-    <header className="bg-background-secondary/80 backdrop-blur-sm sticky top-0 z-30 border-b border-border print:hidden">
+    <header className="bg-background-secondary sticky top-0 z-30 border-b border-border print:hidden">
       <div className="container mx-auto flex justify-between items-center p-3">
         <Logo />
         <nav className="flex items-center gap-2">

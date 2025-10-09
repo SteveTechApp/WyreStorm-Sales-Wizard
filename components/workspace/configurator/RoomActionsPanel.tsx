@@ -24,14 +24,14 @@ const RoomActionsPanel: React.FC = () => {
 
     return (
         <>
-            <div className="mfd-panel space-y-3">
-                <button
-                    onClick={handleDesign}
-                    className="w-full btn btn-primary text-base"
-                >
-                    Engage AI Wingman
-                </button>
-                <div className="grid grid-cols-2 gap-3">
+            <div className="mfd-panel">
+                <div className="grid grid-cols-3 gap-3">
+                    <button
+                        onClick={handleDesign}
+                        className="w-full btn btn-primary text-sm"
+                    >
+                        AI Design
+                    </button>
                     <button onClick={() => setIsWizardOpen(true)} className="w-full btn btn-secondary text-sm">
                         Manual Config
                     </button>

@@ -1,10 +1,11 @@
 
+
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useProjectContext } from './context/ProjectContext.tsx';
 
-// FIX: Corrected the import path to the single, authoritative AppLayout.
-import AppLayout from './components/layout/AppLayout.tsx';
+// FIX: Corrected the import path to point to the unified AppLayout component.
+import AppLayout from './components/AppLayout.tsx';
 import LoadingSpinner from './components/LoadingSpinner.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import ContextualLoadingUI from './components/loading/ContextualLoadingUI.tsx';
@@ -17,6 +18,7 @@ const DesignCoPilot = lazy(() => import('./pages/DesignCoPilot.tsx'));
 const ProposalDisplay = lazy(() => import('./pages/ProposalDisplay.tsx'));
 const TrainingPage = lazy(() => import('./pages/TrainingPage.tsx'));
 const VideoGeneratorPage = lazy(() => import('./pages/VideoGeneratorPage.tsx'));
+const TemplateBrowserScreen = lazy(() => import('./pages/TemplateBrowserScreen.tsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx'));
 
 const suspenseFallback = (
@@ -41,6 +43,7 @@ const App: React.FC = () => {
                         <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
                         <Route path="/training" element={<TrainingPage />} />
                         <Route path="/video-generator" element={<VideoGeneratorPage />} />
+                        <Route path="/templates" element={<TemplateBrowserScreen />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                 </Suspense>

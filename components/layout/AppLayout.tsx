@@ -1,10 +1,9 @@
-
 import React, { ReactNode, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useThemeContext } from '../../context/ThemeContext.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
 
-import DefaultHeader from './DefaultHeader.tsx';
-import CockpitHeader from './CockpitHeader.tsx';
+import Header from '../Header.tsx';
 import Footer from './Footer.tsx';
 import QuickQuestionFAB from '../QuickQuestionFAB.tsx';
 import ComparisonTray from '../ComparisonTray.tsx';
@@ -18,30 +17,29 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { theme } = useThemeContext();
   const { userProfile } = useUserContext();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  
-  const isCockpit = theme === 'cockpit';
-  const layoutClass = "min-h-screen text-text-primary flex flex-col";
-  const cockpitBg = "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black";
-  
-  const zoomStyle: React.CSSProperties = {
-      transform: `scale(${userProfile.zoomLevel / 100})`,
-      transformOrigin: 'top',
-      transition: 'transform 0.2s ease-out'
-  };
+  const location = useLocation();
+
+  const isHomePage = location.pathname === '/';
+  const showWelcomeBg = theme === 'wyrestorm' && userProfile.showBackground && isHomePage;
 
   return (
-    <div className={`${layoutClass} ${isCockpit ? cockpitBg : 'bg-background'}`}>
-      {isCockpit 
-        ? <CockpitHeader /> 
-        : <DefaultHeader onOpenProfile={() => setIsProfileModalOpen(true)} />}
-      <main 
-        className="flex-grow container mx-auto p-4 md:p-6 transition-transform duration-200" 
-        style={isCockpit ? zoomStyle : {}}
-      >
-        {children}
+    <div className="min-h-screen text-text-primary flex flex-col bg-background">
+      <Header onOpenProfile={() => setIsProfileModalOpen(true)} />
+      <main className="flex-grow flex flex-col relative">
+        {showWelcomeBg && (
+            <div 
+                className="absolute inset-0 bg-cover bg-center -z-10" 
+                style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2560&auto=format&fit=crop)' }}
+            >
+                <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
+            </div>
+        )}
+        <div className="container mx-auto p-4 md:p-6 flex-grow flex flex-col relative z-0">
+             {children}
+        </div>
       </main>
-      {!isCockpit && <Footer />}
-      {!isCockpit && <QuickQuestionFAB />}
+      <Footer />
+      <QuickQuestionFAB />
       <ComparisonTray />
       <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
     </div>

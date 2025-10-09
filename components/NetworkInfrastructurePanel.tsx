@@ -2,6 +2,7 @@ import React from 'react';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 import InfoTooltip from './InfoTooltip.tsx';
 import { ProjectInfrastructure } from '../utils/types.ts';
+import ToggleSwitch from './ui/ToggleSwitch.tsx';
 
 const NetworkInfrastructurePanel: React.FC = () => {
     const { projectData, dispatchProjectAction } = useProjectContext();
@@ -12,8 +13,7 @@ const NetworkInfrastructurePanel: React.FC = () => {
         cablingByOthers: false,
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
+    const handleChange = (name: keyof ProjectInfrastructure, checked: boolean) => {
         const newInfra: ProjectInfrastructure = { ...infrastructure, [name]: checked };
         dispatchProjectAction({ type: 'UPDATE_INFRASTRUCTURE', payload: newInfra });
     };
@@ -25,13 +25,9 @@ const NetworkInfrastructurePanel: React.FC = () => {
                     <label htmlFor="useDedicatedNetwork" className="text-sm font-medium text-text-secondary">Use Dedicated AV Network</label>
                     <InfoTooltip text="Specifies if the AV system will be on its own isolated network switch, or on the client's main network." />
                 </div>
-                <input
-                    type="checkbox"
-                    id="useDedicatedNetwork"
-                    name="useDedicatedNetwork"
+                <ToggleSwitch
                     checked={infrastructure.useDedicatedNetwork}
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent"
+                    onChange={(isChecked) => handleChange('useDedicatedNetwork', isChecked)}
                 />
             </div>
             <div className="flex items-center justify-between">
@@ -39,13 +35,9 @@ const NetworkInfrastructurePanel: React.FC = () => {
                     <label htmlFor="cablingByOthers" className="text-sm font-medium text-text-secondary">Cabling by Others</label>
                      <InfoTooltip text="Indicates that the low-voltage cabling (e.g., Cat6) will be installed by a different contractor." />
                 </div>
-                <input
-                    type="checkbox"
-                    id="cablingByOthers"
-                    name="cablingByOthers"
+                <ToggleSwitch
                     checked={infrastructure.cablingByOthers}
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent"
+                    onChange={(isChecked) => handleChange('cablingByOthers', isChecked)}
                 />
             </div>
         </div>

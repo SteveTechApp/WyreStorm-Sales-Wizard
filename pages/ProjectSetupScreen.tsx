@@ -35,6 +35,10 @@ const ProjectSetupScreen: React.FC = () => {
         setRooms(newRooms);
     };
 
+    const handleRemoveRoom = (index: number) => {
+        setRooms(rooms.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const setupData: ProjectSetupData = { projectName, clientName, rooms, budget, timeline };
@@ -81,14 +85,20 @@ const ProjectSetupScreen: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                         {rooms.map((room, index) => (
-                            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-2 border-border bg-background">
-                                <input placeholder="Area Name" type="text" value={room.roomName} onChange={e => handleRoomChange(index, 'roomName', e.target.value)} className={inputStyle} />
-                                <select value={room.roomType} onChange={e => handleRoomChange(index, 'roomType', e.target.value)} className={inputStyle}>
-                                    {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                                </select>
-                                <select value={room.designTier} onChange={e => handleRoomChange(index, 'designTier', e.target.value as DesignTier)} className={inputStyle}>
-                                    {DESIGN_TIER_OPTIONS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
-                                </select>
+                           <div key={index} className="p-4 border-2 border-border bg-background">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h3 className="font-bold text-lg">Target Area {index + 1}</h3>
+                                    <button type="button" onClick={() => handleRemoveRoom(index)} className="text-sm text-destructive hover:underline">Remove</button>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input placeholder="Area Name" type="text" value={room.roomName} onChange={e => handleRoomChange(index, 'roomName', e.target.value)} className={inputStyle} />
+                                    <select value={room.roomType} onChange={e => handleRoomChange(index, 'roomType', e.target.value)} className={inputStyle}>
+                                        {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                                    </select>
+                                    <select value={room.designTier} onChange={e => handleRoomChange(index, 'designTier', e.target.value as DesignTier)} className={inputStyle}>
+                                        {DESIGN_TIER_OPTIONS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
+                                    </select>
+                                </div>
                             </div>
                         ))}
                          {rooms.length === 0 && <p className="text-center text-sm text-text-secondary py-4">// No target areas defined. Click 'Add Area' to get started.</p>}

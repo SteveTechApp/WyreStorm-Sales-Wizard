@@ -1,3 +1,4 @@
+import React from 'react';
 import { LanguageCode, DesignTier } from '../utils/types.ts';
 import { 
     BuildingIcon, 
@@ -12,8 +13,28 @@ import {
     GamingIcon,
     HouseOfWorshipIcon,
     CommandCenterIcon,
-    SparklesIcon
+    SparklesIcon,
+    SwitcherIcon,
+    ExtenderIcon,
+    UCIcon,
+    CameraIcon,
+    AudioIcon,
+    ProcessorIcon,
+    ControlIcon,
+    GenericDeviceIcon,
 } from '../components/Icons.tsx';
+import { 
+    HdmiIcon, 
+    UsbCIcon, 
+    DisplayPortIcon, 
+    VgaIcon, 
+    AudioJackIcon, 
+    XlrIcon, 
+    DirectIcon, 
+    HdbasetIcon, 
+    AvoipIcon, 
+    FiberIcon 
+} from '../components/io/io-icons.tsx';
 
 
 export const ROOM_TYPES: string[] = [
@@ -60,6 +81,36 @@ export const VERTICAL_MARKETS = [
     { verticalId: 'how', name: 'House of Worship', imageUrl: 'https://images.unsplash.com/photo-1596205244955-3b26c71a39a0?w=400&h=300&fit=crop&q=80', icon: HouseOfWorshipIcon },
     { verticalId: 'cmd', name: 'Command & Control', imageUrl: 'https://images.unsplash.com/photo-1617994211029-29c78701835b?w=400&h=300&fit=crop&q=80', icon: CommandCenterIcon },
 ];
+
+// FIX: Replaced JSX syntax with React.createElement because JSX is not supported in .ts files.
+export const PRODUCT_CATEGORY_ICONS: Record<string, React.ReactNode> = {
+    'switcher': React.createElement(SwitcherIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'extender': React.createElement(ExtenderIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'uc': React.createElement(UCIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'camera': React.createElement(CameraIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'audio': React.createElement(AudioIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'amplifier': React.createElement(AudioIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'microphone': React.createElement(AudioIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'processor': React.createElement(ProcessorIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'control': React.createElement(ControlIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'avoip': React.createElement(ProcessorIcon, { className: "h-5 w-5 text-text-secondary" }),
+    'default': React.createElement(GenericDeviceIcon, { className: "h-5 w-5 text-text-secondary" }),
+};
+
+export const CONNECTION_TYPE_ICONS: Record<string, React.ReactNode> = {
+    'HDMI': React.createElement(HdmiIcon, { className: 'h-6 w-6 text-accent' }),
+    'USB-C': React.createElement(UsbCIcon, { className: 'h-6 w-6 text-accent' }),
+    'DisplayPort': React.createElement(DisplayPortIcon, { className: 'h-6 w-6 text-accent' }),
+    'VGA': React.createElement(VgaIcon, { className: 'h-6 w-6 text-accent' }),
+    '3.5mm Audio': React.createElement(AudioJackIcon, { className: 'h-6 w-6 text-accent' }),
+    'XLR Audio': React.createElement(XlrIcon, { className: 'h-6 w-6 text-accent' }),
+    'Direct': React.createElement(DirectIcon, { className: 'h-6 w-6 text-text-secondary' }),
+    'HDBaseT': React.createElement(HdbasetIcon, { className: 'h-6 w-6 text-text-secondary' }),
+    'AVoIP': React.createElement(AvoipIcon, { className: 'h-6 w-6 text-text-secondary' }),
+    'Fiber': React.createElement(FiberIcon, { className: 'h-6 w-6 text-text-secondary' }),
+    'default': React.createElement(GenericDeviceIcon, { className: 'h-6 w-6 text-text-secondary' }),
+};
+
 
 export const COMMON_FEATURES = [
     { name: 'Video Conferencing', description: 'Integrate with platforms like Zoom or Teams.' },

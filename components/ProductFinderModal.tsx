@@ -80,7 +80,7 @@ const ProductFinderModal: React.FC<ProductFinderModalProps> = ({ isOpen, onClose
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
+      <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
         <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-4xl m-4 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
           <div className="flex justify-between items-center p-4 border-b border-border-color">
             <h2 className="text-2xl font-bold text-text-primary">AI Product Finder</h2>

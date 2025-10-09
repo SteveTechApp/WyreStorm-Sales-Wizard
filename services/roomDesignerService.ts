@@ -7,7 +7,7 @@ import { cleanAndParseJson } from '../utils/utils.ts';
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): string => `
-  You are an expert AV System Designer for WyreStorm. Your task is to select the appropriate equipment for the given room requirements from the provided product database.
+  You are an expert AV System Designer for WyreStorm. Your task is to select the appropriate equipment for the given room requirements from the provided product database, prioritizing stability and reliability.
 
   Room Details:
   - Name: ${room.roomName}
@@ -20,17 +20,24 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   - Display Type: ${room.displayType}
 
   Available WyreStorm Products (use ONLY these products):
-  ${JSON.stringify(productDatabase.map(p => ({ sku: p.sku, name: p.name, category: p.category, description: p.description, tags: p.tags })), null, 2)}
+  ${JSON.stringify(productDatabase.map(p => ({ sku: p.sku, name: p.name, category: p.category, description: p.description, tags: p.tags, status: p.status })), null, 2)}
   
   Technical Reference Material:
   ${TECHNICAL_DATABASE}
+
+  **Core Design Principles:**
+  1.  **Reliability First**: Prioritize proven, stable solutions. For critical signal paths, prefer wired connections (like HDBaseT or direct HDMI) over wireless unless "Wireless Presentation" is a must-have feature.
+  2.  **Strict Tier Adherence**:
+      - **Bronze**: Focus on core functionality and maximum cost-effectiveness. Use essential, entry-level products. Avoid expensive, complex solutions.
+      - **Silver**: A balance of performance and value. Use mid-range, feature-rich products. This is the standard for modern meeting rooms.
+      - **Gold**: Prioritize performance, scalability, and cutting-edge features. Use premium products (e.g., AVoIP like NetworkHD 500/600 series, latest HDBaseT 3.0, advanced control).
+  3.  **Simplicity**: Do not over-engineer. If a simple, reliable product meets the requirement, choose it. Avoid legacy or EOL products unless there is no active alternative.
 
   Based on the room details and the available products, perform the following tasks:
   1. Write a concise, one-paragraph "functionalityStatement" describing how the chosen system will work for the end-user.
   2. Create a list of equipment needed to fulfill the requirements in the "manuallyAddedEquipment" array.
      - You MUST select products ONLY from the provided database.
      - Specify the SKU and quantity for each item.
-     - Prioritize solutions based on the room's Design Tier (Bronze, Silver, Gold).
      - Ensure all key features and IO points are accounted for.
 
   Return only valid JSON. Do not include markdown formatting or explanations.

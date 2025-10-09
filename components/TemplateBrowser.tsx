@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from 'react';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -13,8 +14,8 @@ const TemplateBrowser: React.FC = () => {
 
     const groupedTemplates = useMemo(() => {
         return userTemplates.reduce((acc, template) => {
-            const vertical = template.vertical;
-            const verticalId = VERTICAL_MARKETS.find(v => v.name === vertical)?.verticalId || 'other';
+            const verticalInfo = VERTICAL_MARKETS.find(v => v.name === template.vertical);
+            const verticalId = verticalInfo ? verticalInfo.verticalId : 'corp'; // Default to corp if not found
 
             if (!acc[verticalId]) {
                 acc[verticalId] = [];
@@ -32,10 +33,9 @@ const TemplateBrowser: React.FC = () => {
     }, [activeVertical, groupedTemplates]);
 
     return (
-        <div className="bg-background-secondary p-6 rounded-lg border border-border">
-            <h2 className="text-2xl font-bold mb-4">Start from a Template</h2>
+        <div>
             <div className="mb-4 overflow-x-auto">
-                 <div className="flex space-x-2 border-b border-border">
+                 <div className="flex justify-center space-x-2 border-b border-border-color">
                     {VERTICAL_MARKETS.map(v => (
                         <button 
                             key={v.verticalId}
@@ -47,15 +47,17 @@ const TemplateBrowser: React.FC = () => {
                     ))}
                  </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredVerticals.map(vertical => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredVerticals.length > 0 ? filteredVerticals.map(vertical => (
                     <TemplateGroupCard 
                         key={vertical.verticalId}
                         verticalId={vertical.verticalId}
                         templates={groupedTemplates[vertical.verticalId] || []}
                         onTemplateSelect={(template) => handleStartFromTemplate(template, navigate)}
                     />
-                ))}
+                )) : (
+                    <p className="text-center text-text-secondary col-span-full py-8">No templates found for this vertical.</p>
+                )}
             </div>
         </div>
     );

@@ -3,6 +3,7 @@ import { RoomData, DesignTier } from '../utils/types.ts';
 import { createNewRoom } from '../utils/utils.ts';
 import { v4 as uuidv4 } from 'uuid';
 import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from '../data/constants.ts';
+import TierIcon from './TierIcon.tsx';
 
 interface AddRoomModalProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onAddRoom 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
       <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
         <form onSubmit={handleSubmit}>
           <div className="p-4 border-b border-border-color">
@@ -89,9 +90,12 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onAddRoom 
                     key={tier}
                     type="button"
                     onClick={() => setDesignTier(tier)}
-                    className={`p-2 border rounded-md ${designTier === tier ? 'border-accent bg-accent/10' : 'border-border-color'}`}
+                    className={`p-3 border rounded-md text-left transition-colors ${designTier === tier ? 'border-accent bg-accent/10' : 'border-border-color hover:border-accent/50'}`}
                   >
-                    {tier}
+                    <div className="flex items-center gap-2">
+                        <TierIcon tier={tier} className="h-5 w-5" />
+                        <span className="font-bold">{tier}</span>
+                    </div>
                   </button>
                 ))}
               </div>

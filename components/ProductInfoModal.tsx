@@ -31,7 +31,7 @@ const ProductInfoModal: React.FC<ProductInfoModalProps> = ({ isOpen, onClose, pr
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
       <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-lg m-4" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center p-4 border-b border-border-color">
           <h2 className="text-xl font-bold text-text-primary">{product.name}</h2>
@@ -46,6 +46,14 @@ const ProductInfoModal: React.FC<ProductInfoModalProps> = ({ isOpen, onClose, pr
           <div>
             <span className="font-semibold">Tags:</span> {product.tags.join(', ')}
           </div>
+          {product.status && product.status !== 'active' && (
+            <div className="mt-4 p-3 border-l-4 border-destructive rounded-r-lg bg-destructive/10">
+                <p className="font-bold text-destructive capitalize">{product.status} Product</p>
+                {product.legacyReason && (
+                    <p className="text-sm text-text-secondary mt-1">{product.legacyReason}</p>
+                )}
+            </div>
+           )}
         </div>
       </div>
     </div>

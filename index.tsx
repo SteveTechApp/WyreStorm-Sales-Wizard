@@ -25,7 +25,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     background: 'var(--background-secondary)',
                     color: 'var(--text-primary)',
                     border: '2px solid var(--border-color)',
-                    fontFamily: 'monospace'
                   }
                 }}
               />
