@@ -21,6 +21,7 @@ const defaultUserProfile: UserProfile = {
 
 export const useUserProfile = () => {
   const [userProfile, setUserProfile] = useLocalStorage<UserProfile>('userProfile', defaultUserProfile);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const updateUserProfile = useCallback((newProfile: UserProfile) => {
     setUserProfile(newProfile);
@@ -45,6 +46,9 @@ export const useUserProfile = () => {
     }));
   }, [setUserProfile]);
 
+  const openProfileModal = useCallback(() => setIsProfileModalOpen(true), []);
+  const closeProfileModal = useCallback(() => setIsProfileModalOpen(false), []);
 
-  return { userProfile, updateUserProfile, addLaborRate, updateLaborRate, removeLaborRate };
+
+  return { userProfile, updateUserProfile, addLaborRate, updateLaborRate, removeLaborRate, isProfileModalOpen, openProfileModal, closeProfileModal };
 };

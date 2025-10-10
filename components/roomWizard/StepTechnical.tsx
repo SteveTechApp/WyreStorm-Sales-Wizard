@@ -1,6 +1,6 @@
 import React from 'react';
 import { RoomWizardAnswers } from '../../utils/types';
-import { VIDEO_RESOLUTIONS, CONTROL_SYSTEMS } from '../../data/constants';
+import { VIDEO_RESOLUTIONS, CONTROL_SYSTEMS } from '../../data/wizardOptions.ts';
 
 interface StepTechnicalProps {
   answers: RoomWizardAnswers;

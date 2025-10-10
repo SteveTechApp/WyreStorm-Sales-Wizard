@@ -6,7 +6,7 @@ import {
   AUDIO_SPEAKER_LAYOUT_OPTIONS,
   AUDIO_SYSTEM_TYPE_OPTIONS,
   AUDIO_USE_CASE_OPTIONS,
-} from '../../data/constants';
+} from '../../data/wizardOptions.ts';
 import AudioDesignGuideModal from '../AudioDesignGuideModal.tsx';
 
 interface StepEnvironmentProps {

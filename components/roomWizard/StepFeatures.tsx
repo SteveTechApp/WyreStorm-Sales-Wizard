@@ -1,6 +1,6 @@
 import React from 'react';
 import { RoomWizardAnswers, Feature } from '../../utils/types';
-import { COMMON_FEATURES } from '../../data/constants';
+import { COMMON_FEATURES } from '../../data/wizardOptions.ts';
 
 interface StepFeaturesProps {
   answers: RoomWizardAnswers;

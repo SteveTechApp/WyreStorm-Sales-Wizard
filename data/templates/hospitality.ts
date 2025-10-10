@@ -116,7 +116,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A simple AV system for a hotel gym. Four wall-mounted TVs are fed by AVoIP decoders, allowing them to display a variety of satellite TV channels. A separate high-impedance audio system provides background music from a dedicated streaming source. Local wall controllers allow staff to change channels and adjust volume easily.',
             manuallyAddedEquipment: [],
-            // FIX: Corrected invalid 'surface_mount' to 'trunking' for cableContainment.
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['program_audio'] },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad' },

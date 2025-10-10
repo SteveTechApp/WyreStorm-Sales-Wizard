@@ -1,4 +1,4 @@
-import { TrainingModule } from '../../utils/types.ts';
+import { TrainingModule } from '../../utils/types';
 
 export const MODULE_9_TROUBLESHOOTING: TrainingModule = {
   id: 'module-9-troubleshooting',

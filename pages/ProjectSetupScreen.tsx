@@ -54,7 +54,7 @@ const ProjectSetupScreen: React.FC = () => {
                 <p className="text-lg text-text-secondary">Define mission parameters and target areas for your new project.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="mfd-panel">
+                <div className="p-6 bg-background-secondary border-2 border-border-color">
                     <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Mission Details</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -76,7 +76,7 @@ const ProjectSetupScreen: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mfd-panel">
+                <div className="p-6 bg-background-secondary border-2 border-border-color">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold uppercase tracking-widest">// Target Areas</h2>
                         <button type="button" onClick={handleAddRoom} className="flex items-center gap-1 text-sm font-medium text-accent hover:underline">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { IOPoint } from '../../../utils/types.ts';
-import { CONNECTION_TYPES, DISTRIBUTION_TYPES, TERMINATION_TYPES } from '../../../data/constants.ts';
+import { CONNECTION_TYPES, DISTRIBUTION_TYPES, TERMINATION_TYPES } from '../../../data/wizardOptions.ts';
 
 interface ConnectivityInputsProps {
   point: IOPoint;

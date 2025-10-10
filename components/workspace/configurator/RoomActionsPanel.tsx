@@ -6,7 +6,7 @@ import SaveTemplateModal from '../../SaveTemplateModal.tsx';
 import { useUserTemplates } from '../../../hooks/useUserTemplates.ts';
 
 const RoomActionsPanel: React.FC = () => {
-    const { handleDesignRoom } = useGenerationContext();
+    const { handleDesignRoom, handleGenerateDiagram } = useGenerationContext();
     const { projectData, activeRoomId, dispatchProjectAction } = useProjectContext();
     const { handleSaveTemplate } = useUserTemplates();
     const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -20,17 +20,29 @@ const RoomActionsPanel: React.FC = () => {
         }
     };
     
+    const handleDiagram = () => {
+        if (activeRoomId) {
+            handleGenerateDiagram(activeRoomId);
+        }
+    };
+
     if (!room) return null;
 
     return (
         <>
-            <div className="mfd-panel">
-                <div className="grid grid-cols-3 gap-3">
+            <div className="p-6 bg-background-secondary border-2 border-border-color">
+                <div className="grid grid-cols-2 gap-3">
                     <button
                         onClick={handleDesign}
                         className="w-full btn btn-primary text-sm"
                     >
-                        AI Design
+                        AI Design Room
+                    </button>
+                    <button
+                        onClick={handleDiagram}
+                        className="w-full btn btn-primary text-sm"
+                    >
+                        AI Generate Diagram
                     </button>
                     <button onClick={() => setIsWizardOpen(true)} className="w-full btn btn-secondary text-sm">
                         Manual Config

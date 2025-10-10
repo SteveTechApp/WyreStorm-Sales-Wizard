@@ -3,7 +3,8 @@ import { IOPoint } from '../../utils/types.ts';
 import DeviceAttributeSelector from './DeviceAttributeSelector.tsx';
 import AssignedInputs from './AssignedInputs.tsx';
 import { useProjectContext } from '../../context/ProjectContext.tsx';
-import { CONNECTION_TYPES, DISTRIBUTION_TYPES, CONNECTION_TYPE_ICONS } from '../../data/constants.ts';
+import { CONNECTION_TYPE_ICONS } from '../../data/constants.ts';
+import { CONNECTION_TYPES, DISTRIBUTION_TYPES } from '../../data/wizardOptions.ts';
 
 interface IoDeviceCardProps {
     point: IOPoint;

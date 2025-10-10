@@ -1,6 +1,6 @@
 import React from 'react';
 import { IOPoint, DisplayType, ProjectorLensType } from '../../../utils/types.ts';
-import { DISPLAY_TYPES, PROJECTOR_LENS_TYPES } from '../../../data/constants.ts';
+import { DISPLAY_TYPES, PROJECTOR_LENS_TYPES } from '../../../data/wizardOptions.ts';
 
 interface OutputSpecificsProps {
   point: IOPoint;

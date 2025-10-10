@@ -1,6 +1,7 @@
 import React from 'react';
 import { RoomWizardAnswers } from '../../../utils/types.ts';
-import { ROOM_TYPES, DISPLAY_TYPES } from '../../../data/constants.ts';
+import { ROOM_TYPES } from '../../../data/constants.ts';
+import { DISPLAY_TYPES } from '../../../data/wizardOptions.ts';
 
 interface RoomDetailsInputsProps {
   answers: RoomWizardAnswers;

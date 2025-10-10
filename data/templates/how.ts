@@ -62,7 +62,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A flexible AV system for a youth group room. It features a projector for movies and presentations, along with multiple HDMI inputs for connecting gaming consoles and laptops. A pair of powerful surface-mount speakers and a subwoofer provide an engaging audio experience. A simple wall-plate controller allows for easy source selection and volume control.',
             manuallyAddedEquipment: [],
-            // FIX: Corrected invalid 'surface_mount' to 'trunking' for cableContainment.
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'] },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad' },

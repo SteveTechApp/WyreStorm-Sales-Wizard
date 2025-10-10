@@ -40,7 +40,7 @@ John Smith
                 <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Analyze Intel</h1>
                 <p className="text-lg text-text-secondary">Paste your client's RFQ, email, or field notes. The AI will parse the intel and build a sortie plan.</p>
             </div>
-            <form onSubmit={handleSubmit} className="mfd-panel">
+            <form onSubmit={handleSubmit} className="p-6 bg-background-secondary border-2 border-border-color">
                 <textarea
                     value={documentText}
                     onChange={(e) => setDocumentText(e.target.value)}

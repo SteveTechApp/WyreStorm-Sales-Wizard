@@ -11,13 +11,13 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Using a class property to initialize state. This is a more modern and concise approach that avoids potential issues with `this` context inside the constructor.
   state: State = {
     hasError: false,
     error: null,
   };
 
-  static getDerivedStateFromError(error: Error): State {
+  // FIX: Corrected the return type from `State` to `Partial<State>` to match React's type definitions for this lifecycle method.
+  static getDerivedStateFromError(error: Error): Partial<State> {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
@@ -33,7 +33,8 @@ class ErrorBoundary extends React.Component<Props, State> {
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }
 
-    return this.props.children;
+    // FIX: Ensure null is returned if children are not provided, as returning undefined from render causes a runtime error.
+    return this.props.children || null;
   }
 }
 

@@ -62,7 +62,7 @@ const VideoGeneratorPage: React.FC = () => {
 
         if (videoUrl) {
             return (
-                <div className="mfd-panel">
+                <div className="p-6 bg-background-secondary border-2 border-border-color">
                     <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Generated Video</h2>
                     <video src={videoUrl} controls className="w-full rounded-md" />
                     <div className="mt-4 text-right">
@@ -75,7 +75,7 @@ const VideoGeneratorPage: React.FC = () => {
         }
 
         return (
-            <form onSubmit={handleGenerateVideo} className="mfd-panel">
+            <form onSubmit={handleGenerateVideo} className="p-6 bg-background-secondary border-2 border-border-color">
                 <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}

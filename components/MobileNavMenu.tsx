@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { CloseIcon } from './Icons.tsx';
 import Logo from './Logo.tsx';
+import ThemeSelector from './ThemeSelector.tsx';
+import { useUserContext } from '../context/UserContext.tsx';
 
 interface MobileNavMenuProps {
   isOpen: boolean;
@@ -9,6 +11,8 @@ interface MobileNavMenuProps {
 }
 
 const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
+  const { openProfileModal } = useUserContext();
+  
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -28,6 +32,11 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+  
+  const handleOpenProfile = () => {
+    onClose();
+    openProfileModal();
+  };
 
   const navLinkClass = "block py-4 text-2xl font-bold text-center text-text-primary hover:text-accent transition-colors duration-300";
 
@@ -49,6 +58,15 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
         <NavLink to="/video-generator" className={navLinkClass} onClick={onClose}>Video Gen</NavLink>
         <NavLink to="/training" className={navLinkClass} onClick={onClose}>Training</NavLink>
       </nav>
+      <div className="p-6 border-t border-border flex flex-col items-center gap-4">
+        <ThemeSelector />
+        <button
+          onClick={handleOpenProfile}
+          className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm w-full max-w-xs"
+        >
+          Profile
+        </button>
+      </div>
     </div>
   );
 };
