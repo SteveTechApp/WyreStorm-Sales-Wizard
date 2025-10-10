@@ -9,7 +9,7 @@ import { PlusIcon } from '../components/Icons.tsx';
 import { createNewRoom } from '../utils/utils.ts';
 
 const ProjectSetupScreen: React.FC = () => {
-    const [projectName, setProjectName] = useState('New Sortie');
+    const [projectName, setProjectName] = useState('New Project');
     const [clientName, setClientName] = useState('New Client');
     const [budget, setBudget] = useState<number | undefined>();
     const [timeline, setTimeline] = useState('');
@@ -22,7 +22,7 @@ const ProjectSetupScreen: React.FC = () => {
         const newRoomBase = createNewRoom();
         const newRoom: Omit<RoomData, 'id'> = {
             ...newRoomBase,
-            roomName: `Target Area ${rooms.length + 1}`,
+            roomName: `Room ${rooms.length + 1}`,
             roomType: 'Conference Room',
             designTier: 'Silver',
         };
@@ -45,20 +45,20 @@ const ProjectSetupScreen: React.FC = () => {
         handleProjectSetupSubmit(setupData, navigate);
     };
 
-    const inputStyle = "w-full p-2 border-2 border-border rounded-none bg-input-bg mt-1 focus:border-accent outline-none";
+    const inputStyle = "w-full p-2 border border-border-color rounded-md bg-input-bg mt-1 focus:border-accent outline-none";
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in-fast">
             <div className="text-center mb-8">
-                <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Plan New Sortie</h1>
-                <p className="text-lg text-text-secondary">Define mission parameters and target areas for your new project.</p>
+                <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Plan New Project</h1>
+                <p className="text-lg text-text-secondary">Define parameters and rooms for your new project.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="p-6 bg-background-secondary border-2 border-border-color">
-                    <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Mission Details</h2>
+                <div className="p-6 bg-background-secondary border border-border-color rounded-lg">
+                    <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Project Details</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="project-name" className="block text-sm font-medium uppercase">Sortie Name</label>
+                            <label htmlFor="project-name" className="block text-sm font-medium uppercase">Project Name</label>
                             <input type="text" id="project-name" value={projectName} onChange={e => setProjectName(e.target.value)} className={inputStyle} required />
                         </div>
                         <div>
@@ -66,7 +66,7 @@ const ProjectSetupScreen: React.FC = () => {
                             <input type="text" id="client-name" value={clientName} onChange={e => setClientName(e.target.value)} className={inputStyle} />
                         </div>
                         <div>
-                            <label htmlFor="budget" className="block text-sm font-medium uppercase">Mission Budget ({userProfile.currency})</label>
+                            <label htmlFor="budget" className="block text-sm font-medium uppercase">Total Budget ({userProfile.currency})</label>
                             <input type="number" id="budget" value={budget || ''} placeholder="e.g., 25000" onChange={e => setBudget(Number(e.target.value))} className={inputStyle} />
                         </div>
                         <div>
@@ -76,22 +76,22 @@ const ProjectSetupScreen: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 bg-background-secondary border-2 border-border-color">
+                <div className="p-6 bg-background-secondary border border-border-color rounded-lg">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold uppercase tracking-widest">// Target Areas</h2>
+                        <h2 className="text-xl font-bold uppercase tracking-widest">// Rooms</h2>
                         <button type="button" onClick={handleAddRoom} className="flex items-center gap-1 text-sm font-medium text-accent hover:underline">
-                            <PlusIcon className="h-4 w-4" /> Add Area
+                            <PlusIcon className="h-4 w-4" /> Add Room
                         </button>
                     </div>
                     <div className="space-y-4">
                         {rooms.map((room, index) => (
-                           <div key={index} className="p-4 border-2 border-border bg-background">
+                           <div key={index} className="p-4 border border-border-color bg-background rounded-md">
                                 <div className="flex justify-between items-center mb-3">
-                                    <h3 className="font-bold text-lg">Target Area {index + 1}</h3>
+                                    <h3 className="font-bold text-lg">Room {index + 1}</h3>
                                     <button type="button" onClick={() => handleRemoveRoom(index)} className="text-sm text-destructive hover:underline">Remove</button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <input placeholder="Area Name" type="text" value={room.roomName} onChange={e => handleRoomChange(index, 'roomName', e.target.value)} className={inputStyle} />
+                                    <input placeholder="Room Name" type="text" value={room.roomName} onChange={e => handleRoomChange(index, 'roomName', e.target.value)} className={inputStyle} />
                                     <select value={room.roomType} onChange={e => handleRoomChange(index, 'roomType', e.target.value)} className={inputStyle}>
                                         {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
                                     </select>
@@ -101,13 +101,13 @@ const ProjectSetupScreen: React.FC = () => {
                                 </div>
                             </div>
                         ))}
-                         {rooms.length === 0 && <p className="text-center text-sm text-text-secondary py-4">// No target areas defined. Click 'Add Area' to get started.</p>}
+                         {rooms.length === 0 && <p className="text-center text-sm text-text-secondary py-4">// No rooms defined. Click 'Add Room' to get started.</p>}
                     </div>
                 </div>
 
                 <div className="text-right">
                     <button type="submit" className="btn btn-primary text-lg">
-                        Launch Sortie
+                        Create Project
                     </button>
                 </div>
             </form>

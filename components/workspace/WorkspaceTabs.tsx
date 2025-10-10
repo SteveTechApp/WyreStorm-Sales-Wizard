@@ -14,7 +14,7 @@ const TABS = [
 
 const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="border-b border-border-color">
+    <div className="border-b-2 border-border-color">
       <nav className="-mb-px flex space-x-6" aria-label="Tabs">
         {TABS.map((tab) => (
           <button
@@ -22,9 +22,9 @@ const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({ activeTab, setActiveTab }
             onClick={() => setActiveTab(tab.id)}
             className={`${
               activeTab === tab.id
-                ? 'border-accent text-accent'
+                ? 'border-accent text-accent font-bold'
                 : 'border-transparent text-text-secondary hover:text-text-primary hover:border-gray-300'
-            } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
+            } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-all`}
           >
             {tab.label}
           </button>

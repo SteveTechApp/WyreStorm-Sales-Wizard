@@ -60,31 +60,31 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
-      <div className="bg-background-secondary rounded-none shadow-xl w-full max-w-4xl m-4 flex flex-col max-h-[90vh] border-2 border-border" onClick={e => e.stopPropagation()}>
-        <div className="flex justify-between items-center p-4 border-b-2 border-border">
-          <h2 className="text-2xl font-bold text-text-primary uppercase tracking-widest">// Pilot Profile & Settings</h2>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
+      <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-4xl m-4 flex flex-col max-h-[90vh] border border-border-color" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center p-4 border-b border-border-color">
+          <h2 className="text-2xl font-bold text-text-primary uppercase tracking-widest">Pilot Profile & Settings</h2>
           <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
         </div>
         <div className="p-6 overflow-y-auto space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div>
                     <label htmlFor="profile-name" className="block text-sm font-medium">Name</label>
-                    <input type="text" id="profile-name" name="name" value={localProfile.name} onChange={handleChange} className="w-full p-2 border-2 border-border rounded-none bg-input-bg mt-1" />
+                    <input type="text" id="profile-name" name="name" value={localProfile.name} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1" />
                 </div>
                  <div>
                     <label htmlFor="profile-company" className="block text-sm font-medium">Company</label>
-                    <input type="text" id="profile-company" name="company" value={localProfile.company} onChange={handleChange} className="w-full p-2 border-2 border-border rounded-none bg-input-bg mt-1" />
+                    <input type="text" id="profile-company" name="company" value={localProfile.company} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1" />
                 </div>
                 <div>
                     <label htmlFor="profile-language" className="block text-sm font-medium">Language</label>
-                    <select id="profile-language" name="language" value={localProfile.language} onChange={handleChange} className="w-full p-2 border-2 border-border rounded-none bg-input-bg mt-1">
+                    <select id="profile-language" name="language" value={localProfile.language} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
                         {SUPPORTED_LANGUAGES.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
                     </select>
                 </div>
                  <div>
                     <label htmlFor="profile-currency" className="block text-sm font-medium">Currency</label>
-                    <select id="profile-currency" name="currency" value={localProfile.currency} onChange={handleChange} className="w-full p-2 border-2 border-border rounded-none bg-input-bg mt-1">
+                    <select id="profile-currency" name="currency" value={localProfile.currency} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
                         <option value="GBP">GBP (£)</option>
                         <option value="USD">USD ($)</option>
                         <option value="EUR">EUR (€)</option>
@@ -99,7 +99,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                 />
             </div>
         </div>
-        <div className="p-4 bg-background flex justify-end gap-3 border-t-2 border-border">
+        <div className="p-4 bg-background flex justify-end gap-3 border-t border-border-color">
             <button onClick={onClose} className="btn btn-secondary">Cancel</button>
             <button onClick={handleSave} className="btn btn-primary">Save Changes</button>
         </div>

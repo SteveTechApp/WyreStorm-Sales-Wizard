@@ -40,19 +40,19 @@ John Smith
                 <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Analyze Intel</h1>
                 <p className="text-lg text-text-secondary">Paste your client's RFQ, email, or field notes. The AI will parse the intel and build a sortie plan.</p>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 bg-background-secondary border-2 border-border-color">
+            <form onSubmit={handleSubmit} className="p-6 bg-background-secondary border border-border-color rounded-lg">
                 <textarea
                     value={documentText}
                     onChange={(e) => setDocumentText(e.target.value)}
                     placeholder="// PASTE INTEL HERE..."
-                    className="w-full h-80 p-4 border-2 border-border-color rounded-none bg-input-bg focus:outline-none focus:border-accent resize-y"
+                    className="w-full h-80 p-4 border border-border-color rounded-md bg-input-bg focus:outline-none focus:border-accent resize-y"
                 />
                 <div className="mt-4 flex justify-between items-center">
                     <button type="button" onClick={loadSampleBrief} className="text-sm font-medium text-accent hover:underline uppercase">
                         Load Sample Intel
                     </button>
                     <button type="submit" className="btn btn-primary text-lg">
-                        Analyze & Build Sortie
+                        Analyze & Build Project
                     </button>
                 </div>
             </form>

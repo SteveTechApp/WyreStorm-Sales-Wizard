@@ -3,7 +3,7 @@ import { useLocalStorage } from './useLocalStorage.ts';
 import { ThemeName } from '../utils/types.ts';
 import { themes } from '../data/themes.ts';
 
-const defaultTheme: ThemeName = 'wyrestorm';
+const defaultTheme: ThemeName = 'dark';
 const validThemes: ThemeName[] = Object.keys(themes) as ThemeName[];
 
 export const useTheme = () => {

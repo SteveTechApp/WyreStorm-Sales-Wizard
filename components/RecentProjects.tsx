@@ -14,29 +14,31 @@ const RecentProjects: React.FC = () => {
   };
 
   return (
-    <div className="bg-background-secondary p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Recent Projects</h2>
+    <div className="bg-glass-bg backdrop-blur-sm p-6 rounded-xl border border-border-color/50">
+      <h2 className="text-3xl font-bold mb-6 text-center">Recent Projects</h2>
       {sortedProjects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedProjects.map(project => (
-            <div key={project.projectId} className="bg-background p-4 rounded-lg border border-border-color flex flex-col justify-between group">
+            <div key={project.projectId} className="bg-background/50 p-6 rounded-lg border border-border-color flex flex-col justify-between group transition-all duration-300 hover:border-accent/50 hover:shadow-xl hover:-translate-y-1">
               <div>
-                <h3 className="font-bold text-lg">{project.projectName}</h3>
-                <p className="text-sm text-text-secondary mb-1">Client: {project.clientName}</p>
-                <p className="text-xs text-text-secondary">
-                    Saved: {formatDistanceToNow(new Date(project.lastSaved), { addSuffix: true })}
+                <h3 className="font-bold text-lg text-text-primary">{project.projectName}</h3>
+                <p className="text-sm text-text-secondary mb-2">Client: {project.clientName}</p>
+                <p className="text-xs text-text-secondary font-mono">
+                    {formatDistanceToNow(new Date(project.lastSaved), { addSuffix: true })}
                 </p>
               </div>
-              <div className="mt-4 flex justify-between items-center">
+              <div className="mt-6 flex justify-between items-center">
                  <button onClick={() => handleLoad(project.projectId)} className="font-semibold text-accent hover:underline text-sm">
                     Load Project
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteProject(project.projectId);
+                    if (window.confirm(`Are you sure you want to delete "${project.projectName}"?`)) {
+                        handleDeleteProject(project.projectId);
+                    }
                   }}
-                  className="text-destructive opacity-0 group-hover:opacity-100 text-xs font-semibold"
+                  className="text-destructive opacity-0 group-hover:opacity-100 text-xs font-semibold transition-opacity"
                 >
                   Delete
               </button>

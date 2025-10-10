@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from '../Logo.tsx';
@@ -12,14 +13,14 @@ const DefaultHeader: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `py-2 px-3 rounded-md text-sm font-medium ${isActive ? 'bg-background text-text-primary' : 'text-text-secondary hover:bg-background-secondary/50 hover:text-text-primary'}`;
+    `py-2 px-3 rounded-md text-sm font-medium transition-colors ${isActive ? 'bg-background/80 text-accent font-bold' : 'text-text-secondary hover:bg-background/50 hover:text-text-primary'}`;
 
   return (
     <>
-      <header className="bg-background-secondary sticky top-0 z-30 border-b border-border print:hidden">
+      <header className="sticky top-0 z-30 bg-background/70 backdrop-blur-lg border-b border-border-color/50 print:hidden">
         <div className="container mx-auto flex justify-between items-center p-3">
           <Logo />
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-2 bg-background-secondary/50 border border-border-color/50 rounded-full p-1">
             <NavLink to="/" className={navLinkClass} end>Dashboard</NavLink>
             <NavLink to="/setup" className={navLinkClass}>New Project</NavLink>
             <NavLink to="/video-generator" className={navLinkClass}>Video Gen</NavLink>
@@ -30,7 +31,7 @@ const DefaultHeader: React.FC = () => {
               <ThemeSelector />
               <button
                 onClick={openProfileModal}
-                className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm"
+                className="bg-accent/10 hover:bg-accent/20 text-accent font-bold py-2 px-4 rounded-full text-sm border-2 border-accent/20"
               >
                 Profile
               </button>
