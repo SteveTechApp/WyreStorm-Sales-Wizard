@@ -27,20 +27,22 @@
     <script type="module" src="/index.tsx"></script>
     <style>
         :root {
-            --app-bg: #5a5a5a;
-            --background: #4f4f4f;
-            --background-secondary: #424242;
-            --input-bg: #333333;
-            --text-primary: #e5e7eb;
-            --text-secondary: #9ca3af;
+            --app-bg: #4A5568; /* Lighter page background */
+            --background: #2D3748; /* Darker content cards */
+            --background-secondary: #2D3748; /* Darker modals, buttons */
+            --input-bg: #1A202C; /* Even darker inputs */
+            
+            --text-primary: #F7FAFC; /* Off-white */
+            --text-secondary: #A0AEC0; /* Lighter gray */
             --text-on-accent: #ffffff;
-            --border-color: #6b7280;
+            
+            --border-color: #718096; /* Mid-gray for visible borders */
             --accent: #f58220;
             --accent-hover: #ff9c40;
             --primary: #4a90e2;
             --primary-hover: #63a4ff;
             --destructive: #e53e3e;
-            --border: #6b7280;
+            --border: #718096;
         }
         
         html, body, #root {
@@ -48,7 +50,7 @@
         }
 
         body {
-            background-color: #4a4a4a;
+            background-color: #1A202C; /* Darkest outer background */
             color: var(--text-primary);
             transition: background-color 0.3s, color 0.3s;
             font-family: 'Inter', sans-serif;
@@ -57,13 +59,8 @@
             justify-content: center;
         }
 
-        select option {
-            color: black;
-            background: white;
-        }
-
         .bg-grid-pattern {
-            background-image: linear-gradient(to right, #4f4f4f 1px, transparent 1px), linear-gradient(to bottom, #4f4f4f 1px, transparent 1px);
+            background-image: linear-gradient(to right, var(--border-color) 1px, transparent 1px), linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 

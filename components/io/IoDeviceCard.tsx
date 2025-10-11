@@ -10,7 +10,7 @@ interface IoDeviceCardProps {
     point: IOPoint;
 }
 
-const getIoIcon = (type: string) => {
+const getIoIconComponent = (type: string): React.FC<{ className?: string }> => {
     return CONNECTION_TYPE_ICONS[type] || CONNECTION_TYPE_ICONS['default'];
 };
 
@@ -27,12 +27,14 @@ const IoDeviceCard: React.FC<IoDeviceCardProps> = ({ point }) => {
         };
         dispatchProjectAction({ type: 'UPDATE_ROOM', payload: updatedRoom });
     };
+    
+    const IconComponent = getIoIconComponent(point.connectionType);
 
     return (
         <div className="bg-background p-3 rounded-lg border border-border-color space-y-3">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                    {getIoIcon(point.connectionType)}
+                    <IconComponent className="h-6 w-6 text-accent" />
                     <div>
                         <h4 className="font-bold">{point.name}</h4>
                         <p className="text-xs text-text-secondary">Quantity: {point.quantity}</p>

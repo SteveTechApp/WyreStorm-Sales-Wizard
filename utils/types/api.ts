@@ -1,4 +1,3 @@
-
 import { RoomData } from './project.ts';
 
 export interface DesignFeedbackItem {

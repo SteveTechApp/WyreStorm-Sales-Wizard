@@ -12,14 +12,22 @@ interface TranslateProposalModalProps {
 const TranslateProposalModal: React.FC<TranslateProposalModalProps> = ({ isOpen, onClose, onTranslate }) => {
   const [targetLang, setTargetLang] = useState<LanguageCode>('fr-FR');
 
-  if (!isOpen) return null;
+  const footer = (
+    <>
+      <button onClick={onClose} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Cancel</button>
+      <button onClick={() => onTranslate(targetLang)} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">Translate</button>
+    </>
+  );
 
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-md">
-      <div className="p-4 border-b border-border-color">
-        <h2 className="text-xl font-bold">Translate Proposal</h2>
-      </div>
-      <div className="p-6 space-y-4">
+    <InfoModal 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        className="max-w-md" 
+        title="Translate Proposal" 
+        footer={footer}
+    >
+      <div className="space-y-4">
         <label htmlFor="translate-language" className="block text-sm">Select a language to translate the executive summary and scope of work using AI.</label>
         <select
           id="translate-language"
@@ -29,10 +37,6 @@ const TranslateProposalModal: React.FC<TranslateProposalModalProps> = ({ isOpen,
         >
           {SUPPORTED_LANGUAGES.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
         </select>
-      </div>
-      <div className="p-4 bg-background flex justify-end gap-3">
-        <button onClick={onClose}>Cancel</button>
-        <button onClick={() => onTranslate(targetLang)} className="bg-accent text-white font-bold py-2 px-4 rounded-md">Translate</button>
       </div>
     </InfoModal>
   );

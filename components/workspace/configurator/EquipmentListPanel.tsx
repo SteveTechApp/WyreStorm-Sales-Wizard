@@ -5,7 +5,7 @@ import ProductFinderModal from '../../ProductFinderModal.tsx';
 import { PRODUCT_CATEGORY_ICONS } from '../../../data/constants.ts';
 import ProductInfoModal from '../../ProductInfoModal.tsx';
 
-const getCategoryIcon = (category: string) => {
+const getCategoryIconComponent = (category: string): React.FC<{ className?: string }> => {
     const iconEntry = Object.entries(PRODUCT_CATEGORY_ICONS).find(([key]) => category.toLowerCase().includes(key));
     return iconEntry ? iconEntry[1] : PRODUCT_CATEGORY_ICONS.default;
 };
@@ -57,27 +57,30 @@ const EquipmentListPanel: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                     {room.manuallyAddedEquipment.length > 0 ? (
-                        room.manuallyAddedEquipment.map(item => (
-                            <div key={item.sku} className="flex justify-between items-center bg-background p-2 rounded-md border border-border-color/50">
-                                <button onClick={() => handleViewDetails(item)} className="flex items-center gap-3 text-left w-full mr-4 group">
-                                    {getCategoryIcon(item.category)}
-                                    <div>
-                                        <p className="font-semibold group-hover:underline">{item.name}</p>
-                                        <p className="text-xs font-mono text-text-secondary">{item.sku}</p>
+                        room.manuallyAddedEquipment.map(item => {
+                            const IconComponent = getCategoryIconComponent(item.category);
+                            return (
+                                <div key={item.sku} className="flex justify-between items-center bg-background p-2 rounded-md border border-border-color/50">
+                                    <button onClick={() => handleViewDetails(item)} className="flex items-center gap-3 text-left w-full mr-4 group">
+                                        <IconComponent className="h-5 w-5 text-text-secondary" />
+                                        <div>
+                                            <p className="font-semibold group-hover:underline">{item.name}</p>
+                                            <p className="text-xs font-mono text-text-secondary">{item.sku}</p>
+                                        </div>
+                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="number"
+                                            value={item.quantity}
+                                            onChange={(e) => handleQuantityChange(item.sku, parseInt(e.target.value))}
+                                            className="w-16 p-1 text-center border rounded-md bg-input-bg"
+                                            min="1"
+                                        />
+                                        <button onClick={() => handleRemove(item.sku)} className="text-destructive text-sm hover:underline">Remove</button>
                                     </div>
-                                </button>
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="number"
-                                        value={item.quantity}
-                                        onChange={(e) => handleQuantityChange(item.sku, parseInt(e.target.value))}
-                                        className="w-16 p-1 text-center border rounded-md bg-input-bg"
-                                        min="1"
-                                    />
-                                    <button onClick={() => handleRemove(item.sku)} className="text-destructive text-sm hover:underline">Remove</button>
                                 </div>
-                            </div>
-                        ))
+                            )
+                        })
                     ) : (
                         <p className="text-sm text-text-secondary text-center py-4">No equipment added yet.</p>
                     )}

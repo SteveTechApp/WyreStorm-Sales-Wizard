@@ -5,23 +5,19 @@ import StepTechnology from './videoWall/StepTechnology.tsx';
 import StepSummary from './videoWall/StepSummary.tsx';
 import InfoModal from '../InfoModal.tsx';
 
-interface VideoWallWizardModalProps {
+const STEPS = ['Layout', 'Technology', 'Summary'];
+
+const VideoWallWizardModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   onSave: (config: VideoWallConfig) => void;
-}
-
-const STEPS = ['Layout', 'Technology', 'Summary'];
-
-const VideoWallWizardModal: React.FC<VideoWallWizardModalProps> = ({ isOpen, onClose, onSave }) => {
+}> = ({ isOpen, onClose, onSave }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [config, setConfig] = useState<VideoWallConfig>({
       type: 'lcd',
       layout: { rows: 2, cols: 2 },
       technology: 'avoip_500e'
   });
-
-  if (!isOpen) return null;
 
   const handleSave = () => {
     onSave(config);
@@ -41,21 +37,27 @@ const VideoWallWizardModal: React.FC<VideoWallWizardModalProps> = ({ isOpen, onC
       }
   }
 
+  const title = (
+    <div>
+      <h2 className="text-xl font-bold text-text-primary">Video Wall Configurator</h2>
+      <p className="text-sm text-text-secondary">Step {currentStep + 1}: {STEPS[currentStep]}</p>
+    </div>
+  );
+
+  const footer = (
+    <div className="flex justify-between w-full">
+        <button onClick={() => setCurrentStep(s => Math.max(0, s-1))} disabled={currentStep === 0} className="bg-background-secondary hover:bg-border-color font-bold py-2 px-4 rounded-lg disabled:opacity-50">Previous</button>
+        {currentStep < STEPS.length - 1 
+            ? <button onClick={() => setCurrentStep(s => Math.min(STEPS.length - 1, s+1))} className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-lg">Next</button>
+            : <button onClick={handleSave} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md">Save Configuration</button>
+        }
+    </div>
+  );
+
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-2xl">
-      <div className="p-4 border-b border-border-color">
-        <h2 className="text-xl font-bold">Video Wall Configurator</h2>
-        <p className="text-sm text-text-secondary">Step {currentStep + 1}: {STEPS[currentStep]}</p>
-      </div>
-      <div className="p-6 min-h-[300px]">
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-2xl" title={title} footer={footer}>
+      <div className="min-h-[300px]">
           {renderStepContent()}
-      </div>
-      <div className="p-4 bg-background flex justify-between border-t border-border-color">
-          <button onClick={() => setCurrentStep(s => Math.max(0, s-1))} disabled={currentStep === 0} className="bg-background-secondary hover:bg-border-color font-bold py-2 px-4 rounded-lg disabled:opacity-50">Previous</button>
-          {currentStep < STEPS.length - 1 
-              ? <button onClick={() => setCurrentStep(s => Math.min(STEPS.length - 1, s+1))} className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-lg">Next</button>
-              : <button onClick={handleSave} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md">Save Configuration</button>
-          }
       </div>
     </InfoModal>
   );

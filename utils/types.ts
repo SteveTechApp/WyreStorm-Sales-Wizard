@@ -1,6 +1,3 @@
-// This file is now a barrel file. Import from here as usual.
-// Type definitions have been split into logical domains.
-
 export * from './types/api.ts';
 export * from './types/common.ts';
 export * from './types/product.ts';

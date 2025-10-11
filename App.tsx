@@ -1,10 +1,7 @@
-
-
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useProjectContext } from './context/ProjectContext.tsx';
 
-// FIX: Corrected the import path to point to the unified AppLayout component.
 import AppLayout from './components/AppLayout.tsx';
 import LoadingSpinner from './components/LoadingSpinner.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';

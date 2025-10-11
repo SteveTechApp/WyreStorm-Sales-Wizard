@@ -1,7 +1,7 @@
 import React, { ReactNode, useMemo } from 'react';
 import { useUserContext } from '../context/UserContext.tsx';
 
-import Header from './Header.tsx';
+import Header from './layout/DefaultHeader.tsx';
 import Footer from './layout/Footer.tsx';
 import QuickQuestionFAB from './QuickQuestionFAB.tsx';
 import ComparisonTray from './ComparisonTray.tsx';

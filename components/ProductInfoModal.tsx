@@ -9,15 +9,9 @@ interface ProductInfoModalProps {
 }
 
 const ProductInfoModal: React.FC<ProductInfoModalProps> = ({ isOpen, onClose, product }) => {
-  if (!isOpen) return null;
-
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-lg">
-      <div className="flex justify-between items-center p-4 border-b border-border-color">
-        <h2 className="text-xl font-bold text-text-primary">{product.name}</h2>
-        <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
-      </div>
-      <div className="p-6 space-y-4">
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-lg" title={product.name}>
+      <div className="space-y-4">
         <p className="font-mono text-sm text-text-secondary">SKU: {product.sku}</p>
         <p className="text-text-primary">{product.description}</p>
         <div>

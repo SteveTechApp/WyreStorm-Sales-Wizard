@@ -14,12 +14,8 @@ const ProductComparisonModal: React.FC<ProductComparisonModalProps> = ({ isOpen,
   const allKeys = Array.from(new Set(products.flatMap(p => Object.keys(p))));
 
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-6xl">
-      <div className="flex justify-between items-center p-4 border-b border-border-color">
-        <h2 className="text-2xl font-bold text-text-primary">Product Comparison</h2>
-        <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
-      </div>
-      <div className="p-6 overflow-auto">
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-6xl" title="Product Comparison">
+      <div className="overflow-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-background">

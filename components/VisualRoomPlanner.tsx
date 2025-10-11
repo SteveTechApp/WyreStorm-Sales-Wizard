@@ -5,7 +5,7 @@ import { PRODUCT_CATEGORY_ICONS } from '../data/constants.ts';
 import InfoTooltip from './InfoTooltip.tsx';
 import ProductInfoModal from './ProductInfoModal.tsx';
 
-const getCategoryIcon = (category: string) => {
+const getCategoryIconComponent = (category: string): React.FC<{ className?: string }> => {
     const iconEntry = Object.entries(PRODUCT_CATEGORY_ICONS).find(([key]) => category.toLowerCase().includes(key));
     return iconEntry ? iconEntry[1] : PRODUCT_CATEGORY_ICONS.default;
 };
@@ -54,18 +54,21 @@ const VisualRoomPlanner: React.FC = () => {
               <div className="absolute inset-0 flex flex-wrap items-start justify-center p-4 gap-4 overflow-y-auto">
                   {equipment.length > 0 ? (
                       equipment.flatMap((item, itemIndex) => 
-                        Array.from({ length: item.quantity }).map((_, quantityIndex) => (
-                            <InfoTooltip key={`${item.sku}-${itemIndex}-${quantityIndex}`} text={item.name}>
-                                <button
-                                    onClick={() => setSelectedProduct(item)}
-                                    className="flex flex-col items-center justify-center p-2 rounded-lg bg-background hover:bg-border-color border border-border-color transition-all hover:scale-110"
-                                    aria-label={`View details for ${item.name}`}
-                                >
-                                    {React.cloneElement(getCategoryIcon(item.category) as React.ReactElement, { className: "h-8 w-8 text-text-primary" })}
-                                    <span className="text-xs mt-1 font-mono text-text-secondary truncate w-16">{item.sku}</span>
-                                </button>
-                            </InfoTooltip>
-                        ))
+                        Array.from({ length: item.quantity }).map((_, quantityIndex) => {
+                            const IconComponent = getCategoryIconComponent(item.category);
+                            return (
+                                <InfoTooltip key={`${item.sku}-${itemIndex}-${quantityIndex}`} text={item.name}>
+                                    <button
+                                        onClick={() => setSelectedProduct(item)}
+                                        className="flex flex-col items-center justify-center p-2 rounded-lg bg-background hover:bg-border-color border border-border-color transition-all hover:scale-110"
+                                        aria-label={`View details for ${item.name}`}
+                                    >
+                                        <IconComponent className="h-8 w-8 text-text-primary" />
+                                        <span className="text-xs mt-1 font-mono text-text-secondary truncate w-16">{item.sku}</span>
+                                    </button>
+                                </InfoTooltip>
+                            )
+                        })
                       )
                   ) : (
                       <div className="text-center text-text-secondary p-4 bg-background rounded-lg border border-border-color self-center">
