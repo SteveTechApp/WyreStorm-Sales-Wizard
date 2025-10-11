@@ -64,11 +64,7 @@ export const useProjectGeneration = () => {
                 projectName: setupData.projectName,
                 clientName: setupData.clientName,
                 lastSaved: new Date().toISOString(),
-                rooms: setupData.rooms.map(roomStub => ({
-                    ...createNewRoom(),
-                    id: uuidv4(),
-                    ...roomStub
-                })),
+                rooms: setupData.rooms,
                 proposals: [],
                 unitSystem: 'metric',
                 notes: '',

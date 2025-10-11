@@ -8,7 +8,7 @@ const QuickQuestionFAB: React.FC = () => {
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-8 right-8 bg-primary hover:bg-primary/90 text-white rounded-full p-6 shadow-2xl z-40 transition-transform duration-200 hover:scale-110"
+        className="fixed bottom-8 right-8 bg-accent hover:bg-accent-hover text-white rounded-full p-6 shadow-2xl z-40 transition-transform duration-200 hover:scale-110 animate-pulse-bright"
         aria-label="Ask a quick question"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">

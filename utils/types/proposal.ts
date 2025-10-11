@@ -1,12 +1,4 @@
-import { StructuredSystemDiagram } from './project.ts';
-
-export interface AncillaryCosts {
-    cables: number;
-    connectors: number;
-    containment: number;
-    fixings: number;
-    materials: number;
-}
+import type { StructuredSystemDiagram } from './project.ts';
 
 export interface Proposal {
     proposalId: string;

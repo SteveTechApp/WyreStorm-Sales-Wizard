@@ -1,4 +1,5 @@
 
+
 import React, { useMemo, useState } from 'react';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -14,8 +15,7 @@ const TemplateBrowser: React.FC = () => {
 
     const groupedTemplates = useMemo(() => {
         return userTemplates.reduce((acc, template) => {
-            const verticalInfo = VERTICAL_MARKETS.find(v => v.name === template.vertical);
-            const verticalId = verticalInfo ? verticalInfo.verticalId : 'corp'; // Default to corp if not found
+            const verticalId = template.vertical; // Assuming template.vertical is the ID like 'corp', 'edu'
 
             if (!acc[verticalId]) {
                 acc[verticalId] = [];

@@ -4,6 +4,7 @@ import { UserProfile, LaborRate } from '../utils/types.ts';
 import LaborRateManager from './profile/LaborRateManager.tsx';
 import { SUPPORTED_LANGUAGES } from '../data/constants.ts';
 import toast from 'react-hot-toast';
+import ToggleSwitch from './ui/ToggleSwitch.tsx';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -97,6 +98,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                     laborRates={localProfile.laborRates}
                     setLaborRates={(newRates: LaborRate[]) => setLocalProfile(p => ({...p, laborRates: newRates}))}
                 />
+            </div>
+            <div>
+                <h3 className="text-lg font-semibold mb-2">Appearance</h3>
+                <div className="flex items-center justify-between p-3 bg-background rounded-md border border-border-color">
+                    <label htmlFor="show-background" className="text-sm font-medium">Show Background Image Carousel</label>
+                    <ToggleSwitch
+                        checked={localProfile.showBackground}
+                        onChange={(isChecked) => setLocalProfile(p => ({ ...p, showBackground: isChecked }))}
+                    />
+                </div>
             </div>
         </div>
         <div className="p-4 bg-background flex justify-end gap-3 border-t border-border-color">

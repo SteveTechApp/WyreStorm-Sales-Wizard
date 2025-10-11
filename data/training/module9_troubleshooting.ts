@@ -7,27 +7,52 @@ export const MODULE_9_TROUBLESHOOTING: TrainingModule = {
     {
       title: 'The Troubleshooting Mindset',
       content:
-        "Effective troubleshooting is a methodical process, not guesswork. The golden rule is **'Check the Physical Layer First!'** Over 80% of AV issues are related to cables and connections.\n\nAdopt this workflow:\n1.  **Verify Signal Flow**: Trace the path from the source to the destination. Is everything connected as you expect?\n2.  **Isolate the Problem**: Use the 'divide and conquer' method. If a source doesn't work on a display, does it work when plugged directly into the display, bypassing the switcher? This helps pinpoint the faulty component.\n3.  **Check the Simple Stuff**: Are devices powered on? Are they on the correct input? Are status LEDs showing a healthy link?\n4.  **Make One Change at a Time**: Don't change multiple settings at once. Change one thing, test, and observe the result. This is the only way to know what actually fixed the issue.",
+        "Effective troubleshooting is a methodical process, not guesswork. The golden rule is **'Check the Physical Layer First!'** Over 80% of AV issues are related to cables and connections.\n\nAdopt this workflow:\n1.  **Verify Signal Flow**: Trace the path from the source to the destination.\n2.  **Isolate the Problem**: Use the 'divide and conquer' method to pinpoint the faulty component.\n3.  **Check the Simple Stuff**: Are devices powered on? Are they on the correct input?\n4.  **Make One Change at a Time**: Change one thing, test, and observe the result.",
+      asset: {
+        url: 'https://i.imgur.com/G4V8z8M.png',
+        title: 'A logical troubleshooting workflow.',
+        type: 'diagram',
+      },
     },
     {
       title: 'Problem 1: "No Signal"',
       content:
-        "This is the most common field issue. It means the display is not receiving a valid video signal.\n\n**Troubleshooting Steps**:\n- **Confirm the Source**: Is the source device (laptop, media player) powered on and outputting a signal? Test it with a small, known-good monitor.\n- **Check the Display**: Is the display powered on and set to the correct input (e.g., HDMI 1)?\n- **Inspect Cables**: Check that all HDMI and category cables are securely plugged in at both ends. A loose connection is a frequent culprit.\n- **The Handshake**: A digital video connection involves a 'handshake' where the source and display exchange information (like resolution and HDCP). Power cycling all devices in the signal chain (source, extenders, switcher, display) can force a new handshake and often resolves the issue. Turn everything off, wait 10 seconds, then turn on the display first, followed by the switcher/extenders, and finally the source.",
+        "This is the most common field issue. It means the display is not receiving a valid video signal.\n\n**Troubleshooting Steps**:\n- **Confirm the Source**: Is the source device powered on and outputting a signal?\n- **Check the Display**: Is the display powered on and set to the correct input (e.g., HDMI 1)?\n- **Inspect Cables**: Check that all cables are securely plugged in at both ends.\n- **The Handshake**: Power cycling all devices in the signal chain (source, extenders, switcher, display) can force a new **HDMI handshake** and often resolves the issue.",
+      asset: {
+        url: 'https://i.imgur.com/kH8eU3W.png',
+        title: 'The dreaded "No Signal" message.',
+        type: 'image',
+      },
     },
     {
       title: 'Problem 2: HDCP Errors',
       content:
-        "An HDCP error (often a blank screen, flashing, or an explicit error message) occurs when the content protection handshake fails.\n\n**Common Causes**:\n- **Version Mismatch**: A source requiring HDCP 2.2 is connected to a display that only supports HDCP 1.4.\n- **Non-Compliant Device**: A device in the chain (like a cheap splitter or adapter) does not support HDCP.\n- **Exceeding Device Limit**: An HDCP source can typically only feed a limited number of displays.\n\n**Resolution**:\n- Ensure every device in the signal path, from source to display, supports the required HDCP version (usually 2.2 for 4K).\n- Temporarily bypass devices to identify which one is causing the failure.\n- Replace any non-compliant devices.",
+        "An **HDCP error** (often a blank screen, flashing, or an explicit error message) occurs when the content protection handshake fails.\n\n**Common Causes**:\n- **Version Mismatch**: A source requiring HDCP 2.2 is connected to a display that only supports HDCP 1.4.\n- **Non-Compliant Device**: A device in the chain (like a cheap splitter) does not support HDCP.\n\n**Resolution**:\n- Ensure **every device** in the signal path supports the required HDCP version.",
+      asset: {
+        url: 'https://i.imgur.com/f9c8f8L.png',
+        title: 'An example of an HDCP error message.',
+        type: 'image',
+      },
     },
     {
       title: 'Problem 3: Sparkles, "Snow", or Dropouts',
       content:
-        "These visual artifacts indicate a poor quality signal, often called 'signal integrity' issues. The data is arriving, but it's corrupted.\n\n**Key Causes**:\n- **Cable Length**: The HDMI or category cable is too long for the signal bandwidth. An 18Gbps 4K HDR signal is much more demanding than a 1080p signal.\n- **Cable Quality**: The cable is low quality, damaged, or has a poor termination. Solid-core copper is essential for category cable infrastructure.\n- **Interference**: The AV cable is running too close to high-voltage power lines or other sources of electromagnetic interference (EMI).\n\n**Solutions**:\n- Use shorter, higher-quality certified cables.\n- Use an appropriate extender (like HDBaseT) for long runs, ensuring the cable and distance are within the extender's specification.\n- Re-route cables away from sources of interference.",
+        "These visual artifacts indicate a poor quality signal, often called **'signal integrity'** issues. The data is arriving, but it's corrupted.\n\n**Key Causes**:\n- **Cable Length**: The HDMI or category cable is too long for the signal bandwidth.\n- **Cable Quality**: The cable is low quality, damaged, or has a poor termination.\n- **Interference**: The AV cable is running too close to high-voltage power lines (EMI).\n\n**Solutions**:\n- Use shorter, higher-quality certified cables or an appropriate extender.",
+      asset: {
+        url: 'https://i.imgur.com/zW3b9hJ.jpg',
+        title: 'Video "snow" is a classic sign of poor signal integrity.',
+        type: 'image',
+      },
     },
     {
       title: 'Problem 4: Audio & Control Issues',
       content:
-        "**Audio Problems**:\n- **No Audio**: Check if the source is muted. Verify audio de-embedding settings on the matrix or extender. Ensure the display or amplifier isn't muted.\n- **Wrong Audio Format**: Mismatched audio formats (e.g., sending a Dolby Atmos signal to a stereo-only device) can result in silence. Check the EDID settings to ensure the source sends a compatible audio format.\n\n**Control Problems**:\n- **RS-232**: Verify your TX (transmit) and RX (receive) connections are correct (TX from controller goes to RX on device). Ensure baud rate, data bits, and parity settings match on both ends.\n- **IP Control**: Confirm the device and the controller are on the same network and subnet. Use a 'ping' command to verify basic network connectivity to the device's IP address. Check that you are using the correct TCP/IP port number.",
+        "**Audio Problems**:\n- **No Audio**: Check for mutes. Verify audio de-embedding settings. Check **EDID** settings to ensure the source is sending a compatible format.\n\n**Control Problems**:\n- **RS-232**: Verify **TX (transmit) and RX (receive)** connections are correct (TX from controller goes to RX on device). Ensure baud rate settings match.\n- **IP Control**: Confirm the device and controller are on the same network. Use a **'ping'** command to verify basic network connectivity.",
+      asset: {
+        url: 'https://i.imgur.com/Q6D8n3b.png',
+        title: 'A common mistake is connecting TX-to-TX and RX-to-RX.',
+        type: 'diagram',
+      },
     },
   ],
   quiz: [

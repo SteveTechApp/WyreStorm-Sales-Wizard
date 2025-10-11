@@ -17,7 +17,6 @@ const AgentInputForm = lazy(() => import('./pages/AgentInputForm.tsx'));
 const DesignCoPilot = lazy(() => import('./pages/DesignCoPilot.tsx'));
 const ProposalDisplay = lazy(() => import('./pages/ProposalDisplay.tsx'));
 const TrainingPage = lazy(() => import('./pages/TrainingPage.tsx'));
-const VideoGeneratorPage = lazy(() => import('./pages/VideoGeneratorPage.tsx'));
 const TemplateBrowserScreen = lazy(() => import('./pages/TemplateBrowserScreen.tsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx'));
 
@@ -42,7 +41,6 @@ const App: React.FC = () => {
                         <Route path="/design/:projectId" element={<DesignCoPilot />} />
                         <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
                         <Route path="/training" element={<TrainingPage />} />
-                        <Route path="/video-generator" element={<VideoGeneratorPage />} />
                         <Route path="/templates" element={<TemplateBrowserScreen />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>

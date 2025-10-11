@@ -1,56 +1,91 @@
-import { DesignTier, AncillaryCosts, Product, UserProfile } from '../types.ts';
+import { DesignTier } from './common.ts';
+import { Product } from './product.ts';
+import type { Proposal } from './proposal.ts';
+
+export interface AncillaryCosts {
+    cables: number;
+    connectors: number;
+    containment: number;
+    fixings: number;
+    materials: number;
+}
+
+export interface Dimensions {
+  length: number;
+  width: number;
+  height: number;
+}
 
 export interface Feature {
-    name: string;
-    priority: 'must-have' | 'nice-to-have';
-}
-
-export interface ManuallyAddedEquipment extends Product {
-    quantity: number;
-    connectionType?: string;
-    distributionType?: string;
-    mountingType?: string;
-    assignedInputs?: string[];
-}
-
-export interface DiagramNode {
-    id: string; // SKU
-    label: string;
-    type: string; // e.g., Source, Switcher, Display
-}
-
-export interface DiagramEdge {
-    from: string; // from SKU
-    to: string; // to SKU
-    label: string; // e.g., HDMI, HDBaseT
-    type: 'video' | 'audio' | 'control' | 'usb' | 'network';
-}
-
-export interface StructuredSystemDiagram {
-    nodes: DiagramNode[];
-    edges: DiagramEdge[];
-}
-
-export interface VideoWallConfig {
-    type: 'lcd' | 'led';
-    layout: { rows: number; cols: number };
-    technology: 'looped' | 'multiview_150' | 'processor_vw' | 'avoip_500e' | 'avoip_600';
+  name: string;
+  priority: 'must-have' | 'nice-to-have';
 }
 
 export type DisplayType = 'single' | 'dual_display' | 'lcd_video_wall' | 'led_video_wall' | 'projector';
 export type ProjectorLensType = 'standard' | 'zoom' | 'short_throw';
 
 export interface IOPoint {
+  id: string;
+  name: string;
+  type: 'input' | 'output';
+  quantity: number;
+  connectionType: string;
+  distributionType: string;
+  distance: number;
+  terminationType: string;
+  displayType?: DisplayType;
+  projectorLensType?: ProjectorLensType;
+}
+
+export interface ConstructionDetails {
+  wallConstruction: 'drywall' | 'concrete' | 'glass' | 'modular';
+  cableContainment: 'none' | 'trunking' | 'conduit' | 'floor_boxes';
+  furnitureType: 'fixed' | 'multi_use';
+}
+
+export interface AudioSystemDetails {
+  speakerLayout: 'none' | 'soundbar' | 'in_ceiling' | 'surface_mount' | 'pendant';
+  systemType: 'low_impedance' | 'high_impedance';
+  useCases: ('speech_reinforcement' | 'program_audio' | 'video_conferencing')[];
+  microphoneType: 'none' | 'table_mic' | 'ceiling_mic' | 'wireless_lav' | 'soundbar_mic';
+  ucCompatibility: boolean;
+}
+
+export interface TechnicalDetails {
+  primaryVideoResolution: string;
+  videoSignalTypes: string[];
+  controlSystem: string;
+  cameraType: 'none' | 'usb_webcam' | 'hdmi_ptz';
+  cameraCount: number;
+  roomPc: boolean;
+}
+
+export interface StructuredSystemDiagramNode {
     id: string;
-    type: 'input' | 'output';
+    label: string;
+    type: string;
+}
+
+export interface StructuredSystemDiagramEdge {
+    from: string;
+    to: string;
+    label: string;
+    type: string;
+}
+
+export interface StructuredSystemDiagram {
+    nodes: StructuredSystemDiagramNode[];
+    edges: StructuredSystemDiagramEdge[];
+}
+
+export interface VideoWallConfig {
+    type: 'lcd' | 'led';
+    layout: { rows: number; cols: number };
+    technology: 'processor_vw' | 'avoip_150' | 'avoip_500e' | 'avoip_600';
+}
+
+export interface ManuallyAddedEquipment extends Product {
     quantity: number;
-    name: string;
-    connectionType: string;
-    distributionType: string;
-    distance: number;
-    terminationType: string;
-    displayType?: DisplayType;
-    projectorLensType?: ProjectorLensType;
 }
 
 export interface RoomData {
@@ -58,32 +93,24 @@ export interface RoomData {
     roomName: string;
     roomType: string;
     designTier: DesignTier;
-    dimensions: { length: number; width: number; height: number };
+    dimensions: Dimensions;
     maxParticipants: number;
     ioRequirements: IOPoint[];
-    displayType: string;
+    displayType: DisplayType;
     displayCount: number;
+    displaySize?: number;
+    videoWallConfig?: VideoWallConfig;
     features: Feature[];
     functionalityStatement: string;
     manuallyAddedEquipment: ManuallyAddedEquipment[];
     systemDiagram?: StructuredSystemDiagram;
-    videoWallConfig?: VideoWallConfig;
-    constructionDetails: {
-        wallConstruction: 'drywall' | 'concrete' | 'glass' | 'modular';
-        cableContainment: 'none' | 'trunking' | 'conduit' | 'floor_boxes';
-    };
-    audioSystemDetails: {
-        speakerLayout: 'none' | 'soundbar' | 'in_ceiling' | 'surface_mount' | 'pendant';
-        systemType: 'low_impedance' | 'high_impedance';
-        useCases: ('speech_reinforcement' | 'program_audio' | 'video_conferencing')[];
-    };
-    technicalDetails: {
-        primaryVideoResolution: string;
-        videoSignalTypes: string[];
-        controlSystem: string;
-    };
+    constructionDetails: ConstructionDetails;
+    audioSystemDetails: AudioSystemDetails;
+    technicalDetails: TechnicalDetails;
     budget: number;
 }
+
+export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment'>;
 
 export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;
@@ -97,22 +124,20 @@ export interface ProjectData {
     clientName: string;
     lastSaved: string;
     rooms: RoomData[];
-    proposals: any[]; // Use any to avoid circular dependency with Proposal type
+    proposals: Proposal[];
     unitSystem: 'metric' | 'imperial';
     notes: string;
-    ancillaryCosts: AncillaryCosts;
     productDatabase: Product[];
+    ancillaryCosts: AncillaryCosts;
     infrastructure?: ProjectInfrastructure;
     budget?: number;
     timeline?: string;
 }
 
 export interface ProjectSetupData {
-    projectName: string;
-    clientName: string;
-    rooms: Omit<RoomData, 'id'>[];
-    budget?: number;
-    timeline?: string;
+  projectName: string;
+  clientName: string;
+  rooms: RoomData[];
+  budget?: number;
+  timeline?: string;
 }
-
-export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram'>;

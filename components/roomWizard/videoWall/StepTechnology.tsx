@@ -1,31 +1,34 @@
 import React from 'react';
-import { VideoWallConfig } from '../../../utils/types';
+import { VideoWallConfig } from '../../../utils/types.ts';
 
 interface StepTechnologyProps {
   config: VideoWallConfig;
   updateConfig: (newConfig: Partial<VideoWallConfig>) => void;
 }
 
-const TECH_OPTIONS: {id: VideoWallConfig['technology'], name: string, desc: string}[] = [
-    { id: 'avoip_500e', name: 'NetworkHD 500 Series (AVoIP)', desc: 'Most flexible. Visually lossless quality. Ideal for corporate and command center walls.'},
-    { id: 'processor_vw', name: 'Standalone Processor', desc: 'Simple and robust for single-source walls. Limited flexibility.'},
-    { id: 'multiview_150', name: 'NetworkHD 150 Series (Multiview)', desc: 'AVoIP solution that allows multiple sources to be shown on the wall at once.'},
+const TECHNOLOGY_OPTIONS = [
+    { id: 'processor_vw', name: 'Dedicated Video Wall Processor', description: 'A single hardware box that splits a source across multiple screens. Simple and reliable for single-source walls.' },
+    { id: 'avoip_150', name: 'AVoIP (Multi-view)', description: 'Uses specialized NetworkHD 150 decoders to create flexible multi-source layouts on the wall.' },
+    { id: 'avoip_500e', name: 'AVoIP (Standard)', description: 'Uses one NetworkHD 500-E decoder per screen. Good for showing single sources on single screens or across the whole wall.' },
+    { id: 'avoip_600', name: 'AVoIP (10G Uncompressed)', description: 'The highest quality, zero-latency option using NetworkHD 600 series. For mission-critical applications.' }
 ];
 
 const StepTechnology: React.FC<StepTechnologyProps> = ({ config, updateConfig }) => {
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">Select Video Wall Technology</h2>
-      {TECH_OPTIONS.map(opt => (
-          <button 
-            key={opt.id}
-            onClick={() => updateConfig({ technology: opt.id })}
-            className={`w-full text-left p-4 border-2 rounded-lg ${config.technology === opt.id ? 'border-accent bg-accent/10' : 'border-border-color hover:border-accent/50'}`}
-          >
-              <h4 className="font-bold">{opt.name}</h4>
-              <p className="text-sm text-text-secondary">{opt.desc}</p>
-          </button>
-      ))}
+    <div>
+        <h2 className="text-xl font-bold mb-4">Select Technology</h2>
+        <div className="space-y-3">
+            {TECHNOLOGY_OPTIONS.map(opt => (
+                <button 
+                    key={opt.id}
+                    onClick={() => updateConfig({ technology: opt.id as VideoWallConfig['technology'] })}
+                    className={`w-full text-left p-3 border-2 rounded-lg transition-colors ${config.technology === opt.id ? 'border-accent bg-accent/10' : 'border-border-color hover:border-accent/50'}`}
+                >
+                    <p className="font-bold">{opt.name}</p>
+                    <p className="text-sm text-text-secondary">{opt.description}</p>
+                </button>
+            ))}
+        </div>
     </div>
   );
 };

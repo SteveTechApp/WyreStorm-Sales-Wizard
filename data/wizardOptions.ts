@@ -49,8 +49,8 @@ export const MOUNTING_TYPES = ['Wall Mount', 'Ceiling Mount', 'Pole Mount', 'Rac
 export const TERMINATION_TYPES = ['Wall Plate', 'Floor Box', 'Table Box', 'Direct to Device'];
 
 export const DISPLAY_TYPES = [
-    { value: 'single', label: 'Single Display' },
-    { value: 'dual_display', label: 'Dual Display' },
+    { value: 'single', label: 'Single LFD' },
+    { value: 'dual_display', label: 'Dual LFDs' },
     { value: 'lcd_video_wall', label: 'LCD Video Wall' },
     { value: 'led_video_wall', label: 'LED Video Wall' },
     { value: 'projector', label: 'Projector' },
@@ -60,4 +60,23 @@ export const PROJECTOR_LENS_TYPES = [
     { value: 'standard', label: 'Standard Lens' },
     { value: 'zoom', label: 'Zoom Lens' },
     { value: 'short_throw', label: 'Short Throw' },
+];
+
+export const FURNITURE_TYPES = [
+    { value: 'fixed', label: 'Fixed Furniture (e.g., Boardroom Table)' },
+    { value: 'multi_use', label: 'Multi-use / Reconfigurable' },
+];
+
+export const CAMERA_TYPES = [
+    { value: 'none', label: 'No Camera' },
+    { value: 'usb_webcam', label: 'USB Webcam / Video Bar' },
+    { value: 'hdmi_ptz', label: 'HDMI/SDI PTZ Camera' },
+];
+
+export const MICROPHONE_TYPES = [
+    { value: 'none', label: 'No Microphones' },
+    { value: 'soundbar_mic', label: 'Via Soundbar/Video Bar' },
+    { value: 'table_mic', label: 'Table Microphones' },
+    { value: 'ceiling_mic', label: 'Ceiling Microphones' },
+    { value: 'wireless_lav', label: 'Wireless (Lav/Handheld)' },
 ];

@@ -1,137 +1,202 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WyreStorm Wingman</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?external=react",
-    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react",
-    "react-hot-toast": "https://esm.sh/react-hot-toast@2.4.1?external=react",
-    "uuid": "https://esm.sh/uuid@9.0.1",
-    "zod": "https://esm.sh/zod@3.22.4",
-    "react-markdown": "https://esm.sh/react-markdown@9.0.1?external=react",
-    "date-fns": "https://esm.sh/date-fns@3.6.0",
-    "@google/genai": "https://esm.sh/@google/genai@0.12.0",
-    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
-    "react/": "https://esm.sh/react@18.2.0/"
-  }
-}
-</script>
+    {
+      "imports": {
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.23.0",
+        "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.4",
+        "zod": "https://aistudiocdn.com/zod@^4.1.12",
+        "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.6.0",
+        "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0",
+        "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0"
+      }
+    }
+    </script>
+    <script type="module" src="/index.tsx"></script>
     <style>
-      :root {
-        --background: #ffffff;
-        --background-secondary: #f3f4f6;
-        --background-image: none;
-        --text-primary: #111827;
-        --text-secondary: #6b7280;
-        --text-on-accent: #ffffff;
-        --accent: #008a3a;
-        --accent-hover: #006f2f;
-        --primary: #e6007e;
-        --destructive: #dc2626;
-        --border-color: #e5e7eb;
-        --input-bg: #ffffff;
-        --glass-bg: rgba(243, 244, 246, 0.8);
-      }
+        :root {
+            --background: #f8f9fa;
+            --background-secondary: #ffffff;
+            --input-bg: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-on-accent: #ffffff;
+            --border-color: #dee2e6;
+            --accent: #f58220;
+            --accent-hover: #ff9c40;
+            --primary: #4a90e2;
+            --primary-hover: #63a4ff;
+            --destructive: #e53e3e;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --border: #dee2e6;
+        }
+        
+        html, body, #root {
+            min-height: 100vh;
+        }
 
-      .dark, .wyrestorm {
-        --glass-bg: rgba(39, 39, 42, 0.5);
-      }
+        body {
+            background: var(--background);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
 
-      body {
-        background-color: var(--background);
-        background-image: var(--background-image);
-        color: var(--text-primary);
-        transition: background-color 0.3s, color 0.3s;
-        font-family: 'Inter', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      .font-mono {
-        font-family: 'Roboto Mono', monospace;
-      }
-      .dark body, .wyrestorm body {
-        background: linear-gradient(-45deg, #0f172a, #1e293b, #0f172a, #334155);
-        background-size: 400% 400%;
-        animation: gradient 15s ease infinite;
-      }
-      
-      /* Custom Scrollbar */
-      .dark ::-webkit-scrollbar, .wyrestorm ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      .dark ::-webkit-scrollbar-track, .wyrestorm ::-webkit-scrollbar-track {
-        background: var(--background);
-      }
-      .dark ::-webkit-scrollbar-thumb, .wyrestorm ::-webkit-scrollbar-thumb {
-        background-color: var(--border-color);
-        border-radius: 4px;
-      }
-      .dark ::-webkit-scrollbar-thumb:hover, .wyrestorm ::-webkit-scrollbar-thumb:hover {
-        background-color: var(--accent);
-      }
+        body.has-background-carousel {
+            background: var(--background);
+        }
+        
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, var(--border-color) 1px, transparent 1px), linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
-      .btn {
-        font-weight: 700;
-        padding: 0.6rem 1.25rem;
-        border-radius: 0.5rem;
-        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border: 2px solid transparent;
-        font-size: 0.875rem;
-      }
-      .btn-primary {
-        color: var(--text-on-accent);
-        background-color: var(--accent);
-        box-shadow: 0 0 15px 0 color-mix(in srgb, var(--accent) 40%, transparent);
-      }
-      .btn-primary:hover { 
-        background-color: var(--accent-hover); 
-        transform: translateY(-2px);
-        box-shadow: 0 4px 20px 0 color-mix(in srgb, var(--accent) 50%, transparent);
-      }
-      .btn-secondary {
-        color: var(--accent);
-        border-color: var(--accent);
-        background-color: transparent;
-      }
-      .btn-secondary:hover { 
-        background-color: var(--accent);
-        color: var(--text-on-accent);
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      @keyframes fadeIn { '0%': { opacity: '0' }, '100%': { opacity: '1' } }
-      @keyframes fadeInUp { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
-      @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      .animate-fade-in-fast { animation: fadeIn 0.3s ease-in-out; }
-      .animate-fade-in-up { animation: fadeInUp 0.5s ease-in-out; }
-      
-      .prose { color: var(--text-primary); }
-      .dark .prose, .wyrestorm .prose { color: var(--text-primary); }
-      .dark .prose-invert, .wyrestorm .prose-invert { color: var(--text-primary); }
-      
-      /* Remove default radius on wyrestorm theme to keep sharp edges if needed, but we'll use consistent rounding for now */
-      /* .wyrestorm .rounded-lg { border-radius: 0 !important; } */
+        .prose {
+            color: var(--text-primary);
+        }
+        .prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
+            color: var(--text-primary);
+        }
+        .prose a {
+            color: var(--accent);
+        }
+        .prose blockquote {
+            color: var(--text-secondary);
+            border-left-color: var(--border-color);
+        }
 
+        /* Base Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--text-on-accent);
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        .btn-secondary:hover {
+             background-color: var(--border-color);
+             color: var(--text-primary);
+        }
+
+        @keyframes pulse-bright {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(245, 130, 32, 0.7);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(245, 130, 32, 0);
+            }
+        }
+        .animate-pulse-bright {
+            animation: pulse-bright 2.5s infinite;
+        }
+
+        @keyframes fade-in-fast {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in-fast {
+            animation: fade-in-fast 0.3s ease-in-out forwards;
+        }
+        
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.3s ease-out forwards;
+        }
+
+        .glass-bg {
+            background-color: var(--glass-bg);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .background-carousel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            background-color: var(--background);
+        }
+
+        .background-carousel-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .background-carousel-image.visible {
+            opacity: 0.5;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background-color: #fff;
+                color: #000;
+            }
+            .print\:hidden {
+                display: none;
+            }
+            .print\:shadow-none {
+                box-shadow: none;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body class="font-sans">
     <div id="root"></div>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script type="module" src="./index.tsx"></script>
-  </body>
+    <script src="https://unpkg.com/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+      function handleMermaidClick(nodeId) {
+        // This function can be called from within the Mermaid diagram SVG if needed,
+        // for example, by adding `click nodeId call handleMermaidClick(nodeId)` to the graph definition.
+        console.log('Mermaid node clicked:', nodeId);
+      }
+      window.handleMermaidClick = handleMermaidClick;
+    </script>
+</body>
 </html>

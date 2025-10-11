@@ -1,5 +1,5 @@
 import React from 'react';
-import { IOPoint } from '../../../utils/types';
+import { IOPoint } from '../../../utils/types.ts';
 
 interface BasicInfoInputsProps {
   point: IOPoint;

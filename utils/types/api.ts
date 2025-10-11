@@ -1,3 +1,4 @@
+
 import { RoomData } from './project.ts';
 
 export interface DesignFeedbackItem {
@@ -5,11 +6,13 @@ export interface DesignFeedbackItem {
     text: string;
 }
 
+export type VerticalMarketId = 'corp' | 'edu' | 'gov' | 'hos' | 'ret' | 'res' | 'tra' | 'ven' | 'ind' | 'gam' | 'how' | 'cmd';
+
 export interface UserTemplate {
     templateId: string;
     templateName: string;
     description: string;
-    vertical: string;
+    vertical: VerticalMarketId;
     imageUrl: string;
     roomData: RoomData;
 }

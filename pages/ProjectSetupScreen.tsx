@@ -2,45 +2,56 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
-import { ProjectSetupData, RoomData, DesignTier } from '../utils/types.ts';
-import { v4 as uuidv4 } from 'uuid';
-import { ROOM_TYPES, DESIGN_TIER_OPTIONS } from '../data/constants.ts';
+import { ProjectSetupData, RoomData } from '../utils/types.ts';
 import { PlusIcon } from '../components/Icons.tsx';
-import { createNewRoom } from '../utils/utils.ts';
+import RoomWizard from '../components/RoomWizard.tsx';
+import TierIcon from '../components/TierIcon.tsx';
+import toast from 'react-hot-toast';
 
 const ProjectSetupScreen: React.FC = () => {
     const [projectName, setProjectName] = useState('New Project');
     const [clientName, setClientName] = useState('New Client');
     const [budget, setBudget] = useState<number | undefined>();
     const [timeline, setTimeline] = useState('');
-    const [rooms, setRooms] = useState<Omit<RoomData, 'id'>[]>([]);
+    const [rooms, setRooms] = useState<RoomData[]>([]);
     const { handleProjectSetupSubmit } = useGenerationContext();
     const { userProfile } = useUserContext();
     const navigate = useNavigate();
 
-    const handleAddRoom = () => {
-        const newRoomBase = createNewRoom();
-        const newRoom: Omit<RoomData, 'id'> = {
-            ...newRoomBase,
-            roomName: `Room ${rooms.length + 1}`,
-            roomType: 'Conference Room',
-            designTier: 'Silver',
-        };
-        setRooms([...rooms, newRoom]);
+    const [isWizardOpen, setIsWizardOpen] = useState(false);
+    const [editingRoom, setEditingRoom] = useState<RoomData | null>(null);
+
+    const handleAddWithWizard = () => {
+        setEditingRoom(null);
+        setIsWizardOpen(true);
     };
 
-    const handleRoomChange = (index: number, field: keyof Omit<RoomData, 'id'>, value: any) => {
-        const newRooms = [...rooms];
-        (newRooms[index] as any)[field] = value;
-        setRooms(newRooms);
+    const handleEditWithWizard = (room: RoomData) => {
+        setEditingRoom(room);
+        setIsWizardOpen(true);
     };
 
-    const handleRemoveRoom = (index: number) => {
-        setRooms(rooms.filter((_, i) => i !== index));
+    const handleSaveFromWizard = (savedRoom: RoomData) => {
+        const existing = rooms.find(r => r.id === savedRoom.id);
+        if (existing) {
+            setRooms(rooms.map(r => (r.id === savedRoom.id ? savedRoom : r)));
+        } else {
+            setRooms([...rooms, savedRoom]);
+        }
+        setIsWizardOpen(false);
+        setEditingRoom(null);
+    };
+
+    const handleRemoveRoom = (roomId: string) => {
+        setRooms(rooms.filter(r => r.id !== roomId));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (rooms.length === 0) {
+            toast.error("Please add at least one room to the project.");
+            return;
+        }
         const setupData: ProjectSetupData = { projectName, clientName, rooms, budget, timeline };
         handleProjectSetupSubmit(setupData, navigate);
     };
@@ -51,7 +62,7 @@ const ProjectSetupScreen: React.FC = () => {
         <div className="max-w-4xl mx-auto animate-fade-in-fast">
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Plan New Project</h1>
-                <p className="text-lg text-text-secondary">Define parameters and rooms for your new project.</p>
+                <p className="text-lg text-text-secondary">Define project parameters and configure rooms using the wizard.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="p-6 bg-background-secondary border border-border-color rounded-lg">
@@ -77,32 +88,37 @@ const ProjectSetupScreen: React.FC = () => {
                 </div>
 
                 <div className="p-6 bg-background-secondary border border-border-color rounded-lg">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold uppercase tracking-widest">// Rooms</h2>
-                        <button type="button" onClick={handleAddRoom} className="flex items-center gap-1 text-sm font-medium text-accent hover:underline">
-                            <PlusIcon className="h-4 w-4" /> Add Room
-                        </button>
-                    </div>
+                    <h2 className="text-xl font-bold uppercase tracking-widest mb-4">// Configured Rooms</h2>
                     <div className="space-y-4">
-                        {rooms.map((room, index) => (
-                           <div key={index} className="p-4 border border-border-color bg-background rounded-md">
-                                <div className="flex justify-between items-center mb-3">
-                                    <h3 className="font-bold text-lg">Room {index + 1}</h3>
-                                    <button type="button" onClick={() => handleRemoveRoom(index)} className="text-sm text-destructive hover:underline">Remove</button>
+                        {rooms.map(room => (
+                           <div key={room.id} className="p-4 border border-border-color bg-background rounded-md flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <TierIcon tier={room.designTier} className="h-6 w-6" />
+                                    <div>
+                                        <h3 className="font-bold">{room.roomName}</h3>
+                                        <p className="text-sm text-text-secondary">{room.roomType}</p>
+                                    </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <input placeholder="Room Name" type="text" value={room.roomName} onChange={e => handleRoomChange(index, 'roomName', e.target.value)} className={inputStyle} />
-                                    <select value={room.roomType} onChange={e => handleRoomChange(index, 'roomType', e.target.value)} className={inputStyle}>
-                                        {ROOM_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                                    </select>
-                                    <select value={room.designTier} onChange={e => handleRoomChange(index, 'designTier', e.target.value as DesignTier)} className={inputStyle}>
-                                        {DESIGN_TIER_OPTIONS.map(tier => <option key={tier} value={tier}>{tier}</option>)}
-                                    </select>
+                                <div className="flex gap-4">
+                                    <button type="button" onClick={() => handleEditWithWizard(room)} className="text-sm font-medium text-accent hover:underline">Edit</button>
+                                    <button type="button" onClick={() => handleRemoveRoom(room.id)} className="text-sm text-destructive hover:underline">Remove</button>
                                 </div>
                             </div>
                         ))}
-                         {rooms.length === 0 && <p className="text-center text-sm text-text-secondary py-4">// No rooms defined. Click 'Add Room' to get started.</p>}
+                         {rooms.length === 0 && (
+                            <div className="text-center py-8 border-2 border-dashed border-border-color rounded-lg">
+                                <p className="text-text-secondary">// No rooms configured yet.</p>
+                                <p className="text-sm text-text-secondary">Use the wizard to add your first room.</p>
+                            </div>
+                         )}
                     </div>
+                    <button 
+                        type="button" 
+                        onClick={handleAddWithWizard} 
+                        className="mt-4 w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:bg-accent/10 py-3 border-2 border-dashed border-border-color rounded-lg"
+                    >
+                        <PlusIcon className="h-4 w-4" /> Add Room with Wizard
+                    </button>
                 </div>
 
                 <div className="text-right">
@@ -111,6 +127,13 @@ const ProjectSetupScreen: React.FC = () => {
                     </button>
                 </div>
             </form>
+
+            <RoomWizard 
+                isOpen={isWizardOpen}
+                onClose={() => setIsWizardOpen(false)}
+                onSave={handleSaveFromWizard}
+                initialData={editingRoom}
+            />
         </div>
     );
 };

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { CloseIcon } from './Icons.tsx';
 import Logo from './Logo.tsx';
-import ThemeSelector from './ThemeSelector.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
 
 interface MobileNavMenuProps {
@@ -55,11 +54,9 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
       <nav className="flex flex-col justify-center items-center flex-grow gap-6">
         <NavLink to="/" className={navLinkClass} onClick={onClose} end>Dashboard</NavLink>
         <NavLink to="/setup" className={navLinkClass} onClick={onClose}>New Project</NavLink>
-        <NavLink to="/video-generator" className={navLinkClass} onClick={onClose}>Video Gen</NavLink>
         <NavLink to="/training" className={navLinkClass} onClick={onClose}>Training</NavLink>
       </nav>
       <div className="p-6 border-t border-border flex flex-col items-center gap-4">
-        <ThemeSelector />
         <button
           onClick={handleOpenProfile}
           className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm w-full max-w-xs"

@@ -1,3 +1,5 @@
+
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -6,7 +8,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Dedicated Home Theater',
         description: 'A high-end home cinema with 4K projection, immersive audio, and simple control.',
-        vertical: 'Residential',
+        vertical: 'res',
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
@@ -23,9 +25,10 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A dedicated home cinema experience. A 4K laser projector and acoustically transparent screen provide a stunning image. Multiple sources like a 4K Blu-ray player, Apple TV, and gaming console are connected through an advanced AV Receiver. An HDBaseT extender ensures a reliable video signal to the projector. The entire system, including lighting, is controlled via a single remote or touch panel.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit' },
-            audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'] },
-            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 50000,
         },
     },
@@ -33,7 +36,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Living Room Media System',
         description: 'A clean and simple setup with a large TV, soundbar, and hidden sources.',
-        vertical: 'Residential',
+        vertical: 'res',
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Living Room', roomType: 'Other', designTier: 'Silver',
@@ -42,9 +45,10 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A high-quality but discreet living room entertainment system. A large 4K OLED TV is mounted on the wall, paired with a high-performance soundbar with eARC. All source devices (streaming box, cable box, game console) are located remotely in a nearby closet and connected via an HDBaseT extender for a clean, wire-free look. A universal remote controls the entire system.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit' },
-            audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['program_audio'] },
-            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 15000,
         },
     },
@@ -52,7 +56,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Multi-Room Audio',
         description: 'A distributed audio system for music in several rooms of the house.',
-        vertical: 'Residential',
+        vertical: 'res',
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Whole Home Audio', roomType: 'Other', designTier: 'Silver',
@@ -61,9 +65,10 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A 4-zone distributed audio system providing music to the kitchen, dining room, patio, and master bedroom. In-ceiling speakers in each zone provide discreet, high-quality sound. A multi-zone streaming amplifier serves as the heart of the system, allowing users to play different music in each zone, or group zones together, all controlled from their smartphone.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit' },
-            audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'] },
-            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 10000,
         },
     },
@@ -71,7 +76,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Outdoor Patio Entertainment',
         description: 'A weatherproof TV and speaker system for outdoor viewing.',
-        vertical: 'Residential',
+        vertical: 'res',
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Back Patio', roomType: 'Other', designTier: 'Bronze',
@@ -80,9 +85,10 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'An outdoor entertainment system for the patio. A weatherproof TV, designed for viewing in bright daylight, is the main feature. A pair of outdoor-rated speakers provide robust audio. An HDBaseT extender connects the outdoor equipment back to a source device located safely inside the house.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit' },
-            audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'] },
-            technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 12000,
         },
     },
@@ -90,7 +96,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Home Office / Study',
         description: 'A high-quality setup for video calls and focused work.',
-        vertical: 'Residential',
+        vertical: 'res',
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Home Office', roomType: 'Other', designTier: 'Silver',
@@ -99,9 +105,10 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Video Conferencing', priority: 'must-have' }],
             functionalityStatement: 'A professional home office setup for remote work. A large 4K monitor provides ample screen real estate. A high-quality USB-C docking station allows for single-cable connection to a laptop for video, data, and power. A pro-grade webcam and USB speakerphone ensure crystal-clear video calls.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking' },
-            audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'] },
-            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['USB-C', 'DisplayPort'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'], microphoneType: 'soundbar_mic', ucCompatibility: true },
+            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['USB-C', 'DisplayPort'], controlSystem: 'None (Auto-switching)', cameraType: 'usb_webcam', cameraCount: 1, roomPc: false },
             budget: 4000,
         },
     }

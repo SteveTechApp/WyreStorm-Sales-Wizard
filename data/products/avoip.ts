@@ -1,4 +1,4 @@
-import { Product } from '../../utils/types';
+import { Product } from '../../utils/types.ts';
 
 export const AVOIP_PRODUCTS: Product[] = [
     {
@@ -8,7 +8,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Cost-effective H.264/H.265 streaming for 4K30 video. Ideal for large-scale deployments where bandwidth is a consideration.',
         msrp: 600,
         dealerPrice: 450,
-        tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264'],
+        tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'],
     },
     {
         sku: 'NHD-120-RX',
@@ -17,7 +17,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Decoder for the NetworkHD 120 series. Does not support bezel correction, not ideal for video walls.',
         msrp: 600,
         dealerPrice: 450,
-        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264'],
+        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'],
     },
     {
         sku: 'NHD-500-TX',
@@ -26,7 +26,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Visually lossless 4K60 4:4:4 video over 1GbE with Dante audio support. Excellent for high-quality, low-latency applications.',
         msrp: 1200,
         dealerPrice: 900,
-        tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'JPEG-XS', 'Dante'],
+        tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'Low Latency'],
     },
     {
         sku: 'NHD-500-RX',
@@ -35,7 +35,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Decoder for the NetworkHD 500 series with Dante audio, USB, and serial support.',
         msrp: 1200,
         dealerPrice: 900,
-        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante'],
+        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'USB', 'RS232'],
     },
     {
         sku: 'NHD-500-E-RX',
@@ -44,7 +44,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'A more economical version of the 500-RX without USB and some audio breakout, ideal for video wall applications.',
         msrp: 1000,
         dealerPrice: 750,
-        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Video Wall'],
+        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Video Wall', '1GbE', '4K60'],
     },
     {
         sku: 'NHD-600-TRX',
@@ -53,7 +53,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Uncompressed 4K60 4:4:4 video over a 10GbE network. Can be configured as an encoder or decoder. The ultimate in AVoIP quality.',
         msrp: 1800,
         dealerPrice: 1350,
-        tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE'],
+        tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency'],
     },
     {
         sku: 'NHD-CTL-PRO',
@@ -62,7 +62,7 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Centralized controller for NetworkHD systems. Provides a single point of control for routing and configuration.',
         msrp: 1500,
         dealerPrice: 1100,
-        tags: ['NetworkHD', 'Control'],
+        tags: ['NetworkHD', 'Control', 'Controller'],
     },
     {
         sku: 'NHD-150-RX',
@@ -71,6 +71,6 @@ export const AVOIP_PRODUCTS: Product[] = [
         description: 'Specialized decoder that can display up to 9 sources on a single display. Ideal for video walls and control rooms.',
         msrp: 1400,
         dealerPrice: 1050,
-        tags: ['NetworkHD', 'AVoIP', 'Decoder', 'Multi-view', 'Video Wall'],
+        tags: ['NetworkHD', 'AVoIP', 'Decoder', 'Multi-view', 'Video Wall', '1GbE'],
     },
 ];

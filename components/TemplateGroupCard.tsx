@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { UserTemplate } from '../utils/types.ts';
 import { VERTICAL_MARKETS } from '../data/constants.ts';

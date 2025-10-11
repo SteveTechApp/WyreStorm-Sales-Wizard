@@ -7,17 +7,32 @@ export const MODULE_2_HDBASET: TrainingModule = {
     {
       title: 'What is HDBaseT?',
       content:
-        "**HDBaseT** is a technology standard for transmitting video, audio, USB, control signals, and power over a single standard category cable (like Cat6).\n\nIt solves the distance limitation of standard HDMI cables, which are unreliable over 15 meters. HDBaseT allows for robust long-distance transmission, making it a cornerstone of professional AV installations.",
+        "**HDBaseT** is a global standard for transmitting video, audio, USB, control signals, and power over a single standard category cable (like Cat6).\n\nIt solves the primary problem of modern AV: **distance**. Standard HDMI cables become unreliable over 15 meters, but HDBaseT allows for robust long-distance transmission, making it a cornerstone of professional AV installations.",
+      asset: {
+        url: 'https://i.imgur.com/1mYqf8F.png',
+        title: 'A typical HDBaseT setup uses a Transmitter (TX) and a Receiver (RX).',
+        type: 'diagram',
+      },
     },
     {
       title: 'The 5-Play Feature Set',
       content:
-        'HDBaseT is famous for its **5-Play** feature set, which includes:\n1.  **Uncompressed Video & Audio**: Transmit high-definition video and audio without loss of quality.\n2.  **USB**: Extend USB 2.0 for devices like interactive displays, cameras, and keyboards/mice (KVM).\n3.  **Ethernet**: Pass through a 100Mbps Ethernet connection.\n4.  **Control**: Send control signals like IR (Infrared) and RS-232.\n5.  **Power**: Deliver power to the remote device using **PoH** (Power over HDBaseT), eliminating the need for a power supply at the display end.',
+        'HDBaseT is famous for its **5-Play** feature set, which describes the five types of signals it can carry simultaneously:\n\n1.  **Uncompressed Video & Audio**: Transmit high-definition video and audio without loss of quality.\n2.  **USB**: Extend USB 2.0 for devices like interactive displays, cameras, and keyboards/mice (KVM).\n3.  **Ethernet**: Pass through a 100Mbps Ethernet connection.\n4.  **Control**: Send control signals like IR (Infrared) and RS-232.\n5.  **Power**: Deliver power to the remote device using **PoH** (Power over HDBaseT), eliminating the need for a power supply at the display end.',
+      asset: {
+        url: 'https://i.imgur.com/YdK0fJj.png',
+        title: 'The five components of the HDBaseT 5-Play feature set.',
+        type: 'diagram',
+      },
     },
     {
       title: 'HDBaseT Classes',
       content:
-        "There are different classes of HDBaseT that determine the transmission distance:\n\n- **Class A**: The highest performance. Transmits 1080p up to **100m** and 4K up to **70m**.\n- **Class B**: A more cost-effective option. Transmits 1080p up to **70m** and 4K up to **35-40m**.\n- **HDBaseT 3.0**: The latest generation, supporting uncompressed 4K/60 4:4:4 video up to 100m.\n\nAlways use high-quality, solid-core Cat6 or Cat6a cable for best results.",
+        "There are different classes of HDBaseT that determine the transmission distance:\n\n- **Class A**: The highest performance. Transmits 1080p up to **100m** and 4K up to **70m**.\n- **Class B**: A more cost-effective option. Transmits 1080p up to **70m** and 4K up to **35-40m**.\n- **HDBaseT 3.0**: The latest generation, supporting uncompressed 4K/60 4:4:4 video up to **100m**.\n\n**Note**: Always use high-quality, solid-core Cat6 or Cat6a cable for best results.",
+      asset: {
+          url: 'https://i.imgur.com/pB3yC5K.png',
+          title: 'HDBaseT transmission distance comparison by class and resolution.',
+          type: 'diagram',
+      },
     },
   ],
   quiz: [

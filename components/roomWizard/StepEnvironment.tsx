@@ -3,9 +3,8 @@ import { RoomWizardAnswers } from '../../utils/types.ts';
 import {
   WALL_CONSTRUCTION_OPTIONS,
   CONTAINMENT_OPTIONS,
-  AUDIO_SPEAKER_LAYOUT_OPTIONS,
-  AUDIO_SYSTEM_TYPE_OPTIONS,
-  AUDIO_USE_CASE_OPTIONS,
+  FURNITURE_TYPES,
+  CONTROL_SYSTEMS,
 } from '../../data/wizardOptions.ts';
 import AudioDesignGuideModal from '../AudioDesignGuideModal.tsx';
 
@@ -22,34 +21,25 @@ const StepEnvironment: React.FC<StepEnvironmentProps> = ({ answers, updateAnswer
     updateAnswers({ constructionDetails: { ...answers.constructionDetails, [name]: value } });
   };
   
-  const handleAudioChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  const handleTechDetailChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    updateAnswers({ audioSystemDetails: { ...answers.audioSystemDetails, [name]: value } });
-  };
-
-  const handleUseCaseChange = (useCase: ('speech_reinforcement' | 'program_audio' | 'video_conferencing')) => {
-    const currentUseCases = answers.audioSystemDetails.useCases;
-    const newUseCases = currentUseCases.includes(useCase)
-        ? currentUseCases.filter(uc => uc !== useCase)
-        : [...currentUseCases, useCase];
-    
-    updateAnswers({ 
-        audioSystemDetails: { 
-            ...answers.audioSystemDetails, 
-            useCases: newUseCases 
-        } 
+    updateAnswers({
+      technicalDetails: {
+        ...answers.technicalDetails,
+        [name]: value,
+      },
     });
   };
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4 text-text-primary">Room Environment</h2>
-      <p className="text-text-secondary mb-6">Provide details about the physical construction and audio requirements of the room.</p>
+      <h2 className="text-2xl font-bold mb-4 text-text-primary">Environment & Control</h2>
+      <p className="text-text-secondary mb-6">Provide details about the physical room and how users will control the system.</p>
       
       <div className="space-y-8">
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-bold mb-4">Construction</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-4 border rounded-lg bg-background">
+          <h3 className="font-bold mb-4">Construction & Furniture</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label htmlFor="wall-construction" className="block text-sm font-medium text-text-secondary">Wall Construction</label>
               <select id="wall-construction" name="wallConstruction" value={answers.constructionDetails.wallConstruction} onChange={handleConstructionChange} className="w-full p-2 border rounded-md bg-input-bg mt-1">
@@ -62,49 +52,29 @@ const StepEnvironment: React.FC<StepEnvironmentProps> = ({ answers, updateAnswer
                 {CONTAINMENT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
             </div>
+            <div>
+              <label htmlFor="furniture-type" className="block text-sm font-medium text-text-secondary">Furniture Type</label>
+              <select id="furniture-type" name="furnitureType" value={answers.constructionDetails.furnitureType} onChange={handleConstructionChange} className="w-full p-2 border rounded-md bg-input-bg mt-1">
+                {FURNITURE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
+            </div>
           </div>
         </div>
 
-        <div className="p-4 border rounded-lg">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold">Audio System</h3>
-            <button type="button" onClick={() => setIsGuideOpen(true)} className="text-sm font-medium text-accent hover:underline">
-                Audio Design Guide
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="speaker-layout" className="block text-sm font-medium text-text-secondary">Speaker Layout</label>
-              <select id="speaker-layout" name="speakerLayout" value={answers.audioSystemDetails.speakerLayout} onChange={handleAudioChange} className="w-full p-2 border rounded-md bg-input-bg mt-1">
-                {AUDIO_SPEAKER_LAYOUT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        <div className="p-4 border rounded-lg bg-background">
+           <h3 className="font-bold mb-4">Control System</h3>
+           <div>
+              <label htmlFor="control-system" className="block text-sm font-medium text-text-secondary">Primary Control Method</label>
+              <select
+                id="control-system"
+                name="controlSystem"
+                value={answers.technicalDetails.controlSystem}
+                onChange={handleTechDetailChange}
+                className="w-full p-2 border rounded-md bg-input-bg mt-1"
+              >
+                {CONTROL_SYSTEMS.map(sys => <option key={sys} value={sys}>{sys}</option>)}
               </select>
             </div>
-             <div>
-              <label htmlFor="audio-system-type" className="block text-sm font-medium text-text-secondary">System Type</label>
-              <select id="audio-system-type" name="systemType" value={answers.audioSystemDetails.systemType} onChange={handleAudioChange} className="w-full p-2 border rounded-md bg-input-bg mt-1">
-                {AUDIO_SYSTEM_TYPE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-              </select>
-            </div>
-          </div>
-           <div className="mt-6">
-            <label className="block text-sm font-medium text-text-secondary">Audio Use Cases (select multiple)</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-                {AUDIO_USE_CASE_OPTIONS.map(opt => (
-                <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => handleUseCaseChange(opt.value as any)}
-                    className={`px-3 py-1.5 text-sm rounded-md border ${
-                    answers.audioSystemDetails.useCases.includes(opt.value as any)
-                        ? 'bg-accent/10 border-accent text-accent'
-                        : 'bg-background hover:bg-border-color border-border-color'
-                    }`}
-                >
-                    {opt.label}
-                </button>
-                ))}
-            </div>
-           </div>
         </div>
       </div>
       <AudioDesignGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />

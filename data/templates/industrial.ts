@@ -1,3 +1,5 @@
+
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -6,7 +8,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Process Control Room',
         description: 'A zero-latency AVoIP system for displaying critical SCADA and telemetry data in an industrial control room.',
-        vertical: 'Industrial',
+        vertical: 'ind',
         imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
@@ -22,9 +24,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A mission-critical visualization system for an industrial process control room. The NetworkHD 600 series delivers pixel-perfect, zero-latency uncompressed video over a 10GbE network, ensuring operators see real-time data without any delay or compression artifacts. The 3x2 video wall can display multiple SCADA system outputs, camera feeds, and telemetry data in flexible layouts controlled by a simple touch interface.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit' },
-            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [] },
-            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['DisplayPort', 'HDMI'], controlSystem: 'Third-Party Integration' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['DisplayPort', 'HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: true },
             budget: 150000,
         },
     },
@@ -32,7 +35,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Factory Floor Huddle Station',
         description: 'A ruggedized display on a mobile cart for reviewing production data on the factory floor.',
-        vertical: 'Industrial',
+        vertical: 'ind',
         imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Production Line 2 Station', roomType: 'Other', designTier: 'Bronze',
@@ -41,9 +44,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A mobile AV cart for use on the factory floor. It includes a ruggedized commercial display and a simple wireless presentation device. This allows teams to huddle and review production metrics, schematics, or safety information right where the work is happening. The cart is self-contained and only requires a power outlet.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'none' },
-            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [] },
-            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'none', furnitureType: 'multi_use' },
+            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 5000,
         },
     },
@@ -51,7 +55,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Safety Briefing Room',
         description: 'A simple, reliable room for conducting safety training and daily briefings.',
-        vertical: 'Industrial',
+        vertical: 'ind',
         imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Daily Briefing Room', roomType: 'Conference Room', designTier: 'Silver',
@@ -60,9 +64,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'A robust AV system for daily safety briefings. A bright projector and screen provide a large, clear image. A wall plate offers an HDMI connection for a presenter\'s laptop. A simple public address system with a wired microphone ensures the speaker can be heard over ambient noise. The system is designed for extreme simplicity and reliability.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking' },
-            audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement'] },
-            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
+            audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'table_mic', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 12000,
         },
     },
@@ -70,7 +75,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Remote Monitoring Station',
         description: 'An AVoIP-based station allowing remote monitoring of control room screens.',
-        vertical: 'Industrial',
+        vertical: 'ind',
         imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Manager\'s Office', roomType: 'Other', designTier: 'Silver',
@@ -79,9 +84,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A desktop display in a manager\'s office that can securely view feeds from the main process control room. An AVoIP decoder is connected to the display, allowing the manager to select and view any of the SCADA system sources on the main network without needing to be physically in the control room.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking' },
-            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [] },
-            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
+            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 4000,
         },
     },
@@ -89,7 +95,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateId: uuidv4(),
         templateName: 'Locker Room / Break Area Signage',
         description: 'Displays for safety alerts, company announcements, and general information.',
-        vertical: 'Industrial',
+        vertical: 'ind',
         imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Break Room', roomType: 'Other', designTier: 'Bronze',
@@ -98,9 +104,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'Two displays located in high-traffic employee areas like break rooms or locker rooms. The displays show important safety reminders, company-wide announcements, and HR information. The system uses reliable AVoIP decoders fed from a central media player, ensuring messages are delivered consistently.',
             manuallyAddedEquipment: [],
-            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking' },
-            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [] },
-            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)' },
+            // FIX: Add missing properties
+            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
+            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
+            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
             budget: 6500,
         },
     }

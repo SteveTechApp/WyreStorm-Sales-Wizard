@@ -1,9 +1,6 @@
-
-
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from '../Logo.tsx';
-import ThemeSelector from '../ThemeSelector.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
 import { HamburgerIcon } from '../Icons.tsx';
 import MobileNavMenu from '../MobileNavMenu.tsx';
@@ -23,12 +20,10 @@ const DefaultHeader: React.FC = () => {
           <nav className="hidden md:flex items-center gap-2 bg-background-secondary/50 border border-border-color/50 rounded-full p-1">
             <NavLink to="/" className={navLinkClass} end>Dashboard</NavLink>
             <NavLink to="/setup" className={navLinkClass}>New Project</NavLink>
-            <NavLink to="/video-generator" className={navLinkClass}>Video Gen</NavLink>
             <NavLink to="/training" className={navLinkClass}>Training</NavLink>
           </nav>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-4">
-              <ThemeSelector />
               <button
                 onClick={openProfileModal}
                 className="bg-accent/10 hover:bg-accent/20 text-accent font-bold py-2 px-4 rounded-full text-sm border-2 border-accent/20"

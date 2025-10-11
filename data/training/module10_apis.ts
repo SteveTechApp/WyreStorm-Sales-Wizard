@@ -1,4 +1,4 @@
-import { TrainingModule } from '../../utils/types.ts';
+import { TrainingModule } from '../../utils/types';
 
 export const MODULE_10_APIS: TrainingModule = {
   id: 'module-10-apis',
@@ -7,27 +7,52 @@ export const MODULE_10_APIS: TrainingModule = {
     {
       title: 'What is an API?',
       content:
-        "**API** stands for Application Programming Interface. Think of it as a language that different pieces of software and hardware use to talk to each other.\n\nImagine you're at a restaurant. You (an application) want to order food. The kitchen (the system) makes the food. You don't go into the kitchen yourself; you talk to a waiter (the **API**). You give the waiter a structured command ('I'd like the steak, medium-rare'), and the waiter communicates this to the kitchen. The waiter then brings the result back to you.\n\nIn AV, an API allows a control system (like a touch panel) to send commands to a WyreStorm matrix switcher to perform actions.",
+        "**API** stands for **Application Programming Interface**. It's a language that devices use to talk to each other.\n\n- Imagine you're at a restaurant. You are an **application**, the kitchen is the **system**, and the waiter is the **API**.\n- You give the waiter a structured command ('I'd like the steak, medium-rare').\n- The waiter communicates this to the kitchen and brings the result back to you.\n\nIn AV, an API allows a control system to send commands to a WyreStorm device.",
+      asset: {
+        url: 'https://i.imgur.com/b9k1c0X.png',
+        title: 'The API acts as a messenger between an application and a system.',
+        type: 'diagram',
+      },
     },
     {
       title: 'Common Control Protocols',
       content:
-        "WyreStorm products can be controlled in several ways:\n- **RS-232 (Serial)**: A very robust, wired, text-based control method. It's an industry standard for reliability. Commands are sent over a serial cable.\n- **Telnet (IP Control)**: Essentially RS-232 over a network connection. A control system connects to the product's IP address on a specific port (e.g., port 23) and sends the same text-based commands.\n- **JSON API (IP Control)**: A modern, structured API used by newer products like the NetworkHD Controller. It uses JSON (JavaScript Object Notation) to send and receive data, which is more powerful and easier for software to parse than plain text.",
+        "WyreStorm products can be controlled in several ways:\n- **RS-232 (Serial)**: A very robust, wired, text-based control method. An industry standard for reliability.\n- **Telnet (IP Control)**: Essentially RS-232 over a network connection. A control system connects to the product's IP address on a specific port (e.g., port 23) and sends text-based commands.\n- **JSON API (IP Control)**: A modern, structured API used by newer products like the NetworkHD Controller. It uses JSON (JavaScript Object Notation), which is powerful and easy for software to read.",
+      asset: {
+        url: 'https://i.imgur.com/mYt6X2b.png',
+        title: 'Different protocols for sending control commands.',
+        type: 'diagram',
+      }
     },
     {
       title: 'Example: Controlling a Matrix Switcher',
       content:
-        "Most WyreStorm matrix switchers share a similar text-based API for Telnet and RS-232. The commands are simple and human-readable.\n\n**To switch an input:**\n`SET OUT02 VS IN04`\nThis command tells the switcher to set the video source (VS) for Output 2 to Input 4.\n\n**To query the current status:**\n`GET OUT02 VS`\nAfter sending this, the matrix will respond with the current input for Output 2, for example: `OUT02 VS IN04`.\n\nThese simple commands are the building blocks for creating a fully functional user interface on a control system.",
+        "Most WyreStorm matrix switchers share a similar text-based API for Telnet and RS-232. The commands are simple and human-readable.\n\n- **To switch an input:**\n  `SET OUT02 VS IN04`\n  This command tells the switcher to set the **V**ideo **S**ource for **Out**put **2** to **In**put **4**.\n\n- **To query the current status:**\n  `GET OUT02 VS`\n  The matrix will respond with the current input, for example: `OUT02 VS IN04`.",
+      asset: {
+        url: 'https://i.imgur.com/n4r8F9k.jpg',
+        title: 'A WyreStorm Matrix Switcher.',
+        type: 'image',
+      }
     },
     {
       title: 'The NetworkHD API',
       content:
-        "The NetworkHD AVoIP system uses a more advanced JSON API via the **NHD-CTL-PRO** controller. This allows for much more powerful control.\n\nInstead of simple text, you send a structured JSON object. For example, to switch a single display (Decoder with alias 'Display-01') to a source (Encoder with alias 'PC-01'), the command might look like:\n`{ \"type\": \"video\", \"action\": \"dps\", \"body\": { \"alias\": \"Display-01\", \"source\": \"PC-01\" } }`\n\nThis API can also be used to create video walls, trigger macros, and query the status of every device on the network. It is the key to integrating NetworkHD into large-scale control systems.",
+        "The NetworkHD AVoIP system uses a more advanced **JSON API** via the **NHD-CTL-PRO** controller. This allows for much more powerful control.\n\nInstead of simple text, you send a structured JSON object. For example, to switch a display:\n```json\n{\n  \"type\": \"video\",\n  \"action\": \"dps\",\n  \"body\": {\n    \"alias\": \"Display-01\",\n    \"source\": \"PC-01\"\n  }\n}\n```\nThis API can also be used to create video walls, trigger macros, and query the status of every device on the network.",
+      asset: {
+        url: 'https://i.imgur.com/d9j3S4h.jpg',
+        title: 'The NetworkHD Controller (NHD-CTL-PRO) manages the AVoIP system and its API.',
+        type: 'image',
+      }
     },
     {
       title: 'Why APIs Matter',
       content:
-        "Understanding APIs is crucial for moving beyond basic installations. They unlock the true power of professional AV equipment.\n\n**Use Cases**:\n- **Third-Party Integration**: Allows WyreStorm products to be seamlessly controlled by major control systems like Crestron, Control4, AMX, and others.\n- **Automation**: You can create macros or scripts to automate common tasks. For example, a single 'Room On' button can be programmed to turn on the display, lower the screen, and switch to a default source.\n- **Custom Dashboards**: Developers can use the API to build custom web-based interfaces for monitoring and controlling an AV system.\n- **Scalability**: In large systems, APIs are the only practical way to manage hundreds of devices and routes.",
+        "Understanding APIs is crucial for moving beyond basic installations. They unlock the true power of professional AV equipment.\n\n**Use Cases**:\n- **Third-Party Integration**: Allows WyreStorm products to be seamlessly controlled by major control systems like **Crestron, Control4, AMX**.\n- **Automation**: Create **macros** or scripts to automate common tasks (e.g., a 'Room On' button).\n- **Custom Dashboards**: Developers can use the API to build custom web-based interfaces for monitoring and controlling an AV system.\n- **Scalability**: In large systems, APIs are the only practical way to manage hundreds of devices and routes.",
+      asset: {
+        url: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&q=80',
+        title: 'APIs allow for integration with sophisticated touch panel control systems.',
+        type: 'image',
+      },
     },
   ],
   quiz: [

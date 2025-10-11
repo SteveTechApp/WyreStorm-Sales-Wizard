@@ -4,9 +4,9 @@ import { ThemeName } from '../utils/types.ts';
 import { ChevronDownIcon } from './Icons.tsx';
 
 const THEME_OPTIONS: { name: ThemeName, label: string }[] = [
-    { name: 'wyrestorm', label: 'WyreStorm' },
-    { name: 'dark', label: 'Dark' },
     { name: 'light', label: 'Light' },
+    { name: 'dark', label: 'Dark' },
+    { name: 'wyrestorm', label: 'WyreStorm' },
 ];
 
 const ThemeSelector: React.FC = () => {
