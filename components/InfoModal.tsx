@@ -5,7 +5,7 @@ interface InfoModalProps {
   onClose: () => void;
   children: ReactNode;
   className?: string;
-  title?: string;
+  title?: ReactNode;
   footer?: ReactNode;
 }
 
@@ -33,18 +33,18 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, children, classN
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fade-in-fast" role="dialog" aria-modal="true" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 bg-slate-900/80 flex items-center justify-center z-50 animate-fade-in-fast" role="dialog" aria-modal="true" onClick={handleBackdropClick}>
       <div 
-        className={`bg-background-secondary rounded-lg shadow-2xl w-full m-4 flex flex-col max-h-[90vh] border-2 border-white/75 ${className || ''}`} 
+        className={`bg-background rounded-lg shadow-2xl w-full m-4 flex flex-col max-h-[90vh] border border-border-color ${className || ''}`} 
         onClick={e => e.stopPropagation()}
       >
         {title && (
             <div className="flex justify-between items-center p-4 border-b border-border-color flex-shrink-0">
-                <h2 className="text-2xl font-bold text-text-primary">{title}</h2>
+                <div className="text-2xl font-bold text-text-primary">{title}</div>
                 <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
             </div>
         )}
-        <div className="p-6 overflow-y-auto flex-grow">
+        <div className="p-6 overflow-y-auto flex-grow bg-app-bg">
             {children}
         </div>
         {footer && (

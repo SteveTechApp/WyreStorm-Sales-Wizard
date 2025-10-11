@@ -27,22 +27,22 @@
     <script type="module" src="/index.tsx"></script>
     <style>
         :root {
-            --app-bg: #4A5568; /* Lighter page background */
-            --background: #2D3748; /* Darker content cards */
-            --background-secondary: #2D3748; /* Darker modals, buttons */
-            --input-bg: #1A202C; /* Even darker inputs */
+            --app-bg: #f8fafc;                 /* slate-50 - Main container BG */
+            --background: #ffffff;            /* white - Content card BG */
+            --background-secondary: #ffffff;  /* white - Content card BG */
+            --input-bg: #f1f5f9;               /* slate-100 - Input field BG */
             
-            --text-primary: #F7FAFC; /* Off-white */
-            --text-secondary: #A0AEC0; /* Lighter gray */
-            --text-on-accent: #ffffff;
+            --text-primary: #1e293b;           /* slate-800 */
+            --text-secondary: #64748b;         /* slate-500 */
+            --text-on-accent: #ffffff;         /* white */
             
-            --border-color: #718096; /* Mid-gray for visible borders */
-            --accent: #f58220;
-            --accent-hover: #ff9c40;
-            --primary: #4a90e2;
-            --primary-hover: #63a4ff;
-            --destructive: #e53e3e;
-            --border: #718096;
+            --border-color: #cbd5e1;           /* slate-300 */
+            --accent: #06b6d4;                 /* cyan-500 */
+            --accent-hover: #0891b2;           /* cyan-600 */
+            --primary: #3b82f6;                /* blue-500 */
+            --primary-hover: #2563eb;           /* blue-600 */
+            --destructive: #ef4444;            /* red-500 */
+            --border: #e2e8f0;                 /* slate-200 */
         }
         
         html, body, #root {
@@ -50,7 +50,7 @@
         }
 
         body {
-            background-color: #1A202C; /* Darkest outer background */
+            background-color: #e2e8f0; /* slate-200 - Outermost BG */
             color: var(--text-primary);
             transition: background-color 0.3s, color 0.3s;
             font-family: 'Inter', sans-serif;
@@ -78,6 +78,12 @@
             border-left-color: var(--border-color);
         }
 
+        /* Ensure dropdown option text is readable */
+        select option {
+            color: black;
+            background: white;
+        }
+
         /* Base Button Styles */
         .btn {
             display: inline-flex;
@@ -86,21 +92,22 @@
             border-radius: 0.5rem;
             font-weight: 600;
             transition: all 0.2s ease-in-out;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
         }
 
         .btn-primary, .btn-accent {
             color: var(--text-on-accent);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
         .btn-primary:hover, .btn-accent:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 3px 8px rgba(0,0,0,0.25);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             transform: translateY(-2px);
         }
 
         .btn-primary {
             background-color: var(--primary);
             border-color: var(--primary);
+            color: #ffffff;
         }
         .btn-primary:hover {
             background-color: var(--primary-hover);
@@ -109,11 +116,12 @@
 
         .btn-accent {
              background-color: var(--accent);
+             border-color: var(--accent);
         }
         .btn-accent:hover {
             background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
         }
-
 
         .btn-secondary {
             background-color: transparent;
@@ -121,18 +129,18 @@
             border-color: var(--border-color);
         }
         .btn-secondary:hover {
-             background-color: var(--border-color);
-             color: var(--text-primary);
+             background-color: var(--input-bg);
+             border-color: var(--border-color);
         }
 
         @keyframes pulse-bright {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(245, 130, 32, 0.7);
+                box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7);
             }
             70% {
                 transform: scale(1.05);
-                box-shadow: 0 0 0 15px rgba(245, 130, 32, 0);
+                box-shadow: 0 0 0 15px rgba(34, 211, 238, 0);
             }
         }
         .animate-pulse-bright {
@@ -162,16 +170,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--background);
+            background: var(--app-bg);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
+            background: #cbd5e1; /* slate-300 */
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent);
+            background: #94a3b8; /* slate-400 */
         }
 
         /* Print styles */

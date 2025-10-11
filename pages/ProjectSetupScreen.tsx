@@ -5,7 +5,7 @@ import { useUserContext } from '../context/UserContext.tsx';
 import { ProjectSetupData, RoomData } from '../utils/types.ts';
 import { PlusIcon } from '../components/Icons.tsx';
 import RoomWizard from '../components/RoomWizard.tsx';
-import TierIcon from '../components/TierIcon.tsx';
+import ConfiguredRoomCard from '../components/projectSetup/ConfiguredRoomCard.tsx';
 import toast from 'react-hot-toast';
 
 const ProjectSetupScreen: React.FC = () => {
@@ -91,19 +91,12 @@ const ProjectSetupScreen: React.FC = () => {
                     <h2 className="text-xl font-bold uppercase tracking-widest mb-4">// Configured Rooms</h2>
                     <div className="space-y-4">
                         {rooms.map(room => (
-                           <div key={room.id} className="p-4 border border-border-color bg-background rounded-md flex justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                    <TierIcon tier={room.designTier} className="h-6 w-6" />
-                                    <div>
-                                        <h3 className="font-bold">{room.roomName}</h3>
-                                        <p className="text-sm text-text-secondary">{room.roomType}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4">
-                                    <button type="button" onClick={() => handleEditWithWizard(room)} className="text-sm font-medium text-accent hover:underline">Edit</button>
-                                    <button type="button" onClick={() => handleRemoveRoom(room.id)} className="text-sm text-destructive hover:underline">Remove</button>
-                                </div>
-                            </div>
+                           <ConfiguredRoomCard
+                                key={room.id}
+                                room={room}
+                                onEdit={handleEditWithWizard}
+                                onRemove={handleRemoveRoom}
+                           />
                         ))}
                          {rooms.length === 0 && (
                             <div className="text-center py-8 border-2 border-dashed border-border-color rounded-lg">

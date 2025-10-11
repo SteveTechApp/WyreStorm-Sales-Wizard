@@ -48,23 +48,27 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onSave, initia
     return <StepComponent answers={answers} updateAnswers={updateAnswers} errors={errors} />;
   };
 
+  const title = (
+    <div>
+      <h2 className="text-2xl font-bold text-text-primary">Room Configuration Wizard</h2>
+      <p className="text-sm text-text-secondary">Step {currentStep + 1} of {STEPS.length}: {STEPS[currentStep]}</p>
+    </div>
+  );
+
+  const footer = (
+    <WizardNavigation
+      onNext={handleNext}
+      onPrev={handlePrev}
+      onSave={handleSave}
+      isFirstStep={isFirstStep}
+      isLastStep={isLastStep}
+      onClose={onClose}
+    />
+  );
+
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-4xl">
-      <div className="p-4 border-b border-border-color">
-        <h2 className="text-2xl font-bold text-text-primary">Room Configuration Wizard</h2>
-        <p className="text-sm text-text-secondary">Step {currentStep + 1} of {STEPS.length}: {STEPS[currentStep]}</p>
-      </div>
-      <div className="p-6 overflow-y-auto flex-grow">
-        {renderStepContent()}
-      </div>
-      <WizardNavigation
-        onNext={handleNext}
-        onPrev={handlePrev}
-        onSave={handleSave}
-        isFirstStep={isFirstStep}
-        isLastStep={isLastStep}
-        onClose={onClose}
-      />
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-4xl" title={title} footer={footer}>
+      {renderStepContent()}
     </InfoModal>
   );
 };

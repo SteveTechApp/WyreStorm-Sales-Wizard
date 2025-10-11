@@ -25,12 +25,12 @@ const ResolutionSelector: React.FC = () => {
 
     return (
         <div className="flex items-center gap-2">
-            <label htmlFor="resolution-selector" className="text-xs font-medium text-text-primary">Resolution:</label>
+            <label htmlFor="resolution-selector" className="text-xs font-medium text-text-secondary">Resolution:</label>
             <select
                 id="resolution-selector"
                 value={userProfile.resolution || 'fit'}
                 onChange={handleChange}
-                className="bg-white text-black rounded-lg p-1 text-xs focus:outline-none focus:ring-1 focus:ring-accent"
+                className="bg-input-bg border border-border-color rounded-lg p-1 text-xs focus:outline-none focus:ring-1 focus:ring-accent"
             >
                 {RESOLUTIONS.map(res => (
                     <option key={res.id} value={res.id}>{res.label}</option>

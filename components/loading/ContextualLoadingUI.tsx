@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LoadingSpinner from '../LoadingSpinner.tsx';
 import { useProjectContext } from '../../context/ProjectContext.tsx';
+import InfoModal from '../InfoModal.tsx';
 
 const LOADING_MESSAGES: Record<string, { title: string, messages: string[] }> = {
     'default': {
@@ -39,13 +40,13 @@ const ContextualLoadingUI: React.FC = () => {
     }, [context]);
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-            <div className="text-center p-8 bg-background-secondary rounded-lg border border-border-color shadow-xl">
+        <InfoModal isOpen={true} onClose={() => {}} className="max-w-md bg-background-secondary border border-border-color shadow-xl">
+            <div className="text-center">
                 <LoadingSpinner />
                 <h2 className="text-2xl font-bold mt-4 uppercase tracking-widest text-accent">{context.title}</h2>
                 <p className="text-text-primary mt-2 h-6">{context.messages[messageIndex]}</p>
             </div>
-        </div>
+        </InfoModal>
     );
 };
 

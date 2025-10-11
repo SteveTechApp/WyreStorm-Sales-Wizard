@@ -26,10 +26,10 @@ const EditableSection: React.FC<EditableSectionProps> = ({ initialContent, onSav
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full h-48 p-2 border rounded-md font-sans text-base"
+          className="w-full h-48 p-2 border rounded-md font-sans text-base text-black bg-gray-50"
         />
         <div className="mt-2 flex gap-2">
-          <button onClick={handleSave} className="bg-accent text-white font-bold py-1 px-3 rounded text-sm">Save</button>
+          <button onClick={handleSave} className="bg-cyan-500 text-white font-bold py-1 px-3 rounded text-sm">Save</button>
           <button onClick={handleCancel} className="bg-gray-200 text-gray-800 font-bold py-1 px-3 rounded text-sm">Cancel</button>
         </div>
       </div>
@@ -40,7 +40,7 @@ const EditableSection: React.FC<EditableSectionProps> = ({ initialContent, onSav
     <div className="prose max-w-none relative group" onClick={() => setIsEditing(true)}>
       <ReactMarkdown>{content}</ReactMarkdown>
       <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="text-xs bg-gray-200 p-1 rounded">Edit</button>
+          <button className="text-xs bg-gray-200 text-gray-800 p-1 rounded">Edit</button>
       </div>
     </div>
   );

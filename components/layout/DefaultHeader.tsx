@@ -11,11 +11,11 @@ const DefaultHeader: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `py-2 px-3 rounded-md text-sm font-medium transition-colors ${isActive ? 'text-white font-bold' : 'text-text-secondary hover:text-white'}`;
+    `py-2 px-3 rounded-md text-sm font-medium transition-colors ${isActive ? 'text-accent font-bold' : 'text-text-secondary hover:text-text-primary'}`;
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-background-secondary border-b border-border-color/50 print:hidden shadow-lg">
+      <header className="sticky top-0 z-30 bg-background border-b border-border-color print:hidden shadow-sm">
         <div className="container mx-auto flex justify-between items-center p-3">
           <Logo />
           <nav className="hidden md:flex items-center gap-4">
@@ -29,7 +29,7 @@ const DefaultHeader: React.FC = () => {
             <div className="hidden md:flex items-center gap-4">
               <button
                 onClick={openProfileModal}
-                className="bg-accent/10 hover:bg-accent/20 text-accent font-bold py-2 px-4 rounded-full text-sm border-2 border-accent/20"
+                className="btn btn-secondary text-sm px-4 py-2"
               >
                 Profile
               </button>

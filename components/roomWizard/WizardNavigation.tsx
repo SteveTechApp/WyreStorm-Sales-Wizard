@@ -11,7 +11,7 @@ interface WizardNavigationProps {
 
 const WizardNavigation: React.FC<WizardNavigationProps> = ({ onNext, onPrev, onSave, isFirstStep, isLastStep, onClose }) => {
   return (
-    <div className="mt-8 flex justify-between items-center border-t border-border-color pt-4">
+    <div className="flex justify-between items-center w-full">
       <div>
         <button onClick={onClose} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">
           Cancel

@@ -77,7 +77,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Ask a technical or product question..."
-                className="w-full p-3 rounded-lg bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 ring-offset-background-secondary focus:ring-accent shadow-lg"
+                className="w-full p-3 rounded-lg bg-input-bg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 ring-offset-background focus:ring-accent shadow-sm border border-border-color"
               />
             </form>
             <div className="mt-6">
@@ -87,7 +87,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
                   <button 
                     key={i}
                     onClick={() => handlePresetClick(q)}
-                    className="text-left p-3 bg-background hover:bg-border-color rounded-md text-sm"
+                    className="text-left p-3 bg-background hover:bg-app-bg rounded-md text-sm border border-border-color"
                   >
                     {q}
                   </button>

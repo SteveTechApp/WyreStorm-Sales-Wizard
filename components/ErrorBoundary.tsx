@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface Props {
@@ -10,15 +10,16 @@ interface State {
   error: Error | null;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  // Fix: Replaced state class property with a constructor to explicitly initialize state and call super(props), ensuring `this.props` is correctly typed and available in the component instance.
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
-  }
+class ErrorBoundary extends React.Component<Props, State> {
+  // FIX: Replaced the constructor with a state property initializer.
+  // This modern syntax for React class components resolves potential type inference issues
+  // with `this` in the constructor that some toolchains may struggle with, fixing the
+  // reported errors about `state` and `props` not existing. This also fixes the cascading
+  // error in App.tsx where the `children` prop was not being recognized.
+  state: State = {
+    hasError: false,
+    error: null,
+  };
 
   static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI.
