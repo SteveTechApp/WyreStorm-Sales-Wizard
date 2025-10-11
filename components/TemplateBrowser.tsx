@@ -47,16 +47,19 @@ const TemplateBrowser: React.FC = () => {
                     ))}
                  </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex overflow-x-auto gap-6 pb-4 -mx-6 px-6 snap-x snap-mandatory">
                 {filteredVerticals.length > 0 ? filteredVerticals.map(vertical => (
-                    <TemplateGroupCard 
-                        key={vertical.verticalId}
-                        verticalId={vertical.verticalId}
-                        templates={groupedTemplates[vertical.verticalId] || []}
-                        onTemplateSelect={(template) => handleStartFromTemplate(template, navigate)}
-                    />
+                    <div key={vertical.verticalId} className="w-80 md:w-96 flex-shrink-0 snap-start">
+                        <TemplateGroupCard 
+                            verticalId={vertical.verticalId}
+                            templates={groupedTemplates[vertical.verticalId] || []}
+                            onTemplateSelect={(template) => handleStartFromTemplate(template, navigate)}
+                        />
+                    </div>
                 )) : (
-                    <p className="text-center text-text-secondary col-span-full py-8">No templates found for this vertical.</p>
+                    <div className="w-full flex-grow">
+                        <p className="text-center text-text-secondary py-8">No templates found for this vertical.</p>
+                    </div>
                 )}
             </div>
         </div>

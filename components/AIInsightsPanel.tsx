@@ -52,7 +52,7 @@ const AIInsightsPanel: React.FC = () => {
     };
 
     return (
-        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
+        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col shadow-lg">
             <h3 className="font-bold text-lg mb-4 text-text-primary">AI Wingman</h3>
             {isLoading ? (
                 <div className="flex-grow flex items-center justify-center">
@@ -63,7 +63,7 @@ const AIInsightsPanel: React.FC = () => {
                     <button 
                         onClick={handleReviewRoom} 
                         disabled={!activeRoom} 
-                        className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full btn-accent text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Review Current Room
                     </button>

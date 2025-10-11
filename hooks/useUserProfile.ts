@@ -17,6 +17,7 @@ const defaultUserProfile: UserProfile = {
   ],
   showBackground: true,
   zoomLevel: 100,
+  resolution: 'fit',
 };
 
 export const useUserProfile = () => {

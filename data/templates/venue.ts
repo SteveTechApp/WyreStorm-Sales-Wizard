@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -26,7 +27,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A professional presentation system for a large auditorium. A high-brightness laser projector is fed by a powerful HDBaseT presentation switcher located at the lectern. The switcher accommodates various sources, including guest laptops and a resident PC. Multiple wireless microphones and a distributed speaker system ensure clear audio for every attendee. The system is managed via a touch panel controller.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 1, roomPc: true },
@@ -46,7 +46,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A stadium-wide AVoIP system distributing video content to 50+ displays across all concourse levels. This includes digital menu boards for concession stands, advertisements, and live game feeds. The NetworkHD system allows for centralized control, so content can be changed instantly across the entire venue from a single control room.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -66,7 +65,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A high-end AV experience for a luxury suite. Three large 4K displays can show the main game feed, replay channels, or other broadcast sources. An AVoIP decoder is used for each display, and a simple in-room touch panel allows guests to select which channel they want to watch on which screen. High-quality in-ceiling speakers provide immersive audio.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -86,7 +84,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A broadcast-ready press box AV system. Each journalist station is equipped with a small display and an AVoIP decoder, allowing them to select from various camera angles, program feeds, and data channels. An audio distribution system provides access to different commentator and effects mixes. The system uses SDI and AVoIP to ensure broadcast-quality, low-latency signals.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['SDI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -106,7 +103,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'A robust and user-friendly system for a convention center breakout room. A ceiling-mounted projector and screen are controlled by a simple wall-plate keypad. Floor and wall plates provide HDMI inputs for presenters. A basic audio system with a wireless microphone is included for speech reinforcement. The system is designed for reliability and quick setup between events.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },

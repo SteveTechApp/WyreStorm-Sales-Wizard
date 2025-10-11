@@ -36,7 +36,7 @@ const ConnectivityGraphic: React.FC = () => {
     const outputs = room?.ioRequirements.filter(io => io.type === 'output') || [];
     
     return (
-        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col">
+        <div className="bg-background-secondary p-4 rounded-lg border border-border-color h-full flex flex-col shadow-lg">
              <h3 className="font-bold text-lg mb-4 text-text-primary text-center">Connectivity Overview</h3>
             <div className="flex-grow flex items-stretch gap-4">
                 <IOColumn title="Inputs" points={inputs} icon={<InputIcon className="h-6 w-6 text-accent" />} />

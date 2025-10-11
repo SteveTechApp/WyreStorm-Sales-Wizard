@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -26,7 +27,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A simple collaboration space for small teams. Users can connect via a single USB-C cable for charging and BYOM video conferencing, or cast wirelessly from any device. An all-in-one video bar provides audio and a wide-angle camera.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'], microphoneType: 'soundbar_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'usb_webcam', cameraCount: 1, roomPc: false },
@@ -57,7 +57,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A premium, fully-featured boardroom designed for executive meetings. It supports dual 4K displays and includes multiple connection points (HDMI/USB-C) at the table. A powerful presentation switcher handles all signals, including wireless casting. Ceiling microphones and speakers provide crystal-clear audio for all participants. The entire room is managed via a simple, intuitive touch panel.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'video_conferencing', 'program_audio'], microphoneType: 'ceiling_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C', 'DisplayPort'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 1, roomPc: false },
@@ -77,7 +76,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A standard, reliable meeting room. A single 4K display is served by a simple auto-switcher with HDMI and USB-C inputs at the table. This setup is designed for cost-effectiveness and ease of use with minimal user interaction required.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -97,7 +95,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Video Conferencing', priority: 'must-have' }, { name: 'Wireless Presentation', priority: 'must-have' }],
             functionalityStatement: 'A flexible conference room designed for modern collaboration. It features dual displays for video conferencing and content sharing. A presentation switcher provides HDMI/USB-C inputs and wireless casting. A USB soundbar with an integrated camera provides a simple BYOM experience.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'], microphoneType: 'soundbar_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'Simple Keypad', cameraType: 'usb_webcam', cameraCount: 1, roomPc: false },
@@ -117,7 +114,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'A corporate training room designed for clear instruction. A high-brightness laser projector serves as the main display. The instructor can present from a lectern with built-in PC and guest laptop connections. A wireless lavalier microphone and ceiling speakers provide voice reinforcement to ensure every participant can hear clearly.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -137,7 +133,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'A multi-purpose town hall space centered around a large LED video wall. A powerful presentation system handles multiple inputs for presenters. Several wireless handheld and lavalier microphones are available, mixed through a DSP for clear audio. The entire event can be streamed to remote employees via a dedicated streaming encoder.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 2, roomPc: false },
@@ -157,7 +152,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A simple and effective digital signage solution for the main reception area. A commercial display is fed by a reliable AVoIP decoder, which receives content from a central media player. This allows for easy updates of welcome messages, corporate videos, and branding.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },

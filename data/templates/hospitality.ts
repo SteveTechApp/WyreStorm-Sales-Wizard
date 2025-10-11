@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -23,7 +24,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A scalable NetworkHD AVoIP system allows any of the 8 satellite receivers to be routed to any of the 12 displays, individually or in groups. The bartender can easily control the routing from a tablet. The system uses a low-bandwidth H.264 codec, allowing it to run on a cost-effective 1GbE network.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'pendant', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -43,7 +43,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A set of three digital signage displays in the hotel lobby for welcome messages, event schedules, and wayfinding. The displays are fed by AVoIP decoders connected to a central media player, allowing for easy, remote content updates by hotel staff.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -63,7 +62,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'A flexible AV system for a grand ballroom that can be divided into three separate sections via airwalls. A powerful hybrid HDBaseT/HDMI matrix switcher is the core of the system, allowing any source to be routed to any of the three projectors. When combined, the rooms can act as a single large space. Multiple floor box inputs are available for presenters, and a rack of wireless microphones provides audio reinforcement. Each room configuration can be recalled with a single press on a touch panel.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -83,7 +81,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Wireless Presentation', priority: 'nice-to-have' }],
             functionalityStatement: 'A simple, intuitive AV system for a hotel meeting room. A wall-mounted display is connected to a table input plate with HDMI and USB-C connections. An auto-switcher ensures the system is easy for any guest to use without assistance. An optional wireless casting dongle can be provided by the hotel.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -103,7 +100,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A high-impedance (70V) distributed audio system providing even background music coverage throughout the restaurant. The system is split into two zones (e.g., main dining and bar), allowing for independent volume control in each area from a simple wall-mounted controller. A Bluetooth receiver and streaming media player serve as sources.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -123,7 +119,6 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A simple AV system for a hotel gym. Four wall-mounted TVs are fed by AVoIP decoders, allowing them to display a variety of satellite TV channels. A separate high-impedance audio system provides background music from a dedicated streaming source. Local wall controllers allow staff to change channels and adjust volume easily.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },

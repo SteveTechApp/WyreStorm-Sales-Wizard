@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -23,7 +24,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A campus-wide NetworkHD AVoIP system for distributing flight information (FIDS), gate information, and advertising content to over 100 displays throughout the terminal. The system is designed for 24/7 reliability and can be centrally managed and monitored. The scalability of AVoIP is crucial, allowing the airport to easily add or change displays as the terminal evolves.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'glass', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -43,7 +43,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A set of outdoor-rated, high-brightness displays for a train platform. These ruggedized displays show train arrival/departure times and service alerts. They are fed by AVoIP decoders in weatherproof enclosures, connected to a central data source in the main station building. The system is designed for maximum reliability and readability in all weather conditions.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -63,7 +62,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A comprehensive passenger information system for a busy bus terminal. Large displays show departure schedules, while interactive touch-screen kiosks allow passengers to look up routes and get directions. The entire system is networked, allowing for real-time updates in case of delays or gate changes.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -83,7 +81,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }, { name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A state-of-the-art theater for cruise ship entertainment. A large, fine-pitch LED wall serves as a dynamic backdrop for live performances and a brilliant screen for movie nights. A professional audio system with line array speakers provides powerful, clear sound. The system includes a production booth with a video switcher and audio mixer to manage the shows.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Third-Party Integration', cameraType: 'hdmi_ptz', cameraCount: 3, roomPc: false },
@@ -103,7 +100,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A comprehensive public address and background music system for a transportation hub. The system is divided into numerous zones (e.g., ticketing, gates, baggage claim) with independent volume control. It uses a 70V/100V distributed architecture for clarity over long distances. An audio DSP automatically ducks the background music when a live or automated announcement is made.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },

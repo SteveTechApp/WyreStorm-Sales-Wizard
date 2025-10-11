@@ -39,7 +39,7 @@ const ContextualLoadingUI: React.FC = () => {
     }, [context]);
 
     return (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
             <div className="text-center p-8 bg-background-secondary rounded-lg border border-border-color shadow-xl">
                 <LoadingSpinner />
                 <h2 className="text-2xl font-bold mt-4 uppercase tracking-widest text-accent">{context.title}</h2>

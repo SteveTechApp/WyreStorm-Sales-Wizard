@@ -1,49 +1,21 @@
 import React from 'react';
 import { RoomWizardAnswers } from '../../utils/types.ts';
 import IOSection from './basicInfo/IOSection.tsx';
-import ToggleSwitch from '../ui/ToggleSwitch.tsx';
 import { CAMERA_TYPES } from '../../data/wizardOptions.ts';
+import WizardToggleOption from './common/WizardToggleOption.tsx';
+import { toggleFeature } from '../../utils/utils.ts';
 
 interface StepSourcesProps {
   answers: RoomWizardAnswers;
   updateAnswers: (newAnswers: Partial<RoomWizardAnswers>) => void;
 }
 
-const FeatureToggle: React.FC<{
-    label: string,
-    description: string,
-    featureName: string,
-    answers: RoomWizardAnswers,
-    updateAnswers: (newAnswers: Partial<RoomWizardAnswers>) => void;
-}> = ({ label, description, featureName, answers, updateAnswers }) => {
+const StepSources: React.FC<StepSourcesProps> = ({ answers, updateAnswers }) => {
 
-    const handleFeatureToggle = (isEnabled: boolean) => {
-        let newFeatures = [...answers.features];
-        const featureExists = newFeatures.some(f => f.name === featureName);
-
-        if (isEnabled && !featureExists) {
-            newFeatures.push({ name: featureName, priority: 'must-have' });
-        } else if (!isEnabled && featureExists) {
-            newFeatures = newFeatures.filter(f => f.name !== featureName);
-        }
+    const handleFeatureToggle = (featureName: string) => (isEnabled: boolean) => {
+        const newFeatures = toggleFeature(answers.features, featureName, isEnabled);
         updateAnswers({ features: newFeatures });
     };
-
-    return (
-        <div className="flex items-center justify-between p-3 bg-background rounded-md border border-border-color">
-            <div>
-                <label className="text-sm font-medium">{label}</label>
-                <p className="text-xs text-text-secondary">{description}</p>
-            </div>
-            <ToggleSwitch
-                checked={answers.features.some(f => f.name === featureName)}
-                onChange={handleFeatureToggle}
-            />
-        </div>
-    );
-};
-
-const StepSources: React.FC<StepSourcesProps> = ({ answers, updateAnswers }) => {
 
     const handleTechChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         const { name, value, type } = e.target;
@@ -73,23 +45,19 @@ const StepSources: React.FC<StepSourcesProps> = ({ answers, updateAnswers }) => 
                 <p className="text-text-secondary mb-6">Define where signals will come from and what key features are required.</p>
                 <div className="space-y-4">
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FeatureToggle 
+                        <WizardToggleOption
                             label="Wireless Presentation"
                             description="Allow users to share content wirelessly."
-                            featureName="Wireless Presentation"
-                            answers={answers}
-                            updateAnswers={updateAnswers}
+                            checked={answers.features.some(f => f.name === 'Wireless Presentation')}
+                            onChange={handleFeatureToggle('Wireless Presentation')}
                         />
-                         <div className="flex items-center justify-between p-3 bg-background rounded-md border border-border-color">
-                            <div>
-                                <label htmlFor="room-pc" className="text-sm font-medium">Dedicated Room PC</label>
-                                <p className="text-xs text-text-secondary">Include a dedicated in-room computer.</p>
-                            </div>
-                            <ToggleSwitch
-                                checked={answers.technicalDetails.roomPc}
-                                onChange={handleRoomPcToggle}
-                            />
-                        </div>
+                        <WizardToggleOption
+                            label="Dedicated Room PC"
+                            description="Include a dedicated in-room computer."
+                            htmlForId="room-pc"
+                            checked={answers.technicalDetails.roomPc}
+                            onChange={handleRoomPcToggle}
+                        />
                      </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div>

@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -23,7 +24,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A NetworkHD 100 series AVoIP system distributes content from a central media player to six displays throughout the store. The low-bandwidth H.264 solution is cost-effective and easy to scale as more displays are added. Content can be updated centrally and scheduled to change throughout the day.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -43,7 +43,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'An engaging brand experience zone designed to attract and immerse customers. It features a 2x2 video wall displaying high-impact brand content. An interactive touch overlay on one of the displays allows customers to explore product features. Directional speakers create a focused audio experience that doesn\'t bleed into the rest of the store. A high-performance media player provides 4K content.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -63,7 +62,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'An enhanced fitting room experience. A small touch-enabled display inside the fitting room can show related products or allow the customer to request a different size from a store associate. The system is driven by a simple, low-cost media player and network connection.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -84,7 +82,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A 2x2 video wall creating a high-impact visual at the store entrance. A dedicated video wall processor takes a single 4K media player source and splits it across the four displays. The processor handles bezel correction for a seamless look. This is a robust, cost-effective solution for a single-source video wall.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -104,7 +101,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A premium-quality distributed audio system providing background music to enhance the shopping experience. The store is divided into three zones (e.g., entrance, main floor, fitting rooms) with independent volume control for each. A multi-zone amplifier is fed by a professional media player with curated playlists.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },

@@ -17,4 +17,5 @@ export interface UserProfile {
     laborRates: LaborRate[];
     showBackground: boolean;
     zoomLevel: number;
+    resolution: string;
 }

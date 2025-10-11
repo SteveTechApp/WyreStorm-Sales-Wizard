@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -26,7 +27,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'An engaging learning environment where the instructor can present from a fixed lectern PC or cast wirelessly from a tablet while moving around the room. A ceiling-mounted microphone provides clear voice lift, and a simple wall-plate controller manages system power and source selection.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'ceiling_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -55,7 +55,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A comprehensive AV system for a large university lecture hall. It features dual laser projectors for main content and confidence monitoring. An advanced presentation switcher at the lectern accommodates various sources including a resident PC, document camera, and guest laptops. The system integrates with a lecture capture platform to record and stream classes. A distributed audio system ensures every student hears clearly, and a touch panel provides the lecturer with full control.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'table_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 2, roomPc: true },
@@ -75,7 +74,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A cost-effective and reliable AV system for a standard K-12 classroom. A bright projector displays content from a wall plate with HDMI and USB-C inputs. An auto-switcher selects the active source, and built-in projector speakers provide audio. This simple setup is robust and easy for any teacher to use.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -95,7 +93,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Wireless Presentation', priority: 'must-have' }],
             functionalityStatement: 'A dynamic active learning environment with six student pods. Each pod has its own display and a simple switcher, allowing students to collaborate and share content from their devices. The instructor, from a central lectern with a touch panel, can view content from any pod and choose to push any pod\'s screen to the main classroom projector for group discussion. An AVoIP system provides the flexibility to route any source to any destination.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -115,7 +112,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Wireless Presentation', priority: 'must-have' }],
             functionalityStatement: 'Four separate group study pods in the library, each equipped with a 55-inch display and a wireless presentation device. Students can connect and share content from their laptops or mobile devices quickly and easily, fostering collaboration without the need for technical support.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -135,7 +131,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A simple digital signage solution for the school\'s common areas. Four displays show a rotating schedule of announcements, lunch menus, and school news. The system is driven by a central media player connected to AVoIP encoders, allowing for easy content updates from a single location.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -155,7 +150,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A science lab AV system designed for clear demonstrations. A high-resolution document camera at the instructor\'s bench can show detailed experiments on a main projector screen. Two additional confidence displays are placed in the room so all students have a clear view without crowding the front. The switcher allows for easy toggling between the document camera, a PC, and a guest laptop.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: true },

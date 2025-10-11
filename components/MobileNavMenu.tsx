@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { CloseIcon } from './Icons.tsx';
 import Logo from './Logo.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
+import { NAV_LINKS } from '../data/navigation.ts';
 
 interface MobileNavMenuProps {
   isOpen: boolean;
@@ -52,9 +53,11 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
         </button>
       </div>
       <nav className="flex flex-col justify-center items-center flex-grow gap-6">
-        <NavLink to="/" className={navLinkClass} onClick={onClose} end>Dashboard</NavLink>
-        <NavLink to="/setup" className={navLinkClass} onClick={onClose}>New Project</NavLink>
-        <NavLink to="/training" className={navLinkClass} onClick={onClose}>Training</NavLink>
+        {NAV_LINKS.map(link => (
+          <NavLink key={link.path} to={link.path} className={navLinkClass} onClick={onClose} end={link.end}>
+            {link.label}
+          </NavLink>
+        ))}
       </nav>
       <div className="p-6 border-t border-border flex flex-col items-center gap-4">
         <button

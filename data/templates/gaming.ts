@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -23,7 +24,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A robust NetworkHD AVoIP system designed for the demanding 24/7 environment of a casino. Multiple sources (live TV, promotional content, sports betting data) are encoded and distributed over a dedicated 10GbE network to dozens of displays across the gaming floor. The system offers low latency and high reliability, with a central controller for easy routing and monitoring by staff. The scalability of AVoIP allows for easy expansion as the casino grows.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -43,7 +43,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Multi-Display Support', priority: 'must-have' }],
             functionalityStatement: 'The centerpiece of a modern sportsbook: a massive, seamless direct-view LED video wall. A powerful AVoIP system with multiview capabilities (NetworkHD 150) allows the wall to be configured in endless ways, showing multiple live games, odds boards, and promotional content simultaneously. Operators can instantly recall presets for different sports or times of day from a touch panel controller.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -63,7 +62,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A premium AV experience for VIP guests. The suite features multiple 4K displays, a high-fidelity sound system, and a simple touch panel remote that controls everything, including lighting and shades. Guests can access casino-wide TV feeds or connect their own devices to watch personal content.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -83,7 +81,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'An AVoIP distribution system for a poker room. Multiple displays around the room show broadcast sports. Several dedicated displays are connected to a tournament management system to show player lists and blind timers. The system is managed from a central control point but is designed for high reliability and minimal staff intervention.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -103,7 +100,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A state-of-the-art esports arena. Player stations feature high-refresh-rate monitors with zero-latency connections. A broadcast production booth switches between player cameras, gameplay feeds, and commentator analysis. The main spectator experience is a large LED wall showing the primary game feed. The entire system is built on a high-speed AVoIP backbone (like NetworkHD 600 series) to ensure minimal latency, which is critical for competitive gaming.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'DisplayPort', 'SDI'], controlSystem: 'Third-Party Integration', cameraType: 'hdmi_ptz', cameraCount: 8, roomPc: true },

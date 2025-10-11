@@ -1,22 +1,21 @@
 import React from 'react';
 
+interface TabConfig {
+  id: string;
+  label: string;
+}
+
 interface WorkspaceTabsProps {
+  tabs: TabConfig[];
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
 
-const TABS = [
-  { id: 'config', label: 'Configuration' },
-  { id: 'io', label: 'I/O List' },
-  { id: 'diagram', label: 'Diagram' },
-  { id: 'planner', label: 'Planner' },
-];
-
-const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({ activeTab, setActiveTab }) => {
+const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({ tabs, activeTab, setActiveTab }) => {
   return (
     <div className="border-b-2 border-border-color">
       <nav className="-mb-px flex space-x-6" aria-label="Tabs">
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}

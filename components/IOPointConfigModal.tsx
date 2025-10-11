@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { IOPoint } from '../../utils/types.ts';
-import BasicInfoInputs from './ioConfig/BasicInfoInputs.tsx';
-import ConnectivityInputs from './ioConfig/ConnectivityInputs.tsx';
-import OutputSpecifics from './ioConfig/OutputSpecifics.tsx';
-import InfoModal from '../InfoModal.tsx';
+import BasicInfoInputs from './roomWizard/ioConfig/BasicInfoInputs.tsx';
+import ConnectivityInputs from './roomWizard/ioConfig/ConnectivityInputs.tsx';
+import OutputSpecifics from './roomWizard/ioConfig/OutputSpecifics.tsx';
+import InfoModal from './InfoModal.tsx';
 
 interface IOPointConfigModalProps {
   isOpen: boolean;

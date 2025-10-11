@@ -1,4 +1,4 @@
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface Props {
@@ -10,18 +10,13 @@ interface State {
   error: Error | null;
 }
 
-class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Using a constructor to initialize state. This is a more robust pattern
-  // that avoids potential TypeScript issues with `this.props` not being correctly identified
-  // when using class property initialization for state.
-  
-  // GPE_FIX: Replaced the constructor with class property state initialization. This is the modern standard for React class components and resolves the type errors regarding 'state' and 'props'.
-  state: State = {
+class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
     hasError: false,
     error: null,
   };
 
-  static getDerivedStateFromError(error: any): Partial<State> | null {
+  static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }

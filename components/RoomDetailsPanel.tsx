@@ -2,22 +2,7 @@ import React from 'react';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 import TierIcon from './TierIcon.tsx';
 import { VERTICAL_MARKETS } from '../data/constants.ts';
-
-// Simple mapping from a detailed room type to a broader vertical category
-const roomTypeToVerticalMap: Record<string, string> = {
-    'Conference Room': 'corp',
-    'Boardroom': 'corp',
-    'Huddle Space': 'corp',
-    'Classroom': 'edu',
-    'Lecture Hall': 'edu',
-    'Auditorium': 'ven',
-    'House of Worship': 'how',
-    'Command Center': 'cmd',
-    'Sports Bar': 'hos',
-    'Retail Space': 'ret',
-    'Large Venue': 'ven',
-    'Other': 'corp', // default
-};
+import { roomTypeToVerticalMap } from '../data/mappings.ts';
 
 const RoomDetailsPanel: React.FC = () => {
     const { projectData, activeRoomId } = useProjectContext();
@@ -25,7 +10,7 @@ const RoomDetailsPanel: React.FC = () => {
 
     if (!room) {
         return (
-            <div className="bg-background-secondary p-4 rounded-lg border border-border-color">
+            <div className="bg-background-secondary p-4 rounded-lg border border-border-color shadow-lg">
                 <p className="text-text-secondary">No room selected.</p>
             </div>
         );
@@ -36,7 +21,7 @@ const RoomDetailsPanel: React.FC = () => {
     const imageUrl = verticalInfo?.imageUrl;
 
     return (
-        <div className="bg-background-secondary rounded-lg border border-border-color h-full flex flex-col overflow-hidden">
+        <div className="bg-background-secondary rounded-lg border border-border-color h-full flex flex-col overflow-hidden shadow-lg">
             {imageUrl && (
                 <div className="h-32 w-full overflow-hidden">
                      <img src={imageUrl} alt={room.roomType} className="w-full h-full object-cover" />

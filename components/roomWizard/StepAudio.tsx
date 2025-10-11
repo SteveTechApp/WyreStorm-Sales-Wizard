@@ -7,7 +7,8 @@ import {
     MICROPHONE_TYPES
 } from '../../data/wizardOptions.ts';
 import AudioDesignGuideModal from '../AudioDesignGuideModal.tsx';
-import ToggleSwitch from '../ui/ToggleSwitch.tsx';
+import WizardToggleOption from './common/WizardToggleOption.tsx';
+import { toggleArrayItem } from '../../utils/utils.ts';
 
 interface StepAudioProps {
   answers: RoomWizardAnswers;
@@ -22,14 +23,9 @@ const StepAudio: React.FC<StepAudioProps> = ({ answers, updateAnswers }) => {
         updateAnswers({ audioSystemDetails: { ...answers.audioSystemDetails, [name]: value } });
     };
     
-    const handleUseCaseChange = (useCase: string, checked: boolean) => {
-        let newUseCases = [...answers.audioSystemDetails.useCases];
-        if (checked) {
-            newUseCases.push(useCase as any);
-        } else {
-            newUseCases = newUseCases.filter(uc => uc !== useCase);
-        }
-        updateAnswers({ audioSystemDetails: { ...answers.audioSystemDetails, useCases: newUseCases } });
+    const handleUseCaseChange = (useCase: string) => {
+        const newUseCases = toggleArrayItem(answers.audioSystemDetails.useCases, useCase);
+        updateAnswers({ audioSystemDetails: { ...answers.audioSystemDetails, useCases: newUseCases as any } });
     };
 
     const handleUcCompatChange = (checked: boolean) => {
@@ -71,7 +67,7 @@ const StepAudio: React.FC<StepAudioProps> = ({ answers, updateAnswers }) => {
                                     type="checkbox"
                                     id={`use-case-${opt.value}`}
                                     checked={answers.audioSystemDetails.useCases.includes(opt.value as any)}
-                                    onChange={(e) => handleUseCaseChange(opt.value, e.target.checked)}
+                                    onChange={(e) => handleUseCaseChange(opt.value)}
                                     className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent"
                                 />
                                 <label htmlFor={`use-case-${opt.value}`} className="ml-2 text-sm">{opt.label}</label>
@@ -85,16 +81,12 @@ const StepAudio: React.FC<StepAudioProps> = ({ answers, updateAnswers }) => {
                         {MICROPHONE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                     </select>
                 </div>
-                 <div className="flex items-center justify-between p-3 bg-background rounded-md border border-border-color">
-                    <div>
-                        <label className="text-sm font-medium">UC Compatibility Required</label>
-                        <p className="text-xs text-text-secondary">Does the audio system need to integrate with a BYOM/UC system?</p>
-                    </div>
-                    <ToggleSwitch
-                        checked={answers.audioSystemDetails.ucCompatibility}
-                        onChange={handleUcCompatChange}
-                    />
-                </div>
+                <WizardToggleOption
+                    label="UC Compatibility Required"
+                    description="Does the audio system need to integrate with a BYOM/UC system?"
+                    checked={answers.audioSystemDetails.ucCompatibility}
+                    onChange={handleUcCompatChange}
+                />
             </div>
             <AudioDesignGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
         </div>

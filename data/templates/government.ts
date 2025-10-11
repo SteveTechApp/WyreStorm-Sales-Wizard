@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -26,7 +27,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A sophisticated system for public meetings. Each delegate position has a microphone with a request-to-speak button. Multiple PTZ cameras automatically focus on the active speaker. A powerful matrix switcher routes presentation content and camera feeds to main projectors and smaller displays for the public gallery. The entire meeting is recorded and streamed for public access, managed from a dedicated control room.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: {
                 wallConstruction: 'drywall',
                 cableContainment: 'floor_boxes',
@@ -63,7 +63,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A high-security AV system for a SCIF environment. All equipment is located within the secure space. The system is completely air-gapped from any external networks. A simple, reliable point-to-point fiber optic extender is used for signal transmission to the display to prevent any potential RF emissions. The system is designed for secure, wired presentations only.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['speech_reinforcement'], microphoneType: 'soundbar_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -83,7 +82,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'An evidence presentation system for a courtroom. Displays are provided for the judge, jury, witness, and counsel tables. A central matrix switcher allows the clerk to route evidence from various inputs (document camera, PC, guest laptop) to any or all screens. A video conferencing system is integrated for remote arraignments. A multi-microphone audio system with a DSP ensures every word is captured clearly for the court record.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'video_conferencing'], microphoneType: 'table_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'VGA'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 3, roomPc: true },
@@ -103,7 +101,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A digital signage and queuing system for a public-facing government office. Large displays clearly show "Now Serving" ticket numbers, reducing confusion and wait times. Other displays provide informational content and public service announcements. The system is driven by AVoIP for easy and cost-effective distribution of signals from the central server.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -123,7 +120,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'An immersive training environment using three short-throw projectors with edge-blending technology to create a single, seamless, ultra-wide image. The system is fed by high-performance simulation computers. A robust audio system provides realistic sound cues. The system is designed for high-fidelity, low-latency performance to create a convincing simulation.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['DisplayPort'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: true },

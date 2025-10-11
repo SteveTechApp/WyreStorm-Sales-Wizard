@@ -1,5 +1,5 @@
 import React from 'react';
-import InfoModal from './InfoModal';
+import InfoModal from './InfoModal.tsx';
 
 interface AudioDesignGuideModalProps {
   isOpen: boolean;
@@ -8,8 +8,12 @@ interface AudioDesignGuideModalProps {
 
 const AudioDesignGuideModal: React.FC<AudioDesignGuideModalProps> = ({ isOpen, onClose }) => {
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} title="Audio Design Quick Guide">
-      <div className="space-y-4 text-text-secondary">
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-3xl">
+      <div className="flex justify-between items-center p-4 border-b border-border-color">
+        <h2 className="text-2xl font-bold text-text-primary">Audio Design Quick Guide</h2>
+        <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
+      </div>
+      <div className="p-6 overflow-y-auto space-y-4 text-text-secondary">
         <div>
           <h3 className="font-bold text-text-primary">Speaker Layout</h3>
           <ul className="list-disc list-inside text-sm mt-1">

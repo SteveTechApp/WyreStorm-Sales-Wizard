@@ -27,20 +27,20 @@
     <script type="module" src="/index.tsx"></script>
     <style>
         :root {
-            --background: #f8f9fa;
-            --background-secondary: #ffffff;
-            --input-bg: #ffffff;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
+            --app-bg: #5a5a5a;
+            --background: #4f4f4f;
+            --background-secondary: #424242;
+            --input-bg: #333333;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
             --text-on-accent: #ffffff;
-            --border-color: #dee2e6;
+            --border-color: #6b7280;
             --accent: #f58220;
             --accent-hover: #ff9c40;
             --primary: #4a90e2;
             --primary-hover: #63a4ff;
             --destructive: #e53e3e;
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --border: #dee2e6;
+            --border: #6b7280;
         }
         
         html, body, #root {
@@ -48,18 +48,22 @@
         }
 
         body {
-            background: var(--background);
+            background-color: #4a4a4a;
             color: var(--text-primary);
             transition: background-color 0.3s, color 0.3s;
             font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        body.has-background-carousel {
-            background: var(--background);
+        select option {
+            color: black;
+            background: white;
         }
-        
+
         .bg-grid-pattern {
-            background-image: linear-gradient(to right, var(--border-color) 1px, transparent 1px), linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+            background-image: linear-gradient(to right, #4f4f4f 1px, transparent 1px), linear-gradient(to bottom, #4f4f4f 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
@@ -88,17 +92,31 @@
             border: 2px solid transparent;
         }
 
+        .btn-primary, .btn-accent {
+            color: var(--text-on-accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .btn-primary:hover, .btn-accent:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 3px 8px rgba(0,0,0,0.25);
+            transform: translateY(-2px);
+        }
+
         .btn-primary {
             background-color: var(--primary);
-            color: var(--text-on-accent);
             border-color: var(--primary);
         }
         .btn-primary:hover {
             background-color: var(--primary-hover);
             border-color: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+
+        .btn-accent {
+             background-color: var(--accent);
+        }
+        .btn-accent:hover {
+            background-color: var(--accent-hover);
+        }
+
 
         .btn-secondary {
             background-color: transparent;
@@ -139,37 +157,24 @@
         .animate-fade-in-up {
             animation: fade-in-up 0.3s ease-out forwards;
         }
-
-        .glass-bg {
-            background-color: var(--glass-bg);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
+        
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
 
-        .background-carousel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-            background-color: var(--background);
+        ::-webkit-scrollbar-track {
+            background: var(--background);
         }
 
-        .background-carousel-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
         }
 
-        .background-carousel-image.visible {
-            opacity: 0.5;
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
         }
 
         /* Print styles */

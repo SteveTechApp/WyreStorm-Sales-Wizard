@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { askQuickQuestion } from '../services/assistantService.ts';
 import LoadingSpinner from './LoadingSpinner.tsx';
 import QuickQuestionResult from './quickQuestion/QuickQuestionResult.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
+import InfoModal from './InfoModal.tsx';
 
 interface QuickQuestionModalProps {
   isOpen: boolean;
@@ -22,20 +23,6 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
     "What is HDCP 2.2 required for?",
     "Explain chroma subsampling 4:4:4 vs 4:2:0.",
   ];
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-            onClose();
-        }
-    };
-    if (isOpen) {
-        window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => {
-        window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
 
   const handleSubmit = async (currentQuery: string) => {
     if (!currentQuery.trim()) return;
@@ -69,63 +56,48 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
       setIsLoading(false);
   }
 
-  if (!isOpen) return null;
-
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-        onClose();
-    }
-  };
-
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={handleBackdropClick}>
-      <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-3xl m-4 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-        <div className="flex justify-between items-center p-4 border-b border-border-color">
-          <h2 className="text-2xl font-bold text-text-primary">Quick Question</h2>
-          <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
-        </div>
-        
-        <div className="p-6 overflow-y-auto">
-          {result || isLoading || error ? (
-             <QuickQuestionResult 
-                query={query} 
-                result={result} 
-                isLoading={isLoading} 
-                error={error} 
-                onReset={resetSearch} 
-             />
-          ) : (
-            <>
-              <form onSubmit={handleFormSubmit}>
-                <label htmlFor="quick-question-input" className="sr-only">Ask a technical or product question</label>
-                <input
-                  type="text"
-                  id="quick-question-input"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ask a technical or product question..."
-                  className="w-full p-3 border-2 border-border-color rounded-lg bg-input-bg focus:outline-none focus:border-accent"
-                />
-              </form>
-              <div className="mt-6">
-                <h3 className="font-semibold mb-3">Or try one of these:</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {PRESET_QUESTIONS.map((q, i) => (
-                    <button 
-                      key={i}
-                      onClick={() => handlePresetClick(q)}
-                      className="text-left p-3 bg-background hover:bg-border-color rounded-md text-sm"
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-3xl" title="Quick Question">
+      <div>
+        {result || isLoading || error ? (
+           <QuickQuestionResult 
+              query={query} 
+              result={result} 
+              isLoading={isLoading} 
+              error={error} 
+              onReset={resetSearch} 
+           />
+        ) : (
+          <>
+            <form onSubmit={handleFormSubmit}>
+              <label htmlFor="quick-question-input" className="sr-only">Ask a technical or product question</label>
+              <input
+                type="text"
+                id="quick-question-input"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Ask a technical or product question..."
+                className="w-full p-3 rounded-lg bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 ring-offset-background-secondary focus:ring-accent shadow-lg"
+              />
+            </form>
+            <div className="mt-6">
+              <h3 className="font-semibold mb-3">Or try one of these:</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {PRESET_QUESTIONS.map((q, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => handlePresetClick(q)}
+                    className="text-left p-3 bg-background hover:bg-border-color rounded-md text-sm"
+                  >
+                    {q}
+                  </button>
+                ))}
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
-    </div>
+    </InfoModal>
   );
 };
 

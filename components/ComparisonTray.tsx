@@ -27,7 +27,7 @@ const ComparisonTray: React.FC = () => {
           </div>
           <div className="flex gap-2">
             <button onClick={clearComparison} className="text-sm font-medium text-text-secondary hover:underline">Clear</button>
-            <button onClick={() => setIsModalOpen(true)} disabled={comparisonList.length < 2} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50">Compare</button>
+            <button onClick={() => setIsModalOpen(true)} disabled={comparisonList.length < 2} className="btn-accent text-white font-bold py-2 px-4 rounded-md text-sm disabled:opacity-50">Compare</button>
           </div>
         </div>
       </div>

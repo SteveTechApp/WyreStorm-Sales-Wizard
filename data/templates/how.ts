@@ -1,5 +1,6 @@
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -26,7 +27,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             ],
             functionalityStatement: 'A versatile system designed for worship services. A central matrix switcher routes content from a presentation computer (for lyrics and graphics) and a live camera feed to a main center projector and two side-fill displays. An HDBaseT extender system ensures reliable signal transmission over long distances. The system includes inputs for musical instruments and microphones, mixed through a dedicated audio console. Control is handled by a simple keypad for easy operation by volunteers.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Simple Keypad', cameraType: 'hdmi_ptz', cameraCount: 2, roomPc: true },
@@ -46,7 +46,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A simple and effective overflow room setup. A single AVoIP decoder receives the main program feed from an encoder in the sanctuary and displays it on a projector. In-ceiling speakers, also fed from the main system, provide clear audio. This allows the room to act as an extension of the main worship space with minimal local hardware or control.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -66,7 +65,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A flexible AV system for a youth group room. It features a projector for movies and presentations, along with multiple HDMI inputs for connecting gaming consoles and laptops. A pair of powerful surface-mount speakers and a subwoofer provide an engaging audio experience. A simple wall-plate controller allows for easy source selection and volume control.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -86,7 +84,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'Two large displays in the lobby area provide a warm welcome and keep the congregation informed. Driven by AVoIP decoders, they show a rotating loop of announcements, upcoming event schedules, and community photos. Content is managed from a central office computer, making it easy for church staff to keep information current.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -106,7 +103,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A dedicated broadcast booth for producing high-quality online services. Multiple camera feeds are sent to a production video switcher. An operator can switch between cameras, add graphics from a presentation computer, and monitor the final program output. The audio feed is taken directly from the main audio console. The final mixed program is sent to a hardware streaming encoder for reliable distribution to online platforms.',
             manuallyAddedEquipment: [],
-            // FIX: Add missing properties
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['SDI', 'HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: true },

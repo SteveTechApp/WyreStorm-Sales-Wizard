@@ -1,6 +1,6 @@
 import React from 'react';
-import InfoModal from './InfoModal';
-import TierIcon from './TierIcon';
+import InfoModal from './InfoModal.tsx';
+import TierIcon from './TierIcon.tsx';
 
 interface TierInfoModalProps {
   isOpen: boolean;
@@ -9,7 +9,13 @@ interface TierInfoModalProps {
 
 const TierInfoModal: React.FC<TierInfoModalProps> = ({ isOpen, onClose }) => {
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} title="Design Tier Guide">
+    // FIX: Replaced unsupported `title` prop with a standard header and content wrapper to match the application's modal pattern.
+    <InfoModal isOpen={isOpen} onClose={onClose}>
+      <div className="flex justify-between items-center p-4 border-b border-border-color">
+        <h2 className="text-2xl font-bold text-text-primary">Design Tier Guide</h2>
+        <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
+      </div>
+      <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-4 border rounded-lg bg-background-secondary/50">
                 <div className="flex items-center gap-2 mb-2">
@@ -51,6 +57,7 @@ const TierInfoModal: React.FC<TierInfoModalProps> = ({ isOpen, onClose }) => {
                 </ul>
             </div>
         </div>
+      </div>
     </InfoModal>
   );
 };

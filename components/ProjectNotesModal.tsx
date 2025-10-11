@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProjectContext } from '../context/ProjectContext.tsx';
+import InfoModal from './InfoModal.tsx';
 
 interface ProjectNotesModalProps {
   isOpen: boolean;
@@ -24,26 +25,24 @@ const ProjectNotesModal: React.FC<ProjectNotesModalProps> = ({ isOpen, onClose }
   };
 
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 animate-fade-in-fast" onClick={onClose}>
-      <div className="bg-background-secondary rounded-lg shadow-xl w-full max-w-3xl m-4 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-        <div className="flex justify-between items-center p-4 border-b border-border-color">
-          <h2 className="text-2xl font-bold text-text-primary">Project Notes</h2>
-          <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
-        </div>
-        <div className="p-6 flex-grow">
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full h-full p-2 border rounded-md bg-input-bg resize-none"
-            placeholder="Add project-wide notes here..."
-          />
-        </div>
-        <div className="p-4 bg-background flex justify-end gap-3 border-t border-border-color">
-          <button onClick={onClose} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Cancel</button>
-          <button onClick={handleSave} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">Save Notes</button>
-        </div>
+    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-3xl">
+      <div className="flex justify-between items-center p-4 border-b border-border-color">
+        <h2 className="text-2xl font-bold text-text-primary">Project Notes</h2>
+        <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
       </div>
-    </div>
+      <div className="p-6 flex-grow">
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="w-full h-full p-2 border rounded-md bg-input-bg resize-none"
+          placeholder="Add project-wide notes here..."
+        />
+      </div>
+      <div className="p-4 bg-background flex justify-end gap-3 border-t border-border-color">
+        <button onClick={onClose} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Cancel</button>
+        <button onClick={handleSave} className="bg-accent hover:bg-accent-hover text-text-on-accent font-bold py-2 px-4 rounded-md">Save Notes</button>
+      </div>
+    </InfoModal>
   );
 };
 
