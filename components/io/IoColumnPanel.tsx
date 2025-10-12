@@ -13,7 +13,7 @@ const IoColumnPanel: React.FC<IoColumnPanelProps> = ({ title, type }) => {
     const points = room?.ioRequirements.filter(io => io.type === type) || [];
 
     return (
-        <div className="p-4 bg-background-secondary rounded-lg border border-border-color">
+        <div className="p-6 bg-background-secondary rounded-xl shadow-xl border border-border-color">
             <h3 className="font-bold text-lg mb-4">{title}</h3>
             <div className="space-y-3">
                 {points.length > 0 ? (

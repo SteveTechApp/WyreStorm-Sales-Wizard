@@ -35,35 +35,37 @@ const QuizView: React.FC<QuizViewProps> = ({ module, onQuizComplete }) => {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Quiz: {module.title}</h1>
-      <div className="bg-background-secondary p-6 rounded-lg">
-        <p className="text-lg font-semibold mb-4">({currentQuestion + 1}/{module.quiz.length}) {question.question}</p>
-        <div className="space-y-3">
-          {question.options.map(option => (
-            <button
-              key={option}
-              onClick={() => setSelectedAnswer(option)}
-              className={`w-full text-left p-3 border rounded-md transition-colors ${
-                selectedAnswer === option
-                  ? 'bg-accent text-white border-accent'
-                  : 'bg-background hover:bg-border-color'
-              }`}
-            >
-              {option}
-            </button>
-          ))}
+    <div className="max-w-4xl mx-auto bg-background-secondary p-6 md:p-8 rounded-xl shadow-xl animate-fade-in-fast">
+        <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Quiz: {module.title}</h1>
         </div>
-      </div>
-      <div className="text-right mt-6">
-        <button
-          onClick={handleNext}
-          disabled={selectedAnswer === null}
-          className="bg-primary text-white font-bold py-2 px-6 rounded-lg disabled:opacity-50"
-        >
-          {currentQuestion < module.quiz.length - 1 ? 'Next' : 'Finish'}
-        </button>
-      </div>
+        <div className="bg-background p-6 rounded-lg border border-border-color">
+            <p className="text-lg font-semibold mb-4">({currentQuestion + 1}/{module.quiz.length}) {question.question}</p>
+            <div className="space-y-3">
+              {question.options.map(option => (
+                <button
+                  key={option}
+                  onClick={() => setSelectedAnswer(option)}
+                  className={`w-full text-left p-3 border-2 rounded-md transition-colors text-text-primary ${
+                    selectedAnswer === option
+                      ? 'bg-accent/10 border-accent'
+                      : 'bg-background hover:bg-border-color border-border-color'
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+        </div>
+        <div className="text-right mt-6">
+            <button
+              onClick={handleNext}
+              disabled={selectedAnswer === null}
+              className="btn btn-primary"
+            >
+              {currentQuestion < module.quiz.length - 1 ? 'Next' : 'Finish Quiz'}
+            </button>
+        </div>
     </div>
   );
 };

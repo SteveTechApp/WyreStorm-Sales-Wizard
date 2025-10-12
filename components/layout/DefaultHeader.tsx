@@ -4,9 +4,13 @@ import Logo from '../Logo.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
 import { HamburgerIcon } from '../Icons.tsx';
 import MobileNavMenu from '../MobileNavMenu.tsx';
-import { NAV_LINKS } from '../../data/navigation.ts';
+import { NavLinkItem } from '../../data/navigation.ts';
 
-const DefaultHeader: React.FC = () => {
+interface DefaultHeaderProps {
+  links: NavLinkItem[];
+}
+
+const DefaultHeader: React.FC<DefaultHeaderProps> = ({ links }) => {
   const { openProfileModal } = useUserContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -19,7 +23,7 @@ const DefaultHeader: React.FC = () => {
         <div className="container mx-auto flex justify-between items-center p-3">
           <Logo />
           <nav className="hidden md:flex items-center gap-4">
-            {NAV_LINKS.map(link => (
+            {links.map(link => (
               <NavLink key={link.path} to={link.path} className={navLinkClass} end={link.end}>
                 {link.label}
               </NavLink>
@@ -46,7 +50,7 @@ const DefaultHeader: React.FC = () => {
           </div>
         </div>
       </header>
-      <MobileNavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <MobileNavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} links={links} />
     </>
   );
 };

@@ -19,9 +19,7 @@ const createInitialAnswers = (initialData: RoomData | null): RoomWizardAnswers =
     };
 };
 
-const TOTAL_STEPS = 6; // Basic Info, Display, Sources, Audio, Environment & Control, Budget & Tier
-
-export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: RoomData) => void) => {
+export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: RoomData) => void, totalSteps: number) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<RoomWizardAnswers>(() => createInitialAnswers(initialData));
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -86,7 +84,7 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
 
     const handleNext = () => {
         if (!validateStep(currentStep)) return;
-        setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS - 1));
+        setCurrentStep(prev => Math.min(prev + 1, totalSteps - 1));
     };
 
     const handlePrev = () => {
@@ -106,7 +104,7 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
     };
 
     const isFirstStep = currentStep === 0;
-    const isLastStep = currentStep === TOTAL_STEPS - 1;
+    const isLastStep = currentStep === totalSteps - 1;
 
     return {
         currentStep,

@@ -1,4 +1,5 @@
 import { TrainingModule } from '../utils/types.ts';
+import { MODULE_0_TERMINOLOGY } from './training/module0_terminology.ts';
 import { MODULE_1_SIGNALS } from './training/module1_signals.ts';
 import { MODULE_2_HDBASET } from './training/module2_hdbaset.ts';
 import { MODULE_3_AVOIP } from './training/module3_avoip.ts';
@@ -12,6 +13,7 @@ import { MODULE_10_APIS } from './training/module10_apis.ts';
 import { MODULE_11_INSTALLATION } from './training/module11_installation.ts';
 
 export const TRAINING_MODULES: TrainingModule[] = [
+    MODULE_0_TERMINOLOGY,
     MODULE_1_SIGNALS,
     MODULE_2_HDBASET,
     MODULE_3_AVOIP,

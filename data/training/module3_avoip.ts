@@ -1,4 +1,4 @@
-import { TrainingModule } from '../../utils/types';
+import { TrainingModule } from '../../utils/types.ts';
 
 export const MODULE_3_AVOIP: TrainingModule = {
   id: 'module-3-avoip',
@@ -15,9 +15,19 @@ export const MODULE_3_AVOIP: TrainingModule = {
       },
     },
     {
+      title: 'Unicast vs. Multicast',
+      content:
+        'AVoIP uses two main methods for sending signals:\n\n- **Unicast**: A **one-to-one** connection. The encoder sends a single stream directly to the IP address of one decoder. This is efficient for simple connections but not for distribution.\n- **Multicast**: A **one-to-many** connection. The encoder sends a single stream to a special multicast IP address. Any decoder on the network can subscribe to this address to receive the stream. This is incredibly efficient for sending one source to many displays (like in digital signage or a sports bar). **IGMP Snooping** on the network switch is required to manage multicast traffic effectively.',
+      asset: {
+        url: 'https://i.imgur.com/k2e4k1N.png',
+        title: 'Unicast sends to one specific decoder, while Multicast sends to a group address that multiple decoders can listen to.',
+        type: 'diagram',
+      },
+    },
+    {
       title: 'Benefits of AVoIP',
       content:
-        'AVoIP offers several key advantages over traditional AV distribution:\n\n- **Scalability**: You are not limited by a fixed number of inputs and outputs. You can add more encoders or decoders at any time.\n- **Distance**: The transmission distance is virtually unlimited, constrained only by the reach of the network itself.\n- **Flexibility**: Any source can be routed to any display, or even to multiple displays simultaneously (multicasting).\n- **Advanced Features**: AVoIP enables features like video walls, multiview (multiple sources on one screen), and integration with other network services.',
+        'AVoIP offers several key advantages over traditional AV distribution:\n\n- **Scalability**: You are not limited by a fixed number of inputs and outputs. You can add more encoders or decoders at any time.\n- **Distance**: The transmission distance is virtually unlimited, constrained only by the reach of the network itself.\n- **Flexibility**: Any source can be routed to any display, or even to multiple displays simultaneously (multicasting).\n- **Advanced Features**: AVoIP enables features like **video walls, multiview** (multiple sources on one screen), and integration with other network services.',
       asset: {
         url: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=800&q=80',
         title: 'AVoIP systems can scale from small to massive installations easily.',
@@ -27,23 +37,23 @@ export const MODULE_3_AVOIP: TrainingModule = {
     {
       title: 'WyreStorm NetworkHD Series',
       content:
-        "WyreStorm's AVoIP product line is called **NetworkHD**. It includes several series based on different compression technologies (codecs):\n\n- **100/120 Series (H.264/H.265)**: A **low-bandwidth** solution ideal for large-scale deployments where network capacity is a concern. Good for digital signage and non-critical viewing.\n- **500 Series (JPEG-XS)**: A **high-quality, low-latency** solution that is visually lossless. Excellent for corporate boardrooms and command centers where quality is paramount.\n- **600 Series (Uncompressed)**: A **zero-latency, pixel-perfect** solution for the most demanding applications like medical imaging or broadcast, requiring a 10GbE network.",
+        "WyreStorm's AVoIP product line is called **NetworkHD**. It includes several series based on different compression technologies (codecs):\n\n- **100/120 Series (H.264/H.265)**: A **low-bandwidth** solution ideal for large-scale deployments where network capacity is a concern. Good for digital signage and non-critical viewing.\n- **500 Series (JPEG-XS)**: A **high-quality, low-latency** solution that is visually lossless. Excellent for corporate boardrooms and command centers where quality is paramount.\n- **600 Series (Uncompressed)**: A **zero-latency, pixel-perfect** solution for the most demanding applications like medical imaging or broadcast, requiring a 10GbE network.\n\nAll NetworkHD systems are managed by the **NHD-CTL-PRO**, the system controller that provides a web interface and API for routing and configuration.",
       asset: {
-        url: 'https://i.imgur.com/oV7j7fC.png',
-        title: 'The WyreStorm NetworkHD family of AVoIP products.',
+        url: 'https://i.imgur.com/d9j3S4h.jpg',
+        title: 'The NHD-CTL-PRO is the brain of a NetworkHD system.',
         type: 'image',
       }
     },
   ],
   quiz: [
     {
-      question: 'In an AVoIP system, what device connects to a display?',
-      options: ['Encoder', 'Decoder', 'Network Switch'],
-      correctAnswer: 'Decoder',
-      explanation: 'Decoders receive AV data from the network and convert it back into a signal (like HDMI) that a display can understand.',
+      question: 'Which transmission method is used to send a single source to multiple displays efficiently?',
+      options: ['Unicast', 'Multicast', 'Broadcast'],
+      correctAnswer: 'Multicast',
+      explanation: 'Multicast allows an encoder to send a single stream that multiple decoders can subscribe to, saving network bandwidth.',
     },
     {
-      question: 'Which NetworkHD series offers the highest possible video quality with zero latency?',
+      question: 'Which NetworkHD series would you choose for a mission-critical command center where image quality and zero latency are the top priorities?',
       options: ['120 Series', '500 Series', '600 Series'],
       correctAnswer: '600 Series',
       explanation: 'The 600 Series sends uncompressed video over a 10GbE network, resulting in pixel-perfect quality and no transmission delay.',

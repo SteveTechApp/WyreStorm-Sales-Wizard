@@ -10,16 +10,15 @@ interface State {
   error: Error | null;
 }
 
+// FIX: The ErrorBoundary class must extend React.Component<Props, State> to be a valid React component. This provides access to `this.props` and `this.state` and allows it to correctly accept children components.
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Replaced the constructor with a state property initializer.
-  // This modern syntax for React class components resolves potential type inference issues
-  // with `this` in the constructor that some toolchains may struggle with, fixing the
-  // reported errors about `state` and `props` not existing. This also fixes the cascading
-  // error in App.tsx where the `children` prop was not being recognized.
-  state: State = {
-    hasError: false,
-    error: null,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
 
   static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI.

@@ -17,7 +17,7 @@ const VisualRoomPlanner: React.FC = () => {
 
   if (!room) {
     return (
-      <div className="p-4 border rounded-lg bg-background-secondary text-center text-text-secondary min-h-[400px] flex items-center justify-center">
+      <div className="p-6 bg-background-secondary rounded-xl shadow-xl border border-border-color text-center text-text-secondary min-h-[400px] flex items-center justify-center">
         <p>Select a room to see the visual planner.</p>
       </div>
     );
@@ -31,7 +31,7 @@ const VisualRoomPlanner: React.FC = () => {
 
   return (
     <>
-      <div className="p-6 bg-background-secondary rounded-lg border border-border-color h-full flex flex-col min-h-[60vh]">
+      <div className="p-6 bg-background-secondary rounded-xl shadow-xl border border-border-color h-full flex flex-col min-h-[60vh]">
         <h3 className="font-bold text-lg mb-4 text-text-primary">Visual Room Planner</h3>
         <div className="bg-background border border-border-color p-8 rounded-md flex-grow flex items-center justify-center overflow-hidden">
           <div 

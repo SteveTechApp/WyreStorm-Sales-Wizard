@@ -3,14 +3,15 @@ import { NavLink } from 'react-router-dom';
 import { CloseIcon } from './Icons.tsx';
 import Logo from './Logo.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
-import { NAV_LINKS } from '../data/navigation.ts';
+import { NavLinkItem } from '../data/navigation.ts';
 
 interface MobileNavMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  links: NavLinkItem[];
 }
 
-const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
+const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose, links }) => {
   const { openProfileModal } = useUserContext();
   
   useEffect(() => {
@@ -53,7 +54,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ isOpen, onClose }) => {
         </button>
       </div>
       <nav className="flex flex-col justify-center items-center flex-grow gap-6">
-        {NAV_LINKS.map(link => (
+        {links.map(link => (
           <NavLink key={link.path} to={link.path} className={navLinkClass} onClick={onClose} end={link.end}>
             {link.label}
           </NavLink>

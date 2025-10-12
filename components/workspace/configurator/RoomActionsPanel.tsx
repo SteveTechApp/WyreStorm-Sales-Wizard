@@ -30,7 +30,7 @@ const RoomActionsPanel: React.FC = () => {
 
     return (
         <>
-            <div className="p-6 bg-background-secondary border-2 border-border-color">
+            <div className="p-6 bg-background-secondary rounded-xl shadow-xl border border-border-color">
                 <div className="grid grid-cols-2 gap-3">
                     <button
                         onClick={handleDesign}

@@ -1,11 +1,12 @@
 import React, { ReactNode, useMemo } from 'react';
 import { useUserContext } from '../context/UserContext.tsx';
 
-import Header from './layout/DefaultHeader.tsx';
+import DefaultHeader from './layout/DefaultHeader.tsx';
 import Footer from './layout/Footer.tsx';
 import QuickQuestionFAB from './QuickQuestionFAB.tsx';
 import ComparisonTray from './ComparisonTray.tsx';
 import ProfileModal from './ProfileModal.tsx';
+import { NAV_LINKS } from '../data/navigation.ts';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -32,7 +33,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         style={containerStyle}
         className="text-text-primary flex flex-col bg-app-bg shadow-2xl rounded-lg relative isolate overflow-hidden border border-border-color transition-all duration-300 ease-in-out"
     >
-      <Header />
+      <DefaultHeader links={NAV_LINKS} />
       <main className="flex-grow flex flex-col relative overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 flex-grow flex flex-col relative z-0">
              {children}

@@ -40,8 +40,8 @@ const ContextualLoadingUI: React.FC = () => {
     }, [context]);
 
     return (
-        <InfoModal isOpen={true} onClose={() => {}} className="max-w-md bg-background-secondary border border-border-color shadow-xl">
-            <div className="text-center">
+        <InfoModal isOpen={true} onClose={() => {}} className="max-w-md">
+            <div className="text-center p-4">
                 <LoadingSpinner />
                 <h2 className="text-2xl font-bold mt-4 uppercase tracking-widest text-accent">{context.title}</h2>
                 <p className="text-text-primary mt-2 h-6">{context.messages[messageIndex]}</p>

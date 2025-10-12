@@ -65,7 +65,7 @@ const ProjectSetupScreen: React.FC = () => {
                 <p className="text-lg text-text-secondary">Define project parameters and configure rooms using the wizard.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="p-6 bg-background-secondary border border-border-color rounded-lg">
+                <div className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
                     <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Project Details</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -87,7 +87,7 @@ const ProjectSetupScreen: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 bg-background-secondary border border-border-color rounded-lg">
+                <div className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
                     <h2 className="text-xl font-bold uppercase tracking-widest mb-4">// Configured Rooms</h2>
                     <div className="space-y-4">
                         {rooms.map(room => (

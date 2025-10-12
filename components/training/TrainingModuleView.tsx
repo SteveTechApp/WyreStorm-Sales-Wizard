@@ -13,36 +13,40 @@ const TrainingModuleView: React.FC<TrainingModuleViewProps> = ({ module, onCompl
   const page = module.contentPages[currentPage];
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">{module.title}</h1>
-      <h2 className="text-xl text-text-secondary mb-6">{page.title}</h2>
-      
-      <div className="prose dark:prose-invert max-w-none mb-6">
-          <ReactMarkdown>{page.content}</ReactMarkdown>
+    <div className="max-w-4xl mx-auto bg-background-secondary p-6 md:p-8 rounded-xl shadow-xl animate-fade-in-fast">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold mb-2">{module.title}</h1>
+        <h2 className="text-xl text-text-secondary mb-6">{page.title}</h2>
       </div>
+      
+      <div className="p-6 bg-background rounded-lg border border-border-color">
+          <div className="prose max-w-none">
+              <ReactMarkdown>{page.content}</ReactMarkdown>
+          </div>
 
-      {page.asset && (
-        <div className="my-6 p-4 border rounded-lg text-center bg-background-secondary">
-            <img src={page.asset.url} alt={page.asset.title} className="max-w-full mx-auto rounded-md" />
-            <p className="text-sm text-text-secondary italic mt-2">{page.asset.title}</p>
-        </div>
-      )}
+          {page.asset && (
+            <div className="my-6 p-4 border rounded-lg text-center bg-input-bg">
+                <img src={page.asset.url} alt={page.asset.title} className="max-w-full mx-auto rounded-md" />
+                <p className="text-sm text-text-secondary italic mt-2">{page.asset.title}</p>
+            </div>
+          )}
+      </div>
 
       <div className="flex justify-between items-center mt-8">
         <button
           onClick={() => setCurrentPage(p => p - 1)}
           disabled={currentPage === 0}
-          className="bg-background-secondary hover:bg-border-color font-bold py-2 px-4 rounded-lg disabled:opacity-50"
+          className="btn btn-secondary"
         >
           Previous
         </button>
         <p className="text-sm text-text-secondary">Page {currentPage + 1} of {module.contentPages.length}</p>
         {currentPage === module.contentPages.length - 1 ? (
-          <button onClick={onComplete} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-lg">
+          <button onClick={onComplete} className="btn btn-accent">
             Start Quiz
           </button>
         ) : (
-          <button onClick={() => setCurrentPage(p => p + 1)} className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg">
+          <button onClick={() => setCurrentPage(p => p + 1)} className="btn btn-primary">
             Next
           </button>
         )}

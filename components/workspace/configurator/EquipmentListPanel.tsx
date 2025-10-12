@@ -48,7 +48,7 @@ const EquipmentListPanel: React.FC = () => {
 
     return (
         <>
-            <div className="bg-background-secondary p-4 rounded-lg border border-border-color">
+            <div className="bg-background-secondary p-6 rounded-xl shadow-xl border border-border-color">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-lg">Equipment List</h3>
                     <button onClick={() => setIsFinderOpen(true)} className="text-sm font-semibold text-accent hover:underline">

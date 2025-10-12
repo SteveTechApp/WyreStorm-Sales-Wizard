@@ -39,7 +39,7 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onSave, initia
     handleSave,
     isFirstStep,
     isLastStep,
-  } = useRoomWizard(initialData, onSave);
+  } = useRoomWizard(initialData, onSave, stepComponents.length);
 
   if (!isOpen) return null;
 

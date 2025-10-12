@@ -1,13 +1,13 @@
-import { TrainingModule } from '../../utils/types';
+import { TrainingModule } from '../../utils/types.ts';
 
 export const MODULE_4_NETWORKING: TrainingModule = {
   id: 'module-4-networking',
   title: 'AV Networking Basics',
   contentPages: [
     {
-      title: 'The Network Switch is Key',
+      title: 'The LAN & The Network Switch',
       content:
-        'For AVoIP systems, the network switch is the heart of the system, acting as the virtual matrix switcher. Not all switches are suitable for AV.\n\nYou need a **Managed Switch** that supports specific features to handle the high-bandwidth, real-time nature of video traffic.',
+        'A **LAN (Local Area Network)** is the collection of connected devices within a single physical location, like an office building. For AVoIP systems, the **network switch** is the heart of the system, acting as the virtual matrix switcher. Not all switches are suitable for AV.\n\nYou need a **Managed Switch** that can be configured to handle the high-bandwidth, real-time nature of video traffic.',
       asset: {
         url: 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=800&q=80',
         title: 'A managed network switch is the core of any AVoIP system.',
@@ -15,9 +15,19 @@ export const MODULE_4_NETWORKING: TrainingModule = {
       },
     },
     {
+      title: 'IP Addresses & DHCP',
+      content:
+        'Every device on a network needs a unique **IP Address** to communicate, just like every house needs a unique street address.\n\n- **Static IP**: You manually assign a permanent IP address to each device. This is reliable but can be time-consuming to manage.\n- **DHCP (Dynamic Host Configuration Protocol)**: A service on the network (usually on the router) that **automatically assigns** IP addresses to devices when they connect. This is much easier to manage, especially for large systems. Most AVoIP systems can work with either method.',
+      asset: {
+        url: 'https://i.imgur.com/3c8i8tK.png',
+        title: 'A DHCP server on the LAN automatically provides IP addresses to new devices.',
+        type: 'diagram',
+      },
+    },
+    {
       title: 'Essential Switch Features',
       content:
-        'Key features to look for in a network switch for AVoIP include:\n\n- **PoE (Power over Ethernet)**: Can power encoders and decoders directly from the switch, simplifying wiring. Look for **PoE+ (802.3at)** for most devices.\n- **IGMP Snooping**: This is **crucial**. It prevents multicast video traffic from flooding the entire network. The switch "snoops" on the traffic and only sends it to the ports that have requested it.\n- **Jumbo Frames**: Allows for larger packet sizes (e.g., 9000 bytes), which can improve efficiency when transmitting large amounts of video data.',
+        'Key features to look for in a network switch for AVoIP include:\n\n- **PoE (Power over Ethernet)**: Can power encoders and decoders directly from the switch, simplifying wiring. Look for **PoE+ (802.3at)** for most devices.\n- **IGMP Snooping**: This is **crucial** for multicast traffic. It prevents video streams from flooding the entire network by only sending them to the ports that have requested them.\n- **Jumbo Frames**: Allows for larger packet sizes (e.g., 9000 bytes), which can improve efficiency when transmitting large amounts of video data.',
       asset: {
         url: 'https://i.imgur.com/k2e4k1N.png',
         title: 'With IGMP Snooping, multicast traffic only goes where it is needed.',
@@ -43,14 +53,14 @@ export const MODULE_4_NETWORKING: TrainingModule = {
       explanation: 'IGMP Snooping is essential to prevent multicast video from overwhelming the network by only sending streams to the ports that need them.',
     },
     {
-      question: 'What is the main advantage of a dedicated AV network?',
+      question: 'What automatically assigns IP addresses to devices on a network?',
       options: [
-        'It is cheaper than using the client\'s network.',
-        'It isolates AV traffic, ensuring reliability and simplifying setup.',
-        'It allows for faster internet speeds.',
+        'LAN',
+        'DHCP',
+        'IGMP',
       ],
-      correctAnswer: 'It isolates AV traffic, ensuring reliability and simplifying setup.',
-      explanation: 'A dedicated network prevents conflicts with other network traffic and is easier to configure and troubleshoot.',
+      correctAnswer: 'DHCP',
+      explanation: 'DHCP (Dynamic Host Configuration Protocol) simplifies network administration by leasing IP addresses to devices automatically.',
     },
   ],
 };

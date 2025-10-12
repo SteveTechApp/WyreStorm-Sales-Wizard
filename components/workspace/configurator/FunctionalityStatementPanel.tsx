@@ -14,7 +14,7 @@ const FunctionalityStatementPanel: React.FC = () => {
     };
 
     return (
-        <div className="bg-background-secondary p-4 rounded-lg border border-border-color">
+        <div className="bg-background-secondary p-6 rounded-xl shadow-xl border border-border-color">
             <h3 className="font-bold text-lg mb-2">Functionality Statement</h3>
             <p className="text-xs text-text-secondary mb-2">
                 This statement is used by the AI to understand the room's purpose. Be descriptive.
