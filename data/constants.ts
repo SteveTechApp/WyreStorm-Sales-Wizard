@@ -63,9 +63,6 @@ export const SUPPORTED_LANGUAGES: { code: LanguageCode, name: string }[] = [
     { code: 'de-DE', name: 'Deutsch (Deutschland)' },
 ];
 
-export const LABOR_ROLES: string[] = ['AV Technician', 'Lead Technician', 'Programmer', 'Project Manager', 'Engineer'];
-export const RATE_TYPES: ('Hourly' | 'Day Rate')[] = ['Hourly', 'Day Rate'];
-
 export const VERTICAL_MARKETS = [
     { verticalId: 'all', name: 'All', icon: SparklesIcon, imageUrl: '' },
     { verticalId: 'corp', name: 'Corporate', imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop&q=80', icon: BuildingIcon },
@@ -109,3 +106,18 @@ export const CONNECTION_TYPE_ICONS: Record<string, React.FC<{ className?: string
     'Fiber': FiberIcon,
     'default': GenericDeviceIcon,
 };
+
+// FIX: Added missing LABOR_ROLES and RATE_TYPES constant exports.
+export const LABOR_ROLES: string[] = [
+    'Project Manager',
+    'Lead Technician',
+    'Technician',
+    'Programmer',
+    'Engineer',
+    'Drafter',
+];
+
+export const RATE_TYPES: string[] = [
+    'Hourly',
+    'Daily',
+];

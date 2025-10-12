@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../context/UserContext.tsx';
-import { UserProfile, LaborRate } from '../utils/types.ts';
-import LaborRateManager from './profile/LaborRateManager.tsx';
+import { UserProfile } from '../utils/types.ts';
 import { SUPPORTED_LANGUAGES } from '../data/constants.ts';
 import toast from 'react-hot-toast';
 import ToggleSwitch from './ui/ToggleSwitch.tsx';
@@ -72,13 +71,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                       <option value="EUR">EUR (€)</option>
                   </select>
               </div>
-          </div>
-           <div>
-              <h3 className="text-lg font-semibold mb-2">Labor Rates</h3>
-              <LaborRateManager 
-                  laborRates={localProfile.laborRates}
-                  setLaborRates={(newRates: LaborRate[]) => setLocalProfile(p => ({...p, laborRates: newRates}))}
-              />
           </div>
           <div>
               <h3 className="text-lg font-semibold mb-2">Appearance</h3>

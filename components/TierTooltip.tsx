@@ -16,7 +16,7 @@ const TierTooltip: React.FC<TierTooltipProps> = ({ tier, children }) => {
   return (
     <div className="relative group">
       {children}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-app-bg text-text-primary text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-border-color">
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-background text-text-primary text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-border-color">
         <h4 className="font-bold">{tier} Tier</h4>
         <p>{TIER_DESCRIPTIONS[tier]}</p>
       </div>

@@ -1,4 +1,4 @@
-import { TrainingModule } from '../../utils/types';
+import { TrainingModule } from '../../utils/types.ts';
 
 export const MODULE_8_BANT: TrainingModule = {
   id: 'module-8-bant',
@@ -9,7 +9,7 @@ export const MODULE_8_BANT: TrainingModule = {
       content:
         '**BANT** is a sales qualification framework used to identify and assess potential leads. It helps you determine if a prospect is a good fit before you invest too much time.\n\nIt stands for:\n- **B**udget\n- **A**uthority\n- **N**eed\n- **T**imeline',
       asset: {
-        url: 'https://i.imgur.com/2Xy3l5b.png',
+        url: 'https://i.imgur.com/mX7rD4C.png',
         title: 'BANT: Budget, Authority, Need, Timeline.',
         type: 'diagram',
       },

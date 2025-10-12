@@ -68,7 +68,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
               onReset={resetSearch} 
            />
         ) : (
-          <>
+          <div className="bg-background p-6 rounded-lg shadow-lg border border-border-color">
             <form onSubmit={handleFormSubmit}>
               <label htmlFor="quick-question-input" className="sr-only">Ask a technical or product question</label>
               <input
@@ -87,14 +87,14 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
                   <button 
                     key={i}
                     onClick={() => handlePresetClick(q)}
-                    className="text-left p-3 bg-background hover:bg-app-bg rounded-md text-sm border border-border-color"
+                    className="text-left p-3 bg-app-bg hover:bg-input-bg rounded-md text-sm border border-border-color"
                   >
                     {q}
                   </button>
                 ))}
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </InfoModal>

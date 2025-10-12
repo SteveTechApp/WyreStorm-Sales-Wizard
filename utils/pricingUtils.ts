@@ -7,12 +7,12 @@ export const calculatePricing = (project: ProjectData, userProfile: UserProfile)
         return total + (item.dealerPrice * item.quantity);
     }, 0);
 
-    // Placeholder for labor calculation
-    const laborTotal = (userProfile.laborRates.find(r => r.role === 'AV Technician')?.rate || 75) * 8 * project.rooms.length;
+    // Labor costs have been removed as per user request.
+    const laborTotal = 0;
 
     const ancillaryTotal = Object.values(project.ancillaryCosts).reduce((sum, cost) => sum + cost, 0);
 
-    const grandTotal = hardwareTotal + laborTotal + ancillaryTotal;
+    const grandTotal = hardwareTotal + ancillaryTotal;
 
     return {
         hardwareTotal,

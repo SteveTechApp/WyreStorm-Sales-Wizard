@@ -1,9 +1,10 @@
 import { LanguageCode } from './common.ts';
 
+// FIX: Added missing LaborRate type export.
 export interface LaborRate {
     id: string;
     role: string;
-    rateType: 'Hourly' | 'Day Rate';
+    rateType: string;
     rate: number;
 }
 
@@ -14,7 +15,6 @@ export interface UserProfile {
     language: LanguageCode;
     currency: 'GBP' | 'USD' | 'EUR';
     unitSystem: 'metric' | 'imperial';
-    laborRates: LaborRate[];
     showBackground: boolean;
     zoomLevel: number;
     resolution: string;

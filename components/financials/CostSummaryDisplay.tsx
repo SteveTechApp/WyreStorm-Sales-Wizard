@@ -19,10 +19,6 @@ const CostSummaryDisplay: React.FC = () => {
                 <span className="font-bold">{formatCurrency(pricing.hardwareTotal)}</span>
             </div>
              <div className="flex justify-between p-2 bg-background rounded">
-                <span>Labor Cost:</span>
-                <span className="font-bold">{formatCurrency(pricing.laborTotal)}</span>
-            </div>
-             <div className="flex justify-between p-2 bg-background rounded">
                 <span>Ancillary Cost:</span>
                 <span className="font-bold">{formatCurrency(pricing.ancillaryTotal)}</span>
             </div>

@@ -108,9 +108,10 @@ export interface RoomData {
     audioSystemDetails: AudioSystemDetails;
     technicalDetails: TechnicalDetails;
     budget: number;
+    valueEngineeringConstraints?: string[];
 }
 
-export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment'>;
+export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints'>;
 
 export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;

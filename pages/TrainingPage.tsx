@@ -15,7 +15,6 @@ const TrainingPage: React.FC = () => {
     const { userProfile } = useUserContext();
     const [status, setStatus] = useState<TrainingStatus>('idle');
     const [activeModule, setActiveModule] = useState<TrainingModuleType | null>(null);
-    const [quizAnswers, setQuizAnswers] = useState<QuizAnswer[]>([]);
     const [lastQuizScore, setLastQuizScore] = useState<number | null>(null);
     const [completedModules, setCompletedModules] = useLocalStorage<string[]>('completedTrainingModules', []);
 
@@ -27,7 +26,6 @@ const TrainingPage: React.FC = () => {
     const startQuiz = (module: TrainingModuleType) => {
         setActiveModule(module);
         setStatus('in_quiz');
-        setQuizAnswers([]);
     };
 
     const handleQuizComplete = (answers: QuizAnswer[]) => {

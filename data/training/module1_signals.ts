@@ -9,7 +9,7 @@ export const MODULE_1_SIGNALS: TrainingModule = {
       content:
         'At its core, AV is about moving signals from a source to a destination.\n\n- **Analog**: A continuous wave that is susceptible to noise and degradation over distance. Examples include VGA for video and RCA for audio. Analog is considered legacy technology.\n- **Digital**: A signal represented by binary code (1s and 0s). It is much more resistant to noise. If the data arrives, the picture is perfect. Examples include **HDMI, DisplayPort, and SDI**.',
       asset: {
-        url: 'https://placehold.co/800x400/e2e8f0/334155?text=Diagram:+Analog+Wave+vs+Digital+Signal',
+        url: 'https://i.imgur.com/8f8sJ6W.png',
         title: 'An analog signal degrades with noise, while a digital signal remains perfect until it fails completely.',
         type: 'diagram',
       },
@@ -29,7 +29,7 @@ export const MODULE_1_SIGNALS: TrainingModule = {
         content:
           '**EDID (Extended Display Identification Data)** is a crucial piece of information that makes "plug and play" possible. It is the data a display sends to a source device to tell it what its capabilities are.\n\nWhen you plug in an HDMI cable, an **"EDID handshake"** occurs:\n1. The display says, "Hi, I\'m a 1080p TV and I support stereo audio."\n2. The source device reads this and says, "Okay, I will send you a 1080p signal with stereo audio."\n\nIf this handshake fails (due to a bad cable or incompatible device), you will often get a **black screen or "No Signal"** message, even if everything is plugged in correctly.',
         asset: {
-          url: 'https://placehold.co/800x400/e2e8f0/334155?text=Diagram:+EDID+Handshake',
+          url: 'https://i.imgur.com/e2a2d4w.png',
           title: 'The EDID handshake is a two-way communication between a source and a display.',
           type: 'diagram',
         },
@@ -39,7 +39,7 @@ export const MODULE_1_SIGNALS: TrainingModule = {
         content:
           '**Bandwidth** is the data rate of a signal, measured in gigabits per second (Gbps). Higher resolution, higher frame rates, and less compression all require more bandwidth.\n\n- **1080p @ 60Hz** requires about 4.46 Gbps.\n- **4K @ 60Hz 4:4:4** requires **17.82 Gbps**.\n\nThis is why **18Gbps** is a critical number. All devices in a 4K60 signal chain (cables, switchers, extenders) must be rated to handle at least 18Gbps of bandwidth, or the signal will fail.',
         asset: {
-          url: 'https://placehold.co/800x400/e2e8f0/334155?text=Diagram:+Bandwidth+Requirements',
+          url: 'https://i.imgur.com/B1b1e9c.png',
           title: 'Higher quality video signals require significantly more bandwidth.',
           type: 'diagram',
         },
@@ -49,7 +49,7 @@ export const MODULE_1_SIGNALS: TrainingModule = {
       content:
         "To save bandwidth, video signals often use chroma subsampling. It's expressed as a ratio like **4:4:4**, **4:2:2**, or **4:2:0**.\n\n- **4:4:4**: **No compression**. Every pixel gets full color information. This is **crucial** for sharp text and computer graphics.\n- **4:2:0**: **High compression**. Color information is shared across a 2x2 block of pixels. It\'s acceptable for movies and broadcast TV but can make text look blurry.\n\nFor most corporate and education applications, **4:4:4** support is preferred to ensure computer-generated content looks crisp.",
       asset: {
-        url: 'https://placehold.co/800x400/e2e8f0/334155?text=Visual:+4:4:4+vs+4:2:0+on+text',
+        url: 'https://i.imgur.com/qO5m3J6.png',
         title: 'A visual comparison of 4:4:4 vs 4:2:0 on fine text.',
         type: 'image',
       },

@@ -15,10 +15,6 @@ const PricingTable: React.FC<PricingTableProps> = ({ pricing }) => {
             <td className="p-2 text-right">${pricing.hardwareTotal.toFixed(2)}</td>
           </tr>
           <tr>
-            <td className="p-2 font-semibold">Labor Total</td>
-            <td className="p-2 text-right">${pricing.laborTotal.toFixed(2)}</td>
-          </tr>
-          <tr>
             <td className="p-2 font-semibold">Ancillary Total</td>
             <td className="p-2 text-right">${pricing.ancillaryTotal.toFixed(2)}</td>
           </tr>

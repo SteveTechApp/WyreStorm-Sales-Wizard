@@ -13,7 +13,7 @@ interface QuickQuestionResultProps {
 
 const QuickQuestionResult: React.FC<QuickQuestionResultProps> = ({ query, result, isLoading, error, onReset }) => {
     return (
-        <div>
+        <div className="bg-background p-6 rounded-lg shadow-lg border border-border-color">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold text-lg truncate">Q: {query}</h3>
                 <button onClick={onReset} className="flex items-center gap-1 text-sm font-medium text-accent hover:underline">
@@ -22,17 +22,19 @@ const QuickQuestionResult: React.FC<QuickQuestionResultProps> = ({ query, result
                 </button>
             </div>
 
-            {isLoading && (
-                <div className="flex justify-center items-center min-h-[200px]">
-                    <LoadingSpinner />
-                </div>
-            )}
-            {error && <p className="text-destructive">{error}</p>}
-            {result && (
-                 <div className="prose dark:prose-invert max-w-none p-4 bg-background rounded-md border">
-                    <ReactMarkdown>{result}</ReactMarkdown>
-                </div>
-            )}
+            <div className="pt-4 border-t border-border-color">
+                {isLoading && (
+                    <div className="flex justify-center items-center min-h-[200px]">
+                        <LoadingSpinner />
+                    </div>
+                )}
+                {error && <p className="text-destructive">{error}</p>}
+                {result && (
+                     <div className="prose max-w-none">
+                        <ReactMarkdown>{result}</ReactMarkdown>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

@@ -125,6 +125,32 @@ export const useProjectGeneration = () => {
             toast.success(`AI has designed room: ${roomToDesign.roomName}`);
         });
     };
+
+    const handleValueEngineerRoom = async (roomId: string, constraints: string[]) => {
+        const project = getState().projectData;
+        if (!project) return;
+        const roomToEngineer = project.rooms.find(r => r.id === roomId);
+        if (!roomToEngineer) return;
+
+        const roomWithConstraints = { ...roomToEngineer, valueEngineeringConstraints: constraints };
+        dispatchProjectAction({ type: 'UPDATE_ROOM', payload: roomWithConstraints });
+
+        await withLoading('design', async () => {
+            const result = await designRoom(roomWithConstraints, project.productDatabase);
+            const fullEquipment: ManuallyAddedEquipment[] = result.manuallyAddedEquipment.map(item => {
+                const product = project.productDatabase.find(p => p.sku === item.sku);
+                return { ...product!, quantity: item.quantity };
+            });
+
+            const updatedRoom: RoomData = {
+                ...roomWithConstraints,
+                functionalityStatement: result.functionalityStatement,
+                manuallyAddedEquipment: fullEquipment,
+            };
+            dispatchProjectAction({ type: 'UPDATE_ROOM', payload: updatedRoom });
+            toast.success(`Room re-designed with new constraints!`);
+        });
+    };
     
     const handleGenerateDiagram = async (roomId: string) => {
         const project = getState().projectData;
@@ -169,5 +195,6 @@ export const useProjectGeneration = () => {
         handleDesignRoom,
         handleGenerateDiagram,
         handleGenerateProposal,
+        handleValueEngineerRoom,
     };
 };

@@ -44,6 +44,24 @@ export const MODULE_2_HDBASET: TrainingModule = {
         type: 'diagram',
       },
     },
+    {
+      title: 'Cabling is Critical',
+      content: "The performance of HDBaseT is highly dependent on the quality of the category cable used. Using the wrong cable is the #1 cause of HDBaseT failures.\n\n- **Use Solid Core Copper**: Never use Copper Clad Aluminum (CCA) or patch cables for infrastructure wiring.\n- **CAT6a is Recommended**: For all new installations, especially for HDBaseT 3.0, CAT6a is the recommended standard.\n- **Termination Matters**: Both ends of the cable must be terminated correctly, usually to the **T568B** standard. Poor termination is a major source of signal loss.",
+      asset: {
+        url: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80',
+        title: 'High-quality, well-terminated CAT6a cable is essential for HDBaseT reliability.',
+        type: 'image',
+      },
+    },
+    {
+      title: 'Power over HDBaseT (PoH)',
+      content: "**PoH** is similar to PoE but is a specific part of the HDBaseT standard. It allows a transmitter (TX) to send power up the category cable to the receiver (RX), or vice-versa.\n\nThis is a huge advantage as it means you don't need to install a power outlet behind the display. One end of the extender pair powers the other.\n\n**Important**: Always check the datasheet to see if the PoH is **two-way** (either unit can power the other) or **one-way** (only the TX can power the RX).",
+      asset: {
+        url: 'https://i.imgur.com/7jL5x3d.png',
+        title: 'PoH simplifies installation by removing the need for a power outlet at one end.',
+        type: 'diagram',
+      },
+    },
   ],
   quiz: [
     {
@@ -58,5 +76,13 @@ export const MODULE_2_HDBASET: TrainingModule = {
       correctAnswer: 'AVoIP',
       explanation: 'AVoIP uses a network switch as a virtual matrix, allowing any source to be sent to any number of displays, making it ideal for flexible routing.',
     },
+    { question: 'What does "PoH" stand for?', options: ['Power over HDMI', 'Power over HDBaseT', 'Power on Handshake'], correctAnswer: 'Power over HDBaseT', explanation: 'PoH is the HDBaseT standard for sending power over the same category cable as the AV signals.' },
+    { question: 'What is the maximum distance for HDBaseT Class A transmitting a 1080p signal?', options: ['70m', '100m', '40m'], correctAnswer: '100m', explanation: 'Class A can transmit 1080p signals up to 100 meters (328 feet).' },
+    { question: 'You are running an HDBaseT link and see sparkles on the screen. What is the most likely cause?', options: ['A failed EDID handshake', 'An HDCP error', 'A low-quality or poorly terminated cable'], correctAnswer: 'A low-quality or poorly terminated cable', explanation: 'Sparkles and signal dropouts are classic signs of poor signal integrity, usually caused by issues with the cable.' },
+    { question: 'HDBaseT is what type of connection topology?', options: ['Point-to-point', 'Point-to-multipoint', 'Mesh network'], correctAnswer: 'Point-to-point', explanation: 'HDBaseT connects a single transmitter (TX) to a single receiver (RX). It is not a networked technology.' },
+    { question: 'Which of the 5-Play features allows you to control a display from the transmitter side?', options: ['Video', 'Power', 'Control (IR/RS-232)'], correctAnswer: 'Control (IR/RS-232)', explanation: 'The control channel allows signals like IR and RS-232 to be passed through the extender pair.' },
+    { question: 'Which cable type is recommended for all new HDBaseT installations?', options: ['CAT5e', 'CAT6a', 'Coaxial'], correctAnswer: 'CAT6a', explanation: 'CAT6a provides the best performance and future-proofing, and is required for HDBaseT 3.0.' },
+    { question: 'What does "5-Play" refer to?', options: ['The number of displays you can connect', 'The five types of signals HDBaseT can carry', 'A five-year warranty'], correctAnswer: 'The five types of signals HDBaseT can carry', explanation: 'The 5-Play feature set includes Video/Audio, USB, Ethernet, Control, and Power.' },
+    { question: 'You have a 4K source. An HDBaseT Class B extender will transmit this signal up to what distance?', options: ['100m', '70m', '35m'], correctAnswer: '35m', explanation: 'Class B extenders support 4K signals up to 35 meters. They support 1080p up to 70 meters.' }
   ],
 };

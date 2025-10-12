@@ -11,6 +11,7 @@ export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' |
     features: [],
     functionalityStatement: 'A standard meeting space.',
     manuallyAddedEquipment: [],
+    valueEngineeringConstraints: [],
     constructionDetails: {
         wallConstruction: 'drywall',
         cableContainment: 'trunking',
