@@ -4,6 +4,7 @@ import BasicInfoInputs from './ioConfig/BasicInfoInputs.tsx';
 import ConnectivityInputs from './ioConfig/ConnectivityInputs.tsx';
 import OutputSpecifics from './ioConfig/OutputSpecifics.tsx';
 import InfoModal from '../InfoModal.tsx';
+import toast from 'react-hot-toast';
 
 interface IOPointConfigModalProps {
   isOpen: boolean;
@@ -14,19 +15,50 @@ interface IOPointConfigModalProps {
 
 const IOPointConfigModal: React.FC<IOPointConfigModalProps> = ({ isOpen, onClose, onSave, point }) => {
   const [currentPoint, setCurrentPoint] = useState<IOPoint | null>(point);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setCurrentPoint(point);
+    setErrors({}); // Reset errors when modal is opened or point changes
   }, [point, isOpen]);
 
   if (!isOpen || !currentPoint) return null;
 
   const handleUpdate = (newValues: Partial<IOPoint>) => {
     setCurrentPoint(prev => prev ? { ...prev, ...newValues } : null);
+    // Clear errors for the field being updated
+    const fieldName = Object.keys(newValues)[0];
+    if (fieldName in errors) {
+        setErrors(prevErrors => {
+            const newErrors = { ...prevErrors };
+            delete newErrors[fieldName];
+            return newErrors;
+        });
+    }
   };
 
+  const validate = (): boolean => {
+      if (!currentPoint) return false;
+      const newErrors: Record<string, string> = {};
+      
+      // HDBaseT Distance Validation
+      if (currentPoint.connectionType === 'HDBaseT') {
+          const distance = Number(currentPoint.distance);
+          if (isNaN(distance) || distance < 1 || distance > 100) {
+              newErrors.distance = 'HDBaseT distance must be between 1 and 100 meters.';
+          }
+      }
+
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+          toast.error(Object.values(newErrors)[0]); // Show first error in a toast
+          return false;
+      }
+      return true;
+  }
+
   const handleSave = () => {
-    if (currentPoint) {
+    if (currentPoint && validate()) {
       onSave(currentPoint);
     }
   };
@@ -48,7 +80,7 @@ const IOPointConfigModal: React.FC<IOPointConfigModalProps> = ({ isOpen, onClose
     >
       <div className="space-y-6">
         <BasicInfoInputs point={currentPoint} onUpdate={handleUpdate} />
-        <ConnectivityInputs point={currentPoint} onUpdate={handleUpdate} />
+        <ConnectivityInputs point={currentPoint} onUpdate={handleUpdate} errors={errors} />
         {currentPoint.type === 'output' && (
           <OutputSpecifics point={currentPoint} onUpdate={handleUpdate} />
         )}

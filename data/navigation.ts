@@ -10,4 +10,5 @@ export const NAV_LINKS: NavLinkItem[] = [
   { path: '/', label: 'Dashboard', end: true },
   { path: '/setup', label: 'New Project', end: false },
   { path: '/training', label: 'Training', end: false },
+  { path: '/video', label: 'Video Gen', end: false },
 ];

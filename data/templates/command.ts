@@ -18,7 +18,8 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
             ioRequirements: [],
             displayType: 'lcd_video_wall',
             displayCount: 4,
-            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'avoip_500e' },
+            // FIX: Corrected typo 'avoip_500e' to 'avoip_500' to match the type definition.
+            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'avoip_500' },
             features: [],
             functionalityStatement: 'A compact but powerful security operations center for 2-4 operators. A 2x2 video wall displays a flexible combination of security camera feeds, access control dashboards, and other data sources. The system is driven by a NetworkHD AVoIP system, allowing any source to be shown on any screen or across the entire wall. Operators can control layouts from their workstations.',
             manuallyAddedEquipment: [],

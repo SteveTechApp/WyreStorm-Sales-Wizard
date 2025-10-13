@@ -40,7 +40,7 @@ const VideoGeneratorPage: React.FC = () => {
     const renderContent = () => {
         if (isLoading) {
             return (
-                <div className="text-center p-8 bg-background-secondary rounded-none border-2 border-border-color shadow-xl">
+                <div className="text-center p-8 bg-background-secondary rounded-xl border border-border-color shadow-xl">
                     <LoadingSpinner />
                     <h2 className="text-2xl font-bold mt-4 uppercase tracking-widest text-accent">Generating Video...</h2>
                     <p className="text-text-primary mt-2 h-6">{loadingMessage}</p>
@@ -50,9 +50,9 @@ const VideoGeneratorPage: React.FC = () => {
 
         if (error) {
             return (
-                <div className="text-center text-destructive p-8 bg-destructive/10 border-2 border-destructive/20">
-                    <h2 className="text-2xl font-bold">Generation Failed</h2>
-                    <p className="mt-2">{error}</p>
+                <div className="text-center p-8 bg-destructive/10 border border-destructive/20 rounded-xl">
+                    <h2 className="text-2xl font-bold text-destructive">Generation Failed</h2>
+                    <p className="mt-2 text-text-secondary">{error}</p>
                     <button onClick={handleReset} className="mt-4 btn btn-secondary">
                         Try Again
                     </button>
@@ -62,7 +62,7 @@ const VideoGeneratorPage: React.FC = () => {
 
         if (videoUrl) {
             return (
-                <div className="p-6 bg-background-secondary border-2 border-border-color">
+                <div className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
                     <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Generated Video</h2>
                     <video src={videoUrl} controls className="w-full rounded-md" />
                     <div className="mt-4 text-right">
@@ -75,12 +75,12 @@ const VideoGeneratorPage: React.FC = () => {
         }
 
         return (
-            <form onSubmit={handleGenerateVideo} className="p-6 bg-background-secondary border-2 border-border-color">
+            <form onSubmit={handleGenerateVideo} className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
                 <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="e.g., A 3D animation showing a WyreStorm EX-40-H2-ARC extender set. A laptop connects to the transmitter with an HDMI cable. A Cat6 cable connects the transmitter to the receiver, which is behind a TV. The TV displays a 4K image."
-                    className="w-full h-40 p-4 border-2 border-border-color rounded-none bg-input-bg focus:outline-none focus:border-accent resize-y"
+                    className="w-full h-40 p-4 border border-border-color rounded-md bg-input-bg focus:outline-none focus:border-accent resize-y"
                 />
                 <div className="mt-4 text-right">
                     <button type="submit" className="btn btn-primary text-lg" disabled={!prompt.trim()}>

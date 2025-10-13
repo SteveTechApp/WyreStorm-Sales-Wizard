@@ -1,6 +1,7 @@
 
 
 
+
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -78,7 +79,8 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             id: '', roomName: 'Entrance Display', roomType: 'Retail Space', designTier: 'Silver',
             dimensions: { length: 5, width: 1, height: 4 }, maxParticipants: 0, ioRequirements: [],
             displayType: 'lcd_video_wall', displayCount: 4,
-            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'processor_vw' },
+            // FIX: Corrected 'processor_vw' to a valid specific product SKU 'processor_sw0204vw' which matches a 2x2 layout.
+            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'processor_sw0204vw' },
             features: [],
             functionalityStatement: 'A 2x2 video wall creating a high-impact visual at the store entrance. A dedicated video wall processor takes a single 4K media player source and splits it across the four displays. The processor handles bezel correction for a seamless look. This is a robust, cost-effective solution for a single-source video wall.',
             manuallyAddedEquipment: [],

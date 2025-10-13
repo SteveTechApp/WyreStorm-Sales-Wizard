@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
-import { ProjectData, ProjectSetupData, RoomData, UserTemplate, ManuallyAddedEquipment } from '../utils/types.ts';
+import { ProjectData, ProjectSetupData, RoomData, UserTemplate, ManuallyAddedEquipment, DesignTier } from '../utils/types.ts';
 import { analyzeRequirements } from '../services/projectAnalysisService.ts';
 import { designRoom, generateDiagram } from '../services/roomDesignerService.ts';
 import { generateProposal } from '../services/proposalService.ts';
@@ -49,6 +49,7 @@ export const useProjectGeneration = () => {
                 unitSystem: 'metric',
                 notes: `Generated from client brief:\n\n${documentText}`,
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
+                infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
                 productDatabase: PRODUCT_DATABASE,
             };
             dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
@@ -69,6 +70,7 @@ export const useProjectGeneration = () => {
                 unitSystem: 'metric',
                 notes: '',
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
+                infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
                 productDatabase: PRODUCT_DATABASE,
                 budget: setupData.budget,
                 timeline: setupData.timeline,
@@ -79,22 +81,23 @@ export const useProjectGeneration = () => {
        });
     };
     
-    const handleStartFromTemplate = (template: UserTemplate, navigate: ReturnType<typeof useNavigate>) => {
+    const handleStartFromTemplate = (template: UserTemplate, tier: DesignTier, navigate: ReturnType<typeof useNavigate>) => {
          withLoading('template', async () => {
             const newProject: ProjectData = {
                 projectId: uuidv4(),
                 projectName: `${template.templateName} Project`,
                 clientName: 'New Client',
                 lastSaved: new Date().toISOString(),
-                rooms: [{...template.roomData, id: uuidv4()}],
+                rooms: [{...template.roomData, id: uuidv4(), designTier: tier}],
                 proposals: [],
                 unitSystem: 'metric',
                 notes: `Started from template: ${template.templateName}`,
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
+                infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
                 productDatabase: PRODUCT_DATABASE,
             };
             dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
-            toast.success(`Project started from "${template.templateName}" template!`);
+            toast.success(`Project started from "${template.templateName}" as a ${tier} design!`);
             navigate(`/design/${newProject.projectId}`);
         });
     }

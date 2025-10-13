@@ -1,98 +1,145 @@
-import React, { useState } from 'react';
-import { askQuickQuestion } from '../services/assistantService.ts';
-import QuickQuestionResult from './quickQuestion/QuickQuestionResult.tsx';
+import React, { useState, useEffect, useRef } from 'react';
 import { useUserContext } from '../context/UserContext.tsx';
+import { createChatSession } from '../services/assistantService.ts';
+import type { Chat } from '@google/genai';
+import ReactMarkdown from 'react-markdown';
+
+interface Message {
+  role: 'user' | 'model';
+  content: string;
+}
 
 const QuickQuestionPage: React.FC = () => {
-  const [query, setQuery] = useState('');
-  const [result, setResult] = useState<string | null>(null);
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const { userProfile } = useUserContext();
-  
-  const PRESET_QUESTIONS = [
-    "What's the difference between HDBaseT Class A and B?",
-    "When should I use the NetworkHD 500 series?",
-    "What is HDCP 2.2 required for?",
-    "Explain chroma subsampling 4:4:4 vs 4:2:0.",
-  ];
 
-  const handleSubmit = async (currentQuery: string) => {
-    if (!currentQuery.trim()) return;
+  const chatRef = useRef<Chat | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Initialize chat session on component mount
+    chatRef.current = createChatSession(userProfile);
+    setMessages([
+      { role: 'model', content: "Hello! As your WyreStorm AI assistant, how can I help you with our products or AV technology today?" }
+    ]);
+  }, [userProfile]);
+
+  useEffect(() => {
+    // Auto-scroll to the latest message
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
+
+  const handleSend = async (messageText?: string) => {
+    const textToSend = messageText || input;
+    if (!textToSend.trim() || isLoading) return;
+
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: textToSend }]);
     setIsLoading(true);
-    setError(null);
-    setResult(null);
+
     try {
-      const response = await askQuickQuestion(currentQuery, userProfile);
-      setResult(response);
+      if (!chatRef.current) {
+        console.error("Chat session not initialized.");
+        throw new Error("Chat session not initialized.");
+      }
+      const response = await chatRef.current.sendMessage(textToSend);
+      setMessages(prev => [...prev, { role: 'model', content: response.text }]);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'An unknown error occurred.');
+      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
+      setMessages(prev => [...prev, { role: 'model', content: `Sorry, I encountered an error: ${errorMessage}` }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handlePresetClick = (question: string) => {
-    setQuery(question);
-    handleSubmit(question);
-  };
-  
   const handleFormSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      handleSubmit(query);
+    e.preventDefault();
+    handleSend();
   };
-  
-  const resetSearch = () => {
-      setQuery('');
-      setResult(null);
-      setError(null);
-      setIsLoading(false);
-  }
+
+  const PRESET_QUESTIONS = [
+    "What's the difference between HDBaseT Class A and B?",
+    "When should I use the NetworkHD 500 series?",
+    "I need a 4x2 matrix with USB-C, what do you recommend?",
+    "Explain chroma subsampling 4:4:4 vs 4:2:0.",
+  ];
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in-fast">
-        <div className="text-center mb-8">
-            <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Quick Question</h1>
-            <p className="text-lg text-text-secondary">Ask a technical or product question about WyreStorm technology.</p>
-        </div>
-      
-        {result || isLoading || error ? (
-           <QuickQuestionResult 
-              query={query} 
-              result={result} 
-              isLoading={isLoading} 
-              error={error} 
-              onReset={resetSearch} 
-           />
-        ) : (
-          <div className="bg-background-secondary p-6 rounded-xl shadow-xl border border-border-color">
-            <form onSubmit={handleFormSubmit}>
-              <label htmlFor="quick-question-input" className="sr-only">Ask a technical or product question</label>
-              <input
-                type="text"
-                id="quick-question-input"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="e.g., Explain chroma subsampling 4:4:4 vs 4:2:0"
-                className="w-full p-3 rounded-lg bg-input-bg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 ring-offset-background focus:ring-accent shadow-sm border border-border-color"
-              />
-            </form>
-            <div className="mt-6">
-              <h3 className="font-semibold mb-3 text-center">Or try one of these common questions:</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {PRESET_QUESTIONS.map((q, i) => (
-                  <button 
-                    key={i}
-                    onClick={() => handlePresetClick(q)}
-                    className="text-left p-3 bg-background hover:bg-input-bg rounded-md text-sm border border-border-color transition-colors"
-                  >
-                    {q}
-                  </button>
-                ))}
+    <div className="max-w-4xl mx-auto animate-fade-in-fast flex flex-col h-full">
+      <div className="text-center mb-8 flex-shrink-0">
+        <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Wingman AI Chat</h1>
+        <p className="text-lg text-text-secondary">Ask technical questions or get product recommendations.</p>
+      </div>
+
+      <div className="bg-background-secondary p-4 rounded-xl shadow-xl border border-border-color flex-grow flex flex-col">
+        {/* Chat History */}
+        <div className="flex-grow overflow-y-auto space-y-4 p-2">
+          {messages.map((msg, index) => (
+            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`p-3 rounded-lg max-w-xl prose ${msg.role === 'user' ? 'bg-accent text-text-on-accent' : 'bg-background border border-border-color'}`}>
+                <ReactMarkdown
+                  components={{
+                    a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline" />
+                  }}
+                >
+                    {msg.content}
+                </ReactMarkdown>
               </div>
             </div>
+          ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="p-3 rounded-lg bg-background border border-border-color">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-text-secondary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
+                  <div className="w-2 h-2 bg-text-secondary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
+                  <div className="w-2 h-2 bg-text-secondary rounded-full animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={chatEndRef} />
+        </div>
+
+        {/* Input Form */}
+        <div className="mt-4 pt-4 border-t border-border-color flex-shrink-0">
+          <form onSubmit={handleFormSubmit} className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask a question..."
+              className="w-full p-3 rounded-lg bg-input-bg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 ring-offset-background focus:ring-accent shadow-sm border border-border-color"
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className="btn btn-primary px-6 disabled:opacity-50"
+              aria-label="Send message"
+            >
+              Send
+            </button>
+          </form>
+          
+          {/* Preset Questions */}
+          <div className="mt-4">
+            <div className="flex flex-wrap justify-center gap-2">
+              {PRESET_QUESTIONS.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSend(q)}
+                  disabled={isLoading}
+                  className="text-xs text-left p-2 bg-background hover:bg-input-bg rounded-md border border-border-color transition-colors disabled:opacity-50"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
+        </div>
+      </div>
     </div>
   );
 };

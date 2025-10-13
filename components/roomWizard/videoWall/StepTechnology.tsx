@@ -7,10 +7,31 @@ interface StepTechnologyProps {
 }
 
 const TECHNOLOGY_OPTIONS = [
-    { id: 'processor_vw', name: 'Dedicated Video Wall Processor', description: 'A single hardware box that splits a source across multiple screens. Simple and reliable for single-source walls.' },
-    { id: 'avoip_150', name: 'AVoIP (Multi-view)', description: 'Uses specialized NetworkHD 150 decoders to create flexible multi-source layouts on the wall.' },
-    { id: 'avoip_500e', name: 'AVoIP (Standard)', description: 'Uses one NetworkHD 500-E decoder per screen. Good for showing single sources on single screens or across the whole wall.' },
-    { id: 'avoip_600', name: 'AVoIP (10G Uncompressed)', description: 'The highest quality, zero-latency option using NetworkHD 600 series. For mission-critical applications.' }
+    { 
+        id: 'processor_sw0204vw', 
+        name: 'Dedicated Processor (SW-0204-VW)', 
+        description: 'A 4-output processor for 2x2 or 1x4 walls. Simple and reliable for single-source walls.' 
+    },
+    { 
+        id: 'processor_sw0206vw', 
+        name: 'Dedicated Processor (SW-0206-VW)', 
+        description: 'A 6-output processor for larger custom layouts (e.g., 2x3 or 1x6). Simple and reliable for single-source walls.' 
+    },
+    { 
+        id: 'avoip_150', 
+        name: 'AVoIP (100/120 Series + NHD-150-RX)', 
+        description: 'Uses specialized NHD-150-RX multiview decoders with the low-bandwidth 100/120 Series to create flexible, multi-source video walls.' 
+    },
+    { 
+        id: 'avoip_500', 
+        name: 'AVoIP (500 Series)', 
+        description: 'Uses one NHD-500-RX decoder per screen. A high-quality, low-latency 1GbE solution with bezel correction and KVM.' 
+    },
+    { 
+        id: 'avoip_600', 
+        name: 'AVoIP (600 Series 10G)', 
+        description: 'The highest quality, zero-latency option using NetworkHD 600 series transceivers. For mission-critical applications.' 
+    }
 ];
 
 const StepTechnology: React.FC<StepTechnologyProps> = ({ config, updateConfig }) => {

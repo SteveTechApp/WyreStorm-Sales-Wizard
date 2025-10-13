@@ -31,6 +31,16 @@ const NetworkInfrastructurePanel: React.FC = () => {
                 />
             </div>
             <div className="flex items-center justify-between">
+                 <div className="flex items-center gap-2">
+                    <label htmlFor="enableTouchAppPreview" className="text-sm font-medium text-text-secondary">Enable Touch App Preview</label>
+                    <InfoTooltip text="Enables the WyreStorm Touch App preview feature for controlling NetworkHD systems from a tablet." />
+                </div>
+                <ToggleSwitch
+                    checked={infrastructure.enableTouchAppPreview}
+                    onChange={(isChecked) => handleChange('enableTouchAppPreview', isChecked)}
+                />
+            </div>
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <label htmlFor="cablingByOthers" className="text-sm font-medium text-text-secondary">Cabling by Others</label>
                      <InfoTooltip text="Indicates that the low-voltage cabling (e.g., Cat6) will be installed by a different contractor." />

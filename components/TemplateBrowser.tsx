@@ -1,6 +1,4 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGenerationContext } from '../context/GenerationContext.tsx';
 import { VERTICAL_MARKETS } from '../data/constants.ts';
 import TemplateGroupCard from './TemplateGroupCard.tsx';
 import { useUserTemplates } from '../hooks/useUserTemplates.ts';
@@ -8,12 +6,14 @@ import { UserTemplate } from '../utils/types.ts';
 import TemplateCard from './TemplateCard.tsx';
 import TemplateDetailPanel from './templateBrowser/TemplateDetailPanel.tsx';
 
-const TemplateBrowser: React.FC = () => {
-    const { handleStartFromTemplate } = useGenerationContext();
+interface TemplateBrowserProps {
+  onTemplateSelect: (template: UserTemplate) => void;
+}
+
+const TemplateBrowser: React.FC<TemplateBrowserProps> = ({ onTemplateSelect }) => {
     const { userTemplates } = useUserTemplates();
     const [activeVertical, setActiveVertical] = useState('all');
     const [selectedTemplate, setSelectedTemplate] = useState<UserTemplate | null>(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         setSelectedTemplate(null);
@@ -30,9 +30,6 @@ const TemplateBrowser: React.FC = () => {
         }, {} as Record<string, UserTemplate[]>);
     }, [userTemplates]);
 
-    const startProject = (template: UserTemplate) => {
-        handleStartFromTemplate(template, navigate);
-    };
 
     const templatesForVertical = useMemo(() => {
         if (activeVertical === 'all') return [];
@@ -66,7 +63,7 @@ const TemplateBrowser: React.FC = () => {
                             <TemplateGroupCard 
                                 verticalId={vertical.verticalId}
                                 templates={groupedTemplates[vertical.verticalId] || []}
-                                onTemplateSelect={(template) => startProject(template)}
+                                onTemplateSelect={onTemplateSelect}
                             />
                         </div>
                     )) : (
@@ -90,7 +87,7 @@ const TemplateBrowser: React.FC = () => {
                          )}
                     </div>
                     <div className="md:col-span-2">
-                        <TemplateDetailPanel template={selectedTemplate} onStart={startProject} />
+                        <TemplateDetailPanel template={selectedTemplate} onStart={onTemplateSelect} />
                     </div>
                 </div>
             )}

@@ -16,7 +16,7 @@ const VideoWallWizardModal: React.FC<{
   const [config, setConfig] = useState<VideoWallConfig>({
       type: 'lcd',
       layout: { rows: 2, cols: 2 },
-      technology: 'avoip_500e'
+      technology: 'avoip_500'
   });
 
   const handleSave = () => {

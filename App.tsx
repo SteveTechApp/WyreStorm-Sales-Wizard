@@ -16,6 +16,7 @@ const ProposalDisplay = lazy(() => import('./pages/ProposalDisplay.tsx'));
 const TrainingPage = lazy(() => import('./pages/TrainingPage.tsx'));
 const TemplateBrowserScreen = lazy(() => import('./pages/TemplateBrowserScreen.tsx'));
 const QuickQuestionPage = lazy(() => import('./components/QuickQuestionModal.tsx'));
+const VideoGeneratorPage = lazy(() => import('./pages/VideoGeneratorPage.tsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx'));
 
 const suspenseFallback = (
@@ -35,6 +36,7 @@ const AppRoutes = () => (
             <Route path="/training" element={<TrainingPage />} />
             <Route path="/templates" element={<TemplateBrowserScreen />} />
             <Route path="/ask" element={<QuickQuestionPage />} />
+            <Route path="/video" element={<VideoGeneratorPage />} />
             <Route path="*" element={<NotFoundPage />} />
         </Routes>
     </Suspense>
