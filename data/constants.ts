@@ -106,18 +106,3 @@ export const CONNECTION_TYPE_ICONS: Record<string, React.FC<{ className?: string
     'Fiber': FiberIcon,
     'default': GenericDeviceIcon,
 };
-
-// FIX: Added missing LABOR_ROLES and RATE_TYPES constant exports.
-export const LABOR_ROLES: string[] = [
-    'Project Manager',
-    'Lead Technician',
-    'Technician',
-    'Programmer',
-    'Engineer',
-    'Drafter',
-];
-
-export const RATE_TYPES: string[] = [
-    'Hourly',
-    'Daily',
-];

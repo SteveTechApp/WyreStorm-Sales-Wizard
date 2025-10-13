@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { UserTemplate } from '../utils/types.ts';
-import { useLocalStorage } from './useLocalStorage';
+import { useLocalStorage } from './useLocalStorage.ts';
 import { DEFAULT_TEMPLATES } from '../data/defaultTemplates.ts';
 import toast from 'react-hot-toast';
 

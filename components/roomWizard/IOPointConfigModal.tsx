@@ -28,39 +28,35 @@ const IOPointConfigModal: React.FC<IOPointConfigModalProps> = ({ isOpen, onClose
     setCurrentPoint(prev => prev ? { ...prev, ...newValues } : null);
     // Clear errors for the field being updated
     const fieldName = Object.keys(newValues)[0];
-    if (fieldName in errors) {
-        setErrors(prevErrors => {
-            const newErrors = { ...prevErrors };
+    if (errors[fieldName]) {
+        setErrors(prev => {
+            const newErrors = {...prev};
             delete newErrors[fieldName];
             return newErrors;
         });
     }
   };
 
-  const validate = (): boolean => {
-      if (!currentPoint) return false;
-      const newErrors: Record<string, string> = {};
-      
-      // HDBaseT Distance Validation
-      if (currentPoint.connectionType === 'HDBaseT') {
-          const distance = Number(currentPoint.distance);
-          if (isNaN(distance) || distance < 1 || distance > 100) {
-              newErrors.distance = 'HDBaseT distance must be between 1 and 100 meters.';
-          }
-      }
-
-      setErrors(newErrors);
-      if (Object.keys(newErrors).length > 0) {
-          toast.error(Object.values(newErrors)[0]); // Show first error in a toast
-          return false;
-      }
-      return true;
-  }
-
   const handleSave = () => {
-    if (currentPoint && validate()) {
-      onSave(currentPoint);
+    if (!currentPoint) return;
+
+    const newErrors: Record<string, string> = {};
+    
+    // HDBaseT Distance Validation
+    if (currentPoint.connectionType === 'HDBaseT') {
+        const distance = Number(currentPoint.distance);
+        if (isNaN(distance) || distance < 1 || distance > 100) {
+            newErrors.distance = 'HDBaseT distance must be between 1 and 100 meters.';
+        }
     }
+
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        toast.error(Object.values(newErrors)[0]);
+        return;
+    }
+    
+    onSave(currentPoint);
   };
 
   const footer = (

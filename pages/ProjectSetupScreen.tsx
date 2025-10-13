@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
@@ -7,6 +8,7 @@ import { PlusIcon } from '../components/Icons.tsx';
 import RoomWizard from '../components/RoomWizard.tsx';
 import ConfiguredRoomCard from '../components/projectSetup/ConfiguredRoomCard.tsx';
 import toast from 'react-hot-toast';
+import ProjectDetailsForm from '../components/projectSetup/ProjectDetailsForm.tsx';
 
 const ProjectSetupScreen: React.FC = () => {
     const [projectName, setProjectName] = useState('New Project');
@@ -56,8 +58,6 @@ const ProjectSetupScreen: React.FC = () => {
         handleProjectSetupSubmit(setupData, navigate);
     };
 
-    const inputStyle = "w-full p-2 border border-border-color rounded-md bg-input-bg mt-1 focus:border-accent outline-none";
-
     return (
         <div className="max-w-4xl mx-auto animate-fade-in-fast">
             <div className="text-center mb-8">
@@ -65,27 +65,17 @@ const ProjectSetupScreen: React.FC = () => {
                 <p className="text-lg text-text-secondary">Define project parameters and configure rooms using the wizard.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
-                    <h2 className="text-xl font-bold mb-4 uppercase tracking-widest">// Project Details</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="project-name" className="block text-sm font-medium uppercase">Project Name</label>
-                            <input type="text" id="project-name" value={projectName} onChange={e => setProjectName(e.target.value)} className={inputStyle} required />
-                        </div>
-                        <div>
-                            <label htmlFor="client-name" className="block text-sm font-medium uppercase">Client</label>
-                            <input type="text" id="client-name" value={clientName} onChange={e => setClientName(e.target.value)} className={inputStyle} />
-                        </div>
-                        <div>
-                            <label htmlFor="budget" className="block text-sm font-medium uppercase">Total Budget ({userProfile.currency})</label>
-                            <input type="number" id="budget" value={budget || ''} placeholder="e.g., 25000" onChange={e => setBudget(Number(e.target.value))} className={inputStyle} />
-                        </div>
-                        <div>
-                             <label htmlFor="timeline" className="block text-sm font-medium uppercase">Target Completion Date</label>
-                            <input type="date" id="timeline" value={timeline} onChange={e => setTimeline(e.target.value)} className={inputStyle} />
-                        </div>
-                    </div>
-                </div>
+                <ProjectDetailsForm
+                    projectName={projectName}
+                    setProjectName={setProjectName}
+                    clientName={clientName}
+                    setClientName={setClientName}
+                    budget={budget}
+                    setBudget={setBudget}
+                    timeline={timeline}
+                    setTimeline={setTimeline}
+                    userProfile={userProfile}
+                />
 
                 <div className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
                     <h2 className="text-xl font-bold uppercase tracking-widest mb-4">// Configured Rooms</h2>

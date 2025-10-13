@@ -39,7 +39,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({ isOpen, onClose, 
       templateId: uuidv4(),
       templateName,
       description,
-      vertical,
+      vertical: vertical as any,
       imageUrl: VERTICAL_MARKETS.find(v => v.verticalId === vertical)?.imageUrl || '',
       roomData: { ...roomData, id: '' }, // Clear ID for template
     };
@@ -49,8 +49,8 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({ isOpen, onClose, 
   
   const footer = (
     <>
-      <button onClick={onClose} className="bg-background hover:bg-border-color text-text-primary font-medium py-2 px-4 rounded-md">Cancel</button>
-      <button onClick={handleSave} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md">Save Template</button>
+      <button onClick={onClose} className="btn btn-secondary">Cancel</button>
+      <button onClick={handleSave} className="btn btn-primary">Save Template</button>
     </>
   );
 
@@ -64,7 +64,7 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({ isOpen, onClose, 
             id="template-name" 
             value={templateName} 
             onChange={(e) => setTemplateName(e.target.value)} 
-            className="w-full p-2 border rounded-md bg-input-bg"
+            className="w-full p-2 border rounded-md bg-input-bg mt-1"
             required
           />
         </div>
@@ -74,13 +74,13 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({ isOpen, onClose, 
             id="template-description" 
             value={description} 
             onChange={(e) => setDescription(e.target.value)} 
-            className="w-full p-2 border rounded-md bg-input-bg" 
+            className="w-full p-2 border rounded-md bg-input-bg mt-1" 
             rows={3}
           />
         </div>
         <div>
           <label htmlFor="template-vertical" className="block text-sm font-medium text-text-secondary">Vertical Market</label>
-          <select id="template-vertical" value={vertical} onChange={(e) => setVertical(e.target.value)} className="w-full p-2 border rounded-md bg-input-bg">
+          <select id="template-vertical" value={vertical} onChange={(e) => setVertical(e.target.value)} className="w-full p-2 border rounded-md bg-input-bg mt-1">
             {VERTICAL_MARKETS.filter(v => v.verticalId !== 'all').map(v => (
               <option key={v.verticalId} value={v.verticalId}>{v.name}</option>
             ))}

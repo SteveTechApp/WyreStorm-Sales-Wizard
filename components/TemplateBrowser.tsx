@@ -1,94 +1,49 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { VERTICAL_MARKETS } from '../data/constants.ts';
-import TemplateGroupCard from './TemplateGroupCard.tsx';
+import React, { useMemo } from 'react';
 import { useUserTemplates } from '../hooks/useUserTemplates.ts';
 import { UserTemplate } from '../utils/types.ts';
 import TemplateCard from './TemplateCard.tsx';
-import TemplateDetailPanel from './templateBrowser/TemplateDetailPanel.tsx';
+import { ArrowUturnLeftIcon } from './Icons.tsx';
 
 interface TemplateBrowserProps {
   onTemplateSelect: (template: UserTemplate) => void;
+  activeVertical: string;
+  onBack: () => void;
 }
 
-const TemplateBrowser: React.FC<TemplateBrowserProps> = ({ onTemplateSelect }) => {
-    const { userTemplates } = useUserTemplates();
-    const [activeVertical, setActiveVertical] = useState('all');
-    const [selectedTemplate, setSelectedTemplate] = useState<UserTemplate | null>(null);
+const TemplateBrowser: React.FC<TemplateBrowserProps> = ({ onTemplateSelect, activeVertical, onBack }) => {
+    const { userTemplates, handleDeleteTemplate } = useUserTemplates();
 
-    useEffect(() => {
-        setSelectedTemplate(null);
-    }, [activeVertical]);
-
-    const groupedTemplates = useMemo(() => {
-        return userTemplates.reduce((acc, template) => {
-            const verticalId = template.vertical;
-            if (!acc[verticalId]) {
-                acc[verticalId] = [];
-            }
-            acc[verticalId].push(template);
-            return acc;
-        }, {} as Record<string, UserTemplate[]>);
-    }, [userTemplates]);
-
-
-    const templatesForVertical = useMemo(() => {
-        if (activeVertical === 'all') return [];
-        return groupedTemplates[activeVertical] || [];
-    }, [activeVertical, groupedTemplates]);
-    
-    const filteredVerticals = useMemo(() => {
-        return VERTICAL_MARKETS.filter(v => v.verticalId !== 'all' && groupedTemplates[v.verticalId]);
-    }, [groupedTemplates]);
+    const filteredTemplates = useMemo(() => {
+        return userTemplates.filter(t => t.vertical === activeVertical);
+    }, [userTemplates, activeVertical]);
 
     return (
         <div>
-            <div className="mb-4 overflow-x-auto">
-                 <div className="flex justify-center space-x-2 border-b border-border-color">
-                    {VERTICAL_MARKETS.map(v => (
-                        <button 
-                            key={v.verticalId}
-                            onClick={() => setActiveVertical(v.verticalId)}
-                            className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${activeVertical === v.verticalId ? 'border-b-2 border-accent text-accent' : 'text-text-secondary hover:text-text-primary'}`}
-                        >
-                            {v.name}
-                        </button>
-                    ))}
-                 </div>
+            <div className="mb-6">
+                <button 
+                    onClick={onBack}
+                    className="flex items-center gap-2 text-sm font-medium text-accent hover:underline"
+                >
+                    <ArrowUturnLeftIcon className="h-4 w-4" />
+                    Back to All Verticals
+                </button>
             </div>
 
-            {activeVertical === 'all' ? (
-                <div className="flex overflow-x-auto gap-6 pb-4 -mx-6 px-6 snap-x snap-mandatory">
-                    {filteredVerticals.length > 0 ? filteredVerticals.map(vertical => (
-                        <div key={vertical.verticalId} className="w-80 md:w-96 flex-shrink-0 snap-start">
-                            <TemplateGroupCard 
-                                verticalId={vertical.verticalId}
-                                templates={groupedTemplates[vertical.verticalId] || []}
-                                onTemplateSelect={onTemplateSelect}
-                            />
-                        </div>
-                    )) : (
-                        <div className="w-full flex-grow">
-                            <p className="text-center text-text-secondary py-8">No templates found.</p>
-                        </div>
-                    )}
+            {filteredTemplates.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {filteredTemplates.map(template => (
+                        <TemplateCard
+                            key={template.templateId}
+                            template={template}
+                            onSelect={onTemplateSelect}
+                            onDelete={handleDeleteTemplate}
+                        />
+                    ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    <div className="md:col-span-1 h-[60vh] overflow-y-auto pr-2 space-y-2">
-                         {templatesForVertical.length > 0 ? templatesForVertical.map(template => (
-                             <TemplateCard
-                                key={template.templateId}
-                                template={template}
-                                onSelect={setSelectedTemplate}
-                                isSelected={selectedTemplate?.templateId === template.templateId}
-                             />
-                         )) : (
-                            <p className="text-center text-text-secondary py-8">No templates found for this vertical.</p>
-                         )}
-                    </div>
-                    <div className="md:col-span-2">
-                        <TemplateDetailPanel template={selectedTemplate} onStart={onTemplateSelect} />
-                    </div>
+                <div className="text-center text-text-secondary py-16">
+                    <p className="font-semibold">No templates found.</p>
+                    <p className="text-sm mt-1">No templates available for this vertical market.</p>
                 </div>
             )}
         </div>

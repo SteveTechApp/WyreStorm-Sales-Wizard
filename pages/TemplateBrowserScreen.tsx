@@ -4,10 +4,14 @@ import { useGenerationContext } from '../context/GenerationContext.tsx';
 import TemplateBrowser from '../components/TemplateBrowser.tsx';
 import TemplateTierSelectorModal from '../components/TemplateTierSelectorModal.tsx';
 import { UserTemplate, DesignTier } from '../utils/types.ts';
+import { VERTICAL_MARKETS } from '../data/constants.ts';
+import VerticalMarketCard from '../components/VerticalMarketCard.tsx';
 
 const TemplateBrowserScreen: React.FC = () => {
     const [isTierModalOpen, setIsTierModalOpen] = useState(false);
     const [selectedTemplate, setSelectedTemplate] = useState<UserTemplate | null>(null);
+    const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
+
     const { handleStartFromTemplate } = useGenerationContext();
     const navigate = useNavigate();
 
@@ -24,14 +28,37 @@ const TemplateBrowserScreen: React.FC = () => {
         setSelectedTemplate(null);
     };
 
+    const verticalInfo = selectedVertical ? VERTICAL_MARKETS.find(v => v.verticalId === selectedVertical) : null;
+
     return (
         <>
             <div className="max-w-7xl mx-auto animate-fade-in-fast bg-background-secondary p-6 md:p-8 rounded-xl shadow-xl">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Start from Template</h1>
-                    <p className="text-lg text-text-secondary">Select a pre-configured design to kickstart your project.</p>
+                    <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">
+                        {selectedVertical ? `${verticalInfo?.name} Templates` : 'Select a Vertical'}
+                    </h1>
+                    <p className="text-lg text-text-secondary">
+                        {selectedVertical ? 'Select a pre-configured design to kickstart your project.' : 'Select a vertical market to see available templates.'}
+                    </p>
                 </div>
-                <TemplateBrowser onTemplateSelect={handleSelectTemplate} />
+                
+                {selectedVertical ? (
+                    <TemplateBrowser 
+                        onTemplateSelect={handleSelectTemplate} 
+                        activeVertical={selectedVertical}
+                        onBack={() => setSelectedVertical(null)}
+                    />
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        {VERTICAL_MARKETS.filter(v => v.verticalId !== 'all').map(v => (
+                            <VerticalMarketCard 
+                                key={v.verticalId} 
+                                vertical={v as any}
+                                onClick={() => setSelectedVertical(v.verticalId)}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
             <TemplateTierSelectorModal
                 isOpen={isTierModalOpen}

@@ -124,6 +124,38 @@ export const AVOIP_PRODUCTS: Product[] = [
         usb: { ports: [{ type: 'USB-B Host', count: 1 }, { type: 'USB-A Device', count: 2 }], bandwidth: '2.0 (480Mbps)'},
         audio: { dsp: true }
     },
+    {
+        sku: 'NHD-500-TXE',
+        name: 'NetworkHD 500 Series 4K60 JPEG-XS Encoder (HDMI Only)',
+        category: 'AVoIP Encoder',
+        description: 'A cost-effective, visually lossless 4K60 4:4:4 encoder over 1GbE. This version is stripped back for applications like video walls where only an HDMI input is required, with no USB or advanced audio features.',
+        msrp: 1000,
+        dealerPrice: 750,
+        tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'JPEG-XS', '1GbE', '4K60', '4:4:4', 'Low Latency', 'Video Wall'],
+        videoIO: { inputs: [{ type: 'HDMI', count: 1 }], outputs: [{ type: 'RJ45', count: 1 }] },
+        hdmiVersion: '2.0b',
+        hdcpVersion: '2.2',
+        rs232: true,
+        ethernet: true,
+        poe: true,
+        avoip: { codec: 'JPEG-XS' }
+    },
+    {
+        sku: 'NHD-500-RXE',
+        name: 'NetworkHD 500 Series 4K60 JPEG-XS Decoder (HDMI Only)',
+        category: 'AVoIP Decoder',
+        description: 'A cost-effective, visually lossless 4K60 4:4:4 decoder over 1GbE. This version is ideal for video wall panels or displays that do not require USB KVM or audio de-embedding.',
+        msrp: 1000,
+        dealerPrice: 750,
+        tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', '1GbE', '4K60', '4:4:4', 'Low Latency', 'Video Wall'],
+        videoIO: { inputs: [{ type: 'RJ45', count: 1 }], outputs: [{ type: 'HDMI', count: 1 }] },
+        hdmiVersion: '2.0b',
+        hdcpVersion: '2.2',
+        rs232: true,
+        ethernet: true,
+        poe: true,
+        avoip: { codec: 'JPEG-XS' }
+    },
     
     // 600 SERIES - UNCOMPRESSED 10GbE
     {

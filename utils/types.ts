@@ -1,4 +1,6 @@
+
 export * from './types/api.ts';
+export * from './types/chat.ts';
 export * from './types/common.ts';
 export * from './types/product.ts';
 export * from './types/project.ts';

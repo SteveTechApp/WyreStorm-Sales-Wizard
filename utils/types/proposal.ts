@@ -11,7 +11,6 @@ export interface Proposal {
     installationPlan: { phase: string; tasks: string[] }[];
     pricing: {
         hardwareTotal: number;
-        laborTotal: number;
         ancillaryTotal: number;
         grandTotal: number;
     };

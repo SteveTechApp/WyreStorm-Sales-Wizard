@@ -1,3 +1,5 @@
+import { DesignTier } from '../utils/types.ts';
+
 export const COMMON_FEATURES = [
     { name: 'Video Conferencing', description: 'Integrate with platforms like Zoom or Teams.' },
     { name: 'Wireless Presentation', description: 'Allow users to share content from their devices wirelessly.' },
@@ -9,6 +11,15 @@ export const COMMON_FEATURES = [
 
 export const VIDEO_RESOLUTIONS = ['1080p', '4K/30Hz 4:4:4', '4K/60Hz 4:2:0', '4K/60Hz 4:4:4'];
 export const CONTROL_SYSTEMS = ['None (Auto-switching)', 'Simple Keypad', 'Touch Panel', 'Third-Party Integration'];
+
+export const AVOIP_SYSTEM_TYPES = [
+    'None',
+    '1GbE (H.264/H.265 - Low Bandwidth)',
+    '1GbE (JPEG-XS - Visually Lossless)',
+    '1GbE (JPEG2000 - Legacy)',
+    '10GbE (Uncompressed)',
+    '10GbE (SDVoE)',
+];
 
 export const WALL_CONSTRUCTION_OPTIONS = [
     { value: 'drywall', label: 'Drywall / Plasterboard' },
@@ -43,10 +54,54 @@ export const AUDIO_USE_CASE_OPTIONS = [
     { value: 'video_conferencing', label: 'Video Conferencing Audio' },
 ];
 
-export const CONNECTION_TYPES = ['HDMI', 'USB-C', 'DisplayPort', 'VGA', '3.5mm Audio', 'XLR Audio'];
-export const DISTRIBUTION_TYPES = ['Direct', 'HDBaseT', 'AVoIP', 'Fiber'];
+export const CONNECTION_TYPES = [
+    // Video
+    'HDMI', 
+    'DisplayPort', 
+    'USB-C', 
+    'SDI',
+    'DVI',
+    'VGA', 
+    'Component',
+    'Composite',
+    // Audio
+    '3.5mm Audio', 
+    'RCA Audio',
+    'XLR Audio', 
+    'SPDIF',
+    'Toslink',
+    'Phoenix',
+    'Speakon',
+    // Data/Control
+    'USB-A',
+    'USB-B',
+    'Ethernet',
+];
+export const DISTRIBUTION_TYPES = [
+    'Direct', 
+    'HDBaseT', 
+    'AVoIP', 
+    'Fiber',
+    'Active Optical Cable (AOC)',
+    'SDI',
+    'Dante',
+    'Wireless',
+];
 export const MOUNTING_TYPES = ['Wall Mount', 'Ceiling Mount', 'Pole Mount', 'Rack Mount', 'Desktop'];
-export const TERMINATION_TYPES = ['Wall Plate', 'Floor Box', 'Table Box', 'Direct to Device'];
+export const TERMINATION_TYPES = [
+    'Direct to Device',
+    'Wall Plate',
+    'Brush Plate',
+    'Floor Box',
+    'Floor Box to Desk',
+    'Table Box',
+    'Podium',
+    'Lectern',
+    'In-Furniture',
+    'Local Rack',
+    'Central Rack',
+    'Ceiling Box',
+];
 
 export const DISPLAY_TYPES = [
     { value: 'single', label: 'Single LFD' },

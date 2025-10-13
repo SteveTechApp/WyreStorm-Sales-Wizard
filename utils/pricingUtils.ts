@@ -7,16 +7,12 @@ export const calculatePricing = (project: ProjectData, userProfile: UserProfile)
         return total + (item.dealerPrice * item.quantity);
     }, 0);
 
-    // Labor costs have been removed as per user request.
-    const laborTotal = 0;
-
     const ancillaryTotal = Object.values(project.ancillaryCosts).reduce((sum, cost) => sum + cost, 0);
 
     const grandTotal = hardwareTotal + ancillaryTotal;
 
     return {
         hardwareTotal,
-        laborTotal,
         ancillaryTotal,
         grandTotal,
     };

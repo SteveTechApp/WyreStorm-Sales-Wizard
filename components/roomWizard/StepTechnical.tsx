@@ -1,6 +1,6 @@
 import React from 'react';
-import { RoomWizardAnswers } from '../../utils/types';
-import { VIDEO_RESOLUTIONS, CONTROL_SYSTEMS } from '../../data/wizardOptions.ts';
+import { RoomWizardAnswers } from '../../utils/types.ts';
+import { VIDEO_RESOLUTIONS, CONTROL_SYSTEMS, AVOIP_SYSTEM_TYPES } from '../../data/wizardOptions.ts';
 
 interface StepTechnicalProps {
   answers: RoomWizardAnswers;
@@ -47,6 +47,18 @@ const StepTechnical: React.FC<StepTechnicalProps> = ({ answers, updateAnswers })
             className="w-full p-2 border rounded-md bg-input-bg mt-1"
           >
             {CONTROL_SYSTEMS.map(sys => <option key={sys} value={sys}>{sys}</option>)}
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="avoip-system" className="block text-sm font-medium text-text-secondary">AVoIP System</label>
+          <select
+            id="avoip-system"
+            name="avoipSystem"
+            value={answers.technicalDetails.avoipSystem || 'None'}
+            onChange={handleTechDetailChange}
+            className="w-full p-2 border rounded-md bg-input-bg mt-1"
+          >
+            {AVOIP_SYSTEM_TYPES.map(sys => <option key={sys} value={sys}>{sys}</option>)}
           </select>
         </div>
       </div>

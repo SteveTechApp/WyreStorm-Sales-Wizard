@@ -36,7 +36,6 @@ const ConnectivityInputs: React.FC<ConnectivityInputsProps> = ({ point, onUpdate
           id="io-distance"
           value={point.distance}
           onChange={(e) => onUpdate({ distance: Number(e.target.value) })}
-          // FIX: Use bracket notation to access properties on the `errors` object. This resolves a TypeScript error where the default `{}` type for the `errors` prop doesn't have a known 'distance' property.
           className={`w-full p-2 border rounded-md bg-input-bg mt-1 ${errors['distance'] ? 'border-destructive' : 'border-border-color'}`}
         />
         {errors['distance'] && <p className="text-destructive text-sm mt-1">{errors['distance']}</p>}

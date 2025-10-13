@@ -58,6 +58,7 @@ export interface TechnicalDetails {
   cameraType: 'none' | 'usb_webcam' | 'hdmi_ptz';
   cameraCount: number;
   roomPc: boolean;
+  avoipSystem?: string;
 }
 
 export interface StructuredSystemDiagramNode {

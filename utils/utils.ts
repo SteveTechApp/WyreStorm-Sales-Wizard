@@ -31,6 +31,7 @@ export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' |
         cameraType: 'none',
         cameraCount: 0,
         roomPc: false,
+        avoipSystem: 'None',
     },
     budget: 5000,
 });

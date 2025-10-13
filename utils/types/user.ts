@@ -1,13 +1,5 @@
 import { LanguageCode } from './common.ts';
 
-// FIX: Added missing LaborRate type export.
-export interface LaborRate {
-    id: string;
-    role: string;
-    rateType: string;
-    rate: number;
-}
-
 export interface UserProfile {
     name: string;
     company: string;
