@@ -44,7 +44,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, children, classN
                 <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
             </div>
         )}
-        <div className="p-6 overflow-y-auto flex-grow bg-app-bg">
+        <div className="p-6 overflow-y-auto flex-grow">
             {children}
         </div>
         {footer && (

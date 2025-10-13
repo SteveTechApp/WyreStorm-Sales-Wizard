@@ -11,21 +11,21 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Initialize state as a class property. This modern syntax avoids potential issues with `this` in the constructor and resolves the type errors.
-  state: State = {
+  // FIX: Use modern class field syntax for state initialization. This is cleaner and avoids potential issues with `this` in constructors.
+  public state: State = {
     hasError: false,
     error: null,
   };
 
-  public static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Uncaught error:", error, errorInfo);
   }
 
-  public render() {
+  render() {
     if (this.state.hasError) {
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }

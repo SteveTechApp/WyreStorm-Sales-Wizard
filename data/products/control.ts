@@ -1,4 +1,4 @@
-import { Product } from '../../utils/types';
+import { Product } from '../../utils/types.ts';
 
 export const CONTROL_SOLUTIONS: Product[] = [
     {
@@ -30,11 +30,15 @@ export const CONTROL_SOLUTIONS: Product[] = [
         sku: 'SYN-TOUCH10', name: 'Synergy™ 10.1” All-in-One Touchpad IP Controller', category: 'Control',
         description: 'PoE+ | Table Top Stand & Wall-Mount (US/UK/EU Compatible)',
         msrp: 1200, dealerPrice: 900, tags: ['Control', 'Touchscreen', 'Synergy'],
+        ethernet: true,
+        poe: true
     },
     {
         sku: 'SYN-CTL-HUB', name: 'Ethernet Protocol Converter for the SYN-TOUCH10', category: 'Control',
         description: 'RS232 | Relay | IR',
         msrp: 500, dealerPrice: 350, tags: ['Control', 'Gateway', 'Synergy'],
+        ethernet: true,
+        rs232: true
     },
     {
         sku: 'NHD-TOUCH', name: 'Free iPad & Android Control App for NetworkHD', category: 'Control',

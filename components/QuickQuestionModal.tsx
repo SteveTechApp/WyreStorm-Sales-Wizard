@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { askQuickQuestion } from '../services/assistantService.ts';
-import LoadingSpinner from './LoadingSpinner.tsx';
 import QuickQuestionResult from './quickQuestion/QuickQuestionResult.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
-import InfoModal from './InfoModal.tsx';
 
-interface QuickQuestionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose }) => {
+const QuickQuestionPage: React.FC = () => {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +50,12 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
   }
 
   return (
-    <InfoModal isOpen={isOpen} onClose={onClose} className="max-w-3xl" title="Quick Question">
-      <div>
+    <div className="max-w-4xl mx-auto animate-fade-in-fast">
+        <div className="text-center mb-8">
+            <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Quick Question</h1>
+            <p className="text-lg text-text-secondary">Ask a technical or product question about WyreStorm technology.</p>
+        </div>
+      
         {result || isLoading || error ? (
            <QuickQuestionResult 
               query={query} 
@@ -68,7 +65,7 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
               onReset={resetSearch} 
            />
         ) : (
-          <div className="bg-background p-6 rounded-lg shadow-lg border border-border-color">
+          <div className="bg-background-secondary p-6 rounded-xl shadow-xl border border-border-color">
             <form onSubmit={handleFormSubmit}>
               <label htmlFor="quick-question-input" className="sr-only">Ask a technical or product question</label>
               <input
@@ -76,18 +73,18 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
                 id="quick-question-input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Ask a technical or product question..."
+                placeholder="e.g., Explain chroma subsampling 4:4:4 vs 4:2:0"
                 className="w-full p-3 rounded-lg bg-input-bg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 ring-offset-background focus:ring-accent shadow-sm border border-border-color"
               />
             </form>
             <div className="mt-6">
-              <h3 className="font-semibold mb-3">Or try one of these:</h3>
+              <h3 className="font-semibold mb-3 text-center">Or try one of these common questions:</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {PRESET_QUESTIONS.map((q, i) => (
                   <button 
                     key={i}
                     onClick={() => handlePresetClick(q)}
-                    className="text-left p-3 bg-app-bg hover:bg-input-bg rounded-md text-sm border border-border-color"
+                    className="text-left p-3 bg-background hover:bg-input-bg rounded-md text-sm border border-border-color transition-colors"
                   >
                     {q}
                   </button>
@@ -96,9 +93,8 @@ const QuickQuestionModal: React.FC<QuickQuestionModalProps> = ({ isOpen, onClose
             </div>
           </div>
         )}
-      </div>
-    </InfoModal>
+    </div>
   );
 };
 
-export default QuickQuestionModal;
+export default QuickQuestionPage;

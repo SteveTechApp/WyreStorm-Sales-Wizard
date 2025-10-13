@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { RoomData, RoomWizardAnswers } from '../utils/types.ts';
+import { useState, useEffect, useCallback } from 'react';
+import { RoomData, RoomWizardAnswers, DisplayType } from '../utils/types.ts';
 import { createNewRoom } from '../utils/utils.ts';
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
@@ -30,13 +30,14 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
         setCurrentStep(0);
     }, [initialData]);
 
-    const updateAnswers = (newAnswers: Partial<RoomWizardAnswers>) => {
+    const updateAnswers = useCallback((newAnswers: Partial<RoomWizardAnswers>) => {
         setAnswers(prev => ({ ...prev, ...newAnswers }));
         // Clear errors for fields that are being updated
-        if (Object.keys(errors).length > 0) {
-            const newErrors = { ...errors };
+        setErrors(prevErrors => {
+            if (Object.keys(prevErrors).length === 0) return prevErrors;
+
+            const newErrors = { ...prevErrors };
             for (const key in newAnswers) {
-                // More complex logic might be needed for nested objects like dimensions
                 if (key === 'dimensions') {
                     delete newErrors.length;
                     delete newErrors.width;
@@ -45,9 +46,49 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
                      delete newErrors[key];
                 }
             }
-            setErrors(newErrors);
+             // Only return new object if something changed to prevent re-renders
+            if (Object.keys(newErrors).length !== Object.keys(prevErrors).length) {
+                return newErrors;
+            }
+            return prevErrors;
+        });
+    }, []);
+
+    useEffect(() => {
+        const { roomType, maxParticipants } = answers;
+        
+        let newDisplayType: DisplayType = 'single';
+        let newDisplayCount = 1;
+
+        const participantCount = Number(maxParticipants) || 0;
+
+        if (roomType === 'Huddle Space' || (participantCount > 0 && participantCount <= 6)) {
+            newDisplayType = 'single';
+            newDisplayCount = 1;
+        } else if ((roomType === 'Conference Room' || roomType === 'Boardroom') && (participantCount > 6 && participantCount <= 16)) {
+            newDisplayType = 'dual_display';
+            newDisplayCount = 2;
+        } else if (roomType === 'Lecture Hall' || roomType === 'Auditorium' || roomType === 'Large Venue' || participantCount > 16) {
+            newDisplayType = 'projector';
+            newDisplayCount = 1;
+        } else if (roomType === 'Command Center') {
+            newDisplayType = 'lcd_video_wall';
+            newDisplayCount = 4; // Default to a 2x2
+        } else if (roomType === 'Sports Bar') {
+            newDisplayType = 'single';
+            newDisplayCount = 8;
+        } else if (roomType === 'Retail Space') {
+            newDisplayType = 'single';
+            newDisplayCount = 4;
         }
-    };
+
+        if (answers.displayType !== newDisplayType || answers.displayCount !== newDisplayCount) {
+            updateAnswers({
+                displayType: newDisplayType,
+                displayCount: newDisplayCount,
+            });
+        }
+    }, [answers.roomType, answers.maxParticipants, answers.displayType, answers.displayCount, updateAnswers]);
 
     const validateStep = (stepIndex: number): boolean => {
         const newErrors: Record<string, string> = {};

@@ -37,7 +37,7 @@ const StepEnvironment: React.FC<StepEnvironmentProps> = ({ answers, updateAnswer
       <p className="text-text-secondary mb-6">Provide details about the physical room and how users will control the system.</p>
       
       <div className="space-y-8">
-        <div className="p-4 border rounded-lg bg-background">
+        <div>
           <h3 className="font-bold mb-4">Construction & Furniture</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -61,7 +61,7 @@ const StepEnvironment: React.FC<StepEnvironmentProps> = ({ answers, updateAnswer
           </div>
         </div>
 
-        <div className="p-4 border rounded-lg bg-background">
+        <div>
            <h3 className="font-bold mb-4">Control System</h3>
            <div>
               <label htmlFor="control-system" className="block text-sm font-medium text-text-secondary">Primary Control Method</label>

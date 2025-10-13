@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RoomWizardAnswers } from '../../utils/types.ts';
+import { RoomWizardAnswers, VideoWallConfig } from '../../utils/types.ts';
 import { DISPLAY_TYPES } from '../../data/wizardOptions.ts';
 import VideoWallWizardModal from './VideoWallWizardModal.tsx';
 
@@ -13,6 +13,11 @@ const StepDisplay: React.FC<StepDisplayProps> = ({ answers, updateAnswers }) => 
 
     const isLFD = answers.displayType === 'single' || answers.displayType === 'dual_display';
     const isVideoWall = answers.displayType === 'lcd_video_wall' || answers.displayType === 'led_video_wall';
+
+    const handleSaveVideoWall = (config: VideoWallConfig) => {
+        const newDisplayCount = config.layout.rows * config.layout.cols;
+        updateAnswers({ videoWallConfig: config, displayCount: newDisplayCount });
+    };
 
     return (
         <div>
@@ -40,6 +45,7 @@ const StepDisplay: React.FC<StepDisplayProps> = ({ answers, updateAnswers }) => 
                         value={answers.displayCount}
                         onChange={(e) => updateAnswers({ displayCount: parseInt(e.target.value) || 1 })}
                         className="w-full p-2 border rounded-md bg-input-bg mt-1"
+                        readOnly={isVideoWall}
                     />
                 </div>
                 {isLFD && (
@@ -67,7 +73,7 @@ const StepDisplay: React.FC<StepDisplayProps> = ({ answers, updateAnswers }) => 
              <VideoWallWizardModal
                 isOpen={isVideoWallWizardOpen}
                 onClose={() => setIsVideoWallWizardOpen(false)}
-                onSave={(config) => updateAnswers({ videoWallConfig: config })}
+                onSave={handleSaveVideoWall}
             />
         </div>
     );
