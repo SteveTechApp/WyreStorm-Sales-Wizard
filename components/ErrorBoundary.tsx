@@ -25,7 +25,8 @@ class ErrorBoundary extends React.Component<Props, State> {
     console.error("Uncaught error:", error, errorInfo);
   }
 
-  render() {
+  // FIX: Converted to an arrow function to ensure `this` is correctly bound, resolving potential property access errors.
+  render = () => {
     if (this.state.hasError) {
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }
