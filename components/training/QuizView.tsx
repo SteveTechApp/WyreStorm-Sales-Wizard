@@ -48,7 +48,7 @@ const QuizView: React.FC<QuizViewProps> = ({ module, onQuizComplete }) => {
                   onClick={() => setSelectedAnswer(option)}
                   className={`w-full text-left p-3 border-2 rounded-md transition-colors text-text-primary ${
                     selectedAnswer === option
-                      ? 'bg-accent/10 border-accent'
+                      ? 'bg-accent-bg-subtle border-accent'
                       : 'bg-background hover:bg-border-color border-border-color'
                   }`}
                 >

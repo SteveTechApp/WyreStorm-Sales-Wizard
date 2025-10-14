@@ -17,7 +17,7 @@ const RecentProjectCard: React.FC<RecentProjectCardProps> = ({ project }) => {
   };
 
   return (
-    <div className="bg-input-bg p-4 rounded-lg border border-border-color flex flex-col justify-between group transition-all duration-300 hover:border-accent/50 hover:shadow-xl hover:-translate-y-1">
+    <div className="bg-input-bg p-4 rounded-lg border border-border-color flex flex-col justify-between group transition-all duration-300 hover:border-accent-border-subtle hover:shadow-xl hover:-translate-y-1">
       <div>
         <h3 className="font-bold text-lg text-text-primary">{project.projectName}</h3>
         <p className="text-sm text-text-secondary mb-2">Client: {project.clientName}</p>

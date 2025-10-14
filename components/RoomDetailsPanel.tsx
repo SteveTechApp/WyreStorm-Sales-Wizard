@@ -34,7 +34,7 @@ const RoomDetailsPanel: React.FC = () => {
                 </div>
                 <p className="text-sm text-text-secondary font-medium mb-4">{room.roomType}</p>
                 
-                <p className="text-sm text-text-primary flex-grow bg-background p-3 rounded-md border border-border-color/50">
+                <p className="text-sm text-text-primary flex-grow bg-background p-3 rounded-md border border-border-color-subtle">
                     {room.functionalityStatement}
                 </p>
             </div>

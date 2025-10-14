@@ -60,7 +60,7 @@ const EquipmentListPanel: React.FC = () => {
                         room.manuallyAddedEquipment.map(item => {
                             const IconComponent = getCategoryIconComponent(item.category);
                             return (
-                                <div key={item.sku} className="flex justify-between items-center bg-background p-2 rounded-md border border-border-color/50">
+                                <div key={item.sku} className="flex justify-between items-center bg-background p-2 rounded-md border border-border-color-subtle">
                                     <button onClick={() => handleViewDetails(item)} className="flex items-center gap-3 text-left w-full mr-4 group">
                                         <IconComponent className="h-5 w-5 text-text-secondary" />
                                         <div>

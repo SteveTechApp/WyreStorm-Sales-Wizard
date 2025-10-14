@@ -26,7 +26,7 @@ const VerticalMarketCard: React.FC<VerticalMarketCardProps> = ({ vertical, onCli
         alt={vertical.name} 
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent group-hover:from-black/90 transition-colors" />
+      <div className="absolute inset-0 bg-gradient-to-t from-gradient-from-black-80 to-transparent group-hover:from-gradient-from-black-90 transition-colors" />
       <div className="absolute bottom-0 left-0 p-4 w-full">
         <div className="flex items-center gap-3">
             <Icon className="h-8 w-8 text-white flex-shrink-0" />

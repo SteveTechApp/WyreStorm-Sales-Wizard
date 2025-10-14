@@ -35,7 +35,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, onSelect, onDelet
               onDelete(template.templateId);
             }
           }}
-          className="absolute top-0 right-0 z-10 p-1 bg-background-secondary/50 rounded-full text-destructive-hover opacity-50 hover:opacity-100 hover:bg-destructive hover:text-white transition-all"
+          className="absolute top-0 right-0 z-10 p-1 bg-background-secondary-subtle rounded-full text-destructive-hover opacity-50 hover:opacity-100 hover:bg-destructive hover:text-white transition-all"
           aria-label={`Delete template ${template.templateName}`}
         >
           <CloseIcon className="h-4 w-4" />

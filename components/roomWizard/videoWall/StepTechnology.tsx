@@ -43,7 +43,7 @@ const StepTechnology: React.FC<StepTechnologyProps> = ({ config, updateConfig })
                 <button 
                     key={opt.id}
                     onClick={() => updateConfig({ technology: opt.id as VideoWallConfig['technology'] })}
-                    className={`w-full text-left p-3 border-2 rounded-lg transition-colors ${config.technology === opt.id ? 'border-accent bg-accent/10' : 'border-border-color hover:border-accent/50'}`}
+                    className={`w-full text-left p-3 border-2 rounded-lg transition-colors ${config.technology === opt.id ? 'border-accent bg-accent-bg-subtle' : 'border-border-color hover:border-accent-border-subtle'}`}
                 >
                     <p className="font-bold">{opt.name}</p>
                     <p className="text-sm text-text-secondary">{opt.description}</p>

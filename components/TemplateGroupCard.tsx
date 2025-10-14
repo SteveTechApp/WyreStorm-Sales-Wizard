@@ -1,5 +1,6 @@
 
 
+
 import React from 'react';
 import { UserTemplate } from '../utils/types.ts';
 import { VERTICAL_MARKETS } from '../data/constants.ts';
@@ -22,7 +23,7 @@ const TemplateGroupCard: React.FC<TemplateGroupCardProps> = ({ verticalId, templ
     <div className="bg-background border border-border-color rounded-lg overflow-hidden flex flex-col">
       <div className="relative group">
         <img src={verticalInfo.imageUrl} alt={verticalInfo.name} className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-gradient-from-black-80 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="flex items-center gap-3">
             <Icon className="h-6 w-6 text-white" />

@@ -78,7 +78,7 @@ const AIInsightsPanel: React.FC = () => {
                     {lastAction === 'room' && (
                         <button
                             onClick={handleReviewRoom}
-                            className="w-full flex items-center justify-center gap-2 bg-background-secondary hover:bg-border-color text-accent font-bold py-2 px-4 rounded-md text-sm border-2 border-accent/50"
+                            className="w-full flex items-center justify-center gap-2 bg-background-secondary hover:bg-border-color text-accent font-bold py-2 px-4 rounded-md text-sm border-2 border-accent-border-subtle"
                         >
                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691L7.985 5.964M21.015 14.644L17.834 11.46" />
@@ -90,7 +90,7 @@ const AIInsightsPanel: React.FC = () => {
                     {lastAction === 'project' && (
                          <button
                             onClick={handleAnalyzeProject}
-                            className="w-full flex items-center justify-center gap-2 bg-background-secondary hover:bg-border-color text-accent font-bold py-2 px-4 rounded-md text-sm border-2 border-accent/50"
+                            className="w-full flex items-center justify-center gap-2 bg-background-secondary hover:bg-border-color text-accent font-bold py-2 px-4 rounded-md text-sm border-2 border-accent-border-subtle"
                         >
                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691L7.985 5.964M21.015 14.644L17.834 11.46" />

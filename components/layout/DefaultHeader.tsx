@@ -1,17 +1,15 @@
+
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from '../Logo.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
 import { HamburgerIcon } from '../Icons.tsx';
 import MobileNavMenu from '../MobileNavMenu.tsx';
-import { NavLinkItem } from '../../data/navigation.ts';
+import { NAV_LINKS } from '../../data/navigation.ts';
 import Search from '../Search.tsx';
+import NavDropdown from './NavDropdown.tsx';
 
-interface DefaultHeaderProps {
-  links: NavLinkItem[];
-}
-
-const DefaultHeader: React.FC<DefaultHeaderProps> = ({ links }) => {
+const DefaultHeader: React.FC = () => {
   const { openProfileModal } = useUserContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -23,12 +21,17 @@ const DefaultHeader: React.FC<DefaultHeaderProps> = ({ links }) => {
       <header className="sticky top-0 z-30 bg-background border-b border-border-color print:hidden shadow-sm">
         <div className="container mx-auto flex justify-between items-center p-3">
           <Logo />
-          <nav className="hidden md:flex items-center gap-4">
-            {links.map(link => (
-              <NavLink key={link.path} to={link.path} className={navLinkClass} end={link.end}>
-                {link.label}
-              </NavLink>
-            ))}
+          <nav className="hidden md:flex items-center gap-2">
+            {NAV_LINKS.map(item => {
+              if ('children' in item) {
+                return <NavDropdown key={item.label} label={item.label} children={item.children} />;
+              }
+              return (
+                <NavLink key={item.path} to={item.path} className={navLinkClass} end={item.end}>
+                  {item.label}
+                </NavLink>
+              );
+            })}
           </nav>
           <div className="flex items-center gap-4">
             <Search />
@@ -52,7 +55,7 @@ const DefaultHeader: React.FC<DefaultHeaderProps> = ({ links }) => {
           </div>
         </div>
       </header>
-      <MobileNavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} links={links} />
+      <MobileNavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </>
   );
 };

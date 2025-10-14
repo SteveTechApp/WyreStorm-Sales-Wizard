@@ -40,7 +40,6 @@ export const UC_SOLUTIONS: Product[] = [
         description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming. Ideal for larger rooms and lecture halls.',
         msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'],
         videoIO: {
-            // FIX: Added missing 'inputs' property to satisfy the Product type.
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }, { type: 'IP Stream', count: 1 }]
         },

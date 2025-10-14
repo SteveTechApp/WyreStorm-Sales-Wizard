@@ -6,7 +6,6 @@ export const GENERIC_DEVICES: Product[] = [
         description: 'A dedicated in-room computer for running presentations and video conferencing software.',
         msrp: 1000, dealerPrice: 800, tags: ['Source', 'PC'],
         videoIO: {
-            // FIX: Added missing 'inputs' property to satisfy the Product type.
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'DisplayPort', count: 1 }]
         },
@@ -20,7 +19,6 @@ export const GENERIC_DEVICES: Product[] = [
         description: 'A camera for displaying physical documents or objects to the main screen. Common in education.',
         msrp: 500, dealerPrice: 350, tags: ['Source', 'Camera'],
         videoIO: {
-            // FIX: Added missing 'inputs' property to satisfy the Product type.
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }]
         },

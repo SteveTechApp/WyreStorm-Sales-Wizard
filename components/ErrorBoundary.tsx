@@ -1,3 +1,4 @@
+
 import React, { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
@@ -10,11 +11,15 @@ interface State {
   error: Error | null;
 }
 
+// FIX: Added generic Props and State to the React.Component extension to correctly type the class.
 class ErrorBoundary extends React.Component<Props, State> {
-  state: State = {
-    hasError: false,
-    error: null,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -29,8 +34,6 @@ class ErrorBoundary extends React.Component<Props, State> {
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }
 
-    // In a class component, props must be accessed via `this.props`.
-    // FIX: In a class component, props must be accessed via `this.props`.
     return this.props.children;
   }
 }

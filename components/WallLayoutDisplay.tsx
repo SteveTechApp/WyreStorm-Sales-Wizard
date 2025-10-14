@@ -19,7 +19,7 @@ const WallLayoutDisplay: React.FC<WallLayoutDisplayProps> = ({ rows, cols }) => 
             }}
         >
         {Array.from({ length: safeRows * safeCols }).map((_, index) => (
-            <div key={index} className="bg-accent/20 border border-accent/50 rounded-sm flex items-center justify-center">
+            <div key={index} className="bg-accent-bg-very-subtle border border-accent-border-subtle rounded-sm flex items-center justify-center">
                 <span className="text-accent text-xs font-mono">{index + 1}</span>
             </div>
         ))}

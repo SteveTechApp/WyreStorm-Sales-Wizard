@@ -40,7 +40,7 @@ const TemplateTierSelectorModal: React.FC<TemplateTierSelectorModalProps> = ({ i
               key={tier}
               onClick={() => onSelectTier(tier)}
               className={`p-6 border-2 rounded-lg text-left w-full h-full flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                originalTier === tier ? 'border-accent bg-accent/10' : 'border-border-color hover:border-accent/50 bg-background'
+                originalTier === tier ? 'border-accent bg-accent-bg-subtle' : 'border-border-color hover:border-accent-border-subtle bg-background'
               }`}
             >
               <div>

@@ -25,7 +25,7 @@ const DesignTierSelector: React.FC<DesignTierSelectorProps> = ({ answers, update
                         <button
                             type="button"
                             onClick={() => updateAnswers({ designTier: tier })}
-                            className={`p-4 border-2 rounded-lg text-left w-full h-full flex flex-col justify-between ${answers.designTier === tier ? 'border-accent bg-accent/10' : 'border-border-color hover:border-accent/50'}`}
+                            className={`p-4 border-2 rounded-lg text-left w-full h-full flex flex-col justify-between ${answers.designTier === tier ? 'border-accent bg-accent-bg-subtle' : 'border-border-color hover:border-accent-border-subtle'}`}
                         >
                             <div className="flex items-center gap-2">
                                 <TierIcon tier={tier} className="h-6 w-6" />

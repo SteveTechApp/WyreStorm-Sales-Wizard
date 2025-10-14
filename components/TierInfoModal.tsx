@@ -11,7 +11,7 @@ const TierInfoModal: React.FC<TierInfoModalProps> = ({ isOpen, onClose }) => {
   return (
     <InfoModal isOpen={isOpen} onClose={onClose} title="Design Tier Guide">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-4 border rounded-lg bg-background-secondary/50">
+          <div className="p-4 border rounded-lg bg-background-secondary-subtle">
               <div className="flex items-center gap-2 mb-2">
                   <TierIcon tier="Bronze" className="h-6 w-6" />
                   <h3 className="text-xl font-bold text-[#cd7f32]">Bronze</h3>
@@ -24,7 +24,7 @@ const TierInfoModal: React.FC<TierInfoModalProps> = ({ isOpen, onClose }) => {
                   <li>Standard documentation</li>
               </ul>
           </div>
-          <div className="p-4 border-2 border-primary rounded-lg bg-primary/5">
+          <div className="p-4 border-2 border-primary rounded-lg bg-primary-bg-subtle">
               <div className="flex items-center gap-2 mb-2">
                   <TierIcon tier="Silver" className="h-6 w-6" />
                   <h3 className="text-xl font-bold text-text-primary">Silver (Recommended)</h3>
@@ -37,7 +37,7 @@ const TierInfoModal: React.FC<TierInfoModalProps> = ({ isOpen, onClose }) => {
                   <li>As-built drawings included</li>
               </ul>
           </div>
-          <div className="p-4 border rounded-lg bg-background-secondary/50">
+          <div className="p-4 border rounded-lg bg-background-secondary-subtle">
               <div className="flex items-center gap-2 mb-2">
                   <TierIcon tier="Gold" className="h-6 w-6" />
                   <h3 className="text-xl font-bold text-yellow-500">Gold</h3>

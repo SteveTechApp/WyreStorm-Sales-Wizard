@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
@@ -98,7 +99,7 @@ const ProjectSetupScreen: React.FC = () => {
                     <button 
                         type="button" 
                         onClick={handleAddWithWizard} 
-                        className="mt-4 w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:bg-accent/10 py-3 border-2 border-dashed border-border-color rounded-lg"
+                        className="mt-4 w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:bg-accent-bg-subtle py-3 border-2 border-dashed border-border-color rounded-lg"
                     >
                         <PlusIcon className="h-4 w-4" /> Add Room with Wizard
                     </button>

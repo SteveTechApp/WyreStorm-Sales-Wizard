@@ -50,7 +50,7 @@ const VideoGeneratorPage: React.FC = () => {
 
         if (error) {
             return (
-                <div className="text-center p-8 bg-destructive/10 border border-destructive/20 rounded-xl">
+                <div className="text-center p-8 bg-destructive-bg border border-destructive-border-subtle rounded-xl">
                     <h2 className="text-2xl font-bold text-destructive">Generation Failed</h2>
                     <p className="mt-2 text-text-secondary">{error}</p>
                     <button onClick={handleReset} className="mt-4 btn btn-secondary">

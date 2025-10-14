@@ -26,7 +26,7 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({ onNext, onPrev, onS
             Save Changes
           </button>
         ) : (
-          <button onClick={onNext} className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-lg">
+          <button onClick={onNext} className="bg-primary hover:bg-primary-hover-bg text-white font-bold py-2 px-6 rounded-lg">
             Next
           </button>
         )}

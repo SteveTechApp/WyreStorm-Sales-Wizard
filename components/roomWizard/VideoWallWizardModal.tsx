@@ -48,7 +48,7 @@ const VideoWallWizardModal: React.FC<{
     <div className="flex justify-between w-full">
         <button onClick={() => setCurrentStep(s => Math.max(0, s-1))} disabled={currentStep === 0} className="bg-background-secondary hover:bg-border-color font-bold py-2 px-4 rounded-lg disabled:opacity-50">Previous</button>
         {currentStep < STEPS.length - 1 
-            ? <button onClick={() => setCurrentStep(s => Math.min(STEPS.length - 1, s+1))} className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-lg">Next</button>
+            ? <button onClick={() => setCurrentStep(s => Math.min(STEPS.length - 1, s+1))} className="bg-primary hover:bg-primary-hover-bg text-white font-bold py-2 px-6 rounded-lg">Next</button>
             : <button onClick={handleSave} className="bg-accent hover:bg-accent-hover text-white font-bold py-2 px-4 rounded-md">Save Configuration</button>
         }
     </div>

@@ -7,7 +7,7 @@ const TypingIndicator: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <span className="text-sm font-medium text-text-secondary">Thinking...</span>
                     <div className="w-full bg-border-color rounded-full h-2 overflow-hidden relative">
-                        <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-accent/0 via-accent to-accent/0 animate-thinking-progress"></div>
+                        <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent via-accent to-transparent animate-thinking-progress"></div>
                     </div>
                 </div>
             </div>

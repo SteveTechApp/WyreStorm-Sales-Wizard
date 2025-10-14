@@ -15,7 +15,7 @@ const QuizResultsView: React.FC<QuizResultsViewProps> = ({ module, score, onReta
   return (
     <div className="max-w-4xl mx-auto bg-background-secondary p-6 md:p-8 rounded-xl shadow-xl animate-fade-in-fast text-center">
         <h1 className="text-2xl font-bold mb-2">Quiz Results: {module.title}</h1>
-        <div className={`p-8 rounded-lg ${isPass ? 'bg-green-100' : 'bg-destructive/10'}`}>
+        <div className={`p-8 rounded-lg ${isPass ? 'bg-green-100' : 'bg-destructive-bg'}`}>
             <p className="text-lg">Your Score:</p>
             <p className={`text-6xl font-black ${isPass ? 'text-green-600' : 'text-destructive'}`}>{score.toFixed(0)}%</p>
             <p className={`mt-2 font-semibold ${isPass ? 'text-green-700' : 'text-red-700'}`}>

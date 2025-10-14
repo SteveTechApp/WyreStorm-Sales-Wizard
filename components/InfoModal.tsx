@@ -33,7 +33,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, children, classN
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 flex items-center justify-center z-50 animate-fade-in-fast" role="dialog" aria-modal="true" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 bg-modal-backdrop flex items-center justify-center z-50 animate-fade-in-fast" role="dialog" aria-modal="true" onClick={handleBackdropClick}>
       <div 
         className={`bg-background rounded-lg shadow-2xl w-full m-4 flex flex-col max-h-[90vh] border border-border-color ${className || ''}`} 
         onClick={e => e.stopPropagation()}
@@ -44,11 +44,11 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, children, classN
                 <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 text-2xl leading-none">&times;</button>
             </div>
         )}
-        <div className="p-6 overflow-y-auto flex-grow bg-background">
+        <div className="p-6 overflow-y-auto flex-grow">
             {children}
         </div>
         {footer && (
-            <div className="p-4 bg-background flex justify-end gap-3 border-t border-border-color flex-shrink-0">
+            <div className="p-4 flex justify-end gap-3 border-t border-border-color flex-shrink-0">
                 {footer}
             </div>
         )}
