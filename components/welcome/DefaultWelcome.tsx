@@ -31,7 +31,7 @@ const DefaultWelcome: React.FC = () => {
 
                 {/* Right Column (3/5) */}
                 <div className="lg:col-span-3 h-full flex flex-col">
-                     <h2 className="text-2xl font-bold text-center text-text-primary mb-2">Start a Mission</h2>
+                     <h2 className="text-2xl font-bold text-center text-text-primary mb-2">Start a New Project</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow">
                         <ActionButton 
                             to="/setup"

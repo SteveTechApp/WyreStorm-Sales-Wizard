@@ -7,6 +7,8 @@ export const UC_SOLUTIONS: Product[] = [
         category: 'Unified Communications',
         description: 'All-in-one 4K video bar with integrated camera, microphone, and speakers. Perfect for huddle spaces and small meeting rooms. USB 3.0 connection.',
         msrp: 800, dealerPrice: 600, tags: ['UC', 'Video Bar', '4K', 'USB', 'All-in-one', 'USB3.0'],
+        status: 'legacy',
+        legacyReason: 'Superseded by more modern Apollo series solutions. Consider using a dedicated speakerphone like HALO 80 and a separate USB camera.',
         usb: {
             ports: [{ type: 'USB-C', count: 1 }],
             bandwidth: '3.0'
@@ -34,29 +36,17 @@ export const UC_SOLUTIONS: Product[] = [
         audio: { speakerphone: true, dsp: true }
     },
     {
-        sku: 'CAM-200-PTZ',
-        name: '4K Pro PTZ Camera',
-        category: 'Camera',
-        description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming. Ideal for larger rooms and lecture halls.',
-        msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'],
-        videoIO: {
-            inputs: [],
-            outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }, { type: 'IP Stream', count: 1 }]
-        },
-        hdmiVersion: '2.0',
-        rs232: true,
-        ethernet: true,
-        poe: true,
-        usb: {
-            ports: [{ type: 'USB-B', count: 1 }],
-            bandwidth: '3.0'
-        }
+        sku: 'APO-DG1',
+        name: 'Apollo USB-C Wireless Casting Dongle',
+        category: 'Unified Communications',
+        description: 'Plug-and-play wireless casting dongle for video and audio only. Does not support USB data passthrough. Compatible with devices like the APO-210-UC.',
+        msrp: 200, dealerPrice: 150, tags: ['UC', 'Casting', 'Wireless', 'USB-C', 'Dongle'],
     },
     {
         sku: 'APO-DG2',
-        name: 'Apollo USB-C/HDMI Wireless Casting Dongle',
+        name: 'Apollo USB-C/HDMI Wireless Casting Dongle (for -W SKUs)',
         category: 'Unified Communications',
-        description: 'Plug-and-play wireless casting dongle. Supports both USB-C and HDMI connections for easy screen sharing.',
-        msrp: 250, dealerPrice: 180, tags: ['UC', 'Casting', 'Wireless', 'USB-C', 'HDMI', 'Dongle'],
+        description: 'Plug-and-play wireless casting dongle with USB data support for BYOM. Supports both USB-C and HDMI connections for easy screen sharing. ONLY compatible with WyreStorm SKUs ending in -W.',
+        msrp: 250, dealerPrice: 180, tags: ['UC', 'Casting', 'Wireless', 'USB-C', 'HDMI', 'Dongle', 'BYOM', 'USB'],
     },
 ];

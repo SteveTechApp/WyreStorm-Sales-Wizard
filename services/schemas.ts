@@ -79,9 +79,39 @@ export const PROPOSAL_GENERATION_SCHEMA = {
         },
         required: ['roomName', 'improvement', 'additionalCost'],
       },
-    }
+    },
+    upgradeDowngradePaths: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          roomName: { type: Type.STRING },
+          currentTier: { type: Type.STRING },
+          upgrade: {
+            type: Type.OBJECT,
+            properties: {
+              toTier: { type: Type.STRING },
+              description: { type: Type.STRING },
+              additionalCost: { type: Type.NUMBER },
+            },
+            required: ['toTier', 'description', 'additionalCost'],
+          },
+          downgrade: {
+            type: Type.OBJECT,
+            properties: {
+              toTier: { type: Type.STRING },
+              description: { type: Type.STRING },
+              costSaving: { type: Type.NUMBER },
+            },
+            required: ['toTier', 'description', 'costSaving'],
+          },
+        },
+        required: ['roomName', 'currentTier'],
+      },
+    },
+    cableInformation: { type: Type.STRING, description: "A section detailing WyreStorm's cable offerings and their costs." }
   },
-  required: ['executiveSummary', 'scopeOfWork', 'installationPlan'],
+  required: ['executiveSummary', 'scopeOfWork', 'installationPlan', 'upgradeDowngradePaths'],
 };
 
 export const PROPOSAL_GENERATION_ZOD_SCHEMA = z.object({
@@ -96,6 +126,21 @@ export const PROPOSAL_GENERATION_ZOD_SCHEMA = z.object({
     improvement: z.string(),
     additionalCost: z.number(),
   }))),
+  upgradeDowngradePaths: z.optional(z.array(z.object({
+    roomName: z.string(),
+    currentTier: z.string(),
+    upgrade: z.optional(z.object({
+        toTier: z.string(),
+        description: z.string(),
+        additionalCost: z.number(),
+    })),
+    downgrade: z.optional(z.object({
+        toTier: z.string(),
+        description: z.string(),
+        costSaving: z.number(),
+    })),
+  }))),
+  cableInformation: z.string().optional(),
 });
 
 export const PROJECT_INSIGHTS_SCHEMA = {

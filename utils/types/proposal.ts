@@ -1,4 +1,20 @@
+import { DesignTier } from './common.ts';
 import type { StructuredSystemDiagram } from './project.ts';
+
+export interface UpgradeDowngradePath {
+    roomName: string;
+    currentTier: DesignTier;
+    upgrade?: {
+        toTier: DesignTier;
+        description: string;
+        additionalCost: number;
+    };
+    downgrade?: {
+        toTier: DesignTier;
+        description: string;
+        costSaving: number;
+    };
+}
 
 export interface Proposal {
     proposalId: string;
@@ -19,4 +35,6 @@ export interface Proposal {
         improvement: string;
         additionalCost: number;
     }[];
+    upgradeDowngradePaths?: UpgradeDowngradePath[];
+    cableInformation?: string;
 }

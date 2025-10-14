@@ -1,4 +1,5 @@
 import { LanguageCode } from './common.ts';
+import { Product } from './product.ts';
 
 export interface UserProfile {
     name: string;
@@ -10,4 +11,5 @@ export interface UserProfile {
     showBackground: boolean;
     zoomLevel: number;
     resolution: string;
+    customProductDatabase?: Product[];
 }

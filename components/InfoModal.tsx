@@ -33,9 +33,14 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, children, classN
   };
 
   return (
-    <div className="fixed inset-0 bg-modal-backdrop flex items-center justify-center z-50 animate-fade-in-fast" role="dialog" aria-modal="true" onClick={handleBackdropClick}>
+    <div
+      className="fixed inset-0 bg-modal-backdrop z-50 animate-fade-in-fast flex items-center justify-center p-4 sm:p-6 md:p-8"
+      role="dialog"
+      aria-modal="true"
+      onClick={handleBackdropClick}
+    >
       <div 
-        className={`bg-background rounded-lg shadow-2xl w-full m-4 flex flex-col max-h-[90vh] border border-border-color ${className || ''}`} 
+        className={`bg-background rounded-lg shadow-2xl w-full flex flex-col max-h-[90vh] border border-border-color ${className || ''}`} 
         onClick={e => e.stopPropagation()}
       >
         {title && (

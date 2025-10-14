@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// FIX: Changed import to namespace to fix "no exported member 'Link'" error.
+import * as ReactRouterDOM from 'react-router-dom';
 
 const Logo: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <Link to="/" className={`flex items-center gap-3 ${className || ''}`}>
+    <ReactRouterDOM.Link to="/" className={`flex items-center gap-3 ${className || ''}`}>
       <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
         {/* WyreStorm 'W' Icon */}
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-text-primary">
@@ -18,7 +19,7 @@ const Logo: React.FC<{ className?: string }> = ({ className }) => {
             <span className="text-accent">W</span>ingman
         </span>
       </div>
-    </Link>
+    </ReactRouterDOM.Link>
   );
 };
 

@@ -1,9 +1,9 @@
-
-import React, { ErrorInfo, ReactNode } from 'react';
+import * as React from 'react';
+import { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface Props {
-  children?: ReactNode;
+  children?: React.ReactNode;
 }
 
 interface State {
@@ -12,8 +12,7 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Using a constructor to initialize state and ensure 'this.props' is available.
-  // The class property syntax for state was causing a type error where 'props' was not found.
+  // FIX: Based on similar issues in other files, changed React import to a namespace import to resolve potential type resolution errors with the component's props and state.
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -26,7 +25,7 @@ class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Uncaught error:", error, errorInfo);
   }
 

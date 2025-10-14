@@ -7,7 +7,7 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         templateName: 'Main Sanctuary',
         description: 'A multi-screen system for displaying lyrics and live video, with easy control for volunteers.',
         vertical: 'how',
-        imageUrl: 'https://images.unsplash.com/photo-1596205244955-3b26c71a39a0?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1508285260179-85f81f129596?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Main Sanctuary',
@@ -15,11 +15,12 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 25, width: 18, height: 9 },
             maxParticipants: 300,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Presentation PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Local Rack' },
-                { id: uuidv4(), name: 'Camera Feed', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 10, terminationType: 'Local Rack' },
-                { id: uuidv4(), name: 'Main Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 30, terminationType: 'Ceiling Mount' },
-                { id: uuidv4(), name: 'Side Displays', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 25, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Presentation PC', deviceType: 'Room PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Local Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Camera Feed', deviceType: 'Camera', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 10, terminationType: 'Local Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Main Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 30, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Side Displays', deviceType: 'Room Display', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 25, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector',
             displayCount: 3, // Main projector + 2 side displays
@@ -30,7 +31,7 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             functionalityStatement: 'A versatile system designed for worship services. A central MX-0804-EDU matrix switcher routes content from a presentation computer (for lyrics) and a live camera feed to a main center projector and two side-fill displays via HDBaseT. The switcher also handles microphone inputs for the pastor and choir, mixing them for the main audio system. Control is handled by a simple keypad for easy operation by volunteers.',
             manuallyAddedEquipment: [
                 { sku: 'MX-0804-EDU', name: '8x4 Education Matrix Switcher', quantity: 1, category: 'Matrix Switcher', description: 'An 8-input, 4-output matrix designed for classrooms with mic inputs and powerful audio mixing.', msrp: 2800, dealerPrice: 2100, tags: ['Matrix', 'Education', 'Audio', 'Silver', '8x4', 'Microphone Input', 'Audio Mixer'] },
-                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 2, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'GEN-PTZ-CAM', name: 'Generic 4K PTZ Camera', quantity: 2, category: 'Camera', description: 'A professional 4K pan-tilt-zoom camera with 12x optical zoom, USB, and IP streaming. Ideal for larger rooms and lecture halls.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream', 'HDMI'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
@@ -43,13 +44,14 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         templateName: 'Overflow Room',
         description: 'A simple room that receives a video and audio feed from the main sanctuary.',
         vertical: 'how',
-        imageUrl: 'https://images.unsplash.com/photo-1596205244955-3b26c71a39a0?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1529392576085-f55c88b90150?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Overflow Hall', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 15, width: 10, height: 3 }, maxParticipants: 70, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Sanctuary Feed', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Overflow Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Sanctuary Feed', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Overflow Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector', displayCount: 1,
             features: [],
@@ -69,13 +71,14 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         templateName: 'Youth Room',
         description: 'A multi-purpose room with a projector, gaming inputs, and a robust sound system.',
         vertical: 'how',
-        imageUrl: 'https://images.unsplash.com/photo-1596205244955-3b26c71a39a0?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Youth Center', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 12, width: 9, height: 3 }, maxParticipants: 40, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Gaming Inputs', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Wall Plate' },
-                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Gaming Inputs', deviceType: 'Guest Device', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Wall Plate', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector', displayCount: 1,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
@@ -94,13 +97,14 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         templateName: 'Lobby / Welcome Area Signage',
         description: 'Displays for welcome messages, event schedules, and community news.',
         vertical: 'how',
-        imageUrl: 'https://images.unsplash.com/photo-1596205244955-3b26c71a39a0?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1606830572242-635b7190b85a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Welcome Lobby', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 18, width: 10, height: 4 }, maxParticipants: 100, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Lobby Displays', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Lobby Displays', deviceType: 'Room Display', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 2,
             features: [],
@@ -120,7 +124,7 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         templateName: 'Broadcast & Streaming Booth',
         description: 'A dedicated control room for mixing video and audio for online services.',
         vertical: 'how',
-        imageUrl: 'https://images.unsplash.com/photo-1596205244955-3b26c71a39a0?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1554224312-c824c3848b52?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Media Control Booth', roomType: 'Other', designTier: 'Gold',
             dimensions: { length: 5, width: 4, height: 2.5 }, maxParticipants: 3, 

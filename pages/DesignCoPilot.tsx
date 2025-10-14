@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+// FIX: Changed import to namespace to fix "no exported member" errors.
+import * as ReactRouterDOM from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 import ProjectWorkspace from '../components/ProjectWorkspace.tsx';
 import ProjectEmptyState from '../components/ProjectEmptyState.tsx';
@@ -7,8 +8,8 @@ import LoadingSpinner from '../components/LoadingSpinner.tsx';
 import ErrorDisplay from '../components/ErrorDisplay.tsx';
 
 const DesignCoPilot: React.FC = () => {
-    const { projectId } = useParams<{ projectId: string }>();
-    const navigate = useNavigate();
+    const { projectId } = ReactRouterDOM.useParams<{ projectId: string }>();
+    const navigate = ReactRouterDOM.useNavigate();
     const { projectData, handleLoadProject, error, appState } = useProjectContext();
     
     useEffect(() => {

@@ -7,7 +7,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         templateName: 'Casino Floor Signage',
         description: 'A large-scale, highly reliable AVoIP system for 24/7 content distribution across a casino floor.',
         vertical: 'gam',
-        imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1565575644775-3c35b849646b?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Casino Main Floor',
@@ -15,10 +15,11 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 100, width: 100, height: 6 },
             maxParticipants: 1000,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Content Sources', type: 'input', quantity: 10, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Slot Topper Displays', type: 'output', quantity: 40, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 60, terminationType: 'Wall Mount' },
-                { id: uuidv4(), name: 'Bar Displays', type: 'output', quantity: 10, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 40, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Content Sources', deviceType: 'Media Player', type: 'input', quantity: 10, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Slot Topper Displays', deviceType: 'Room Display', type: 'output', quantity: 40, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 60, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Bar Displays', deviceType: 'Room Display', type: 'output', quantity: 10, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 40, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', // Many single displays
             displayCount: 50,
@@ -40,7 +41,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         templateName: 'Sportsbook Video Wall',
         description: 'A massive LED video wall for displaying multiple live games and betting odds.',
         vertical: 'gam',
-        imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Race & Sports Book', roomType: 'Large Venue', designTier: 'Gold',
             dimensions: { length: 30, width: 20, height: 7 }, maxParticipants: 200, 
@@ -63,7 +64,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         templateName: 'High Roller Suite',
         description: 'A luxury suite with a premium, easy-to-use residential-style AV system.',
         vertical: 'gam',
-        imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Chairman Suite', roomType: 'Residential', designTier: 'Gold',
             dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 10, 
@@ -83,7 +84,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         templateName: 'Poker Room',
         description: 'TV feeds and tournament information displays for a casino poker room.',
         vertical: 'gam',
-        imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1605291423363-2c5b36de0f1d?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Poker Room', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 25, width: 20, height: 4 }, maxParticipants: 150, 
@@ -103,7 +104,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         templateName: 'Esports Arena',
         description: 'A specialized venue with low-latency distribution for players and high-quality feeds for spectators.',
         vertical: 'gam',
-        imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Esports Arena', roomType: 'Large Venue', designTier: 'Gold',
             dimensions: { length: 40, width: 30, height: 10 }, maxParticipants: 500, 

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
+// FIX: Changed import to namespace to fix "no exported member 'HashRouter'" error. Switched to BrowserRouter.
+import * as ReactRouterDOM from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 import { UserProvider } from './context/UserContext.tsx';
@@ -11,7 +12,7 @@ import App from './App.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <HashRouter>
+    <ReactRouterDOM.HashRouter>
       <UserProvider>
         <ProjectProvider>
           <GenerationProvider>
@@ -29,6 +30,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           </GenerationProvider>
         </ProjectProvider>
       </UserProvider>
-    </HashRouter>
+    </ReactRouterDOM.HashRouter>
   </React.StrictMode>,
 );

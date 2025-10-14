@@ -14,10 +14,13 @@ const IOSection: React.FC<IOSectionProps> = ({ answers, updateAnswers }) => {
   const [editingPoint, setEditingPoint] = useState<IOPoint | null>(null);
 
   const handleAddPoint = (type: 'input' | 'output') => {
+    // FIX: Added missing deviceType and control properties to match IOPoint type.
     const newPoint: IOPoint = {
       id: uuidv4(), type, quantity: 1, name: `New ${type}`,
+      deviceType: type === 'input' ? 'Laptop' : 'Room Display',
       connectionType: 'HDMI', distributionType: 'Direct',
       distance: 5, terminationType: 'Wall Plate',
+      control: { needed: false, types: [] },
     };
     setEditingPoint(newPoint);
     setIsModalOpen(true);

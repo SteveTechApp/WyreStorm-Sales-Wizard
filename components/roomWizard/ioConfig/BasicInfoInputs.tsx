@@ -1,5 +1,6 @@
 import React from 'react';
 import { IOPoint } from '../../../utils/types.ts';
+import { SOURCE_DEVICE_TYPES, OUTPUT_DEVICE_TYPES } from '../../../data/wizardOptions.ts';
 
 interface BasicInfoInputsProps {
   point: IOPoint;
@@ -7,17 +8,31 @@ interface BasicInfoInputsProps {
 }
 
 const BasicInfoInputs: React.FC<BasicInfoInputsProps> = ({ point, onUpdate }) => {
+  const deviceTypeOptions = point.type === 'input' ? SOURCE_DEVICE_TYPES : OUTPUT_DEVICE_TYPES;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label htmlFor="io-point-name" className="block text-sm font-medium">Name</label>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="md:col-span-1">
+        <label htmlFor="io-point-name" className="block text-sm font-medium">Friendly Name</label>
         <input
           type="text"
           id="io-point-name"
           value={point.name}
           onChange={(e) => onUpdate({ name: e.target.value })}
           className="w-full p-2 border rounded-md bg-input-bg mt-1"
+          placeholder="e.g., Lectern PC"
         />
+      </div>
+      <div>
+        <label htmlFor="io-device-type" className="block text-sm font-medium">Device Type</label>
+        <select
+          id="io-device-type"
+          value={point.deviceType}
+          onChange={(e) => onUpdate({ deviceType: e.target.value })}
+          className="w-full p-2 border rounded-md bg-input-bg mt-1"
+        >
+          {deviceTypeOptions.map(type => <option key={type} value={type}>{type}</option>)}
+        </select>
       </div>
       <div>
         <label htmlFor="io-point-quantity" className="block text-sm font-medium">Quantity</label>

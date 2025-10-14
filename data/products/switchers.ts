@@ -5,7 +5,7 @@ export const SWITCHERS_PRESENTATION: Product[] = [
         sku: 'SW-0201-4K',
         name: '2x1 USB-C & HDMI Wireless Switcher',
         category: 'Presentation Switcher',
-        description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs, featuring auto-switching and wireless casting support via the included APO-DG2 dongle.',
+        description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs, featuring auto-switching and wireless casting support via the APO-DG1 dongle (sold separately).',
         msrp: 600, dealerPrice: 400, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze', 'HDMI', 'Auto-switching', '2x1'],
         status: 'legacy',
         legacyReason: 'This is a basic switcher. For more inputs or advanced features like dual-view, consider models like the SW-510-TX or SW-640L-TX-W.',

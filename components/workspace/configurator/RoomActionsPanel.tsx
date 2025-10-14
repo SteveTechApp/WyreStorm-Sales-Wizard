@@ -4,6 +4,7 @@ import { useProjectContext } from '../../../context/ProjectContext.tsx';
 import RoomWizard from '../../RoomWizard.tsx';
 import SaveTemplateModal from '../../SaveTemplateModal.tsx';
 import { useUserTemplates } from '../../../hooks/useUserTemplates.ts';
+import { SparklesIcon } from '../../Icons.tsx';
 
 const RoomActionsPanel: React.FC = () => {
     const { handleDesignRoom, handleGenerateDiagram } = useGenerationContext();
@@ -34,8 +35,9 @@ const RoomActionsPanel: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                     <button
                         onClick={handleDesign}
-                        className="w-full btn btn-primary text-sm"
+                        className="w-full btn btn-primary text-sm flex items-center justify-center gap-2 animate-pulse-bright"
                     >
+                        <SparklesIcon className="h-5 w-5" />
                         AI Design Room
                     </button>
                     <button

@@ -7,7 +7,7 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         templateName: 'Store-Wide Digital Signage',
         description: 'A scalable AVoIP solution for distributing promotional content to multiple screens in a retail environment.',
         vertical: 'ret',
-        imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Store-Wide Signage',
@@ -15,9 +15,10 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 50, width: 30, height: 4 },
             maxParticipants: 200,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                 { id: uuidv4(), name: 'Media Player Source', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack' },
-                 { id: uuidv4(), name: 'Signage Displays', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Wall Mount' },
+                 { id: uuidv4(), name: 'Media Player Source', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                 { id: uuidv4(), name: 'Signage Displays', deviceType: 'Room Display', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', // multiple single displays
             displayCount: 6,
@@ -39,13 +40,14 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         templateName: 'Experiential Brand Zone',
         description: 'An immersive zone with interactive displays and directional audio to engage customers.',
         vertical: 'ret',
-        imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Brand Experience Area', roomType: 'Retail Space', designTier: 'Gold',
             dimensions: { length: 10, width: 8, height: 3.5 }, maxParticipants: 15, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: '4K Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack' },
-                { id: uuidv4(), name: 'Video Wall Displays', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: '4K Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Video Wall Displays', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'lcd_video_wall', displayCount: 4,
             features: [],
@@ -64,7 +66,7 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         templateName: 'Smart Fitting Room',
         description: 'A fitting room with a small display for product recommendations and assistance requests.',
         vertical: 'ret',
-        imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1594938298603-c81411554a3a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Fitting Room 3', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 2, width: 2, height: 2.5 }, maxParticipants: 1, 
@@ -84,13 +86,14 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         templateName: 'Store Entrance Video Wall',
         description: 'A 2x2 video wall at the store entrance to attract customers and display promotions.',
         vertical: 'ret',
-        imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1612817158739-a9a2a4b8f046?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Entrance Display', roomType: 'Retail Space', designTier: 'Silver',
             dimensions: { length: 5, width: 1, height: 4 }, maxParticipants: 0, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack' },
-                { id: uuidv4(), name: 'Video Wall Displays', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Video Wall Displays', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'lcd_video_wall', displayCount: 4,
             videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'processor_sw0204vw' },
@@ -110,7 +113,7 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         templateName: 'Boutique Background Music',
         description: 'A high-quality, multi-zone background music system for a luxury retail store.',
         vertical: 'ret',
-        imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'In-Store Audio', roomType: 'Retail Space', designTier: 'Bronze',
             dimensions: { length: 20, width: 15, height: 3.5 }, maxParticipants: 50, 

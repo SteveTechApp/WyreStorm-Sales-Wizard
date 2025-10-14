@@ -11,6 +11,7 @@ import PricingTable from '../components/proposal/PricingTable.tsx';
 import SystemDiagram from '../components/SystemDiagram.tsx';
 import { exportProposalToDocx } from '../utils/docxExporter.ts';
 import { exportEquipmentListToCsv } from '../utils/csvExporter.ts';
+import ReactMarkdown from 'react-markdown';
 
 const ProposalDisplay: React.FC = () => {
     const { proposalId } = useParams<{ projectId: string, proposalId: string }>();
@@ -86,6 +87,45 @@ const ProposalDisplay: React.FC = () => {
                                 </li>
                             ))}
                         </ul>
+                    </ProposalSection>
+                )}
+
+                {proposal.upgradeDowngradePaths && proposal.upgradeDowngradePaths.length > 0 && (
+                    <ProposalSection title="Tier Upgrade & Downgrade Options">
+                        <div className="space-y-6">
+                            {proposal.upgradeDowngradePaths.map((path, index) => (
+                                <div key={index} className="p-4 bg-gray-50 rounded-md border border-gray-200 break-inside-avoid">
+                                    <h3 className="font-bold text-lg text-gray-800">{path.roomName}</h3>
+                                    <p className="text-sm text-gray-600 mb-4">Current Tier: <span className="font-semibold">{path.currentTier}</span></p>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {path.upgrade && (
+                                            <div className="p-3 bg-green-50 border border-green-200 rounded">
+                                                <h4 className="font-semibold text-green-800">Upgrade to {path.upgrade.toTier}</h4>
+                                                <p className="text-sm text-gray-700 mt-1">{path.upgrade.description}</p>
+                                                <p className="text-sm font-bold text-green-700 mt-2">+${path.upgrade.additionalCost.toFixed(2)}</p>
+                                            </div>
+                                        )}
+
+                                        {path.downgrade && (
+                                            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
+                                                <h4 className="font-semibold text-yellow-800">Downgrade to {path.downgrade.toTier}</h4>
+                                                <p className="text-sm text-gray-700 mt-1">{path.downgrade.description}</p>
+                                                <p className="text-sm font-bold text-yellow-700 mt-2">-${path.downgrade.costSaving.toFixed(2)}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </ProposalSection>
+                )}
+
+                {proposal.cableInformation && (
+                    <ProposalSection title="A Note on Connectivity">
+                        <div className="prose max-w-none prose-sm">
+                            <ReactMarkdown>{proposal.cableInformation}</ReactMarkdown>
+                        </div>
                     </ProposalSection>
                 )}
 

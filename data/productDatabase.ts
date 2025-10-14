@@ -3,6 +3,8 @@ import { Product } from '../utils/types.ts';
 import { ACCESSORIES } from './products/accessories.ts';
 import { AUDIO_SYSTEMS } from './products/audio.ts';
 import { AVOIP_PRODUCTS } from './products/avoip.ts';
+import { CABLES } from './products/cables.ts';
+import { CAMERAS } from './products/cameras.ts';
 import { CONTROL_SOLUTIONS } from './products/control.ts';
 import { EXTENDERS } from './products/extenders.ts';
 import { GENERIC_DEVICES } from './products/generic.ts';
@@ -15,6 +17,8 @@ export const PRODUCT_DATABASE: Product[] = [
     ...ACCESSORIES,
     ...AUDIO_SYSTEMS,
     ...AVOIP_PRODUCTS,
+    ...CABLES,
+    ...CAMERAS,
     ...CONTROL_SOLUTIONS,
     ...EXTENDERS,
     ...GENERIC_DEVICES,

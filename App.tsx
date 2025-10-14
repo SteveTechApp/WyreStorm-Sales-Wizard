@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+// FIX: Changed import to namespace to fix "no exported member 'useLocation'" error.
+import * as ReactRouterDOM from 'react-router-dom';
 import { useProjectContext } from './context/ProjectContext.tsx';
 
 import AppLayout from './components/AppLayout.tsx';
@@ -11,7 +12,7 @@ import AppRoutes from './AppRoutes.tsx';
 const App: React.FC = () => {
     const { appState } = useProjectContext();
     const isGenerating = appState === 'generating';
-    const location = useLocation();
+    const location = ReactRouterDOM.useLocation();
 
     const isProposalPage = location.pathname.startsWith('/proposal/');
 

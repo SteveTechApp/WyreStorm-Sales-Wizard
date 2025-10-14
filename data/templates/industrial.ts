@@ -7,7 +7,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Process Control Room',
         description: 'A zero-latency AVoIP system for displaying critical SCADA and telemetry data in an industrial control room.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Operations Control Center',
@@ -15,9 +15,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 12, width: 8, height: 3 },
             maxParticipants: 8,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'SCADA PCs', type: 'input', quantity: 8, connectionType: 'DisplayPort', distributionType: 'AVoIP', distance: 5, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Video Wall', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'SCADA PCs', deviceType: 'Room PC', type: 'input', quantity: 8, connectionType: 'DisplayPort', distributionType: 'AVoIP', distance: 5, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Video Wall', deviceType: 'Room Display', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'lcd_video_wall',
             displayCount: 6,
@@ -39,7 +40,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Factory Floor Huddle Station',
         description: 'A ruggedized display on a mobile cart for reviewing production data on the factory floor.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1587495932550-935b80a1332c?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Production Line 2 Station', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 5, width: 5, height: 5 }, maxParticipants: 8, 
@@ -61,7 +62,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Safety Briefing Room',
         description: 'A simple, reliable room for conducting safety training and daily briefings.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Daily Briefing Room', roomType: 'Conference Room', designTier: 'Silver',
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 25, 
@@ -81,7 +82,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Remote Monitoring Station',
         description: 'An AVoIP-based station allowing remote monitoring of control room screens.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a128?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Manager\'s Office', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 5, width: 4, height: 3 }, maxParticipants: 2, 
@@ -103,7 +104,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Locker Room / Break Area Signage',
         description: 'Displays for safety alerts, company announcements, and general information.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1560950333-899d3a7a27b8?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1552664688-cf412ec27db2?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Break Room', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 12, width: 8, height: 3 }, maxParticipants: 30, 

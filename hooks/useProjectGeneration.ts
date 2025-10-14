@@ -14,6 +14,12 @@ export const useProjectGeneration = () => {
     const { dispatchProjectAction, setAppState, setLoadingContext, getState } = useProjectContext();
     const { userProfile } = useUserContext();
 
+    const getActiveProductDatabase = () => {
+        return userProfile.customProductDatabase && userProfile.customProductDatabase.length > 0
+            ? userProfile.customProductDatabase
+            : PRODUCT_DATABASE;
+    };
+
     const withLoading = async (context: 'template' | 'proposal' | 'design' | 'diagram' | 'default', action: () => Promise<void>) => {
         setAppState('generating');
         setLoadingContext(context);
@@ -50,7 +56,7 @@ export const useProjectGeneration = () => {
                 notes: `Generated from client brief:\n\n${documentText}`,
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
-                productDatabase: PRODUCT_DATABASE,
+                productDatabase: getActiveProductDatabase(),
             };
             dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
             toast.success('Project created from client brief!');
@@ -71,7 +77,7 @@ export const useProjectGeneration = () => {
                 notes: '',
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
-                productDatabase: PRODUCT_DATABASE,
+                productDatabase: getActiveProductDatabase(),
                 budget: setupData.budget,
                 timeline: setupData.timeline,
             };
@@ -94,7 +100,7 @@ export const useProjectGeneration = () => {
                 notes: `Started from template: ${template.templateName}`,
                 ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
-                productDatabase: PRODUCT_DATABASE,
+                productDatabase: getActiveProductDatabase(),
             };
             dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
             toast.success(`Project started from "${template.templateName}" as a ${tier} design!`);

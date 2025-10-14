@@ -7,7 +7,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Dedicated Home Theater',
         description: 'A high-end home cinema with 4K projection, immersive audio, and simple control.',
         vertical: 'res',
-        imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1594904533829-1448034bfd09?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Home Cinema',
@@ -15,9 +15,10 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 8, width: 5, height: 3 },
             maxParticipants: 8,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'AV Sources', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'AV Sources', deviceType: 'Media Player', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector',
             displayCount: 1,
@@ -39,13 +40,14 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Living Room Media System',
         description: 'A clean and simple setup with a large TV, soundbar, and hidden sources.',
         vertical: 'res',
-        imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1593359677879-a4bb92f82d7c?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Living Room', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 7, width: 6, height: 2.8 }, maxParticipants: 6, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Media Cabinet Sources', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Living Room TV', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Media Cabinet Sources', deviceType: 'Media Player', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Living Room TV', deviceType: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 1,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
@@ -64,7 +66,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Multi-Room Audio',
         description: 'A distributed audio system for music in several rooms of the house.',
         vertical: 'res',
-        imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1518709328212-3f15049b1a13?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Whole Home Audio', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 20, width: 15, height: 3 }, maxParticipants: 10, 
@@ -84,7 +86,7 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Outdoor Patio Entertainment',
         description: 'A weatherproof TV and speaker system for outdoor viewing.',
         vertical: 'res',
-        imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1567683933932-f3089d413155?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Back Patio', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 15, 
@@ -106,16 +108,16 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Home Office / Study',
         description: 'A high-quality setup for video calls and focused work.',
         vertical: 'res',
-        imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1591017403286-fd8493524e1e?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Home Office', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 4, width: 3, height: 2.5 }, maxParticipants: 1, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
             features: [{ name: 'Video Conferencing', priority: 'must-have' }],
-            functionalityStatement: 'A professional home office setup for remote work. A large 4K monitor provides ample screen real estate. A high-quality USB-C docking station allows for single-cable connection to a laptop for video, data, and power. A WyreStorm HALO 80 speakerphone and CAM-200-PTZ webcam ensure crystal-clear video calls.',
+            functionalityStatement: 'A professional home office setup for remote work. A large 4K monitor provides ample screen real estate. A high-quality USB-C docking station allows for single-cable connection to a laptop for video, data, and power. A WyreStorm HALO 80 speakerphone and a high-quality 4K webcam ensure crystal-clear video calls.',
             manuallyAddedEquipment: [
-                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 1, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'GEN-USB-CAM', name: 'Generic 4K USB Webcam', quantity: 1, category: 'Camera', description: 'A high-quality 4K USB webcam with a wide-angle lens, suitable for huddle spaces and small to medium meeting rooms.', msrp: 200, dealerPrice: 150, tags: ['Camera', 'USB', '4K', 'Webcam'] },
                 { sku: 'HALO 80', name: 'USB/Bluetooth Speakerphone', quantity: 1, category: 'Unified Communications', description: 'Daisy-chain up to 9 units | Omni-Direction 4Mics | AEC | Noise Reduction | 3W speaker | USB2.0', msrp: 450, dealerPrice: 320, tags: ['UC', 'Speakerphone', 'Bluetooth', 'USB', 'AEC', 'Daisy-chain'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },

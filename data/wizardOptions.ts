@@ -9,6 +9,17 @@ export const COMMON_FEATURES = [
     { name: 'Room Scheduling', description: 'Integrate with a room booking system.' },
 ];
 
+export const SOURCE_DEVICE_TYPES = [
+    'Laptop', 'Tablet', 'Room PC', 'Teams MTR', 
+    'Media Player', 'Satellite Decoder', 'Document Camera', 'Guest Device'
+];
+
+export const OUTPUT_DEVICE_TYPES = [
+    'Room Display', 'Projector', 'Confidence Monitor', 'Recording Feed', 'Assistive Listening'
+];
+
+export const CONTROL_TYPES = ['IR', 'RS232', 'IP'];
+
 export const VIDEO_RESOLUTIONS = ['1080p', '4K/30Hz 4:4:4', '4K/60Hz 4:2:0', '4K/60Hz 4:4:4'];
 export const CONTROL_SYSTEMS = ['None (Auto-switching)', 'Simple Keypad', 'Touch Panel', 'Third-Party Integration'];
 

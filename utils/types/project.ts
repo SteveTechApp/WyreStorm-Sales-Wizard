@@ -24,10 +24,16 @@ export interface Feature {
 export type DisplayType = 'single' | 'dual_display' | 'lcd_video_wall' | 'led_video_wall' | 'projector';
 export type ProjectorLensType = 'standard' | 'zoom' | 'short_throw';
 
+export interface IOControl {
+  needed: boolean;
+  types: ('IR' | 'RS232' | 'IP')[];
+}
+
 export interface IOPoint {
   id: string;
   name: string;
   type: 'input' | 'output';
+  deviceType?: string; // Pre-defined type like 'Laptop', 'Room PC'
   quantity: number;
   connectionType: string;
   distributionType: string;
@@ -35,6 +41,7 @@ export interface IOPoint {
   terminationType: string;
   displayType?: DisplayType;
   projectorLensType?: ProjectorLensType;
+  control?: IOControl;
 }
 
 export interface ConstructionDetails {

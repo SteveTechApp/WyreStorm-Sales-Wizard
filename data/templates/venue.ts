@@ -7,7 +7,7 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         templateName: 'Corporate Auditorium',
         description: 'A projection-based system for corporate auditoriums with multiple inputs and speech reinforcement.',
         vertical: 'ven',
-        imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Corporate Auditorium',
@@ -15,9 +15,10 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 30, width: 20, height: 7 },
             maxParticipants: 250,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Lectern Inputs', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Lectern' },
-                { id: uuidv4(), name: 'Main Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 40, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Lectern Inputs', deviceType: 'Laptop', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Lectern', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Main Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 40, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector',
             displayCount: 1,
@@ -28,7 +29,7 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             functionalityStatement: 'A professional presentation system for a large auditorium. A high-brightness laser projector is fed by a powerful SW-640L-TX-W presentation switcher located at the lectern. The switcher accommodates various sources, including guest laptops and a resident PC. Multiple wireless microphones and a distributed speaker system ensure clear audio for every attendee. The system is managed via a touch panel controller.',
             manuallyAddedEquipment: [
                 { sku: 'SW-640L-TX-W', name: '6-Input 4K/60Hz Presentation Switcher with USB-C', quantity: 1, category: 'Presentation Switcher', description: 'Dual output 4K presentation switcher with wireless casting, USB-C, and USB host for peripherals.', msrp: 2000, dealerPrice: 1500, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Gold', '6x2', 'Dual Output', 'USB Host'] },
-                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 1, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'GEN-PTZ-CAM', name: 'Generic 4K PTZ Camera', quantity: 1, category: 'Camera', description: 'A professional 4K pan-tilt-zoom camera with 12x optical zoom, USB, and IP streaming. Ideal for larger rooms and lecture halls.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream', 'HDMI'] },
                 { sku: 'SYN-TOUCH10', name: 'Synergy™ 10.1” All-in-One Touchpad IP Controller', quantity: 1, category: 'Control', description: 'PoE+ | Table Top Stand & Wall-Mount (US/UK/EU Compatible)', msrp: 1200, dealerPrice: 900, tags: ['Control', 'Touchscreen', 'Synergy'] },
             ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
@@ -42,13 +43,14 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         templateName: 'Stadium Concourse Signage',
         description: 'A large-scale AVoIP system for menu boards, advertising, and wayfinding.',
         vertical: 'ven',
-        imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1577015413813-2696455346e2?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Concourse Digital Signage', roomType: 'Large Venue', designTier: 'Silver',
             dimensions: { length: 400, width: 20, height: 8 }, maxParticipants: 10000, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Broadcast Feeds', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Concourse Displays', type: 'output', quantity: 50, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Broadcast Feeds', deviceType: 'Media Player', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Concourse Displays', deviceType: 'Room Display', type: 'output', quantity: 50, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 50,
             features: [],
@@ -69,12 +71,13 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         templateName: 'Arena Luxury Suite',
         description: 'A premium in-suite AV system with multiple TV feeds and local control.',
         vertical: 'ven',
-        imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1618221118491-39c8b4317801?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Luxury Suite 212', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 20, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Suite Displays', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Suite Displays', deviceType: 'Room Display', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'dual_display', displayCount: 3,
             features: [],
@@ -94,7 +97,7 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         templateName: 'Press Box',
         description: 'A professional setup for media with access to multiple video and audio feeds.',
         vertical: 'ven',
-        imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1610418386866-6330b4273256?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Main Press Box', roomType: 'Other', designTier: 'Gold',
             dimensions: { length: 20, width: 5, height: 3 }, maxParticipants: 30, 
@@ -117,13 +120,14 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         templateName: 'Convention Center Breakout Room',
         description: 'A standard, easy-to-use AV setup for temporary meetings and presentations.',
         vertical: 'ven',
-        imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Breakout Room C', roomType: 'Conference Room', designTier: 'Silver',
             dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 50, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Floor Box Input', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 20, terminationType: 'Floor Box' },
-                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Floor Box Input', deviceType: 'Guest Device', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 20, terminationType: 'Floor Box', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector', displayCount: 1,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// FIX: Changed import to namespace to fix "no exported member 'useNavigate'" error.
+import * as ReactRouterDOM from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
 
 const AgentInputForm: React.FC = () => {
     const [documentText, setDocumentText] = useState('');
     const { handleAgentSubmit } = useGenerationContext();
-    const navigate = useNavigate();
+    const navigate = ReactRouterDOM.useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +39,7 @@ John Smith
         <div className="max-w-4xl mx-auto animate-fade-in-fast">
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">Analyze Intel</h1>
-                <p className="text-lg text-text-secondary">Paste your client's RFQ, email, or field notes. The AI will parse the intel and build a sortie plan.</p>
+                <p className="text-lg text-text-secondary">Paste your client's RFQ, email, or field notes. The AI will parse the intel and build a project plan.</p>
             </div>
             <form onSubmit={handleSubmit} className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">
                 <textarea

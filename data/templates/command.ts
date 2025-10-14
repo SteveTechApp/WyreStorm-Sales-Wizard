@@ -7,7 +7,7 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
         templateName: 'Small Security Operations Center (SOC)',
         description: 'A 2x2 video wall for monitoring multiple camera and data feeds for a small security team.',
         vertical: 'cmd',
-        imageUrl: 'https://images.unsplash.com/photo-1617994211029-29c78701835b?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1587578763266-a24931a2c862?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Security Operations Center',
@@ -15,9 +15,10 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 8, width: 6, height: 3 },
             maxParticipants: 4,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                 { id: uuidv4(), name: 'Camera Feeds', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Central Rack' },
-                 { id: uuidv4(), name: 'Video Wall', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Wall Mount' },
+                 { id: uuidv4(), name: 'Camera Feeds', type: 'input', deviceType: 'Camera', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                 { id: uuidv4(), name: 'Video Wall', type: 'output', deviceType: 'Room Display', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'lcd_video_wall',
             displayCount: 4,
@@ -40,14 +41,15 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
         templateName: 'Large Emergency Operations Center (EOC)',
         description: 'A large-scale video wall with multiple operator stations for coordinating emergency responses.',
         vertical: 'cmd',
-        imageUrl: 'https://images.unsplash.com/photo-1617994211029-29c78701835b?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1620327467533-3561910d8a59?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Emergency Operations Center', roomType: 'Command Center', designTier: 'Gold',
             dimensions: { length: 20, width: 15, height: 5 }, maxParticipants: 30,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'EOC Sources', type: 'input', quantity: 12, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Main Video Wall', type: 'output', quantity: 16, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Wall Mount' },
-                { id: uuidv4(), name: 'Operator Desks', type: 'output', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Desktop' },
+                { id: uuidv4(), name: 'EOC Sources', type: 'input', deviceType: 'Room PC', quantity: 12, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Main Video Wall', type: 'output', deviceType: 'Room Display', quantity: 16, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Operator Desks', type: 'output', deviceType: 'Room Display', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Desktop', control: { needed: false, types: [] } },
             ],
             displayType: 'lcd_video_wall',
             displayCount: 16,

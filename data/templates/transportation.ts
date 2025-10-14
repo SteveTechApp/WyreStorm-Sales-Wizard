@@ -7,7 +7,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Airport Digital Signage',
         description: 'A highly scalable and reliable AVoIP system for displaying flight information and advertising.',
         vertical: 'tra',
-        imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-152459271464c-e0959e190325?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Terminal Signage System',
@@ -15,9 +15,10 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 500, width: 200, height: 12 },
             maxParticipants: 5000,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'FIDS Server', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Terminal Displays', type: 'output', quantity: 100, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 80, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'FIDS Server', deviceType: 'Room PC', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Terminal Displays', deviceType: 'Room Display', type: 'output', quantity: 100, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 80, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', // Many single displays and video walls
             displayCount: 100,
@@ -39,7 +40,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Train Station Platform Display',
         description: 'Ruggedized, high-brightness displays for arrival and departure information.',
         vertical: 'tra',
-        imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1527492662722-dbaf97270863?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Platform 3 Displays', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 200, width: 10, height: 6 }, maxParticipants: 500, 
@@ -59,7 +60,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Bus Terminal Wayfinding',
         description: 'A combination of interactive kiosks and schedule boards to guide passengers.',
         vertical: 'tra',
-        imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Central Bus Terminal', roomType: 'Large Venue', designTier: 'Silver',
             dimensions: { length: 100, width: 50, height: 7 }, maxParticipants: 1000, 
@@ -79,7 +80,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Cruise Ship Theater',
         description: 'A high-performance AV system for live shows and movie screenings on a cruise ship.',
         vertical: 'tra',
-        imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1596726134331-b8271a096342?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Starlight Theater', roomType: 'Auditorium', designTier: 'Gold',
             dimensions: { length: 25, width: 20, height: 9 }, maxParticipants: 400, 
@@ -99,7 +100,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Public Announcement (PA) System',
         description: 'A multi-zone, high-impedance audio system integrated with facility announcements.',
         vertical: 'tra',
-        imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1588190956488-53b6f0e3cec9?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Terminal-Wide Audio', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 500, width: 200, height: 12 }, maxParticipants: 5000, 

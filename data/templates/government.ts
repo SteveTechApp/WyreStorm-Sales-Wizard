@@ -7,7 +7,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Council Chamber',
         description: 'A formal meeting space with delegate microphones, video conferencing, and broadcast capabilities.',
         vertical: 'gov',
-        imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1590214228373-366f0490b490?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'City Council Chamber',
@@ -52,13 +52,14 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Secure Briefing Room (SCIF)',
         description: 'A non-networked, high-security display system for a Sensitive Compartmented Information Facility.',
         vertical: 'gov',
-        imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'SCIF Conference Room', roomType: 'Conference Room', designTier: 'Gold',
             dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 10, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Secure PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 10, terminationType: 'Desktop' },
-                { id: uuidv4(), name: 'Secure Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 2, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Secure PC', deviceType: 'Room PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 10, terminationType: 'Desktop', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Secure Display', deviceType: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 2, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 1,
             features: [],
@@ -75,7 +76,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Courthouse',
         description: 'Evidence presentation, video arraignment, and voice lift for a modern courtroom.',
         vertical: 'gov',
-        imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1589994383619-354e227a94cf?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Courtroom 3A', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 15, width: 12, height: 5 }, maxParticipants: 60, 
@@ -95,7 +96,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Public Service Lobby',
         description: 'Displays for queuing systems, information, and public announcements.',
         vertical: 'gov',
-        imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1628102490586-a334b02a64c4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'DMV Lobby', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 100, 
@@ -115,7 +116,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Training & Simulation Room',
         description: 'A multi-projector or display setup for immersive training simulations.',
         vertical: 'gov',
-        imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1533729227191-3f1c1a2d5930?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Simulator Bay', roomType: 'Other', designTier: 'Gold',
             dimensions: { length: 12, width: 8, height: 4 }, maxParticipants: 10, 

@@ -3,6 +3,7 @@ import { IOPoint } from '../../utils/types.ts';
 import BasicInfoInputs from './ioConfig/BasicInfoInputs.tsx';
 import ConnectivityInputs from './ioConfig/ConnectivityInputs.tsx';
 import OutputSpecifics from './ioConfig/OutputSpecifics.tsx';
+import ControlInputs from './ioConfig/ControlInputs.tsx';
 import InfoModal from '../InfoModal.tsx';
 import toast from 'react-hot-toast';
 
@@ -43,7 +44,7 @@ const IOPointConfigModal: React.FC<IOPointConfigModalProps> = ({ isOpen, onClose
     const newErrors: Record<string, string> = {};
     
     // HDBaseT Distance Validation
-    if (currentPoint.connectionType === 'HDBaseT') {
+    if (currentPoint.distributionType === 'HDBaseT') {
         const distance = Number(currentPoint.distance);
         if (isNaN(distance) || distance < 1 || distance > 100) {
             newErrors.distance = 'HDBaseT distance must be between 1 and 100 meters.';
@@ -70,13 +71,19 @@ const IOPointConfigModal: React.FC<IOPointConfigModalProps> = ({ isOpen, onClose
     <InfoModal 
         isOpen={isOpen} 
         onClose={onClose} 
-        className="max-w-2xl"
+        className="max-w-3xl"
         title={`Configure ${currentPoint.type === 'input' ? 'Input' : 'Output'} Point`}
         footer={footer}
     >
       <div className="space-y-6">
         <BasicInfoInputs point={currentPoint} onUpdate={handleUpdate} />
         <ConnectivityInputs point={currentPoint} onUpdate={handleUpdate} errors={errors} />
+        {currentPoint.type === 'input' && (
+          <ControlInputs 
+            control={currentPoint.control}
+            onUpdate={(newControl) => handleUpdate({ control: newControl })}
+          />
+        )}
         {currentPoint.type === 'output' && (
           <OutputSpecifics point={currentPoint} onUpdate={handleUpdate} />
         )}

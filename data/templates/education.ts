@@ -7,7 +7,7 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Interactive Classroom',
         description: 'A modern classroom with an interactive display, wireless casting, and voice reinforcement.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1577896851231-70f144b59b44?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Standard Classroom',
@@ -15,10 +15,11 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 10, width: 8, height: 3 },
             maxParticipants: 30,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Lectern PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
-                { id: uuidv4(), name: 'Guest Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
-                { id: uuidv4(), name: 'Interactive Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Lectern PC', deviceType: 'Room PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Guest Laptop', deviceType: 'Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Interactive Display', deviceType: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single',
             displayCount: 1,
@@ -43,7 +44,7 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'University Lecture Hall',
         description: 'A large venue system with projection, lecture capture, and multiple sources for higher education.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Lecture Hall 101',
@@ -51,10 +52,11 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 20, width: 25, height: 8 },
             maxParticipants: 200,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Lectern Sources', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
-                { id: uuidv4(), name: 'Main Projectors', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 50, terminationType: 'Ceiling Mount' },
-                { id: uuidv4(), name: 'Confidence Monitor', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Floor Box' },
+                { id: uuidv4(), name: 'Lectern Sources', deviceType: 'Guest Device', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Main Projectors', deviceType: 'Projector', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 50, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Confidence Monitor', deviceType: 'Confidence Monitor', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Floor Box', control: { needed: false, types: [] } },
             ],
             displayType: 'projector',
             displayCount: 2,
@@ -65,7 +67,7 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             functionalityStatement: 'A comprehensive AV system for a large university lecture hall, centered around the powerful MX-1007-HYB hybrid matrix. It routes multiple sources from the lectern to dual laser projectors and a confidence monitor. The system integrates with a lecture capture platform to record and stream classes via a dedicated PTZ camera. A distributed audio system with Dante integration ensures every student hears clearly.',
             manuallyAddedEquipment: [
                 { sku: 'MX-1007-HYB', name: '10x7 Hybrid HDBaseT/HDMI Matrix Switcher', quantity: 1, category: 'Matrix Switcher', description: 'A powerful hybrid matrix with 10 inputs (HDMI, HDBaseT) and 7 outputs, with integrated audio DSP.', msrp: 7500, dealerPrice: 5500, tags: ['Matrix', 'HDBaseT', 'DSP', '4K', 'Gold', '10x7', 'HDMI'] },
-                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 2, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'GEN-PTZ-CAM', name: 'Generic 4K PTZ Camera', quantity: 2, category: 'Camera', description: 'A professional 4K pan-tilt-zoom camera with 12x optical zoom, USB, and IP streaming. Ideal for larger rooms and lecture halls.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream', 'HDMI'] },
                 { sku: 'AMP-260-DNT', name: '120W Network Amplifier', quantity: 2, category: 'Amplifier', description: '2 x 60w or 4 x 25w Channel Output @ 4ohm | Dual Power Options | Advanced DSP with Dante Integration', msrp: 1000, dealerPrice: 750, tags: ['Amplifier', 'Dante', 'DSP', 'Low Impedance'] },
             ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
@@ -79,13 +81,14 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Standard Classroom',
         description: 'A simple, budget-friendly setup with a projector and a wired wall plate input.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Classroom 3B', roomType: 'Classroom', designTier: 'Bronze',
             dimensions: { length: 9, width: 7, height: 3 }, maxParticipants: 25, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Wall Plate Input', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Plate' },
-                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Wall Plate Input', deviceType: 'Guest Device', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Plate', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector', displayCount: 1,
             features: [],
@@ -104,15 +107,16 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Active Learning Classroom',
         description: 'A collaborative space with multiple student pods that can share content locally or to the main display.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1563286094-63a56285a864?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Collaboration Lab', roomType: 'Classroom', designTier: 'Gold',
             dimensions: { length: 15, width: 12, height: 3 }, maxParticipants: 36, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Instructor Lectern', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Lectern' },
-                { id: uuidv4(), name: 'Student Pods', type: 'input', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 8, terminationType: 'Floor Box' },
-                { id: uuidv4(), name: 'Main Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Ceiling Mount' },
-                { id: uuidv4(), name: 'Pod Displays', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 2, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Instructor Lectern', deviceType: 'Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Lectern', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Student Pods', deviceType: 'Guest Device', type: 'input', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 8, terminationType: 'Floor Box', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Main Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Pod Displays', deviceType: 'Room Display', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 2, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 7, // 1 main display + 6 pod displays
             features: [{ name: 'Wireless Presentation', priority: 'must-have' }],
@@ -133,7 +137,7 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Library Collaboration Zone',
         description: 'Several huddle stations with screen sharing for group study.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Library Group Study', roomType: 'Huddle Space', designTier: 'Silver',
             dimensions: { length: 20, width: 10, height: 3.5 }, maxParticipants: 24, 
@@ -155,13 +159,14 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Cafeteria / Common Area Signage',
         description: 'A multi-display system for announcements, menus, and school news.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1555963953-b152b7586566?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'School Cafeteria', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 30, width: 25, height: 6 }, maxParticipants: 300, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Signage Displays', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Signage Displays', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 4,
             features: [],
@@ -181,15 +186,16 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         templateName: 'Science Lab',
         description: 'A specialized room with a document camera and multiple displays for detailed demonstrations.',
         vertical: 'edu',
-        imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1581093581525-7b2046397340?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Chemistry Lab', roomType: 'Classroom', designTier: 'Silver',
             dimensions: { length: 12, width: 10, height: 3 }, maxParticipants: 24, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Doc Cam', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 1, terminationType: 'Desktop' },
-                { id: uuidv4(), name: 'PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Desktop' },
-                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Ceiling Mount' },
-                { id: uuidv4(), name: 'Confidence Displays', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'Direct', distance: 8, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Doc Cam', deviceType: 'Document Camera', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 1, terminationType: 'Desktop', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'PC', deviceType: 'Room PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Desktop', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Projector', deviceType: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Confidence Displays', deviceType: 'Confidence Monitor', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'Direct', distance: 8, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'dual_display', displayCount: 3,
             features: [],

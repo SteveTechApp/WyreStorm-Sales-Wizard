@@ -1,5 +1,6 @@
 
-import React, { ReactNode, useMemo } from 'react';
+
+import React, { ReactNode, useMemo, useState } from 'react';
 import { useUserContext } from '../context/UserContext.tsx';
 
 import DefaultHeader from './layout/DefaultHeader.tsx';
@@ -8,6 +9,7 @@ import QuickQuestionFAB from './QuickQuestionFAB.tsx';
 import ComparisonTray from './ComparisonTray.tsx';
 import ProfileModal from './ProfileModal.tsx';
 import BackgroundCarousel from './BackgroundCarousel.tsx';
+import FeedbackModal from './FeedbackModal.tsx';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -24,6 +26,7 @@ const RESOLUTION_MAP: { [key: string]: React.CSSProperties } = {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { isProfileModalOpen, closeProfileModal, userProfile } = useUserContext();
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   const containerStyle = useMemo(() => {
     return RESOLUTION_MAP[userProfile.resolution || 'fit'] || RESOLUTION_MAP['fit'];
@@ -49,13 +52,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                {children}
           </div>
         </main>
-        <Footer />
+        <Footer onFeedbackClick={() => setIsFeedbackModalOpen(true)} />
       </div>
 
       {/* Floating UI Layer is outside the content layer to not be affected by its background */}
       <QuickQuestionFAB />
       <ComparisonTray />
       <ProfileModal isOpen={isProfileModalOpen} onClose={closeProfileModal} />
+      <FeedbackModal isOpen={isFeedbackModalOpen} onClose={() => setIsFeedbackModalOpen(false)} />
     </div>
   );
 };

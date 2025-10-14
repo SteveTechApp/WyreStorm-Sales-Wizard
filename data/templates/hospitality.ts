@@ -7,7 +7,7 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Sports Bar (AVoIP)',
         description: 'A flexible AVoIP system for distributing multiple broadcast sources to many displays.',
         vertical: 'hos',
-        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1574629891129-13d80354153a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '',
             roomName: 'Main Bar Area',
@@ -15,9 +15,10 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 25, width: 15, height: 4 },
             maxParticipants: 100,
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Satellite Receiver', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Bar Displays', type: 'output', quantity: 12, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Satellite Receiver', deviceType: 'Satellite Decoder', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Bar Displays', deviceType: 'Room Display', type: 'output', quantity: 12, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', // many single displays
             displayCount: 12,
@@ -39,13 +40,14 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Hotel Lobby Signage',
         description: 'Welcome screens and wayfinding displays for a hotel lobby.',
         vertical: 'hos',
-        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Hotel Lobby', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 30, width: 20, height: 6 }, maxParticipants: 100, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Signage Displays', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 25, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Signage Displays', deviceType: 'Room Display', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 25, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 3,
             features: [],
@@ -65,13 +67,14 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Hotel Ballroom (Divisible)',
         description: 'A large, divisible ballroom with projection, wireless audio, and flexible routing for events.',
         vertical: 'hos',
-        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1542665952-14513db15293?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Grand Ballroom', roomType: 'Auditorium', designTier: 'Gold',
             dimensions: { length: 40, width: 25, height: 8 }, maxParticipants: 400, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Floor Box Inputs', type: 'input', quantity: 6, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 30, terminationType: 'Floor Box' },
-                { id: uuidv4(), name: 'Projectors', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 60, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Floor Box Inputs', deviceType: 'Guest Device', type: 'input', quantity: 6, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 30, terminationType: 'Floor Box', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Projectors', deviceType: 'Projector', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 60, terminationType: 'Ceiling Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'projector', displayCount: 3,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
@@ -90,13 +93,14 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Hotel Meeting Room',
         description: 'A standard rentable meeting space with simple connectivity for guests.',
         vertical: 'hos',
-        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Breakout Room A', roomType: 'Conference Room', designTier: 'Silver',
             dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 12, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Table Inputs', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Table Box' },
-                { id: uuidv4(), name: 'Wall Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Table Inputs', deviceType: 'Laptop', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Table Box', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Wall Display', deviceType: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 1,
             features: [{ name: 'Wireless Presentation', priority: 'nice-to-have' }],
@@ -115,7 +119,7 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Restaurant BGM',
         description: 'A multi-zone background music system for a restaurant or lounge.',
         vertical: 'hos',
-        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Restaurant Audio', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 80, 
@@ -137,13 +141,14 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         templateName: 'Hotel Gym',
         description: 'A simple video and audio distribution system for a fitness center.',
         vertical: 'hos',
-        imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Fitness Center', roomType: 'Other', designTier: 'Bronze',
             dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 20, 
+            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
-                { id: uuidv4(), name: 'Satellite TV', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack' },
-                { id: uuidv4(), name: 'Treadmill TVs', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Satellite TV', deviceType: 'Satellite Decoder', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack', control: { needed: false, types: [] } },
+                { id: uuidv4(), name: 'Treadmill TVs', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'single', displayCount: 4,
             features: [],

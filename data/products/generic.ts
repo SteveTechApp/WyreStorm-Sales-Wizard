@@ -26,4 +26,34 @@ export const GENERIC_DEVICES: Product[] = [
             ports: [{ type: 'USB-B', count: 1 }]
         }
     },
+    {
+        sku: 'GEN-USB-CAM',
+        name: 'Generic 4K USB Webcam',
+        category: 'Camera',
+        description: 'A high-quality 4K USB webcam with a wide-angle lens, suitable for huddle spaces and small to medium meeting rooms.',
+        msrp: 200, dealerPrice: 150, tags: ['Camera', 'USB', '4K', 'Webcam'],
+        usb: {
+            ports: [{ type: 'USB-C', count: 1 }],
+            bandwidth: '3.0'
+        },
+    },
+    {
+        sku: 'GEN-PTZ-CAM',
+        name: 'Generic 4K PTZ Camera',
+        category: 'Camera',
+        description: 'A professional 4K pan-tilt-zoom camera with 12x optical zoom, USB, and IP streaming. Ideal for larger rooms and lecture halls.',
+        msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream', 'HDMI'],
+        videoIO: {
+            inputs: [],
+            outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }, { type: 'IP Stream', count: 1 }]
+        },
+        hdmiVersion: '2.0',
+        rs232: true,
+        ethernet: true,
+        poe: true,
+        usb: {
+            ports: [{ type: 'USB-B', count: 1 }],
+            bandwidth: '3.0'
+        }
+    },
 ];

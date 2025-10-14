@@ -13,7 +13,13 @@ const CONSTRAINT_MAP: Record<string, string> = {
   DOWNGRADE_HDBT: 'If possible, select a cheaper product that uses HDBaseT 2.0 or Class B instead of HDBaseT 3.0 or Class A.',
 };
 
-const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): string => `
+const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): string => {
+    
+  const connectivityAnalysisInstruction = room.ioRequirements && room.ioRequirements.length > 0
+    ? `You MUST analyze the 'ioRequirements' in detail. Use the specified 'distance' to determine if an extender is necessary (e.g., an HDMI signal over 15m, or a USB signal over 3m). If extension is needed, you MUST follow the **'Signal Distribution & Extension Logic'** section below to select the correct technology and product. The 'terminationType' (e.g., 'Table Box', 'Central Rack') indicates the physical location of the I/O point, which influences cable lengths and equipment placement.`
+    : `The 'ioRequirements' list is empty. You MUST parse the 'Functionality Statement' and other room details to infer the required inputs (sources) and outputs (displays). For example, if the statement mentions 'dual 85-inch displays' and 'connections for a room PC and two guest laptops', you must infer 2 outputs and 3 inputs. Use this inferred I/O list as your primary guide for selecting equipment. Assume connections are direct and within 10m unless otherwise specified in the description.`;
+
+  return `
   You are an expert AV System Designer for WyreStorm. Your task is to select the appropriate equipment for the given room requirements from the provided product database, prioritizing stability and reliability. For each design tier (Bronze, Silver, Gold), you must provide a distinct technology solution that represents a clear increase in functionality and value, not just cost.
 
   Room Details:
@@ -41,8 +47,20 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
       - **Silver**: Provide a balance of performance and value, with enhanced usability. This is the standard for modern meeting rooms. Look for products with the 'Silver' tag. These products should offer a clear step up from Bronze, such as support for 4K60, more input types (like USB-C), and features for modern collaboration like KVM or **BYOM (Bring Your Own Meeting)** - look for 'USB' tags. Introduce more robust connectivity like **HDBaseT Class A**. Can use 1GbE AVoIP (like NetworkHD 500 series) for added flexibility.
       - **Gold**: Prioritize maximum performance, scalability, and future-proofing. This tier represents a true value upgrade. Look for products with the 'Gold' tag. Design a system based on the best technology available, such as **AVoIP (NetworkHD)** for ultimate flexibility or **HDBaseT 3.0** for high-performance point-to-point connections. Scalability and advanced features (video walls, multi-view, control integration) are key differentiators. These products will support the highest resolutions and provide maximum flexibility.
   3.  **Simplicity**: Do not over-engineer. If a simple, reliable product meets the requirement within the tier's guidelines, choose it. Avoid legacy or EOL products unless there is no active alternative.
-  4.  **Connectivity Analysis**: You MUST analyze the 'ioRequirements' in detail. Use the specified 'distance' for each I/O point to determine if an extender is necessary. For example, an HDMI signal over 15m will require an HDBaseT or Fiber extender. The 'terminationType' (e.g., 'Table Box', 'Central Rack') indicates the physical location of the I/O point, which influences cable lengths and equipment placement.
+  4.  **Product Exclusions**: The following products are considered legacy and MUST NOT be used for new designs: APO-100-UC, CAM-200-PTZ, and all products from the NetworkHD 400 Series (NHD-400-TX, NHD-400-RX).
+  5.  **Connectivity Analysis**: ${connectivityAnalysisInstruction}
   
+  **Signal Distribution & Extension Logic:**
+  You must follow these rules when a signal needs to be extended beyond its passive cable limits (e.g., >10m for HDMI, >3m for USB 3.x).
+  1.  **Assess Requirements**: Determine the video bandwidth needed (e.g., 18Gbps for 4K/60Hz 4:4:4) and if USB extension (KVM) is required.
+  2.  **Select HDBaseT Standard**:
+      -   **For 18Gbps signals (4K60 4:4:4)**:
+          -   **HDBaseT 3.0**: This is the best, uncompressed solution. It's a 'Gold' tier choice. Look for products with 'HDBT3.0' in their tags. Requires Cat6a cabling.
+          -   **HDBaseT 2.0 with VLC**: A more cost-effective 'Silver' tier choice. These products use Visually Lossless Compression to handle the 18Gbps signal. Look for extenders that are 'HDBaseT' but explicitly mention '4K60', '4:4:4', or 'HDR' support at the required distance.
+      -   **For 10.2Gbps signals (4K30 or 4K60 4:2:0)**: A standard HDBaseT 2.0 extender (Class A for up to 70m, Class B for up to 40m) is sufficient. This is a 'Bronze' or 'Silver' tier choice.
+  3.  **Check for USB**: If USB extension is required for BYOM or KVM, you **MUST** select an extender product that explicitly supports USB (has 'USB', 'KVM', or 'USB2.0' in its tags or description).
+  4.  **Add Equipment**: **CRITICAL INSTRUCTION**: When you select an HDBaseT extender, you **MUST** add the SKU for the complete **Extender Kit** to the \`manuallyAddedEquipment\` list. An extender kit contains both the Transmitter (TX) and Receiver (RX). Do not add individual TX or RX units unless the product is specifically sold that way. For example, \`EX-100-KVM\` is a kit. The quantity should be \`1\` for each required point-to-point link.
+
   **AVoIP System Design**:
   If a specific AVoIP system is selected (not 'None'), you MUST base your design on the corresponding WyreStorm NetworkHD series. Different series are **NOT** interoperable.
   - If '1GbE (H.264/H.265 - Low Bandwidth)' is selected, you MUST use products from the **NetworkHD 120 Series**.
@@ -63,6 +81,10 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   - If a source or display requires only HDMI connectivity and does not need USB or separate audio, use the 'E' versions ('NHD-500-TXE' for source, 'NHD-500-RXE' for display) to reduce cost.
   - You can mix standard 500 series and 'E' version 500 series products in the same design. For example, a presenter's laptop might need a full 'NHD-500-TX' for USB-C, while a fixed media player only needs an 'NHD-500-TXE'.
 
+  **Specific Product Compatibility Rules:**
+  // FIX: Replaced potentially problematic backticks with single quotes to avoid parsing errors.
+  1.  **Apollo Dongles**: The 'APO-DG2' dongle is for wireless casting WITH USB data (BYOM). It is **ONLY** compatible with presentation switchers whose SKU ends in a '-W' (e.g., 'SW-640L-TX-W'). You MUST NOT pair the 'APO-DG2' with any other device, especially not the 'APO-VX20' or 'APO-210-UC'. If a user needs simple wireless casting (video/audio only, no USB data) for devices like the 'APO-210-UC', the correct dongle is the 'APO-DG1'.
+
   ${room.valueEngineeringConstraints && room.valueEngineeringConstraints.length > 0 ? `
   **Value Engineering Constraints:**
   The user has requested to reduce the cost of this solution. You MUST adhere to the following constraints when selecting products, finding cheaper alternatives where possible:
@@ -79,6 +101,7 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
 
   Return only valid JSON. Do not include markdown formatting or explanations.
 `;
+}
 
 const generateDiagramPrompt = (room: RoomData): string => `
   You are an expert AV System Diagrammer. Based on the provided room data, including the equipment list, create a structured system diagram.

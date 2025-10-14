@@ -5,7 +5,11 @@ export const TECHNICAL_DATABASE = `
 
 ### Core Signal Concepts
 - **Digital vs. Analog**: Digital signals (HDMI, DisplayPort) use binary data and are robust against noise over distance. Analog signals (VGA, Component) are continuous waves that degrade easily. Digital is the modern standard.
-- **Bandwidth**: The data rate of a signal, measured in gigabits per second (Gbps). Higher resolutions and frame rates require more bandwidth. A full 4K60 4:4:4 signal requires 18Gbps. All components in the chain must support this bandwidth.
+- **Bandwidth**: The data rate of a signal, measured in gigabits per second (Gbps). Higher resolutions and frame rates require more bandwidth.
+  - **HDMI 1.4**: Max bandwidth of 10.2 Gbps. Supports up to 4K30 4:4:4 or 4K60 4:2:0.
+  - **HDMI 2.0**: Max bandwidth of 18 Gbps. Required for full 4K60 4:4:4 HDR signals.
+  - **HDMI 2.1**: Max bandwidth of 48 Gbps. For 8K and high frame rate 4K.
+  All components in the chain (cables, switchers, extenders) must support the required bandwidth.
 
 ### Common Connection Types
 - **HDMI (High-Definition Multimedia Interface)**: The industry standard for AV. Carries video, audio, and sometimes control (CEC) and network data.
@@ -15,7 +19,9 @@ export const TECHNICAL_DATABASE = `
 
 ### USB Standards & Distances
 - **USB 2.0 (High Speed)**: 480Mbps bandwidth. Sufficient for keyboards, mice, and basic webcams. Passive cable limit is ~5 meters.
-- **USB 3.x (SuperSpeed)**: 5Gbps or higher. Required for high-quality cameras, multiple peripherals, and fast data transfer. Passive cable limit is ~3 meters. USB extension is a common requirement in meeting rooms.
+- **USB 3.x (SuperSpeed)**: 5Gbps or higher. Required for high-quality cameras, multiple peripherals, and fast data transfer. The passive cable limit is very short, around ~3 meters.
+- **USB-C**: A versatile connector that can carry USB 3.x data and video. When used for video, it is also subject to short distance limits and often requires active cables or extenders for in-room applications.
+- **USB Extension**: Extending any USB signal beyond its passive limit requires an active extender. HDBaseT and AVoIP are common technologies for extending USB over long distances.
 
 ### EDID & HDCP
 - **EDID (Extended Display Identification Data)**: Data from a display that tells a source its capabilities (e.g., "I am a 1080p display"). A failed "EDID handshake" is a primary cause of "No Signal" errors.
@@ -24,11 +30,22 @@ export const TECHNICAL_DATABASE = `
 ## Part 2: Signal Extension Technologies
 
 ### HDBaseT
-A technology for transmitting a bundle of signals (Video, Audio, USB, Control, Ethernet, Power) over a single category cable. It is a **point-to-point** technology.
-- **HDBaseT 2.0 (Class A)**: 1080p up to 100m; 4K30 up to 70m.
-- **HDBaseT 2.0 (Class B)**: 1080p up to 70m; 4K30 up to 35m. A more cost-effective, shorter-distance solution.
-- **HDBaseT 3.0**: The latest standard, supporting uncompressed 4K60 4:4:4 and USB 2.0 up to 100m over a single Cat6a/7 cable.
+A technology for transmitting a bundle of signals (Video, Audio, USB, Control, Ethernet, Power) over a single category cable. It is a **point-to-point** technology, requiring a Transmitter (TX) and a Receiver (RX).
+
+#### HDBaseT 2.0 (Classes A & B)
+- **Native Bandwidth**: ~10.2 Gbps. Natively supports 1080p up to 100m (Class A) / 70m (Class B) and 4K30 4:4:4 up to 70m (Class A) / 40m (Class B).
+- **Visually Lossless Compression (VLC)**: To support higher bandwidth signals like 4K60 4:4:4 (18Gbps), many HDBaseT 2.0 products use VLC (also known as DSC - Display Stream Compression). This allows an 18Gbps signal to be sent over a 10.2Gbps link with no perceptible loss in quality. This is a cost-effective way to achieve 4K60 extension.
+- **USB**: USB 2.0 support is an optional feature. Products must explicitly state they support USB/KVM.
+- **Cabling**: Requires a minimum of Cat6, but Cat6a is always recommended.
+
+#### HDBaseT 3.0
+- **Native Bandwidth**: ~18 Gbps. Supports **uncompressed** 4K60 4:4:4 video, audio, USB 2.0, control, and 1GbE Ethernet.
+- **Distance**: Up to 100m.
+- **USB**: USB 2.0 is a standard part of the HDBaseT 3.0 specification.
+- **Cabling**: Requires a minimum of **Cat6a** or Cat7 cable.
+
 - **PoH (Power over HDBaseT)**: Allows one HDBaseT device to power the other over the category cable, simplifying installation.
+
 
 ### Fiber Optic Extenders
 Uses light to transmit signals over glass fiber.
@@ -70,4 +87,11 @@ The ability to display multiple video sources on a single screen simultaneously 
 - **Dante Implementations**:
   - **Dedicated Hardware**: Devices with dedicated Dante chips and ports for primary/secondary networks (e.g., **NHD-610** models).
   - **Software-based (Dante AV-A)**: Some devices can have Dante capability activated via a software license. The **WyreStorm NHD-500 series** supports Dante AV-A, which can be enabled via Audinate's software.
+
+## Part 5: WyreStorm Specific Technologies & Naming
+
+### Apollo Series (Wireless Casting)
+- **APO-DG1**: A wireless casting dongle for video and audio. It does **not** transmit USB data for BYOM functionality. It is compatible with devices like the APO-210-UC for video/audio-only casting.
+- **APO-DG2**: A wireless casting dongle that **does** transmit USB data, enabling full BYOM (Bring Your Own Meeting) functionality.
+- **Compatibility**: The **APO-DG2** is a specialized dongle that only works with WyreStorm presentation switchers whose SKU ends in **-W** (e.g., SW-640L-TX-W). It is **NOT** compatible with devices like the APO-VX20 or APO-210-UC.
 `;

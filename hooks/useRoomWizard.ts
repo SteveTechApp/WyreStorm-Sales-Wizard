@@ -54,42 +54,6 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
         });
     }, []);
 
-    useEffect(() => {
-        const { roomType, maxParticipants } = answers;
-        
-        let newDisplayType: DisplayType = 'single';
-        let newDisplayCount = 1;
-
-        const participantCount = Number(maxParticipants) || 0;
-
-        if (roomType === 'Huddle Space' || (participantCount > 0 && participantCount <= 6)) {
-            newDisplayType = 'single';
-            newDisplayCount = 1;
-        } else if ((roomType === 'Conference Room' || roomType === 'Boardroom') && (participantCount > 6 && participantCount <= 16)) {
-            newDisplayType = 'dual_display';
-            newDisplayCount = 2;
-        } else if (roomType === 'Lecture Hall' || roomType === 'Auditorium' || roomType === 'Large Venue' || participantCount > 16) {
-            newDisplayType = 'projector';
-            newDisplayCount = 1;
-        } else if (roomType === 'Command Center') {
-            newDisplayType = 'lcd_video_wall';
-            newDisplayCount = 4; // Default to a 2x2
-        } else if (roomType === 'Sports Bar') {
-            newDisplayType = 'single';
-            newDisplayCount = 8;
-        } else if (roomType === 'Retail Space') {
-            newDisplayType = 'single';
-            newDisplayCount = 4;
-        }
-
-        if (answers.displayType !== newDisplayType || answers.displayCount !== newDisplayCount) {
-            updateAnswers({
-                displayType: newDisplayType,
-                displayCount: newDisplayCount,
-            });
-        }
-    }, [answers.roomType, answers.maxParticipants, answers.displayType, answers.displayCount, updateAnswers]);
-
     const validateStep = (stepIndex: number): boolean => {
         const newErrors: Record<string, string> = {};
         if (stepIndex === 0) { // Basic Info Validation

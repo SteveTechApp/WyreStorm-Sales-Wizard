@@ -30,7 +30,7 @@ const WorkspaceHeader: React.FC = () => {
                         onClick={() => handleGenerateProposal(projectData, navigate)}
                         className="btn btn-primary"
                     >
-                        Generate Sortie Report
+                        Generate Proposal
                     </button>
                 </div>
             </div>

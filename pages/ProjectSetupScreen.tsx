@@ -1,7 +1,9 @@
 
 
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// FIX: Changed import to namespace to fix "no exported member 'useNavigate'" error.
+import * as ReactRouterDOM from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
 import { ProjectSetupData, RoomData } from '../utils/types.ts';
@@ -19,7 +21,7 @@ const ProjectSetupScreen: React.FC = () => {
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const { handleProjectSetupSubmit } = useGenerationContext();
     const { userProfile } = useUserContext();
-    const navigate = useNavigate();
+    const navigate = ReactRouterDOM.useNavigate();
 
     const [isWizardOpen, setIsWizardOpen] = useState(false);
     const [editingRoom, setEditingRoom] = useState<RoomData | null>(null);
@@ -85,41 +87,4 @@ const ProjectSetupScreen: React.FC = () => {
                            <ConfiguredRoomCard
                                 key={room.id}
                                 room={room}
-                                onEdit={handleEditWithWizard}
-                                onRemove={handleRemoveRoom}
-                           />
-                        ))}
-                         {rooms.length === 0 && (
-                            <div className="text-center py-8 border-2 border-dashed border-border-color rounded-lg">
-                                <p className="text-text-secondary">// No rooms configured yet.</p>
-                                <p className="text-sm text-text-secondary">Use the wizard to add your first room.</p>
-                            </div>
-                         )}
-                    </div>
-                    <button 
-                        type="button" 
-                        onClick={handleAddWithWizard} 
-                        className="mt-4 w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:bg-accent-bg-subtle py-3 border-2 border-dashed border-border-color rounded-lg"
-                    >
-                        <PlusIcon className="h-4 w-4" /> Add Room with Wizard
-                    </button>
-                </div>
-
-                <div className="text-right">
-                    <button type="submit" className="btn btn-primary text-lg">
-                        Create Project
-                    </button>
-                </div>
-            </form>
-
-            <RoomWizard 
-                isOpen={isWizardOpen}
-                onClose={() => setIsWizardOpen(false)}
-                onSave={handleSaveFromWizard}
-                initialData={editingRoom}
-            />
-        </div>
-    );
-};
-
-export default ProjectSetupScreen;
+                                onEdit={handleEditWithWizard

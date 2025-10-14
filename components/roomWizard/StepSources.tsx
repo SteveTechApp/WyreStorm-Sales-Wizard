@@ -1,9 +1,9 @@
-import React from 'react';
-import { RoomWizardAnswers } from '../../utils/types.ts';
-import IOSection from './basicInfo/IOSection.tsx';
-import { CAMERA_TYPES } from '../../data/wizardOptions.ts';
-import WizardToggleOption from './common/WizardToggleOption.tsx';
-import { toggleFeature } from '../../utils/utils.ts';
+import React, { useState } from 'react';
+import { RoomWizardAnswers, IOPoint } from '../../utils/types.ts';
+import IOPointConfigModal from './IOPointConfigModal.tsx';
+import { v4 as uuidv4 } from 'uuid';
+import { CONNECTION_TYPE_ICONS } from '../../data/constants.ts';
+import { PlusIcon } from '../Icons.tsx';
 
 interface StepSourcesProps {
   answers: RoomWizardAnswers;
@@ -11,69 +11,93 @@ interface StepSourcesProps {
 }
 
 const StepSources: React.FC<StepSourcesProps> = ({ answers, updateAnswers }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingPoint, setEditingPoint] = useState<IOPoint | null>(null);
 
-    const handleFeatureToggle = (featureName: string) => (isEnabled: boolean) => {
-        const newFeatures = toggleFeature(answers.features, featureName, isEnabled);
-        updateAnswers({ features: newFeatures });
+    const inputs = answers.ioRequirements.filter(p => p.type === 'input');
+
+    const handleAddPoint = () => {
+        const newPoint: IOPoint = {
+            id: uuidv4(),
+            type: 'input',
+            name: 'New Source',
+            deviceType: 'Laptop',
+            quantity: 1,
+            connectionType: 'USB-C',
+            distributionType: 'Direct',
+            distance: 2,
+            terminationType: 'Table Box',
+            control: { needed: false, types: [] },
+        };
+        setEditingPoint(newPoint);
+        setIsModalOpen(true);
     };
 
-    const handleTechChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-        const { name, value, type } = e.target;
-        const finalValue = type === 'number' ? parseInt(value) : value;
-
-        updateAnswers({ 
-            technicalDetails: {
-                ...answers.technicalDetails,
-                [name]: finalValue,
-            }
-        });
+    const handleEditPoint = (point: IOPoint) => {
+        setEditingPoint(point);
+        setIsModalOpen(true);
     };
 
-    const handleRoomPcToggle = (isEnabled: boolean) => {
-         updateAnswers({ 
-            technicalDetails: {
-                ...answers.technicalDetails,
-                roomPc: isEnabled,
-            }
-        });
-    }
+    const handleRemovePoint = (id: string) => {
+        updateAnswers({ ioRequirements: answers.ioRequirements.filter(p => p.id !== id) });
+    };
+
+    const handleSavePoint = (point: IOPoint) => {
+        const existing = answers.ioRequirements.find(p => p.id === point.id);
+        if (existing) {
+            updateAnswers({ ioRequirements: answers.ioRequirements.map(p => p.id === point.id ? point : p) });
+        } else {
+            updateAnswers({ ioRequirements: [...answers.ioRequirements, point] });
+        }
+        setIsModalOpen(false);
+        setEditingPoint(null);
+    };
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h2 className="text-2xl font-bold mb-4 text-text-primary">Source Devices & Features</h2>
-                <p className="text-text-secondary mb-6">Define where signals will come from and what key features are required.</p>
-                <div className="space-y-4">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <WizardToggleOption
-                            label="Wireless Presentation"
-                            description="Allow users to share content wirelessly."
-                            checked={answers.features.some(f => f.name === 'Wireless Presentation')}
-                            onChange={handleFeatureToggle('Wireless Presentation')}
-                        />
-                        <WizardToggleOption
-                            label="Dedicated Room PC"
-                            description="Include a dedicated in-room computer."
-                            htmlForId="room-pc"
-                            checked={answers.technicalDetails.roomPc}
-                            onChange={handleRoomPcToggle}
-                        />
-                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         <div>
-                            <label htmlFor="camera-type" className="block text-sm font-medium text-text-secondary">Camera Type</label>
-                            <select id="camera-type" name="cameraType" value={answers.technicalDetails.cameraType} onChange={handleTechChange} className="w-full p-2 border rounded-md bg-input-bg mt-1">
-                                {CAMERA_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                            </select>
+        <div>
+            <h2 className="text-2xl font-bold mb-4 text-text-primary">Inputs / Sources</h2>
+            <p className="text-text-secondary mb-6">Define all the source devices that will provide video and audio signals, such as laptops, PCs, or cameras.</p>
+            
+            <div className="space-y-3">
+                {inputs.map(point => {
+                    const Icon = CONNECTION_TYPE_ICONS[point.connectionType] || CONNECTION_TYPE_ICONS.default;
+                    return (
+                        <div key={point.id} className="p-3 bg-background rounded-md border border-border-color flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <Icon className="h-6 w-6 text-accent" />
+                                <div>
+                                    <p className="font-bold">{point.name} (x{point.quantity})</p>
+                                    <p className="text-xs text-text-secondary">{point.deviceType} via {point.connectionType}</p>
+                                </div>
+                            </div>
+                             <div className="flex gap-3">
+                                <button onClick={() => handleEditPoint(point)} className="text-sm font-semibold text-accent hover:underline">Edit</button>
+                                <button onClick={() => handleRemovePoint(point.id)} className="text-sm text-destructive hover:underline">Remove</button>
+                            </div>
                         </div>
-                        <div>
-                            <label htmlFor="camera-count" className="block text-sm font-medium text-text-secondary">Camera Count</label>
-                            <input type="number" id="camera-count" name="cameraCount" min="0" value={answers.technicalDetails.cameraCount} onChange={handleTechChange} className="w-full p-2 border rounded-md bg-input-bg mt-1" />
-                        </div>
+                    );
+                })}
+
+                {inputs.length === 0 && (
+                     <div className="text-center py-8 border-2 border-dashed border-border-color rounded-lg">
+                        <p className="text-text-secondary">No sources defined yet.</p>
                     </div>
-                </div>
+                )}
+
+                <button 
+                    onClick={handleAddPoint}
+                    className="w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:bg-accent-bg-subtle py-3 border-2 border-dashed border-border-color rounded-lg"
+                >
+                    <PlusIcon className="h-4 w-4" /> Add Source
+                </button>
             </div>
-            <IOSection answers={answers} updateAnswers={updateAnswers} />
+
+            <IOPointConfigModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSave={handleSavePoint}
+                point={editingPoint}
+            />
         </div>
     );
 };
