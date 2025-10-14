@@ -11,8 +11,9 @@ interface State {
   error: Error | null;
 }
 
-// FIX: Added generic Props and State to the React.Component extension to correctly type the class.
 class ErrorBoundary extends React.Component<Props, State> {
+  // FIX: Using a constructor to initialize state and ensure 'this.props' is available.
+  // The class property syntax for state was causing a type error where 'props' was not found.
   constructor(props: Props) {
     super(props);
     this.state = {

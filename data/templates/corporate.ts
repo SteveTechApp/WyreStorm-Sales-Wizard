@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,15 +15,22 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 4, width: 3, height: 2.7 },
             maxParticipants: 4,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Table Connection', type: 'input', quantity: 1, connectionType: 'USB-C', distributionType: 'Direct', distance: 2, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Guest HDMI', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single',
             displayCount: 1,
             features: [
                 { name: 'Wireless Presentation', priority: 'must-have' },
                 { name: 'Video Conferencing', priority: 'nice-to-have' },
             ],
-            functionalityStatement: 'A simple collaboration space for small teams. Users can connect via a single USB-C cable for charging and BYOM video conferencing, or cast wirelessly from any device. An all-in-one video bar provides audio and a wide-angle camera.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A simple collaboration space for small teams. Users connect their laptop to the Apollo APO-210-UC at the table via a single USB-C cable for charging, video, and connection to the room\'s AV. The APO-210-UC acts as a speakerphone and drives the room display. Wireless casting is also available via an included APO-DG2 dongle.',
+            manuallyAddedEquipment: [
+                { sku: 'APO-210-UC', name: 'Apollo 210 UC Speakerphone & Switcher', quantity: 1, category: 'Unified Communications', description: 'A complete BYOM solution with USB-C and HDMI inputs, speakerphone with AEC, and dual-view output for medium conference rooms.', msrp: 1500, dealerPrice: 1100, tags: ['UC', 'BYOM', 'USB-C', 'Speakerphone', 'Dual-View', 'HDMI', 'AEC'] },
+                { sku: 'APO-DG2', name: 'Apollo USB-C/HDMI Wireless Casting Dongle', quantity: 1, category: 'Unified Communications', description: 'Plug-and-play wireless casting dongle. Supports both USB-C and HDMI connections for easy screen sharing.', msrp: 250, dealerPrice: 180, tags: ['UC', 'Casting', 'Wireless', 'USB-C', 'HDMI', 'Dongle'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'], microphoneType: 'soundbar_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'usb_webcam', cameraCount: 1, roomPc: false },
@@ -46,7 +50,12 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 12, width: 6, height: 3 },
             maxParticipants: 16,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Table Input 1 (USB-C)', type: 'input', quantity: 1, connectionType: 'USB-C', distributionType: 'Direct', distance: 2, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Table Input 2 (HDMI)', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Left Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Right Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 7, terminationType: 'Wall Mount' },
+            ],
             displayType: 'dual_display',
             displayCount: 2,
             features: [
@@ -55,8 +64,13 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
                 { name: 'Speech Reinforcement', priority: 'must-have' },
                 { name: 'Multi-Display Support', priority: 'must-have' },
             ],
-            functionalityStatement: 'A premium, fully-featured boardroom designed for executive meetings. It supports dual 4K displays and includes multiple connection points (HDMI/USB-C) at the table. A powerful presentation switcher handles all signals, including wireless casting. Ceiling microphones and speakers provide crystal-clear audio for all participants. The entire room is managed via a simple, intuitive touch panel.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A premium, fully-featured boardroom designed for executive meetings. A powerful SW-640L-TX-W presentation switcher, located in local AV furniture, handles multiple 4K sources from the table, including native USB-C and wireless casting. It drives two main 4K displays independently. Audio is captured by two APO-SKY-MIC ceiling microphones and processed through a COM-MIC-HUB for crystal-clear conferencing. The entire room is managed via a SYN-TOUCH10 touch panel.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-640L-TX-W', name: '6-Input 4K/60Hz Presentation Switcher with USB-C', quantity: 1, category: 'Presentation Switcher', description: 'Dual output 4K presentation switcher with wireless casting, USB-C, and USB host for peripherals. A high-performance solution for boardrooms.', msrp: 2000, dealerPrice: 1500, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Gold', '6x2', 'Dual Output', 'USB Host'] },
+                { sku: 'APO-SKY-MIC', name: 'Apollo™ companion Add-On Ceiling Mic', quantity: 2, category: 'Microphone', description: 'RJ45 connection', msrp: 400, dealerPrice: 300, tags: ['Microphone', 'Ceiling'] },
+                { sku: 'COM-MIC-HUB', name: 'Microphone Hub | Microphone Mixer', quantity: 1, category: 'Audio Processor', description: 'AEC & AGC & ANR | Web-UI', msrp: 500, dealerPrice: 380, tags: ['DSP', 'Microphone', 'Mixer', 'AEC', 'AGC'] },
+                { sku: 'SYN-TOUCH10', name: 'Synergy™ 10.1” All-in-One Touchpad IP Controller', quantity: 1, category: 'Control', description: 'PoE+ | Table Top Stand & Wall-Mount (US/UK/EU Compatible)', msrp: 1200, dealerPrice: 900, tags: ['Control', 'Touchscreen', 'Synergy'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'video_conferencing', 'program_audio'], microphoneType: 'ceiling_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C', 'DisplayPort'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 1, roomPc: false },
@@ -71,11 +85,18 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Meeting Room 101', roomType: 'Conference Room', designTier: 'Bronze',
-            dimensions: { length: 6, width: 4, height: 2.7 }, maxParticipants: 6, ioRequirements: [],
+            dimensions: { length: 6, width: 4, height: 2.7 }, maxParticipants: 6, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Table HDMI', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Table USB-C', type: 'input', quantity: 1, connectionType: 'USB-C', distributionType: 'Direct', distance: 2, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 1,
             features: [],
-            functionalityStatement: 'A standard, reliable meeting room. A single 4K display is served by a simple auto-switcher with HDMI and USB-C inputs at the table. This setup is designed for cost-effectiveness and ease of use with minimal user interaction required.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A standard, reliable meeting room. A single 4K display is served by a simple SW-0201-4K auto-switcher with HDMI and USB-C inputs at the table. This setup is designed for cost-effectiveness and ease of use with minimal user interaction required.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-0201-4K', name: '2x1 USB-C & HDMI Wireless Switcher', quantity: 1, category: 'Presentation Switcher', description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs, featuring auto-switching and wireless casting support via the included APO-DG2 dongle.', msrp: 600, dealerPrice: 400, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze', 'HDMI', 'Auto-switching', '2x1'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -90,11 +111,19 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Conference Room 205', roomType: 'Conference Room', designTier: 'Silver',
-            dimensions: { length: 9, width: 5, height: 2.8 }, maxParticipants: 10, ioRequirements: [],
+            dimensions: { length: 9, width: 5, height: 2.8 }, maxParticipants: 10, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Lectern HDMI', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Lectern VGA', type: 'input', quantity: 1, connectionType: 'VGA', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Room Displays', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 20, terminationType: 'Wall Mount' },
+            ],
             displayType: 'dual_display', displayCount: 2,
             features: [{ name: 'Video Conferencing', priority: 'must-have' }, { name: 'Wireless Presentation', priority: 'must-have' }],
-            functionalityStatement: 'A flexible conference room designed for modern collaboration. It features dual displays for video conferencing and content sharing. A presentation switcher provides HDMI/USB-C inputs and wireless casting. A USB soundbar with an integrated camera provides a simple BYOM experience.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A flexible conference room designed for modern collaboration, featuring dual displays. A SW-510-TX presentation switcher provides HDMI, VGA, and DisplayPort inputs at a lectern, with the signal extended to the displays via HDBaseT. A USB soundbar with an integrated camera provides a simple BYOM experience.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-510-TX', name: '5-Input 4K HDBaseT Presentation Switcher', quantity: 1, category: 'Presentation Switcher', description: '5-input HDBaseT/HDMI/VGA/DP switcher with scaling and CEC control. A workhorse for any modern meeting room.', msrp: 1200, dealerPrice: 800, tags: ['HDBaseT', '4K', 'Switcher', 'CEC', 'Silver', '5x1', 'HDMI', 'VGA', 'DisplayPort', 'Scaling'] },
+                { sku: 'APO-100-UC', name: 'Apollo 100 UC Video Bar', quantity: 1, category: 'Unified Communications', description: 'All-in-one 4K video bar with integrated camera, microphone, and speakers. Perfect for huddle spaces and small meeting rooms. USB 3.0 connection.', msrp: 800, dealerPrice: 600, tags: ['UC', 'Video Bar', '4K', 'USB', 'All-in-one', 'USB3.0'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'], microphoneType: 'soundbar_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'Simple Keypad', cameraType: 'usb_webcam', cameraCount: 1, roomPc: false },
@@ -109,11 +138,19 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Training Center Alpha', roomType: 'Conference Room', designTier: 'Silver',
-            dimensions: { length: 12, width: 9, height: 3 }, maxParticipants: 20, ioRequirements: [],
+            dimensions: { length: 12, width: 9, height: 3 }, maxParticipants: 20, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Lectern PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Lectern Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Ceiling Mount' },
+            ],
             displayType: 'projector', displayCount: 1,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
-            functionalityStatement: 'A corporate training room designed for clear instruction. A high-brightness laser projector serves as the main display. The instructor can present from a lectern with built-in PC and guest laptop connections. A wireless lavalier microphone and ceiling speakers provide voice reinforcement to ensure every participant can hear clearly.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A corporate training room designed for clear instruction. A high-brightness laser projector is served by an MX-0804-EDU matrix switcher at the lectern. A wireless lavalier microphone and ceiling speakers, powered by an AMP-260-DNT, provide voice reinforcement to ensure every participant can hear clearly.',
+            manuallyAddedEquipment: [
+                { sku: 'MX-0804-EDU', name: '8x4 Education Matrix Switcher', quantity: 1, category: 'Matrix Switcher', description: 'An 8-input, 4-output matrix designed for classrooms with mic inputs and powerful audio mixing.', msrp: 2800, dealerPrice: 2100, tags: ['Matrix', 'Education', 'Audio', 'Silver', '8x4', 'Microphone Input', 'Audio Mixer'] },
+                { sku: 'AMP-260-DNT', name: '120W Network Amplifier', quantity: 1, category: 'Amplifier', description: '2 x 60w or 4 x 25w Channel Output @ 4ohm | Dual Power Options | Advanced DSP with Dante Integration', msrp: 1000, dealerPrice: 750, tags: ['Amplifier', 'Dante', 'DSP', 'Low Impedance'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -128,11 +165,20 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'The Commons', roomType: 'Auditorium', designTier: 'Gold',
-            dimensions: { length: 20, width: 15, height: 5 }, maxParticipants: 100, ioRequirements: [],
+            dimensions: { length: 20, width: 15, height: 5 }, maxParticipants: 100, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Stage Box HDMI', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Floor Box' },
+                { id: uuidv4(), name: 'PTZ Camera 1', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'LED Wall', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount' },
+            ],
             displayType: 'led_video_wall', displayCount: 1,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
-            functionalityStatement: 'A multi-purpose town hall space centered around a large LED video wall. A powerful presentation system handles multiple inputs for presenters. Several wireless handheld and lavalier microphones are available, mixed through a DSP for clear audio. The entire event can be streamed to remote employees via a dedicated streaming encoder.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A multi-purpose town hall space centered around a large LED video wall. A flexible NetworkHD 500 series AVoIP system handles all signal distribution, allowing any source to be shown on the main wall. Several wireless handheld microphones are mixed through a DSP for clear audio. The entire event can be streamed to remote employees via a dedicated streaming encoder.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-500-TX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Encoder', quantity: 3, category: 'AVoIP Encoder', description: 'Visually lossless 4K60 4:4:4 video over 1GbE. Features software-activatable Dante AV-A audio support.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'Low Latency'] },
+                { sku: 'NHD-500-RX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Decoder', quantity: 1, category: 'AVoIP Decoder', description: 'Decoder for the 500 series with USB 2.0 KVM support and software-activatable Dante AV-A audio support.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'USB', 'KVM'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 2, roomPc: false },
@@ -147,11 +193,18 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Lobby', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 30, ioRequirements: [],
+            dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 30, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Lobby Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 1,
             features: [],
-            functionalityStatement: 'A simple and effective digital signage solution for the main reception area. A commercial display is fed by a reliable AVoIP decoder, which receives content from a central media player. This allows for easy updates of welcome messages, corporate videos, and branding.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A simple and effective digital signage solution for the main reception area. A commercial display is fed by a reliable NHD-120-RX AVoIP decoder, which receives content from a central media player. This allows for easy updates of welcome messages, corporate videos, and branding.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 1, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },

@@ -15,12 +15,19 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 50, width: 30, height: 4 },
             maxParticipants: 200,
-            ioRequirements: [],
+            ioRequirements: [
+                 { id: uuidv4(), name: 'Media Player Source', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack' },
+                 { id: uuidv4(), name: 'Signage Displays', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', // multiple single displays
             displayCount: 6,
             features: [],
-            functionalityStatement: 'A NetworkHD 100 series AVoIP system distributes content from a central media player to six displays throughout the store. The low-bandwidth H.264 solution is cost-effective and easy to scale as more displays are added. Content can be updated centrally and scheduled to change throughout the day.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A NetworkHD 120 series AVoIP system distributes content from a central media player to six displays throughout the store. The low-bandwidth H.264 solution is cost-effective and easy to scale as more displays are added. Content can be updated centrally and scheduled to change throughout the day.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 6, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -35,11 +42,17 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Brand Experience Area', roomType: 'Retail Space', designTier: 'Gold',
-            dimensions: { length: 10, width: 8, height: 3.5 }, maxParticipants: 15, ioRequirements: [],
+            dimensions: { length: 10, width: 8, height: 3.5 }, maxParticipants: 15, 
+            ioRequirements: [
+                { id: uuidv4(), name: '4K Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack' },
+                { id: uuidv4(), name: 'Video Wall Displays', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount' },
+            ],
             displayType: 'lcd_video_wall', displayCount: 4,
             features: [],
-            functionalityStatement: 'An engaging brand experience zone designed to attract and immerse customers. It features a 2x2 video wall displaying high-impact brand content. An interactive touch overlay on one of the displays allows customers to explore product features. Directional speakers create a focused audio experience that doesn\'t bleed into the rest of the store. A high-performance media player provides 4K content.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'An engaging brand experience zone designed to attract and immerse customers. It features a 2x2 video wall, driven by a SW-0204-VW processor, displaying high-impact brand content. An interactive touch overlay on one of the displays allows customers to explore product features. Directional speakers create a focused audio experience that doesn\'t bleed into the rest of the store. A high-performance media player provides 4K content.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-0204-VW', name: '4K 60Hz 4-Output Video Wall', quantity: 1, category: 'Video Processor', description: '1x4, 2x2 layout |Ultra-wide resolution support | WEB GUI and RS232 control.', msrp: 1000, dealerPrice: 750, tags: ['Video Wall', 'Processor', '4K60', '2x2', '1x4', 'RS232'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -54,7 +67,8 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Fitting Room 3', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 2, width: 2, height: 2.5 }, maxParticipants: 1, ioRequirements: [],
+            dimensions: { length: 2, width: 2, height: 2.5 }, maxParticipants: 1, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 1,
             features: [],
             functionalityStatement: 'An enhanced fitting room experience. A small touch-enabled display inside the fitting room can show related products or allow the customer to request a different size from a store associate. The system is driven by a simple, low-cost media player and network connection.',
@@ -73,13 +87,18 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Entrance Display', roomType: 'Retail Space', designTier: 'Silver',
-            dimensions: { length: 5, width: 1, height: 4 }, maxParticipants: 0, ioRequirements: [],
+            dimensions: { length: 5, width: 1, height: 4 }, maxParticipants: 0, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack' },
+                { id: uuidv4(), name: 'Video Wall Displays', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount' },
+            ],
             displayType: 'lcd_video_wall', displayCount: 4,
-            // FIX: Corrected 'processor_vw' to a valid specific product SKU 'processor_sw0204vw' which matches a 2x2 layout.
             videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'processor_sw0204vw' },
             features: [],
-            functionalityStatement: 'A 2x2 video wall creating a high-impact visual at the store entrance. A dedicated video wall processor takes a single 4K media player source and splits it across the four displays. The processor handles bezel correction for a seamless look. This is a robust, cost-effective solution for a single-source video wall.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A 2x2 video wall creating a high-impact visual at the store entrance. A dedicated SW-0204-VW video wall processor takes a single 4K media player source and splits it across the four displays. The processor handles bezel correction for a seamless look. This is a robust, cost-effective solution for a single-source video wall.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-0204-VW', name: '4K 60Hz 4-Output Video Wall', quantity: 1, category: 'Video Processor', description: '1x4, 2x2 layout |Ultra-wide resolution support | WEB GUI and RS232 control.', msrp: 1000, dealerPrice: 750, tags: ['Video Wall', 'Processor', '4K60', '2x2', '1x4', 'RS232'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -94,7 +113,8 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1556742111-a3297a0e5d56?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'In-Store Audio', roomType: 'Retail Space', designTier: 'Bronze',
-            dimensions: { length: 20, width: 15, height: 3.5 }, maxParticipants: 50, ioRequirements: [],
+            dimensions: { length: 20, width: 15, height: 3.5 }, maxParticipants: 50, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 0,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A premium-quality distributed audio system providing background music to enhance the shopping experience. The store is divided into three zones (e.g., entrance, main floor, fitting rooms) with independent volume control for each. A multi-zone amplifier is fed by a professional media player with curated playlists.',

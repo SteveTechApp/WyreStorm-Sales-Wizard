@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,14 +15,19 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 8, width: 5, height: 3 },
             maxParticipants: 8,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'AV Sources', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Ceiling Mount' },
+            ],
             displayType: 'projector',
             displayCount: 1,
             features: [
                 { name: 'Program Audio', priority: 'must-have' },
             ],
-            functionalityStatement: 'A dedicated home cinema experience. A 4K laser projector and acoustically transparent screen provide a stunning image. Multiple sources like a 4K Blu-ray player, Apple TV, and gaming console are connected through an advanced AV Receiver. An HDBaseT extender ensures a reliable video signal to the projector. The entire system, including lighting, is controlled via a single remote or touch panel.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A dedicated home cinema experience. A 4K laser projector is fed by an EX-100-G2 HDBaseT extender for a reliable video signal. Multiple sources like a 4K Blu-ray player, Apple TV, and gaming console are connected through an advanced AV Receiver in a local rack. The entire system, including lighting, is controlled via a single remote or touch panel.',
+            manuallyAddedEquipment: [
+                { sku: 'EX-100-G2', name: '4K60Hz 4.2.0 HDBaseT Extender', quantity: 1, category: 'Extender', description: 'PoH | CEC | IR | RS232 | 100m/327ft', msrp: 700, dealerPrice: 520, tags: ['Extender', 'HDBaseT', '4K', 'Class A', '4K30', '4:2:0', 'CEC', 'IR', 'RS232'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -40,11 +42,17 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Living Room', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 7, width: 6, height: 2.8 }, maxParticipants: 6, ioRequirements: [],
+            dimensions: { length: 7, width: 6, height: 2.8 }, maxParticipants: 6, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Media Cabinet Sources', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Living Room TV', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 1,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
-            functionalityStatement: 'A high-quality but discreet living room entertainment system. A large 4K OLED TV is mounted on the wall, paired with a high-performance soundbar with eARC. All source devices (streaming box, cable box, game console) are located remotely in a nearby closet and connected via an HDBaseT extender for a clean, wire-free look. A universal remote controls the entire system.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A high-quality but discreet living room entertainment system. A large 4K OLED TV is mounted on the wall, paired with a high-performance soundbar with eARC. All source devices (streaming box, cable box, game console) are located remotely in a nearby closet and connected via an EX-40-H2-ARC HDBaseT extender for a clean, wire-free look. A universal remote controls the entire system.',
+            manuallyAddedEquipment: [
+                { sku: 'EX-40-H2-ARC', name: '4K60Hz 4.4.4 HDBaseT™ Extender Set', quantity: 1, category: 'Extender', description: 'Dolby Vision & HDR | ARC | RS232 & 2-Way IR Passthrough (4K: 40m/115ft, 1080p: 70m/230ft)', msrp: 600, dealerPrice: 450, tags: ['Extender', 'HDBaseT', 'ARC', 'Class B', '4K60', '4:4:4', 'HDR', 'RS232', 'IR'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -59,7 +67,8 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Whole Home Audio', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 20, width: 15, height: 3 }, maxParticipants: 10, ioRequirements: [],
+            dimensions: { length: 20, width: 15, height: 3 }, maxParticipants: 10, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 0,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A 4-zone distributed audio system providing music to the kitchen, dining room, patio, and master bedroom. In-ceiling speakers in each zone provide discreet, high-quality sound. A multi-zone streaming amplifier serves as the heart of the system, allowing users to play different music in each zone, or group zones together, all controlled from their smartphone.',
@@ -78,11 +87,14 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Back Patio', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 15, ioRequirements: [],
+            dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 15, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 1,
             features: [],
-            functionalityStatement: 'An outdoor entertainment system for the patio. A weatherproof TV, designed for viewing in bright daylight, is the main feature. A pair of outdoor-rated speakers provide robust audio. An HDBaseT extender connects the outdoor equipment back to a source device located safely inside the house.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'An outdoor entertainment system for the patio. A weatherproof TV, designed for viewing in bright daylight, is the main feature. A pair of outdoor-rated speakers provide robust audio. An EX-70-G2 HDBaseT extender connects the outdoor equipment back to a source device located safely inside the house.',
+            manuallyAddedEquipment: [
+                { sku: 'EX-70-G2', name: '4K60Hz 4:2:0 HDBaseT Extender', quantity: 1, category: 'Extender', description: 'PoH | CEC | IR | RS232 (4K: 35m/115ft, 1080p: 70m/230ft)', msrp: 500, dealerPrice: 350, tags: ['Extender', 'HDBaseT', 'Class B', '4K30', '4:2:0', 'CEC', 'IR', 'RS232'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -97,11 +109,15 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Home Office', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 4, width: 3, height: 2.5 }, maxParticipants: 1, ioRequirements: [],
+            dimensions: { length: 4, width: 3, height: 2.5 }, maxParticipants: 1, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 1,
             features: [{ name: 'Video Conferencing', priority: 'must-have' }],
-            functionalityStatement: 'A professional home office setup for remote work. A large 4K monitor provides ample screen real estate. A high-quality USB-C docking station allows for single-cable connection to a laptop for video, data, and power. A pro-grade webcam and USB speakerphone ensure crystal-clear video calls.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A professional home office setup for remote work. A large 4K monitor provides ample screen real estate. A high-quality USB-C docking station allows for single-cable connection to a laptop for video, data, and power. A WyreStorm HALO 80 speakerphone and CAM-200-PTZ webcam ensure crystal-clear video calls.',
+            manuallyAddedEquipment: [
+                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 1, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'HALO 80', name: 'USB/Bluetooth Speakerphone', quantity: 1, category: 'Unified Communications', description: 'Daisy-chain up to 9 units | Omni-Direction 4Mics | AEC | Noise Reduction | 3W speaker | USB2.0', msrp: 450, dealerPrice: 320, tags: ['UC', 'Speakerphone', 'Bluetooth', 'USB', 'AEC', 'Daisy-chain'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['video_conferencing'], microphoneType: 'soundbar_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['USB-C', 'DisplayPort'], controlSystem: 'None (Auto-switching)', cameraType: 'usb_webcam', cameraCount: 1, roomPc: false },

@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,15 +15,22 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 30, width: 20, height: 7 },
             maxParticipants: 250,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Lectern Inputs', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Main Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 40, terminationType: 'Ceiling Mount' },
+            ],
             displayType: 'projector',
             displayCount: 1,
             features: [
                 { name: 'Speech Reinforcement', priority: 'must-have' },
                 { name: 'Multi-Display Support', priority: 'nice-to-have' }, // For confidence monitors
             ],
-            functionalityStatement: 'A professional presentation system for a large auditorium. A high-brightness laser projector is fed by a powerful HDBaseT presentation switcher located at the lectern. The switcher accommodates various sources, including guest laptops and a resident PC. Multiple wireless microphones and a distributed speaker system ensure clear audio for every attendee. The system is managed via a touch panel controller.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A professional presentation system for a large auditorium. A high-brightness laser projector is fed by a powerful SW-640L-TX-W presentation switcher located at the lectern. The switcher accommodates various sources, including guest laptops and a resident PC. Multiple wireless microphones and a distributed speaker system ensure clear audio for every attendee. The system is managed via a touch panel controller.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-640L-TX-W', name: '6-Input 4K/60Hz Presentation Switcher with USB-C', quantity: 1, category: 'Presentation Switcher', description: 'Dual output 4K presentation switcher with wireless casting, USB-C, and USB host for peripherals.', msrp: 2000, dealerPrice: 1500, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Gold', '6x2', 'Dual Output', 'USB Host'] },
+                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 1, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'SYN-TOUCH10', name: 'Synergy™ 10.1” All-in-One Touchpad IP Controller', quantity: 1, category: 'Control', description: 'PoE+ | Table Top Stand & Wall-Mount (US/UK/EU Compatible)', msrp: 1200, dealerPrice: 900, tags: ['Control', 'Touchscreen', 'Synergy'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 1, roomPc: true },
@@ -41,11 +45,19 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Concourse Digital Signage', roomType: 'Large Venue', designTier: 'Silver',
-            dimensions: { length: 400, width: 20, height: 8 }, maxParticipants: 10000, ioRequirements: [],
+            dimensions: { length: 400, width: 20, height: 8 }, maxParticipants: 10000, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Broadcast Feeds', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Concourse Displays', type: 'output', quantity: 50, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 50,
             features: [],
-            functionalityStatement: 'A stadium-wide AVoIP system distributing video content to 50+ displays across all concourse levels. This includes digital menu boards for concession stands, advertisements, and live game feeds. The NetworkHD system allows for centralized control, so content can be changed instantly across the entire venue from a single control room.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A stadium-wide NetworkHD 120 AVoIP system distributing video content to 50+ displays across all concourse levels. This includes digital menu boards for concession stands, advertisements, and live game feeds. The system allows for centralized control, so content can be changed instantly across the entire venue from a single control room.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 8, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 50, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -60,11 +72,17 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Luxury Suite 212', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 20, ioRequirements: [],
+            dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 20, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Suite Displays', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount' },
+            ],
             displayType: 'dual_display', displayCount: 3,
             features: [],
-            functionalityStatement: 'A high-end AV experience for a luxury suite. Three large 4K displays can show the main game feed, replay channels, or other broadcast sources. An AVoIP decoder is used for each display, and a simple in-room touch panel allows guests to select which channel they want to watch on which screen. High-quality in-ceiling speakers provide immersive audio.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A high-end AV experience for a luxury suite. Three large 4K displays can show the main game feed, replay channels, or other broadcast sources. A NetworkHD 500 series decoder is used for each display, and a simple in-room touch panel allows guests to select which channel they want to watch on which screen. High-quality in-ceiling speakers provide immersive audio.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-500-RX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Decoder', quantity: 3, category: 'AVoIP Decoder', description: 'Decoder for the 500 series with USB 2.0 KVM support.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'USB', 'KVM'] },
+                { sku: 'SYN-TOUCH10', name: 'Synergy™ 10.1” All-in-One Touchpad IP Controller', quantity: 1, category: 'Control', description: 'PoE+ | Table Top Stand & Wall-Mount (US/UK/EU Compatible)', msrp: 1200, dealerPrice: 900, tags: ['Control', 'Touchscreen', 'Synergy'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -79,11 +97,15 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Main Press Box', roomType: 'Other', designTier: 'Gold',
-            dimensions: { length: 20, width: 5, height: 3 }, maxParticipants: 30, ioRequirements: [],
+            dimensions: { length: 20, width: 5, height: 3 }, maxParticipants: 30, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 15,
             features: [],
-            functionalityStatement: 'A broadcast-ready press box AV system. Each journalist station is equipped with a small display and an AVoIP decoder, allowing them to select from various camera angles, program feeds, and data channels. An audio distribution system provides access to different commentator and effects mixes. The system uses SDI and AVoIP to ensure broadcast-quality, low-latency signals.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A broadcast-ready press box AV system. Each journalist station is equipped with a small display and a NetworkHD 600 series AVoIP decoder, allowing them to select from various camera angles, program feeds, and data channels. An audio distribution system provides access to different commentator and effects mixes. The system uses SDI and AVoIP to ensure broadcast-quality, low-latency signals.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 20, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Encoder or Decoder.', msrp: 1800, dealerPrice: 1350, tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['SDI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -98,11 +120,17 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1579269320993-c3583713406a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Breakout Room C', roomType: 'Conference Room', designTier: 'Silver',
-            dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 50, ioRequirements: [],
+            dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 50, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Floor Box Input', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 20, terminationType: 'Floor Box' },
+                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Ceiling Mount' },
+            ],
             displayType: 'projector', displayCount: 1,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
-            functionalityStatement: 'A robust and user-friendly system for a convention center breakout room. A ceiling-mounted projector and screen are controlled by a simple wall-plate keypad. Floor and wall plates provide HDMI inputs for presenters. A basic audio system with a wireless microphone is included for speech reinforcement. The system is designed for reliability and quick setup between events.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A robust and user-friendly system for a convention center breakout room. A ceiling-mounted projector and screen are connected via an EX-70-G2 HDBaseT extender set. Floor and wall plates provide HDMI inputs for presenters. A basic audio system with a wireless microphone is included for speech reinforcement. The system is designed for reliability and quick setup between events.',
+            manuallyAddedEquipment: [
+                { sku: 'EX-70-G2', name: '4K60Hz 4:2:0 HDBaseT Extender', quantity: 1, category: 'Extender', description: 'PoH | CEC | IR | RS232 (4K: 35m/115ft, 1080p: 70m/230ft)', msrp: 500, dealerPrice: 350, tags: ['Extender', 'HDBaseT', 'Class B', '4K30', '4:2:0', 'CEC', 'IR', 'RS232'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },

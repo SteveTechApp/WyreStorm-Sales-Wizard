@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,12 +15,20 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 100, width: 100, height: 6 },
             maxParticipants: 1000,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Content Sources', type: 'input', quantity: 10, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Slot Topper Displays', type: 'output', quantity: 40, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 60, terminationType: 'Wall Mount' },
+                { id: uuidv4(), name: 'Bar Displays', type: 'output', quantity: 10, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 40, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', // Many single displays
             displayCount: 50,
             features: [],
-            functionalityStatement: 'A robust NetworkHD AVoIP system designed for the demanding 24/7 environment of a casino. Multiple sources (live TV, promotional content, sports betting data) are encoded and distributed over a dedicated 10GbE network to dozens of displays across the gaming floor. The system offers low latency and high reliability, with a central controller for easy routing and monitoring by staff. The scalability of AVoIP allows for easy expansion as the casino grows.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A robust NetworkHD 500 series AVoIP system designed for the demanding 24/7 environment of a casino. Multiple sources (live TV, promotional content, sports betting data) are encoded and distributed over a dedicated 1GbE network to dozens of displays across the gaming floor. The system offers low latency and high reliability, with a central controller for easy routing and monitoring by staff.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-500-TX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Encoder', quantity: 10, category: 'AVoIP Encoder', description: 'Visually lossless 4K60 4:4:4 video over 1GbE.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'Low Latency'] },
+                { sku: 'NHD-500-RX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Decoder', quantity: 50, category: 'AVoIP Decoder', description: 'Decoder for the 500 series with USB 2.0 KVM support.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'USB', 'KVM'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -38,11 +43,15 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Race & Sports Book', roomType: 'Large Venue', designTier: 'Gold',
-            dimensions: { length: 30, width: 20, height: 7 }, maxParticipants: 200, ioRequirements: [],
+            dimensions: { length: 30, width: 20, height: 7 }, maxParticipants: 200, 
+            ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
             features: [{ name: 'Multi-Display Support', priority: 'must-have' }],
             functionalityStatement: 'The centerpiece of a modern sportsbook: a massive, seamless direct-view LED video wall. A powerful AVoIP system with multiview capabilities (NetworkHD 150) allows the wall to be configured in endless ways, showing multiple live games, odds boards, and promotional content simultaneously. Operators can instantly recall presets for different sports or times of day from a touch panel controller.',
-            manuallyAddedEquipment: [],
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 16, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-150-RX', name: 'NetworkHD 150 Series Multiview & Video Wall Decoder', quantity: 1, category: 'AVoIP Decoder', description: 'Specialized 100-series decoder that can display up to 9 sources on a single display.', msrp: 1400, dealerPrice: 1050, tags: ['NetworkHD', 'AVoIP', 'Decoder', 'Multiview', 'Video Wall', '1GbE', 'H.264'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -57,7 +66,8 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Chairman Suite', roomType: 'Residential', designTier: 'Gold',
-            dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 10, ioRequirements: [],
+            dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 10, 
+            ioRequirements: [],
             displayType: 'dual_display', displayCount: 3,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A premium AV experience for VIP guests. The suite features multiple 4K displays, a high-fidelity sound system, and a simple touch panel remote that controls everything, including lighting and shades. Guests can access casino-wide TV feeds or connect their own devices to watch personal content.',
@@ -76,7 +86,8 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Poker Room', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 25, width: 20, height: 4 }, maxParticipants: 150, ioRequirements: [],
+            dimensions: { length: 25, width: 20, height: 4 }, maxParticipants: 150, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 10,
             features: [],
             functionalityStatement: 'An AVoIP distribution system for a poker room. Multiple displays around the room show broadcast sports. Several dedicated displays are connected to a tournament management system to show player lists and blind timers. The system is managed from a central control point but is designed for high reliability and minimal staff intervention.',
@@ -95,11 +106,15 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1542820239-652319946571?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Esports Arena', roomType: 'Large Venue', designTier: 'Gold',
-            dimensions: { length: 40, width: 30, height: 10 }, maxParticipants: 500, ioRequirements: [],
+            dimensions: { length: 40, width: 30, height: 10 }, maxParticipants: 500, 
+            ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
             features: [],
-            functionalityStatement: 'A state-of-the-art esports arena. Player stations feature high-refresh-rate monitors with zero-latency connections. A broadcast production booth switches between player cameras, gameplay feeds, and commentator analysis. The main spectator experience is a large LED wall showing the primary game feed. The entire system is built on a high-speed AVoIP backbone (like NetworkHD 600 series) to ensure minimal latency, which is critical for competitive gaming.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A state-of-the-art esports arena. Player stations feature high-refresh-rate monitors with zero-latency connections. A broadcast production booth switches between player cameras, gameplay feeds, and commentator analysis. The main spectator experience is a large LED wall showing the primary game feed. The entire system is built on a high-speed NetworkHD 600 series AVoIP backbone to ensure minimal latency, which is critical for competitive gaming.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 30, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Encoder or Decoder.', msrp: 1800, dealerPrice: 1350, tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'DisplayPort', 'SDI'], controlSystem: 'Third-Party Integration', cameraType: 'hdmi_ptz', cameraCount: 8, roomPc: true },

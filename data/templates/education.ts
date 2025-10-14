@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,15 +15,23 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 10, width: 8, height: 3 },
             maxParticipants: 30,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Lectern PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Guest Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Interactive Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single',
             displayCount: 1,
             features: [
                 { name: 'Wireless Presentation', priority: 'must-have' },
                 { name: 'Speech Reinforcement', priority: 'must-have' },
             ],
-            functionalityStatement: 'An engaging learning environment where the instructor can present from a fixed lectern PC or cast wirelessly from a tablet while moving around the room. A ceiling-mounted microphone provides clear voice lift, and a simple wall-plate controller manages system power and source selection.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'An engaging learning environment where the instructor can present from a fixed lectern with multiple inputs. The SW-510-TX switcher sends the selected source to the main interactive display via a reliable HDBaseT connection. A ceiling microphone provides clear voice lift, and a simple wall-plate controller manages the system.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-510-TX', name: '5-Input 4K HDBaseT Presentation Switcher', quantity: 1, category: 'Presentation Switcher', description: '5-input HDBaseT/HDMI/VGA/DP switcher with scaling and CEC control.', msrp: 1200, dealerPrice: 800, tags: ['HDBaseT', '4K', 'Switcher', 'CEC', 'Silver', '5x1', 'HDMI', 'VGA', 'DisplayPort', 'Scaling'] },
+                { sku: 'APO-SKY-MIC', name: 'Apollo™ companion Add-On Ceiling Mic', quantity: 1, category: 'Microphone', description: 'RJ45 connection', msrp: 400, dealerPrice: 300, tags: ['Microphone', 'Ceiling'] },
+                { sku: 'AMP-260-DNT', name: '120W Network Amplifier', quantity: 1, category: 'Amplifier', description: '2 x 60w or 4 x 25w Channel Output @ 4ohm | Dual Power Options | Advanced DSP with Dante Integration', msrp: 1000, dealerPrice: 750, tags: ['Amplifier', 'Dante', 'DSP', 'Low Impedance'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'ceiling_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -46,15 +51,23 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 20, width: 25, height: 8 },
             maxParticipants: 200,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Lectern Sources', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Main Projectors', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 50, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Confidence Monitor', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Floor Box' },
+            ],
             displayType: 'projector',
             displayCount: 2,
             features: [
                 { name: 'Speech Reinforcement', priority: 'must-have' },
                  { name: 'Multi-Display Support', priority: 'must-have' },
             ],
-            functionalityStatement: 'A comprehensive AV system for a large university lecture hall. It features dual laser projectors for main content and confidence monitoring. An advanced presentation switcher at the lectern accommodates various sources including a resident PC, document camera, and guest laptops. The system integrates with a lecture capture platform to record and stream classes. A distributed audio system ensures every student hears clearly, and a touch panel provides the lecturer with full control.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A comprehensive AV system for a large university lecture hall, centered around the powerful MX-1007-HYB hybrid matrix. It routes multiple sources from the lectern to dual laser projectors and a confidence monitor. The system integrates with a lecture capture platform to record and stream classes via a dedicated PTZ camera. A distributed audio system with Dante integration ensures every student hears clearly.',
+            manuallyAddedEquipment: [
+                { sku: 'MX-1007-HYB', name: '10x7 Hybrid HDBaseT/HDMI Matrix Switcher', quantity: 1, category: 'Matrix Switcher', description: 'A powerful hybrid matrix with 10 inputs (HDMI, HDBaseT) and 7 outputs, with integrated audio DSP.', msrp: 7500, dealerPrice: 5500, tags: ['Matrix', 'HDBaseT', 'DSP', '4K', 'Gold', '10x7', 'HDMI'] },
+                { sku: 'CAM-200-PTZ', name: '4K Pro PTZ Camera', quantity: 2, category: 'Camera', description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming.', msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'] },
+                { sku: 'AMP-260-DNT', name: '120W Network Amplifier', quantity: 2, category: 'Amplifier', description: '2 x 60w or 4 x 25w Channel Output @ 4ohm | Dual Power Options | Advanced DSP with Dante Integration', msrp: 1000, dealerPrice: 750, tags: ['Amplifier', 'Dante', 'DSP', 'Low Impedance'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'table_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 2, roomPc: true },
@@ -69,11 +82,17 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Classroom 3B', roomType: 'Classroom', designTier: 'Bronze',
-            dimensions: { length: 9, width: 7, height: 3 }, maxParticipants: 25, ioRequirements: [],
+            dimensions: { length: 9, width: 7, height: 3 }, maxParticipants: 25, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Wall Plate Input', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Plate' },
+                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 2, terminationType: 'Ceiling Mount' },
+            ],
             displayType: 'projector', displayCount: 1,
             features: [],
-            functionalityStatement: 'A cost-effective and reliable AV system for a standard K-12 classroom. A bright projector displays content from a wall plate with HDMI and USB-C inputs. An auto-switcher selects the active source, and built-in projector speakers provide audio. This simple setup is robust and easy for any teacher to use.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A cost-effective and reliable AV system for a standard K-12 classroom. A bright projector displays content from a wall plate with an HDMI input. An EX-70-G2 HDBaseT extender set ensures a reliable signal from the wall to the projector. Built-in projector speakers provide audio. This simple setup is robust and easy for any teacher to use.',
+            manuallyAddedEquipment: [
+                { sku: 'EX-70-G2', name: '4K60Hz 4:2:0 HDBaseT Extender', quantity: 1, category: 'Extender', description: 'PoH | CEC | IR | RS232 (4K: 35m/115ft, 1080p: 70m/230ft)', msrp: 500, dealerPrice: 350, tags: ['Extender', 'HDBaseT', 'Class B', '4K30', '4:2:0', 'CEC', 'IR', 'RS232'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -88,11 +107,21 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Collaboration Lab', roomType: 'Classroom', designTier: 'Gold',
-            dimensions: { length: 15, width: 12, height: 3 }, maxParticipants: 36, ioRequirements: [],
+            dimensions: { length: 15, width: 12, height: 3 }, maxParticipants: 36, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Instructor Lectern', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Lectern' },
+                { id: uuidv4(), name: 'Student Pods', type: 'input', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 8, terminationType: 'Floor Box' },
+                { id: uuidv4(), name: 'Main Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Pod Displays', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 2, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 7, // 1 main display + 6 pod displays
             features: [{ name: 'Wireless Presentation', priority: 'must-have' }],
-            functionalityStatement: 'A dynamic active learning environment with six student pods. Each pod has its own display and a simple switcher, allowing students to collaborate and share content from their devices. The instructor, from a central lectern with a touch panel, can view content from any pod and choose to push any pod\'s screen to the main classroom projector for group discussion. An AVoIP system provides the flexibility to route any source to any destination.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A dynamic active learning environment with six student pods, powered by a NetworkHD 500 AVoIP system. Each pod has its own display and an encoder, allowing students to collaborate and share content. The instructor, from a central lectern, can use the NHD-TOUCH app on an iPad to view content from any pod and push any pod\'s screen to the main classroom projector for group discussion.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-500-TX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Encoder', quantity: 7, category: 'AVoIP Encoder', description: 'Visually lossless 4K60 4:4:4 video over 1GbE.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'Low Latency'] },
+                { sku: 'NHD-500-RX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Decoder', quantity: 7, category: 'AVoIP Decoder', description: 'Decoder for the 500 series with USB 2.0 KVM support.', msrp: 1200, dealerPrice: 900, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'USB', 'KVM'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -107,11 +136,14 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Library Group Study', roomType: 'Huddle Space', designTier: 'Silver',
-            dimensions: { length: 20, width: 10, height: 3.5 }, maxParticipants: 24, ioRequirements: [],
+            dimensions: { length: 20, width: 10, height: 3.5 }, maxParticipants: 24, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 4,
             features: [{ name: 'Wireless Presentation', priority: 'must-have' }],
-            functionalityStatement: 'Four separate group study pods in the library, each equipped with a 55-inch display and a wireless presentation device. Students can connect and share content from their laptops or mobile devices quickly and easily, fostering collaboration without the need for technical support.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'Four separate group study pods in the library, each equipped with a 55-inch display and an SW-0201-4K switcher. Students can connect and share content from their laptops or mobile devices quickly and easily, fostering collaboration without the need for technical support.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-0201-4K', name: '2x1 USB-C & HDMI Wireless Switcher', quantity: 4, category: 'Presentation Switcher', description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs, featuring auto-switching and wireless casting support.', msrp: 600, dealerPrice: 400, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze', 'HDMI', 'Auto-switching', '2x1'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -126,11 +158,18 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'School Cafeteria', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 30, width: 25, height: 6 }, maxParticipants: 300, ioRequirements: [],
+            dimensions: { length: 30, width: 25, height: 6 }, maxParticipants: 300, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Signage Displays', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 4,
             features: [],
-            functionalityStatement: 'A simple digital signage solution for the school\'s common areas. Four displays show a rotating schedule of announcements, lunch menus, and school news. The system is driven by a central media player connected to AVoIP encoders, allowing for easy content updates from a single location.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A simple digital signage solution for the school\'s common areas. Four displays show a rotating schedule of announcements and news. The system is driven by a central media player connected to a NetworkHD 120 series encoder, allowing for easy content updates from a single location.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 4, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -145,11 +184,20 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Chemistry Lab', roomType: 'Classroom', designTier: 'Silver',
-            dimensions: { length: 12, width: 10, height: 3 }, maxParticipants: 24, ioRequirements: [],
+            dimensions: { length: 12, width: 10, height: 3 }, maxParticipants: 24, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Doc Cam', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 1, terminationType: 'Desktop' },
+                { id: uuidv4(), name: 'PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Desktop' },
+                { id: uuidv4(), name: 'Projector', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Ceiling Mount' },
+                { id: uuidv4(), name: 'Confidence Displays', type: 'output', quantity: 2, connectionType: 'HDMI', distributionType: 'Direct', distance: 8, terminationType: 'Wall Mount' },
+            ],
             displayType: 'dual_display', displayCount: 3,
             features: [],
-            functionalityStatement: 'A science lab AV system designed for clear demonstrations. A high-resolution document camera at the instructor\'s bench can show detailed experiments on a main projector screen. Two additional confidence displays are placed in the room so all students have a clear view without crowding the front. The switcher allows for easy toggling between the document camera, a PC, and a guest laptop.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A science lab AV system designed for clear demonstrations. The MX-0804-EDU matrix switcher handles signals from a high-resolution document camera and PC, sending them to a main projector screen and two confidence displays so all students have a clear view. The switcher\'s integrated audio capabilities handle voice reinforcement.',
+            manuallyAddedEquipment: [
+                { sku: 'MX-0804-EDU', name: '8x4 Education Matrix Switcher', quantity: 1, category: 'Matrix Switcher', description: 'An 8-input, 4-output matrix designed for classrooms with mic inputs and powerful audio mixing.', msrp: 2800, dealerPrice: 2100, tags: ['Matrix', 'Education', 'Audio', 'Silver', '8x4', 'Microphone Input', 'Audio Mixer'] },
+                { sku: 'GEN-DOC-CAM', name: 'Document Camera', quantity: 1, category: 'Source', description: 'A camera for displaying physical documents or objects to the main screen.', msrp: 500, dealerPrice: 350, tags: ['Source', 'Camera'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: true },

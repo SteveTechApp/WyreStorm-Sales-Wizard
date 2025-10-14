@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,12 +15,19 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
             designTier: 'Gold',
             dimensions: { length: 25, width: 15, height: 4 },
             maxParticipants: 100,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'Satellite Receiver', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Bar Displays', type: 'output', quantity: 12, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', // many single displays
             displayCount: 12,
             features: [],
-            functionalityStatement: 'A scalable NetworkHD AVoIP system allows any of the 8 satellite receivers to be routed to any of the 12 displays, individually or in groups. The bartender can easily control the routing from a tablet. The system uses a low-bandwidth H.264 codec, allowing it to run on a cost-effective 1GbE network.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A scalable NetworkHD 120 series AVoIP system allows any of the 8 satellite receivers to be routed to any of the 12 displays, individually or in groups. The bartender can easily control the routing from a tablet using the NHD-TOUCH app. The system uses a low-bandwidth H.264 codec, allowing it to run on a cost-effective 1GbE network.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 8, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 12, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'pendant', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -38,11 +42,18 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Hotel Lobby', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 30, width: 20, height: 6 }, maxParticipants: 100, ioRequirements: [],
+            dimensions: { length: 30, width: 20, height: 6 }, maxParticipants: 100, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Signage Displays', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 25, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 3,
             features: [],
-            functionalityStatement: 'A set of three digital signage displays in the hotel lobby for welcome messages, event schedules, and wayfinding. The displays are fed by AVoIP decoders connected to a central media player, allowing for easy, remote content updates by hotel staff.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A set of three digital signage displays in the hotel lobby fed by NetworkHD 120 series AVoIP decoders. A central media player allows for easy, remote content updates of welcome messages, event schedules, and wayfinding by hotel staff.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 3, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -57,11 +68,17 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Grand Ballroom', roomType: 'Auditorium', designTier: 'Gold',
-            dimensions: { length: 40, width: 25, height: 8 }, maxParticipants: 400, ioRequirements: [],
+            dimensions: { length: 40, width: 25, height: 8 }, maxParticipants: 400, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Floor Box Inputs', type: 'input', quantity: 6, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 30, terminationType: 'Floor Box' },
+                { id: uuidv4(), name: 'Projectors', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 60, terminationType: 'Ceiling Mount' },
+            ],
             displayType: 'projector', displayCount: 3,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
-            functionalityStatement: 'A flexible AV system for a grand ballroom that can be divided into three separate sections via airwalls. A powerful hybrid HDBaseT/HDMI matrix switcher is the core of the system, allowing any source to be routed to any of the three projectors. When combined, the rooms can act as a single large space. Multiple floor box inputs are available for presenters, and a rack of wireless microphones provides audio reinforcement. Each room configuration can be recalled with a single press on a touch panel.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A flexible AV system for a grand ballroom that can be divided into three separate sections via airwalls. A powerful MX-1007-HYB hybrid HDBaseT/HDMI matrix switcher is the core of the system, allowing any source to be routed to any of the three projectors. When combined, the rooms can act as a single large space. Multiple floor box inputs are available for presenters, and a rack of wireless microphones provides audio reinforcement. Each room configuration can be recalled with a single press on a touch panel.',
+            manuallyAddedEquipment: [
+                { sku: 'MX-1007-HYB', name: '10x7 Hybrid HDBaseT/HDMI Matrix Switcher', quantity: 1, category: 'Matrix Switcher', description: 'A powerful hybrid matrix with 10 inputs (HDMI, HDBaseT) and 7 outputs, with integrated audio DSP.', msrp: 7500, dealerPrice: 5500, tags: ['Matrix', 'HDBaseT', 'DSP', '4K', 'Gold', '10x7', 'HDMI'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Touch Panel', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -76,11 +93,17 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Breakout Room A', roomType: 'Conference Room', designTier: 'Silver',
-            dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 12, ioRequirements: [],
+            dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 12, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Table Inputs', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Table Box' },
+                { id: uuidv4(), name: 'Wall Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 5, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 1,
             features: [{ name: 'Wireless Presentation', priority: 'nice-to-have' }],
-            functionalityStatement: 'A simple, intuitive AV system for a hotel meeting room. A wall-mounted display is connected to a table input plate with HDMI and USB-C connections. An auto-switcher ensures the system is easy for any guest to use without assistance. An optional wireless casting dongle can be provided by the hotel.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A simple, intuitive AV system for a hotel meeting room. A wall-mounted display is connected to a SW-0201-4K switcher which provides HDMI/USB-C inputs at the table. The auto-switching feature ensures the system is easy for any guest to use without assistance. An optional wireless casting dongle can be provided by the hotel.',
+            manuallyAddedEquipment: [
+                { sku: 'SW-0201-4K', name: '2x1 USB-C & HDMI Wireless Switcher', quantity: 1, category: 'Presentation Switcher', description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs and auto-switching.', msrp: 600, dealerPrice: 400, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze', 'HDMI', 'Auto-switching', '2x1'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'USB-C'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -95,11 +118,14 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Restaurant Audio', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 80, ioRequirements: [],
+            dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 80, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 0,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A high-impedance (70V) distributed audio system providing even background music coverage throughout the restaurant. The system is split into two zones (e.g., main dining and bar), allowing for independent volume control in each area from a simple wall-mounted controller. A Bluetooth receiver and streaming media player serve as sources.',
-            manuallyAddedEquipment: [],
+            manuallyAddedEquipment: [
+                 { sku: 'AMP-260-DNT', name: '120W Network Amplifier', quantity: 1, category: 'Amplifier', description: '2 x 60w or 4 x 25w Channel Output @ 4ohm | Dual Power Options | Advanced DSP with Dante Integration', msrp: 1000, dealerPrice: 750, tags: ['Amplifier', 'Dante', 'DSP', 'Low Impedance'] },
+            ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -114,11 +140,18 @@ export const HOSPITALITY_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Fitness Center', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 20, ioRequirements: [],
+            dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 20, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Satellite TV', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Treadmill TVs', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 15, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 4,
             features: [],
-            functionalityStatement: 'A simple AV system for a hotel gym. Four wall-mounted TVs are fed by AVoIP decoders, allowing them to display a variety of satellite TV channels. A separate high-impedance audio system provides background music from a dedicated streaming source. Local wall controllers allow staff to change channels and adjust volume easily.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A simple AV system for a hotel gym. Four wall-mounted TVs are fed by NHD-120-RX AVoIP decoders, allowing them to display a variety of satellite TV channels. A separate high-impedance audio system provides background music from a dedicated streaming source. Local wall controllers allow staff to change channels and adjust volume easily.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 2, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 4, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+            ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },

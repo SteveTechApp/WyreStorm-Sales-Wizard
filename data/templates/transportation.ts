@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -18,12 +15,19 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             designTier: 'Silver',
             dimensions: { length: 500, width: 200, height: 12 },
             maxParticipants: 5000,
-            ioRequirements: [],
+            ioRequirements: [
+                { id: uuidv4(), name: 'FIDS Server', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack' },
+                { id: uuidv4(), name: 'Terminal Displays', type: 'output', quantity: 100, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 80, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', // Many single displays and video walls
             displayCount: 100,
             features: [],
-            functionalityStatement: 'A campus-wide NetworkHD AVoIP system for distributing flight information (FIDS), gate information, and advertising content to over 100 displays throughout the terminal. The system is designed for 24/7 reliability and can be centrally managed and monitored. The scalability of AVoIP is crucial, allowing the airport to easily add or change displays as the terminal evolves.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A campus-wide NetworkHD 120 series AVoIP system for distributing flight information (FIDS), gate information, and advertising content to over 100 displays throughout the terminal. The system is designed for 24/7 reliability and can be centrally managed and monitored. The scalability of AVoIP is crucial, allowing the airport to easily add or change displays as the terminal evolves.',
+            manuallyAddedEquipment: [
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 4, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 100, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+            ],
             constructionDetails: { wallConstruction: 'glass', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
@@ -38,7 +42,8 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Platform 3 Displays', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 200, width: 10, height: 6 }, maxParticipants: 500, ioRequirements: [],
+            dimensions: { length: 200, width: 10, height: 6 }, maxParticipants: 500, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 8,
             features: [],
             functionalityStatement: 'A set of outdoor-rated, high-brightness displays for a train platform. These ruggedized displays show train arrival/departure times and service alerts. They are fed by AVoIP decoders in weatherproof enclosures, connected to a central data source in the main station building. The system is designed for maximum reliability and readability in all weather conditions.',
@@ -57,7 +62,8 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Central Bus Terminal', roomType: 'Large Venue', designTier: 'Silver',
-            dimensions: { length: 100, width: 50, height: 7 }, maxParticipants: 1000, ioRequirements: [],
+            dimensions: { length: 100, width: 50, height: 7 }, maxParticipants: 1000, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 20,
             features: [],
             functionalityStatement: 'A comprehensive passenger information system for a busy bus terminal. Large displays show departure schedules, while interactive touch-screen kiosks allow passengers to look up routes and get directions. The entire system is networked, allowing for real-time updates in case of delays or gate changes.',
@@ -76,7 +82,8 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Starlight Theater', roomType: 'Auditorium', designTier: 'Gold',
-            dimensions: { length: 25, width: 20, height: 9 }, maxParticipants: 400, ioRequirements: [],
+            dimensions: { length: 25, width: 20, height: 9 }, maxParticipants: 400, 
+            ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }, { name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A state-of-the-art theater for cruise ship entertainment. A large, fine-pitch LED wall serves as a dynamic backdrop for live performances and a brilliant screen for movie nights. A professional audio system with line array speakers provides powerful, clear sound. The system includes a production booth with a video switcher and audio mixer to manage the shows.',
@@ -95,7 +102,8 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Terminal-Wide Audio', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 500, width: 200, height: 12 }, maxParticipants: 5000, ioRequirements: [],
+            dimensions: { length: 500, width: 200, height: 12 }, maxParticipants: 5000, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 0,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
             functionalityStatement: 'A comprehensive public address and background music system for a transportation hub. The system is divided into numerous zones (e.g., ticketing, gates, baggage claim) with independent volume control. It uses a 70V/100V distributed architecture for clarity over long distances. An audio DSP automatically ducks the background music when a live or automated announcement is made.',

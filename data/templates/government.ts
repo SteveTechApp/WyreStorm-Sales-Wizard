@@ -1,6 +1,3 @@
-
-
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserTemplate } from '../../utils/types.ts';
 
@@ -58,11 +55,15 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'SCIF Conference Room', roomType: 'Conference Room', designTier: 'Gold',
-            dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 10, ioRequirements: [],
+            dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 10, 
+            ioRequirements: [
+                { id: uuidv4(), name: 'Secure PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 10, terminationType: 'Desktop' },
+                { id: uuidv4(), name: 'Secure Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 2, terminationType: 'Wall Mount' },
+            ],
             displayType: 'single', displayCount: 1,
             features: [],
-            functionalityStatement: 'A high-security AV system for a SCIF environment. All equipment is located within the secure space. The system is completely air-gapped from any external networks. A simple, reliable point-to-point fiber optic extender is used for signal transmission to the display to prevent any potential RF emissions. The system is designed for secure, wired presentations only.',
-            manuallyAddedEquipment: [],
+            functionalityStatement: 'A high-security AV system for a SCIF environment. All equipment is located within the secure space and is completely air-gapped from any external networks. A point-to-point fiber optic extender is used for signal transmission to the display to prevent any potential RF emissions. The system is designed for secure, wired presentations only.',
+            manuallyAddedEquipment: [], // Fiber extender would be selected by AI based on I/O
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['speech_reinforcement'], microphoneType: 'soundbar_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: true },
@@ -77,7 +78,8 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Courtroom 3A', roomType: 'Other', designTier: 'Silver',
-            dimensions: { length: 15, width: 12, height: 5 }, maxParticipants: 60, ioRequirements: [],
+            dimensions: { length: 15, width: 12, height: 5 }, maxParticipants: 60, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 5,
             features: [{ name: 'Speech Reinforcement', priority: 'must-have' }],
             functionalityStatement: 'An evidence presentation system for a courtroom. Displays are provided for the judge, jury, witness, and counsel tables. A central matrix switcher allows the clerk to route evidence from various inputs (document camera, PC, guest laptop) to any or all screens. A video conferencing system is integrated for remote arraignments. A multi-microphone audio system with a DSP ensures every word is captured clearly for the court record.',
@@ -96,7 +98,8 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'DMV Lobby', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 100, ioRequirements: [],
+            dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 100, 
+            ioRequirements: [],
             displayType: 'single', displayCount: 6,
             features: [],
             functionalityStatement: 'A digital signage and queuing system for a public-facing government office. Large displays clearly show "Now Serving" ticket numbers, reducing confusion and wait times. Other displays provide informational content and public service announcements. The system is driven by AVoIP for easy and cost-effective distribution of signals from the central server.',
@@ -115,7 +118,8 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612294158422-269c3a6ab8a1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Simulator Bay', roomType: 'Other', designTier: 'Gold',
-            dimensions: { length: 12, width: 8, height: 4 }, maxParticipants: 10, ioRequirements: [],
+            dimensions: { length: 12, width: 8, height: 4 }, maxParticipants: 10, 
+            ioRequirements: [],
             displayType: 'projector', displayCount: 3,
             features: [],
             functionalityStatement: 'An immersive training environment using three short-throw projectors with edge-blending technology to create a single, seamless, ultra-wide image. The system is fed by high-performance simulation computers. A robust audio system provides realistic sound cues. The system is designed for high-fidelity, low-latency performance to create a convincing simulation.',
