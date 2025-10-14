@@ -51,6 +51,12 @@ export interface AudioSystemDetails {
   ucCompatibility: boolean;
 }
 
+export interface AVoIPNetworkDetails {
+    useDedicatedNetwork: boolean;
+    poeAvailable: boolean;
+    switchFeatures: ('igmp_snooping' | 'jumbo_frames')[];
+}
+
 export interface TechnicalDetails {
   primaryVideoResolution: string;
   videoSignalTypes: string[];
@@ -59,6 +65,7 @@ export interface TechnicalDetails {
   cameraCount: number;
   roomPc: boolean;
   avoipSystem?: string;
+  avoipNetworkDetails?: AVoIPNetworkDetails;
 }
 
 export interface StructuredSystemDiagramNode {

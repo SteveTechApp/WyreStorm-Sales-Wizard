@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface ChatInputFormProps {
@@ -32,9 +31,9 @@ const ChatInputForm: React.FC<ChatInputFormProps> = ({
                 type="submit"
                 disabled={isLoading || !input.trim()}
                 className="btn btn-primary px-6 disabled:opacity-50"
-                aria-label="Send message"
+                aria-label="Ask question"
             >
-                Send
+                ASK
             </button>
         </form>
     );

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +8,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'app-bg': 'rgb(var(--app-bg-rgb) / <alpha-value>)',
+              'background': 'rgb(var(--background-rgb) / <alpha-value>)',
+              'background-secondary': 'rgb(var(--background-secondary-rgb) / <alpha-value>)',
+              'input-bg': 'rgb(var(--input-bg-rgb) / <alpha-value>)',
+              'text-primary': 'rgb(var(--text-primary-rgb) / <alpha-value>)',
+              'text-secondary': 'rgb(var(--text-secondary-rgb) / <alpha-value>)',
+              'text-on-accent': 'rgb(var(--text-on-accent-rgb) / <alpha-value>)',
+              'border-color': 'rgb(var(--border-color-rgb) / <alpha-value>)',
+              'border': 'rgb(var(--border-rgb) / <alpha-value>)',
+              'accent': 'rgb(var(--accent-rgb) / <alpha-value>)',
+              'accent-hover': 'rgb(var(--accent-hover-rgb) / <alpha-value>)',
+              'primary': 'rgb(var(--primary-rgb) / <alpha-value>)',
+              'primary-hover': 'rgb(var(--primary-hover-rgb) / <alpha-value>)',
+              'destructive': 'rgb(var(--destructive-rgb) / <alpha-value>)',
+            }
+          }
+        }
+      }
+    </script>
     <script type="importmap">
     {
       "imports": {
@@ -28,7 +51,7 @@
     <script type="module" src="/index.tsx"></script>
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body class="font-sans">
+<body>
     <div id="root"></div>
     <script src="https://unpkg.com/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <script>

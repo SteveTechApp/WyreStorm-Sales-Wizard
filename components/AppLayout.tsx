@@ -7,6 +7,7 @@ import QuickQuestionFAB from './QuickQuestionFAB.tsx';
 import ComparisonTray from './ComparisonTray.tsx';
 import ProfileModal from './ProfileModal.tsx';
 import { NAV_LINKS } from '../data/navigation.ts';
+import BackgroundCarousel from './BackgroundCarousel.tsx';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -28,18 +29,30 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     return RESOLUTION_MAP[userProfile.resolution || 'fit'] || RESOLUTION_MAP['fit'];
   }, [userProfile.resolution]);
 
+  const showBg = userProfile.showBackground;
+
   return (
     <div 
         style={containerStyle}
         className="text-text-primary flex flex-col bg-app-bg shadow-2xl rounded-lg relative isolate overflow-hidden border border-border-color transition-all duration-300 ease-in-out"
     >
-      <DefaultHeader links={NAV_LINKS} />
-      <main className="flex-grow flex flex-col relative overflow-y-auto">
-        <div className="container mx-auto p-4 md:p-6 flex-grow flex flex-col relative z-0">
-             {children}
-        </div>
-      </main>
-      <Footer />
+      {/* Background Layer */}
+      <div className="absolute inset-0 z-0">
+        {showBg && <BackgroundCarousel />}
+      </div>
+
+      {/* Content Layer */}
+      <div className="relative z-10 flex flex-col flex-grow bg-background/95 backdrop-blur-sm">
+        <DefaultHeader links={NAV_LINKS} />
+        <main className="flex-grow flex flex-col relative overflow-y-auto">
+          <div className="container mx-auto p-4 md:p-6 flex-grow flex flex-col relative">
+               {children}
+          </div>
+        </main>
+        <Footer />
+      </div>
+
+      {/* Floating UI Layer is outside the content layer to not be affected by its background */}
       <QuickQuestionFAB />
       <ComparisonTray />
       <ProfileModal isOpen={isProfileModalOpen} onClose={closeProfileModal} />

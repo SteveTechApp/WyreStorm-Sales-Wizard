@@ -5,6 +5,7 @@ import { useUserContext } from '../../context/UserContext.tsx';
 import { HamburgerIcon } from '../Icons.tsx';
 import MobileNavMenu from '../MobileNavMenu.tsx';
 import { NavLinkItem } from '../../data/navigation.ts';
+import Search from '../Search.tsx';
 
 interface DefaultHeaderProps {
   links: NavLinkItem[];
@@ -30,6 +31,7 @@ const DefaultHeader: React.FC<DefaultHeaderProps> = ({ links }) => {
             ))}
           </nav>
           <div className="flex items-center gap-4">
+            <Search />
             <div className="hidden md:flex items-center gap-4">
               <button
                 onClick={openProfileModal}

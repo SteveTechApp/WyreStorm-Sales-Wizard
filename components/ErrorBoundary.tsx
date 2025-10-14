@@ -2,7 +2,7 @@ import React, { ErrorInfo, ReactNode } from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface State {
@@ -29,6 +29,8 @@ class ErrorBoundary extends React.Component<Props, State> {
       return <ErrorDisplay message={this.state.error?.message || 'Something went wrong.'} onRetry={() => window.location.reload()} />;
     }
 
+    // In a class component, props must be accessed via `this.props`.
+    // FIX: In a class component, props must be accessed via `this.props`.
     return this.props.children;
   }
 }

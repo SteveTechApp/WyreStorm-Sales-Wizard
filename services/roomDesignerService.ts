@@ -26,6 +26,7 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   - Max Participants: ${room.maxParticipants}
   - Display Type: ${room.displayType}
   - AVoIP System Selected: ${room.technicalDetails.avoipSystem || 'None'}
+  - AVoIP Network Details: ${JSON.stringify(room.technicalDetails.avoipNetworkDetails)}
 
   Available WyreStorm Products (use ONLY these products):
   ${JSON.stringify(productDatabase.map(p => ({ sku: p.sku, name: p.name, category: p.category, description: p.description, tags: p.tags, status: p.status })), null, 2)}
@@ -35,10 +36,10 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
 
   **Core Design Principles:**
   1.  **Reliability First**: Prioritize proven, stable solutions.
-  2.  **Strict Tier Adherence**: You must adhere to the technology guidelines for the specified tier.
-      - **Bronze**: Focus on core functionality and maximum cost-effectiveness. Design a **direct, point-to-point** connectivity solution. Prioritize simple auto-switchers and basic extenders (like HDBaseT Class B). Avoid complex solutions like AVoIP or large matrix switchers unless explicitly specified.
-      - **Silver**: Provide a balance of performance and value, with enhanced usability. This is the standard for modern meeting rooms. Introduce more robust connectivity like **HDBaseT Class A** for 4K video, presentation switchers with multiple input types (HDMI, USB-C), and support for features like **BYOM (Bring Your Own Meeting)** with USB peripheral sharing. Can use 1GbE AVoIP.
-      - **Gold**: Prioritize maximum performance, scalability, and future-proofing. This tier represents a true value upgrade. Design a system based on **AVoIP (NetworkHD)** for ultimate flexibility in signal routing and expansion. If point-to-point is required for security or simplicity, use the latest technology like **HDBaseT 3.0**. Include advanced features like video walls, multi-view, and integration with third-party control systems.
+  2.  **Strict Tier Adherence**: You must adhere to the technology guidelines for the specified tier. You **MUST** heavily weigh products that have a matching tier tag (e.g., 'Bronze', 'Silver', 'Gold') in their product data, as this is a strong indicator of their intended application.
+      - **Bronze**: Focus on core functionality and maximum cost-effectiveness. Design a **direct, point-to-point** connectivity solution. Look for products with the 'Bronze' tag. Choose the most cost-effective solution that meets the core requirements. Products are typically limited to 1080p or 4K30 and basic connectivity like HDMI. Prioritize simple auto-switchers and basic extenders (like HDBaseT Class B). Avoid AVoIP or large matrices.
+      - **Silver**: Provide a balance of performance and value, with enhanced usability. This is the standard for modern meeting rooms. Look for products with the 'Silver' tag. These products should offer a clear step up from Bronze, such as support for 4K60, more input types (like USB-C), and features for modern collaboration like KVM or **BYOM (Bring Your Own Meeting)** - look for 'USB' tags. Introduce more robust connectivity like **HDBaseT Class A**. Can use 1GbE AVoIP (like NetworkHD 500 series) for added flexibility.
+      - **Gold**: Prioritize maximum performance, scalability, and future-proofing. This tier represents a true value upgrade. Look for products with the 'Gold' tag. Design a system based on the best technology available, such as **AVoIP (NetworkHD)** for ultimate flexibility or **HDBaseT 3.0** for high-performance point-to-point connections. Scalability and advanced features (video walls, multi-view, control integration) are key differentiators. These products will support the highest resolutions and provide maximum flexibility.
   3.  **Simplicity**: Do not over-engineer. If a simple, reliable product meets the requirement within the tier's guidelines, choose it. Avoid legacy or EOL products unless there is no active alternative.
   
   **AVoIP System Design**:
@@ -49,6 +50,11 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   - If '10GbE (Uncompressed)' is selected, you MUST use products from the **NetworkHD 600 Series**.
   - If '10GbE (SDVoE)' is selected, you must state in the functionality statement that WyreStorm does not have an SDVoE product line but that the NetworkHD 600 series is a comparable 10GbE solution, and then design with the 600 series.
   - If AVoIP is selected, you MUST include one encoder (TX) per source and one decoder (RX) per display. You MUST also include one 'NHD-CTL-PRO' controller for the entire system.
+
+  **AVoIP Network Considerations**:
+  - If 'useDedicatedNetwork' is false, you MUST include a warning in your functionality statement about the need for careful coordination with the IT department and the potential for network congestion.
+  - If 'poeAvailable' is false for an AVoIP design, you MUST state in the functionality statement that local power supplies will be required for each endpoint as PoE is not available.
+  - If AVoIP is selected and the 'switchFeatures' array does not include 'igmp_snooping', you MUST state in the functionality statement that the selected network switch is NOT suitable for AVoIP and the design will not work. You MUST recommend either upgrading the network switch or using a non-AVoIP technology like HDBaseT instead. This is a critical failure point. Do NOT select AVoIP products if IGMP snooping is not available.
 
   **NHD 500 Series "E" Version Logic**:
   When designing with the NetworkHD 500 Series, consider using the cost-effective 'E' versions ('NHD-500-TXE', 'NHD-500-RXE') under these conditions:

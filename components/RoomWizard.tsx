@@ -8,6 +8,7 @@ import StepDisplay from './roomWizard/StepDisplay.tsx';
 import StepSources from './roomWizard/StepSources.tsx';
 import StepAudio from './roomWizard/StepAudio.tsx';
 import StepEnvironment from './roomWizard/StepEnvironment.tsx';
+import StepAVoIPNetwork from './roomWizard/StepAVoIPNetwork.tsx';
 import StepBudget from './roomWizard/StepBudget.tsx';
 
 interface RoomWizardProps {
@@ -23,6 +24,7 @@ const stepComponents = [
   { title: 'Sources', component: StepSources },
   { title: 'Audio', component: StepAudio },
   { title: 'Environment & Control', component: StepEnvironment },
+  { title: 'AVoIP Network', component: StepAVoIPNetwork },
   { title: 'Budget & Tier', component: StepBudget },
 ];
 

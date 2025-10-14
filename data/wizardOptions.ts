@@ -21,6 +21,11 @@ export const AVOIP_SYSTEM_TYPES = [
     '10GbE (SDVoE)',
 ];
 
+export const SWITCH_FEATURES = [
+    { id: 'igmp_snooping', label: 'IGMP Snooping' },
+    { id: 'jumbo_frames', label: 'Jumbo Frames' },
+];
+
 export const WALL_CONSTRUCTION_OPTIONS = [
     { value: 'drywall', label: 'Drywall / Plasterboard' },
     { value: 'concrete', label: 'Concrete / Brick' },

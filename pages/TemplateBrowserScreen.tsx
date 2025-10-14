@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
 import TemplateBrowser from '../components/TemplateBrowser.tsx';
@@ -30,10 +30,14 @@ const TemplateBrowserScreen: React.FC = () => {
 
     const verticalInfo = selectedVertical ? VERTICAL_MARKETS.find(v => v.verticalId === selectedVertical) : null;
 
+    const verticals = useMemo(() => {
+        return VERTICAL_MARKETS.filter(v => v.verticalId !== 'all');
+    }, []);
+
     return (
         <>
-            <div className="max-w-7xl mx-auto animate-fade-in-fast bg-background-secondary p-6 md:p-8 rounded-xl shadow-xl">
-                <div className="text-center mb-8">
+            <div className="max-w-7xl mx-auto animate-fade-in-fast bg-background-secondary p-6 md:p-8 rounded-xl shadow-xl h-full flex flex-col">
+                <div className="text-center mb-8 flex-shrink-0">
                     <h1 className="text-4xl font-extrabold text-accent mb-2 uppercase tracking-widest">
                         {selectedVertical ? `${verticalInfo?.name} Templates` : 'Select a Vertical'}
                     </h1>
@@ -42,23 +46,25 @@ const TemplateBrowserScreen: React.FC = () => {
                     </p>
                 </div>
                 
-                {selectedVertical ? (
-                    <TemplateBrowser 
-                        onTemplateSelect={handleSelectTemplate} 
-                        activeVertical={selectedVertical}
-                        onBack={() => setSelectedVertical(null)}
-                    />
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        {VERTICAL_MARKETS.filter(v => v.verticalId !== 'all').map(v => (
-                            <VerticalMarketCard 
-                                key={v.verticalId} 
-                                vertical={v as any}
-                                onClick={() => setSelectedVertical(v.verticalId)}
-                            />
-                        ))}
-                    </div>
-                )}
+                <div className="flex-grow overflow-y-auto">
+                    {selectedVertical ? (
+                        <TemplateBrowser 
+                            onTemplateSelect={handleSelectTemplate} 
+                            activeVertical={selectedVertical}
+                            onBack={() => setSelectedVertical(null)}
+                        />
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            {verticals.map(v => (
+                                <VerticalMarketCard 
+                                    key={v.verticalId} 
+                                    vertical={v as any}
+                                    onClick={() => setSelectedVertical(v.verticalId)}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
             <TemplateTierSelectorModal
                 isOpen={isTierModalOpen}

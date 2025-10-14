@@ -1,42 +1,66 @@
+/*
+=================================================================
+  WYRESTORM WINGMAN - GLOBAL STYLESHEET
+=================================================================
+  TABLE OF CONTENTS
+-----------------------------------------------------------------
+  1. CSS Variables (Color Palette)
+  2. Global Styles (Base, Body, Resets)
+  3. Component Styles (.btn, .prose, etc.)
+  4. Animations (@keyframes)
+  5. Utility & Browser Styles (Scrollbar, Print)
+=================================================================
+*/
 
+/*
+========================================
+    1. CSS Variables (Color Palette)
+========================================
+*/
 :root {
-    --app-bg: #f8fafc;                 /* slate-50 - Main container BG */
-    --background: #ffffff;            /* white - Content card BG */
-    --background-secondary: #ffffff;  /* white - Content card BG */
-    --input-bg: #f1f5f9;               /* slate-100 - Input field BG */
-    
+    --app-bg: #f1f5f9;                 /* slate-100 */
+    --background: #ffffff;            /* white */
+    --background-secondary: #f8fafc;  /* slate-50 */
+    --input-bg: #f1f5f9;               /* slate-100 */
     --text-primary: #1e293b;           /* slate-800 */
     --text-secondary: #64748b;         /* slate-500 */
     --text-on-accent: #ffffff;         /* white */
-    
     --border-color: #cbd5e1;           /* slate-300 */
-    --accent: #06b6d4;                 /* cyan-500 */
-    --accent-hover: #0891b2;           /* cyan-600 */
-    --primary: #3b82f6;                /* blue-500 */
-    --primary-hover: #2563eb;           /* blue-600 */
-    --destructive: #ef4444;            /* red-500 */
     --border: #e2e8f0;                 /* slate-200 */
+    --accent: #00833D;                 /* WyreStorm Green */
+    --accent-hover: #00642F;           /* Darker Green */
+    --primary: #00833D;                /* WyreStorm Green */
+    --primary-hover: #00642F;           /* Darker Green */
+    --destructive: #E4002B;            /* WyreStorm Red */
+
+    /* RGB versions for Tailwind opacity modifiers */
+    --app-bg-rgb: 241, 245, 249;
+    --background-rgb: 255, 255, 255;
+    --background-secondary-rgb: 248, 250, 252;
+    --input-bg-rgb: 241, 245, 249;
+    --text-primary-rgb: 30, 41, 59;
+    --text-secondary-rgb: 100, 116, 139;
+    --text-on-accent-rgb: 255, 255, 255;
+    --border-color-rgb: 203, 213, 225;
+    --accent-rgb: 0, 131, 61;
+    --accent-hover-rgb: 0, 100, 47;
+    --primary-rgb: 0, 131, 61;
+    --primary-hover-rgb: 0, 100, 47;
+    --destructive-rgb: 228, 0, 43;
+    --border-rgb: 226, 232, 240;
 }
 
-html.dark {
-    --app-bg: #0f172a;                 /* slate-900 */
-    --background: #1e293b;            /* slate-800 */
-    --background-secondary: #1e293b;  /* slate-800 */
-    --input-bg: #334155;               /* slate-700 */
-    
-    --text-primary: #f1f5f9;           /* slate-100 */
-    --text-secondary: #94a3b8;         /* slate-400 */
-    
-    --border-color: #334155;           /* slate-700 */
-    --border: #334155;                 /* slate-700 */
-}
-
+/*
+========================================
+    2. Global Styles (Base, Body, Resets)
+========================================
+*/
 html, body, #root {
     min-height: 100vh;
 }
 
 body {
-    background-color: #e2e8f0; /* slate-200 - Outermost BG */
+    background-color: var(--app-bg);
     color: var(--text-primary);
     transition: background-color 0.3s, color 0.3s;
     font-family: 'Inter', sans-serif;
@@ -45,24 +69,25 @@ body {
     justify-content: center;
 }
 
-html.dark body {
-    background-color: #020617; /* slate-950 */
+select option {
+    color: #1e293b; /* slate-800 */
+    background: #ffffff; /* white */
 }
 
+/*
+========================================
+    3. Component Styles
+========================================
+*/
+
+/* --- Background Carousel --- */
 .background-carousel {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
-    opacity: 0.15;
 }
-
-html.dark .background-carousel {
-    opacity: 0.05;
-}
-
 .background-carousel-image {
     position: absolute;
     top: 0;
@@ -73,157 +98,79 @@ html.dark .background-carousel {
     background-position: center;
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    filter: brightness(0.7);
 }
-
 .background-carousel-image.visible {
     opacity: 1;
 }
 
+/* --- Grid Pattern (Visual Planner) --- */
 .bg-grid-pattern {
     background-image: linear-gradient(to right, var(--border-color) 1px, transparent 1px), linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
     background-size: 40px 40px;
 }
 
-.prose {
-    color: var(--text-primary);
-}
-.prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
-    color: var(--text-primary);
-}
-.prose a {
-    color: var(--accent);
-}
-.prose blockquote {
-    color: var(--text-secondary);
-    border-left-color: var(--border-color);
-}
+/* --- Prose (Markdown Content) --- */
+.prose { color: var(--text-primary); }
+.prose h1, .prose h2, .prose h3, .prose h4, .prose strong { color: var(--text-primary); }
+.prose a { color: var(--accent); }
+.prose blockquote { color: var(--text-secondary); border-left-color: var(--border-color); }
 
-/* Ensure dropdown option text is readable */
-select option {
-    color: black;
-    background: white;
-}
+/* --- Buttons --- */
+.btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease-in-out; border: 1px solid transparent; }
+.btn-primary, .btn-accent { color: var(--text-on-accent); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+.btn-primary:hover, .btn-accent:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); transform: translateY(-2px); }
+.btn-primary { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
+.btn-primary:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-accent { background-color: var(--accent); border-color: var(--accent); }
+.btn-accent:hover { background-color: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-secondary { background-color: transparent; color: var(--text-primary); border-color: var(--border-color); }
+.btn-secondary:hover { background-color: var(--input-bg); border-color: var(--border-color); }
 
-html.dark select option {
-    color: #1e293b;
-    background: #f1f5f9;
-}
-
-/* Base Button Styles */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-    border: 1px solid transparent;
-}
-
-.btn-primary, .btn-accent {
-    color: var(--text-on-accent);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-}
-.btn-primary:hover, .btn-accent:hover {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    transform: translateY(-2px);
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: #ffffff;
-}
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-    border-color: var(--primary-hover);
-}
-
-.btn-accent {
-     background-color: var(--accent);
-     border-color: var(--accent);
-}
-.btn-accent:hover {
-    background-color: var(--accent-hover);
-    border-color: var(--accent-hover);
-}
-
-.btn-secondary {
-    background-color: transparent;
-    color: var(--text-primary);
-    border-color: var(--border-color);
-}
-.btn-secondary:hover {
-     background-color: var(--input-bg);
-     border-color: var(--border-color);
-}
-
+/*
+========================================
+    4. Animations
+========================================
+*/
 @keyframes pulse-bright {
-    0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7);
-    }
-    70% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 15px rgba(34, 211, 238, 0);
-    }
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 131, 61, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 131, 61, 0); }
 }
-.animate-pulse-bright {
-    animation: pulse-bright 2.5s infinite;
-}
+.animate-pulse-bright { animation: pulse-bright 2.5s infinite; }
 
 @keyframes fade-in-fast {
     from { opacity: 0; }
     to { opacity: 1; }
 }
-.animate-fade-in-fast {
-    animation: fade-in-fast 0.3s ease-in-out forwards;
-}
+.animate-fade-in-fast { animation: fade-in-fast 0.3s ease-in-out forwards; }
 
 @keyframes fade-in-up {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in-up {
-    animation: fade-in-up 0.3s ease-out forwards;
-}
+.animate-fade-in-up { animation: fade-in-up 0.3s ease-out forwards; }
 
-/* Custom scrollbar for webkit browsers */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+@keyframes thinking-progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
+.animate-thinking-progress { animation: thinking-progress 1.5s ease-in-out infinite; }
 
-::-webkit-scrollbar-track {
-    background: var(--app-bg);
-}
+/*
+========================================
+    5. Utility & Browser Styles
+========================================
+*/
 
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1; /* slate-300 */
-    border-radius: 4px;
-}
+/* --- Custom Scrollbar --- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--app-bg); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8; /* slate-400 */
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-    background: #475569; /* slate-600 */
-}
-html.dark ::-webkit-scrollbar-thumb:hover {
-    background: #64748b; /* slate-500 */
-}
-
-/* Print styles */
+/* --- Print Styles --- */
 @media print {
-    body {
-        background-color: #fff;
-        color: #000;
-    }
-    .print\:hidden {
-        display: none;
-    }
-    .print\:shadow-none {
-        box-shadow: none;
-    }
+    body { background-color: #fff; color: #000; }
+    .print\:hidden { display: none; }
+    .print\:shadow-none { box-shadow: none; }
 }

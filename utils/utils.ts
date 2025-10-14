@@ -32,6 +32,11 @@ export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' |
         cameraCount: 0,
         roomPc: false,
         avoipSystem: 'None',
+        avoipNetworkDetails: {
+            useDedicatedNetwork: true,
+            poeAvailable: true,
+            switchFeatures: ['igmp_snooping'],
+        },
     },
     budget: 5000,
 });

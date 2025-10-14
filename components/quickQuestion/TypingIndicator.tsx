@@ -1,16 +1,18 @@
-
 import React from 'react';
 
-const TypingIndicator: React.FC = () => (
-    <div className="flex justify-start">
-        <div className="p-3 rounded-lg bg-background border border-border-color">
-            <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-text-secondary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-                <div className="w-2 h-2 bg-text-secondary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-                <div className="w-2 h-2 bg-text-secondary rounded-full animate-pulse"></div>
+const TypingIndicator: React.FC = () => {
+    return (
+        <div className="flex justify-start">
+            <div className="p-4 rounded-lg bg-background border border-border-color w-full max-w-sm animate-pulse">
+                <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-text-secondary">Thinking...</span>
+                    <div className="w-full bg-border-color rounded-full h-2 overflow-hidden relative">
+                        <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-accent/0 via-accent to-accent/0 animate-thinking-progress"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default TypingIndicator;
