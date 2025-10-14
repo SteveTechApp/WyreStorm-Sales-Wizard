@@ -40,7 +40,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, children, classN
       onClick={handleBackdropClick}
     >
       <div 
-        className={`bg-background rounded-lg shadow-2xl w-full flex flex-col max-h-[90vh] border border-border-color ${className || ''}`} 
+        className={`bg-background rounded-lg shadow-2xl w-full flex flex-col max-h-full border border-border-color ${className || ''}`} 
         onClick={e => e.stopPropagation()}
       >
         {title && (
