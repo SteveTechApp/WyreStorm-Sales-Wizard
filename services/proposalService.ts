@@ -3,7 +3,6 @@ import { ProjectData, UserProfile, Proposal, StructuredSystemDiagram } from '../
 import { PROPOSAL_GENERATION_SCHEMA, PROPOSAL_GENERATION_ZOD_SCHEMA } from './schemas.ts';
 import { getLocalizationInstructions } from './localizationService.ts';
 import { cleanAndParseJson } from '../utils/utils.ts';
-import { calculatePricing } from '../utils/pricingUtils.ts';
 import { INSTALLATION_TASK_DATABASE } from '../data/installationTaskDatabase.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -38,7 +37,7 @@ const generateProposalPrompt = (project: ProjectData, userProfile: UserProfile |
         1.  **executiveSummary**: Write a compelling, client-facing summary. It should be confident, professional, and highlight how the proposed WyreStorm solution meets the client's needs.
         2.  **scopeOfWork**: Write a detailed scope of work. Describe what will be delivered in each room, referencing the functionality statements. Be clear and comprehensive.
         3.  **installationPlan**: Create a logical, phased installation plan using tasks from the database provided. Group tasks into logical phases (e.g., "Pre-Wire", "Rack Build", "Room Integration", "Commissioning").
-        4.  **suggestedImprovements**: Based on the project scope, suggest 1-2 valuable upsell opportunities. For each, provide the 'roomName' it applies to, an 'improvement' description, and an estimated 'additionalCost'. Examples: suggest upgrading a Silver room to Gold with AVoIP, adding a control system, or suggesting ceiling mics for better audio.
+        4.  **suggestedImprovements**: Based on the project scope, suggest 1-2 valuable upsell opportunities. For each, provide the 'roomName' it applies to and an 'improvement' description. Examples: suggest upgrading a Silver room to Gold with AVoIP, adding a control system, or suggesting ceiling mics for better audio.
         5.  **upgradeDowngradePaths**: This section is CRITICAL. For EACH room in the project, you MUST suggest potential upgrade and downgrade paths. Your suggestions should be concrete technology changes based on the strict guide below.
 
             **Technology Tier Definitions (Strict Guide):**
@@ -50,17 +49,16 @@ const generateProposalPrompt = (project: ProjectData, userProfile: UserProfile |
             - For a 'Bronze' room, you MUST provide an 'upgrade' path to 'Silver'. Example description: "Upgrade from basic HDBaseT extenders to a full 4K60 system with USB-C connectivity for BYOM functionality."
             - For a 'Silver' room, you MUST provide an 'upgrade' path to 'Gold' AND a 'downgrade' path to 'Bronze'. Example upgrade: "Upgrade the 1GbE AVoIP system to a zero-latency 10GbE NetworkHD 600 series solution, ideal for video wall applications." Example downgrade: "Simplify from a flexible AVoIP system to a cost-effective point-to-point HDBaseT extender set."
             - For a 'Gold' room, you MUST provide a 'downgrade' path to 'Silver'. Example description: "Change from a 10GbE AVoIP system to a more cost-effective but still high-quality 1GbE NetworkHD 500 series AVoIP solution."
-            - For each path, you MUST provide a brief 'description' of the key technology changes and an estimated 'additionalCost' (for upgrades) or 'costSaving' (for downgrades).
-        6.  **cableInformation**: Add a final section with this exact heading: 'A Note on Connectivity'. In a brief paragraph, state that WyreStorm offers a range of high-quality HDMI, USB (copper and fiber), and active optical cables to ensure reliable system performance. Explain that these are not included in the main equipment list but can be quoted separately. Create a small markdown table with 3-4 example cables from the 'Cable' category in the product database, showing their SKU, Name, and MSRP. Do NOT mention CAT cables.
+            - For each path, you MUST provide a brief 'description' of the key technology changes.
+        6.  **cableInformation**: Add a final section with this exact heading: 'A Note on Connectivity'. In a brief paragraph, state that WyreStorm offers a range of high-quality HDMI, USB (copper and fiber), and active optical cables to ensure reliable system performance. Explain that these are not included in the main equipment list but can be quoted separately. Create a small markdown table with 3-4 example cables from the 'Cable' category in the product database, showing their SKU and Name. Do NOT mention CAT cables or costs.
 
         Return only valid JSON that conforms to the schema. Do not include markdown formatting or explanations.
     `;
 };
 
-// FIX: Updated type to omit pricing as it's added separately.
-type GeneratedProposalData = Omit<Proposal, 'proposalId' | 'version' | 'createdAt' | 'systemDiagram' | 'equipmentList' | 'pricing'>;
+type GeneratedProposalData = Omit<Proposal, 'proposalId' | 'version' | 'createdAt' | 'systemDiagram' | 'equipmentList'>;
 
-export const generateProposal = async (project: ProjectData, userProfile: UserProfile | null): Promise<GeneratedProposalData & { systemDiagram?: StructuredSystemDiagram, equipmentList: Proposal['equipmentList'], pricing: Proposal['pricing'] }> => {
+export const generateProposal = async (project: ProjectData, userProfile: UserProfile | null): Promise<GeneratedProposalData & { systemDiagram?: StructuredSystemDiagram, equipmentList: Proposal['equipmentList'] }> => {
     const prompt = generateProposalPrompt(project, userProfile);
 
     try {
@@ -80,8 +78,6 @@ export const generateProposal = async (project: ProjectData, userProfile: UserPr
 
         const parsedJson = cleanAndParseJson(text);
         const validatedData = PROPOSAL_GENERATION_ZOD_SCHEMA.parse(parsedJson);
-
-        const pricing = calculatePricing(project, userProfile!);
         
         const equipmentList = project.rooms
             .flatMap(room => room.manuallyAddedEquipment)
@@ -102,7 +98,6 @@ export const generateProposal = async (project: ProjectData, userProfile: UserPr
         return {
             ...validatedData,
             equipmentList,
-            pricing,
             systemDiagram,
         };
 

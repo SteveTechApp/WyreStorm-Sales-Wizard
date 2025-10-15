@@ -13,7 +13,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             roomName: 'Store-Wide Signage',
             roomType: 'Retail Space',
             designTier: 'Silver',
-            budget: 25000,
             dimensions: { length: 50, width: 30, height: 4 },
             maxParticipants: 200,
             ioRequirements: [
@@ -42,7 +41,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Brand Experience Area', roomType: 'Retail Space', designTier: 'Gold',
-            budget: 30000,
             dimensions: { length: 10, width: 8, height: 3.5 }, maxParticipants: 15, 
             ioRequirements: [
                 { id: uuidv4(), name: '4K Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack', control: { needed: false, types: [] } },
@@ -67,7 +65,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1594938298603-c81411554a3a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Fitting Room 3', roomType: 'Other', designTier: 'Bronze',
-            budget: 2000,
             dimensions: { length: 2, width: 2, height: 2.5 }, maxParticipants: 1, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
@@ -87,7 +84,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612817158739-a9a2a4b8f046?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Entrance Display', roomType: 'Retail Space', designTier: 'Silver',
-            budget: 15000,
             dimensions: { length: 5, width: 1, height: 4 }, maxParticipants: 0, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack', control: { needed: false, types: [] } },
@@ -113,12 +109,11 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'In-Store Audio', roomType: 'Retail Space', designTier: 'Bronze',
-            budget: 6000,
             dimensions: { length: 20, width: 15, height: 3.5 }, maxParticipants: 50, 
             ioRequirements: [],
             displayType: 'single', displayCount: 0,
             features: [{ name: 'Program Audio', priority: 'must-have' }],
-            functionalityStatement: 'A premium-quality distributed audio system providing background music to enhance the shopping experience. The store is divided into three zones (e.g., entrance, main floor, fitting rooms) with independent volume control for each. A multi-zone amplifier is fed by a professional media player with curated playlists.',
+            functionalityStatement: 'A premium-quality distributed audio system providing background music to enhance the shopping experience. The store is divided into three zones (e.g., entrance, main floor, fitting rooms) with independent volume control for each. A multi-zone streaming amplifier is fed by a professional media player with curated playlists.',
             manuallyAddedEquipment: [],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },

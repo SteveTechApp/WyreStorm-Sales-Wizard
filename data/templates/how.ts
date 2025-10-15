@@ -13,7 +13,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
             roomName: 'Main Sanctuary',
             roomType: 'House of Worship',
             designTier: 'Silver',
-            budget: 45000,
             dimensions: { length: 25, width: 18, height: 9 },
             maxParticipants: 300,
             ioRequirements: [
@@ -46,7 +45,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1529392576085-f55c88b90150?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Overflow Hall', roomType: 'Other', designTier: 'Bronze',
-            budget: 3000,
             dimensions: { length: 15, width: 10, height: 3 }, maxParticipants: 70, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Sanctuary Feed', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack', control: { needed: false, types: [] } },
@@ -72,7 +70,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Youth Center', roomType: 'Other', designTier: 'Silver',
-            budget: 8000,
             dimensions: { length: 12, width: 9, height: 3 }, maxParticipants: 40, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Gaming Inputs', deviceType: 'Guest Device', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Wall Plate', control: { needed: false, types: [] } },
@@ -97,7 +94,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1606830572242-635b7190b85a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Welcome Lobby', roomType: 'Other', designTier: 'Bronze',
-            budget: 5000,
             dimensions: { length: 18, width: 10, height: 4 }, maxParticipants: 100, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Central Rack', control: { needed: false, types: [] } },
@@ -123,7 +119,6 @@ export const HOW_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1554224312-c824c3848b52?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Media Control Booth', roomType: 'Other', designTier: 'Gold',
-            budget: 60000,
             dimensions: { length: 5, width: 4, height: 2.5 }, maxParticipants: 3, 
             ioRequirements: [],
             displayType: 'dual_display', displayCount: 4, // Multiview + Program + Preview + PC

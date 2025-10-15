@@ -7,12 +7,10 @@ export interface UpgradeDowngradePath {
     upgrade?: {
         toTier: DesignTier;
         description: string;
-        additionalCost: number;
     };
     downgrade?: {
         toTier: DesignTier;
         description: string;
-        costSaving: number;
     };
 }
 
@@ -24,16 +22,10 @@ export interface Proposal {
     scopeOfWork: string;
     systemDiagram?: StructuredSystemDiagram;
     equipmentList: { sku: string; name: string; quantity: number }[];
-    pricing: {
-        hardwareTotal: number;
-        ancillaryTotal: number;
-        grandTotal: number;
-    };
     installationPlan: { phase: string; tasks: string[] }[];
     suggestedImprovements?: {
         roomName: string;
         improvement: string;
-        additionalCost: number;
     }[];
     upgradeDowngradePaths?: UpgradeDowngradePath[];
     cableInformation?: string;

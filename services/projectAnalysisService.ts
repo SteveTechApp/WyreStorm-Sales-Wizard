@@ -65,9 +65,8 @@ export const analyzeProject = async (project: ProjectData, userProfile: UserProf
         - Are there opportunities for standardization across rooms?
         - Are there conflicting design tiers that seem odd?
         - Is there an opportunity to upsell a project-wide feature like AVoIP or a central control system?
-        - Are there any financial insights based on the number of rooms (e.g., suggest a bulk discount)?
 
-        Provide feedback as an array of objects with "type" and "text". Types can be 'Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial'.
+        Provide feedback as an array of objects with "type" and "text". Types can be 'Warning', 'Suggestion', 'Opportunity', 'Insight'.
         Return only valid JSON. Do not include markdown formatting or explanations.
     `;
     try {

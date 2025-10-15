@@ -13,7 +13,6 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             roomName: 'Operations Control Center',
             roomType: 'Command Center',
             designTier: 'Gold',
-            budget: 180000,
             dimensions: { length: 12, width: 8, height: 3 },
             maxParticipants: 8,
             ioRequirements: [
@@ -42,7 +41,6 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1587495932550-935b80a1332c?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Production Line 2 Station', roomType: 'Other', designTier: 'Bronze',
-            budget: 4000,
             dimensions: { length: 5, width: 5, height: 5 }, maxParticipants: 8, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
@@ -64,7 +62,6 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Daily Briefing Room', roomType: 'Conference Room', designTier: 'Silver',
-            budget: 10000,
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 25, 
             ioRequirements: [],
             displayType: 'projector', displayCount: 1,
@@ -84,7 +81,6 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a128?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Manager\'s Office', roomType: 'Other', designTier: 'Silver',
-            budget: 5000,
             dimensions: { length: 5, width: 4, height: 3 }, maxParticipants: 2, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,

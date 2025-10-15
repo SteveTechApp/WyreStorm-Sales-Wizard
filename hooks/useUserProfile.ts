@@ -7,7 +7,6 @@ const defaultUserProfile: UserProfile = {
   company: 'Your Company',
   logoUrl: '',
   language: 'en-GB',
-  currency: 'GBP',
   unitSystem: 'metric',
   showBackground: true,
   zoomLevel: 100,

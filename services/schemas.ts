@@ -75,9 +75,8 @@ export const PROPOSAL_GENERATION_SCHEMA = {
         properties: {
             roomName: { type: Type.STRING },
             improvement: { type: Type.STRING },
-            additionalCost: { type: Type.NUMBER },
         },
-        required: ['roomName', 'improvement', 'additionalCost'],
+        required: ['roomName', 'improvement'],
       },
     },
     upgradeDowngradePaths: {
@@ -92,18 +91,16 @@ export const PROPOSAL_GENERATION_SCHEMA = {
             properties: {
               toTier: { type: Type.STRING },
               description: { type: Type.STRING },
-              additionalCost: { type: Type.NUMBER },
             },
-            required: ['toTier', 'description', 'additionalCost'],
+            required: ['toTier', 'description'],
           },
           downgrade: {
             type: Type.OBJECT,
             properties: {
               toTier: { type: Type.STRING },
               description: { type: Type.STRING },
-              costSaving: { type: Type.NUMBER },
             },
-            required: ['toTier', 'description', 'costSaving'],
+            required: ['toTier', 'description'],
           },
         },
         required: ['roomName', 'currentTier'],
@@ -124,7 +121,6 @@ export const PROPOSAL_GENERATION_ZOD_SCHEMA = z.object({
   suggestedImprovements: z.optional(z.array(z.object({
     roomName: z.string(),
     improvement: z.string(),
-    additionalCost: z.number(),
   }))),
   upgradeDowngradePaths: z.optional(z.array(z.object({
     roomName: z.string(),
@@ -132,12 +128,10 @@ export const PROPOSAL_GENERATION_ZOD_SCHEMA = z.object({
     upgrade: z.optional(z.object({
         toTier: z.string(),
         description: z.string(),
-        additionalCost: z.number(),
     })),
     downgrade: z.optional(z.object({
         toTier: z.string(),
         description: z.string(),
-        costSaving: z.number(),
     })),
   }))),
   cableInformation: z.string().optional(),
@@ -151,7 +145,7 @@ export const PROJECT_INSIGHTS_SCHEMA = {
             items: {
                 type: Type.OBJECT,
                 properties: {
-                    type: { type: Type.STRING, enum: ['Warning', 'Suggestion', 'Opportunity', 'Insight', 'Financial'] },
+                    type: { type: Type.STRING, enum: ['Warning', 'Suggestion', 'Opportunity', 'Insight'] },
                     text: { type: Type.STRING },
                 },
                 required: ['type', 'text'],
@@ -183,18 +177,6 @@ export const REQUIREMENTS_ANALYSIS_SCHEMA = {
     },
   },
   required: ['projectName', 'clientName', 'rooms'],
-};
-
-export const ANCILLARY_COSTS_SCHEMA = {
-    type: Type.OBJECT,
-    properties: {
-        cables: { type: Type.NUMBER },
-        connectors: { type: Type.NUMBER },
-        containment: { type: Type.NUMBER },
-        fixings: { type: Type.NUMBER },
-        materials: { type: Type.NUMBER },
-    },
-    required: ['cables', 'connectors', 'containment', 'fixings', 'materials'],
 };
 
 export const PRODUCT_FINDER_SCHEMA = {

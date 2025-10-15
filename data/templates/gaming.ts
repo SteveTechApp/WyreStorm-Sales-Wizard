@@ -13,7 +13,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             roomName: 'Casino Main Floor',
             roomType: 'Large Venue',
             designTier: 'Gold',
-            budget: 500000,
             dimensions: { length: 100, width: 100, height: 6 },
             maxParticipants: 1000,
             ioRequirements: [
@@ -43,7 +42,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Race & Sports Book', roomType: 'Large Venue', designTier: 'Gold',
-            budget: 300000,
             dimensions: { length: 30, width: 20, height: 7 }, maxParticipants: 200, 
             ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
@@ -66,7 +64,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Chairman Suite', roomType: 'Residential', designTier: 'Gold',
-            budget: 50000,
             dimensions: { length: 15, width: 10, height: 3.5 }, maxParticipants: 10, 
             ioRequirements: [],
             displayType: 'dual_display', displayCount: 3,
@@ -86,7 +83,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1605291423363-2c5b36de0f1d?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Poker Room', roomType: 'Other', designTier: 'Silver',
-            budget: 40000,
             dimensions: { length: 25, width: 20, height: 4 }, maxParticipants: 150, 
             ioRequirements: [],
             displayType: 'single', displayCount: 10,
@@ -106,7 +102,6 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1580234810421-17a41434c245?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Esports Arena', roomType: 'Large Venue', designTier: 'Gold',
-            budget: 400000,
             dimensions: { length: 40, width: 30, height: 10 }, maxParticipants: 500, 
             ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,

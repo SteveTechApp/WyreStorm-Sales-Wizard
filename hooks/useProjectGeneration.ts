@@ -1,4 +1,5 @@
 
+
 // FIX: Corrected typo 'react-outer-dom' to 'react-router-dom' to import the useNavigate hook type correctly.
 import { useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext.tsx';
@@ -56,8 +57,6 @@ export const useProjectGeneration = () => {
                 proposals: [],
                 unitSystem: 'metric',
                 notes: `Generated from client brief:\n\n${documentText}`,
-                // FIX: Added missing ancillaryCosts property.
-                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
                 productDatabase: getActiveProductDatabase(),
             };
@@ -78,13 +77,8 @@ export const useProjectGeneration = () => {
                 proposals: [],
                 unitSystem: 'metric',
                 notes: '',
-                // FIX: Added missing ancillaryCosts property.
-                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
                 productDatabase: getActiveProductDatabase(),
-                // FIX: Added missing budget and timeline properties.
-                budget: setupData.budget,
-                timeline: setupData.timeline,
             };
             dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
             toast.success('Project created!');
@@ -103,8 +97,6 @@ export const useProjectGeneration = () => {
                 proposals: [],
                 unitSystem: 'metric',
                 notes: `Started from template: ${template.templateName}`,
-                // FIX: Added missing ancillaryCosts property.
-                ancillaryCosts: { cables: 0, connectors: 0, containment: 0, fixings: 0, materials: 0 },
                 infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
                 productDatabase: getActiveProductDatabase(),
             };
@@ -133,7 +125,8 @@ export const useProjectGeneration = () => {
             const updatedRoom: RoomData = {
                 ...roomToDesign,
                 functionalityStatement: result.functionalityStatement,
-                manuallyAddedEquipment: fullEquipment
+                manuallyAddedEquipment: fullEquipment,
+                systemDiagram: undefined
             };
 
             dispatchProjectAction({ type: 'UPDATE_ROOM', payload: updatedRoom });
@@ -161,6 +154,7 @@ export const useProjectGeneration = () => {
                 ...roomWithConstraints,
                 functionalityStatement: result.functionalityStatement,
                 manuallyAddedEquipment: fullEquipment,
+                systemDiagram: undefined
             };
             dispatchProjectAction({ type: 'UPDATE_ROOM', payload: updatedRoom });
             toast.success(`Room re-designed with new constraints!`);

@@ -116,7 +116,6 @@ export interface RoomData {
     audioSystemDetails: AudioSystemDetails;
     technicalDetails: TechnicalDetails;
     valueEngineeringConstraints?: string[];
-    budget: number;
 }
 
 export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints'>;
@@ -125,14 +124,6 @@ export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;
     enableTouchAppPreview: boolean;
     cablingByOthers: boolean;
-}
-
-export interface AncillaryCosts {
-    cables: number;
-    connectors: number;
-    containment: number;
-    fixings: number;
-    materials: number;
 }
 
 export interface ProjectData {
@@ -146,15 +137,10 @@ export interface ProjectData {
     notes: string;
     productDatabase: Product[];
     infrastructure: ProjectInfrastructure;
-    ancillaryCosts: AncillaryCosts;
-    timeline?: string;
-    budget?: number;
 }
 
 export interface ProjectSetupData {
   projectName: string;
   clientName: string;
   rooms: RoomData[];
-  timeline?: string;
-  budget?: number;
 }

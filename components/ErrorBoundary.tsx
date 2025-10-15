@@ -1,5 +1,5 @@
-// FIX: Changed React import to a namespace import to correctly resolve 'this.props' on the class component instance.
-import * as React from 'react';
+// FIX: Changed React import from a namespace import to a default import to resolve component type errors.
+import React from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 
@@ -16,11 +16,15 @@ interface State {
   error: Error | null;
 }
 
+// FIX: Correctly typed the React.Component class to include Props and State generics, resolving errors where 'this.props' and 'this.state' were not found on the component type.
 class ErrorBoundaryInternal extends React.Component<ErrorBoundaryInternalProps, State> {
-  public state: State = {
-    hasError: false,
-    error: null,
-  };
+  constructor(props: ErrorBoundaryInternalProps) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
 
   static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI.

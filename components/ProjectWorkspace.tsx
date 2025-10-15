@@ -1,34 +1,51 @@
 import React, { useState } from 'react';
 import WorkspaceHeader from './workspace/WorkspaceHeader.tsx';
-import WorkspaceTabs from './workspace/WorkspaceTabs.tsx';
-import WorkspaceContent from './workspace/WorkspaceContent.tsx';
-import SidePanel from './workspace/SidePanel.tsx';
-import RoomConfigurator from './RoomConfigurator.tsx';
-import IoPanel from './io/IoPanel.tsx';
+import RoomSummaryPanel from './workspace/RoomSummaryPanel.tsx';
+import FunctionalityStatementPanel from './workspace/configurator/FunctionalityStatementPanel.tsx';
+import AIDesignActionPanel from './workspace/configurator/AIDesignActionPanel.tsx';
+import ValueEngineeringPanel from './workspace/configurator/ValueEngineeringPanel.tsx';
+import EquipmentListPanel from './workspace/configurator/EquipmentListPanel.tsx';
+import IOConfigurationPanel from './io/IOConfigurationPanel.tsx';
+import IOWizardModal from './io/IOWizardModal.tsx';
 import SystemDiagram from './SystemDiagram.tsx';
-import VisualRoomPlanner from './VisualRoomPlanner.tsx';
-
-const TABS_CONFIG = [
-  { id: 'config', label: 'Configuration', component: RoomConfigurator },
-  { id: 'io', label: 'I/O List', component: IoPanel },
-  { id: 'diagram', label: 'Diagram', component: SystemDiagram },
-  { id: 'planner', label: 'Planner', component: VisualRoomPlanner },
-];
+import { useProjectContext } from '../context/ProjectContext.tsx';
 
 const ProjectWorkspace: React.FC = () => {
-    const [activeTab, setActiveTab] = useState('config');
+    const { projectData, activeRoomId } = useProjectContext();
+    const room = projectData?.rooms.find(r => r.id === activeRoomId);
+
+    const [isIOWizardOpen, setIsIOWizardOpen] = useState(false);
+
+    if (!room) {
+        return null; // Or a loading/empty state for the room
+    }
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 animate-fade-in-fast">
-            <div className="flex-grow space-y-6">
+        <>
+            <div className="flex flex-col gap-6 animate-fade-in-fast">
                 <WorkspaceHeader />
-                <WorkspaceTabs tabs={TABS_CONFIG} activeTab={activeTab} setActiveTab={setActiveTab} />
-                <div className="mt-6">
-                    <WorkspaceContent tabs={TABS_CONFIG} activeTab={activeTab} />
+                <RoomSummaryPanel />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    {/* Left Column: Configuration */}
+                    <div className="space-y-6">
+                        <FunctionalityStatementPanel />
+                        <AIDesignActionPanel />
+                        <ValueEngineeringPanel />
+                        <EquipmentListPanel />
+                        <IOConfigurationPanel onOpenWizard={() => setIsIOWizardOpen(true)} />
+                    </div>
+                    {/* Right Column: Visualization */}
+                    <div className="lg:sticky lg:top-6">
+                        <SystemDiagram diagram={room?.systemDiagram} />
+                    </div>
                 </div>
             </div>
-            <SidePanel />
-        </div>
+            <IOWizardModal 
+                isOpen={isIOWizardOpen}
+                onClose={() => setIsIOWizardOpen(false)}
+                room={room}
+            />
+        </>
     );
 };
 

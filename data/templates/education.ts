@@ -13,7 +13,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             roomName: 'Standard Classroom',
             roomType: 'Classroom',
             designTier: 'Silver',
-            budget: 12000,
             dimensions: { length: 10, width: 8, height: 3 },
             maxParticipants: 30,
             ioRequirements: [
@@ -49,7 +48,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
             roomName: 'Lecture Hall 101',
             roomType: 'Lecture Hall',
             designTier: 'Gold',
-            budget: 80000,
             dimensions: { length: 20, width: 25, height: 8 },
             maxParticipants: 200,
             ioRequirements: [
@@ -82,7 +80,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Classroom 3B', roomType: 'Classroom', designTier: 'Bronze',
-            budget: 4000,
             dimensions: { length: 9, width: 7, height: 3 }, maxParticipants: 25, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Wall Plate Input', deviceType: 'Guest Device', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 15, terminationType: 'Wall Plate', control: { needed: false, types: [] } },
@@ -107,7 +104,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1563286094-63a56285a864?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Collaboration Lab', roomType: 'Classroom', designTier: 'Gold',
-            budget: 100000,
             dimensions: { length: 15, width: 12, height: 3 }, maxParticipants: 36, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Instructor Lectern', deviceType: 'Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Lectern', control: { needed: false, types: [] } },
@@ -136,7 +132,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Library Group Study', roomType: 'Huddle Space', designTier: 'Silver',
-            budget: 10000,
             dimensions: { length: 20, width: 10, height: 3.5 }, maxParticipants: 24, 
             ioRequirements: [],
             displayType: 'single', displayCount: 4,
@@ -158,7 +153,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1555963953-b152b7586566?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'School Cafeteria', roomType: 'Other', designTier: 'Bronze',
-            budget: 15000,
             dimensions: { length: 30, width: 25, height: 6 }, maxParticipants: 300, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 50, terminationType: 'Central Rack', control: { needed: false, types: [] } },
@@ -184,7 +178,6 @@ export const EDUCATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1581093581525-7b2046397340?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Chemistry Lab', roomType: 'Classroom', designTier: 'Silver',
-            budget: 18000,
             dimensions: { length: 12, width: 10, height: 3 }, maxParticipants: 24, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Doc Cam', deviceType: 'Document Camera', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 1, terminationType: 'Desktop', control: { needed: false, types: [] } },

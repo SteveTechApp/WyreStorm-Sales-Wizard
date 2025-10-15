@@ -1,13 +1,10 @@
+// FIX: Added React import to resolve "Cannot find namespace 'React'" error.
 import React from 'react';
-import IoColumnPanel from './IoColumnPanel.tsx';
 
+// This component is no longer used and can be deleted.
+// Its functionality has been moved to IOWizardModal.tsx.
 const IoPanel: React.FC = () => {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <IoColumnPanel title="Inputs" type="input" />
-      <IoColumnPanel title="Outputs" type="output" />
-    </div>
-  );
+    return null;
 };
 
 export default IoPanel;

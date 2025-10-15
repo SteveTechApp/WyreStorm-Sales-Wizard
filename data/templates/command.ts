@@ -13,7 +13,6 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
             roomName: 'Security Operations Center',
             roomType: 'Command Center',
             designTier: 'Silver',
-            budget: 40000,
             dimensions: { length: 8, width: 6, height: 3 },
             maxParticipants: 4,
             ioRequirements: [
@@ -43,7 +42,6 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1620327467533-3561910d8a59?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Emergency Operations Center', roomType: 'Command Center', designTier: 'Gold',
-            budget: 250000,
             dimensions: { length: 20, width: 15, height: 5 }, maxParticipants: 30,
             ioRequirements: [
                 { id: uuidv4(), name: 'EOC Sources', type: 'input', deviceType: 'Room PC', quantity: 12, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Central Rack', control: { needed: false, types: [] } },

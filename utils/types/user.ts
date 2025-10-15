@@ -6,7 +6,6 @@ export interface UserProfile {
     company: string;
     logoUrl: string;
     language: LanguageCode;
-    currency: 'GBP' | 'USD' | 'EUR';
     unitSystem: 'metric' | 'imperial';
     showBackground: boolean;
     zoomLevel: number;

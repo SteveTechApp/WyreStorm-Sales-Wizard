@@ -7,7 +7,6 @@ import ProposalHeader from '../components/proposal/ProposalHeader.tsx';
 import ProposalSection from '../components/proposal/ProposalSection.tsx';
 import EditableSection from '../components/proposal/EditableSection.tsx';
 import EquipmentTable from '../components/proposal/EquipmentTable.tsx';
-import PricingTable from '../components/proposal/PricingTable.tsx';
 import SystemDiagram from '../components/SystemDiagram.tsx';
 import { exportProposalToDocx } from '../utils/docxExporter.ts';
 import { exportEquipmentListToCsv } from '../utils/csvExporter.ts';
@@ -74,16 +73,12 @@ const ProposalDisplay: React.FC = () => {
                     <EquipmentTable equipmentList={proposal.equipmentList} />
                 </ProposalSection>
 
-                <ProposalSection title="Financial Summary">
-                    <PricingTable pricing={proposal.pricing} />
-                </ProposalSection>
-                
                  {proposal.suggestedImprovements && proposal.suggestedImprovements.length > 0 && (
                     <ProposalSection title="Suggested Improvements">
                         <ul className="list-disc list-inside space-y-2 text-gray-800">
                             {proposal.suggestedImprovements.map((imp, index) => (
                                 <li key={index}>
-                                    <strong>{imp.roomName}:</strong> {imp.improvement} (+${imp.additionalCost.toFixed(2)})
+                                    <strong>{imp.roomName}:</strong> {imp.improvement}
                                 </li>
                             ))}
                         </ul>
@@ -103,7 +98,6 @@ const ProposalDisplay: React.FC = () => {
                                             <div className="p-3 bg-green-50 border border-green-200 rounded">
                                                 <h4 className="font-semibold text-green-800">Upgrade to {path.upgrade.toTier}</h4>
                                                 <p className="text-sm text-gray-700 mt-1">{path.upgrade.description}</p>
-                                                <p className="text-sm font-bold text-green-700 mt-2">+${path.upgrade.additionalCost.toFixed(2)}</p>
                                             </div>
                                         )}
 
@@ -111,7 +105,6 @@ const ProposalDisplay: React.FC = () => {
                                             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
                                                 <h4 className="font-semibold text-yellow-800">Downgrade to {path.downgrade.toTier}</h4>
                                                 <p className="text-sm text-gray-700 mt-1">{path.downgrade.description}</p>
-                                                <p className="text-sm font-bold text-yellow-700 mt-2">-${path.downgrade.costSaving.toFixed(2)}</p>
                                             </div>
                                         )}
                                     </div>

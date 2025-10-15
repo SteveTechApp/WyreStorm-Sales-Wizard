@@ -13,7 +13,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             roomName: 'Huddle Space',
             roomType: 'Huddle Space',
             designTier: 'Silver',
-            budget: 10000,
             dimensions: { length: 4, width: 3, height: 2.7 },
             maxParticipants: 4,
             ioRequirements: [
@@ -48,7 +47,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
             roomName: 'Executive Boardroom',
             roomType: 'Boardroom',
             designTier: 'Gold',
-            budget: 50000,
             dimensions: { length: 12, width: 6, height: 3 },
             maxParticipants: 16,
             ioRequirements: [
@@ -86,7 +84,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1516528387618-afa90b13e00d?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Meeting Room 101', roomType: 'Conference Room', designTier: 'Bronze',
-            budget: 5000,
             dimensions: { length: 6, width: 4, height: 2.7 }, maxParticipants: 6, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Table HDMI', deviceType: 'Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Table Box', control: { needed: false, types: [] } },
@@ -112,7 +109,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1521791055366-0d553872125f?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Conference Room 205', roomType: 'Conference Room', designTier: 'Silver',
-            budget: 15000,
             dimensions: { length: 9, width: 5, height: 2.8 }, maxParticipants: 10, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Lectern HDMI', deviceType: 'Laptop', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern', control: { needed: false, types: [] } },
@@ -140,7 +136,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1578496479532-3202d08a0045?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Training Center Alpha', roomType: 'Conference Room', designTier: 'Silver',
-            budget: 20000,
             dimensions: { length: 12, width: 9, height: 3 }, maxParticipants: 20, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Lectern PC', deviceType: 'Room PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Lectern', control: { needed: false, types: [] } },
@@ -167,7 +162,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'The Commons', roomType: 'Auditorium', designTier: 'Gold',
-            budget: 75000,
             dimensions: { length: 20, width: 15, height: 5 }, maxParticipants: 100, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Stage Box HDMI', deviceType: 'Guest Device', type: 'input', quantity: 2, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 5, terminationType: 'Floor Box', control: { needed: false, types: [] } },
@@ -195,7 +189,6 @@ export const CORPORATE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1579548122080-c35fd6820ecb?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Lobby', roomType: 'Other', designTier: 'Bronze',
-            budget: 8000,
             dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 30, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack', control: { needed: false, types: [] } },

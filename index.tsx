@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import { UserProvider } from './context/UserContext.tsx';
 import { ProjectProvider } from './context/ProjectContext.tsx';
 import { GenerationProvider } from './context/GenerationContext.tsx';
+import { CheckIcon, WarningIcon } from './components/Icons.tsx';
 
 import App from './App.tsx';
 
@@ -23,7 +24,24 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 style: {
                   background: 'var(--background-secondary)',
                   color: 'var(--text-primary)',
-                  border: '2px solid var(--border-color)',
+                  border: '1px solid var(--border-color)',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+                },
+                success: {
+                  duration: 3000,
+                  icon: <CheckIcon className="h-6 w-6 text-accent" />,
+                  style: {
+                    borderLeft: '4px solid var(--accent)',
+                  }
+                },
+                error: {
+                  duration: 5000,
+                  icon: <WarningIcon className="h-6 w-6 text-destructive" />,
+                  style: {
+                    borderLeft: '4px solid var(--destructive)',
+                  }
                 }
               }}
             />

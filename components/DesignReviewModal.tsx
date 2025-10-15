@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { DesignFeedbackItem } from '../utils/types.ts';
 import FeedbackCategory from './designReview/FeedbackCategory.tsx';
-import { WarningIcon, SuggestionIcon, OpportunityIcon, InsightIcon, FinancialIcon } from './Icons.tsx';
+import { WarningIcon, SuggestionIcon, OpportunityIcon, InsightIcon } from './Icons.tsx';
 import InfoModal from './InfoModal.tsx';
 
 interface DesignReviewModalProps {
@@ -16,7 +16,6 @@ const iconMap: Record<string, React.ReactNode> = {
     'Suggestion': <SuggestionIcon className="h-6 w-6 text-blue-500" />,
     'Opportunity': <OpportunityIcon className="h-6 w-6 text-green-500" />,
     'Insight': <InsightIcon className="h-6 w-6 text-purple-500" />,
-    'Financial': <FinancialIcon className="h-6 w-6 text-teal-500" />,
 };
 
 const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, feedbackItems, title }) => {
@@ -38,7 +37,6 @@ const DesignReviewModal: React.FC<DesignReviewModalProps> = ({ isOpen, onClose, 
           <FeedbackCategory title="Suggestions" items={groupedFeedback['Suggestion']} icon={iconMap['Suggestion']} />
           <FeedbackCategory title="Opportunities" items={groupedFeedback['Opportunity']} icon={iconMap['Opportunity']} />
           <FeedbackCategory title="Insights" items={groupedFeedback['Insight']} icon={iconMap['Insight']} />
-          <FeedbackCategory title="Financial" items={groupedFeedback['Financial']} icon={iconMap['Financial']} />
       </div>
     </InfoModal>
   );

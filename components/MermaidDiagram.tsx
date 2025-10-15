@@ -18,6 +18,10 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ definition, onNodeClick
         mermaid.initialize({ 
             startOnLoad: false, 
             theme: 'neutral',
+            securityLevel: 'antiscript', // Allow basic HTML but sanitize scripts to prevent XSS
+            flowchart: {
+              htmlLabels: true // Enable HTML in node labels
+            },
             themeVariables: {
                 background: 'var(--background)',
                 primaryColor: 'var(--background-secondary)',

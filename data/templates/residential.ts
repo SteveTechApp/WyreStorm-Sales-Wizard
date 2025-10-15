@@ -13,7 +13,6 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
             roomName: 'Home Cinema',
             roomType: 'Other',
             designTier: 'Gold',
-            budget: 60000,
             dimensions: { length: 8, width: 5, height: 3 },
             maxParticipants: 8,
             ioRequirements: [
@@ -42,7 +41,6 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1593359677879-a4bb92f82d7c?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Living Room', roomType: 'Other', designTier: 'Silver',
-            budget: 15000,
             dimensions: { length: 7, width: 6, height: 2.8 }, maxParticipants: 6, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Media Cabinet Sources', deviceType: 'Media Player', type: 'input', quantity: 3, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 10, terminationType: 'Central Rack', control: { needed: false, types: [] } },
@@ -67,7 +65,6 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1518709328212-3f15049b1a13?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Whole Home Audio', roomType: 'Other', designTier: 'Silver',
-            budget: 10000,
             dimensions: { length: 20, width: 15, height: 3 }, maxParticipants: 10, 
             ioRequirements: [],
             displayType: 'single', displayCount: 0,
@@ -87,7 +84,6 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1567683933932-f3089d413155?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Back Patio', roomType: 'Other', designTier: 'Bronze',
-            budget: 8000,
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 15, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
@@ -109,7 +105,6 @@ export const RESIDENTIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1591017403286-fd8493524e1e?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Home Office', roomType: 'Other', designTier: 'Silver',
-            budget: 3000,
             dimensions: { length: 4, width: 3, height: 2.5 }, maxParticipants: 1, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,

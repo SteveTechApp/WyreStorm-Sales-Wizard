@@ -1,5 +1,4 @@
-// FIX: Imported AncillaryCosts type.
-import { ProjectData, RoomData, Proposal, AncillaryCosts, ProjectInfrastructure, ManuallyAddedEquipment } from '../../utils/types.ts';
+import { ProjectData, RoomData, Proposal, ProjectInfrastructure, ManuallyAddedEquipment } from '../../utils/types.ts';
 
 export type ProjectAction =
   | { type: 'SET_PROJECT'; payload: ProjectData }
@@ -10,7 +9,6 @@ export type ProjectAction =
   | { type: 'ADD_PROPOSAL'; payload: Proposal }
   | { type: 'UPDATE_PROPOSAL'; payload: Proposal }
   | { type: 'UPDATE_NOTES'; payload: string }
-  | { type: 'UPDATE_ANCILLARY_COSTS', payload: AncillaryCosts }
   | { type: 'UPDATE_INFRASTRUCTURE', payload: ProjectInfrastructure }
   | { type: 'ADD_EQUIPMENT_TO_ROOM', payload: { roomId: string; equipment: ManuallyAddedEquipment } }
   | { type: 'REMOVE_EQUIPMENT_FROM_ROOM', payload: { roomId: string; sku: string } }
@@ -53,9 +51,6 @@ export const projectReducer = (state: ProjectData | null, action: ProjectAction)
     case 'UPDATE_NOTES':
         return { ...state, notes: action.payload, lastSaved: new Date().toISOString() };
     
-    case 'UPDATE_ANCILLARY_COSTS':
-        return { ...state, ancillaryCosts: action.payload, lastSaved: new Date().toISOString() };
-
     case 'UPDATE_INFRASTRUCTURE':
         return { ...state, infrastructure: action.payload, lastSaved: new Date().toISOString() };
     

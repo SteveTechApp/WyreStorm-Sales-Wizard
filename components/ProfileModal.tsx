@@ -72,8 +72,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
             category: row.category || 'Uncategorized',
             description: row.description || '',
             tags: [],
-            msrp: 0,
-            dealerPrice: 0,
         };
     }).filter((p): p is Product => p !== null);
   };
@@ -130,14 +128,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                   <label htmlFor="profile-language" className="block text-sm font-medium">Language</label>
                   <select id="profile-language" name="language" value={localProfile.language} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
                       {SUPPORTED_LANGUAGES.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
-                  </select>
-              </div>
-               <div>
-                  <label htmlFor="profile-currency" className="block text-sm font-medium">Currency</label>
-                  <select id="profile-currency" name="currency" value={localProfile.currency} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
-                      <option value="GBP">GBP (£)</option>
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
                   </select>
               </div>
           </div>

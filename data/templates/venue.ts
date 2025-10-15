@@ -13,7 +13,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
             roomName: 'Corporate Auditorium',
             roomType: 'Auditorium',
             designTier: 'Gold',
-            budget: 90000,
             dimensions: { length: 30, width: 20, height: 7 },
             maxParticipants: 250,
             ioRequirements: [
@@ -45,7 +44,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1577015413813-2696455346e2?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Concourse Digital Signage', roomType: 'Large Venue', designTier: 'Silver',
-            budget: 200000,
             dimensions: { length: 400, width: 20, height: 8 }, maxParticipants: 10000, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Broadcast Feeds', deviceType: 'Media Player', type: 'input', quantity: 8, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack', control: { needed: false, types: [] } },
@@ -72,7 +70,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1618221118491-39c8b4317801?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Luxury Suite 212', roomType: 'Other', designTier: 'Silver',
-            budget: 25000,
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 20, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Suite Displays', deviceType: 'Room Display', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -97,7 +94,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1610418386866-6330b4273256?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Main Press Box', roomType: 'Other', designTier: 'Gold',
-            budget: 150000,
             dimensions: { length: 20, width: 5, height: 3 }, maxParticipants: 30, 
             ioRequirements: [],
             displayType: 'single', displayCount: 15,
@@ -120,7 +116,6 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Breakout Room C', roomType: 'Conference Room', designTier: 'Silver',
-            budget: 6000,
             dimensions: { length: 15, width: 10, height: 4 }, maxParticipants: 50, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Floor Box Input', deviceType: 'Guest Device', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'HDBaseT', distance: 20, terminationType: 'Floor Box', control: { needed: false, types: [] } },

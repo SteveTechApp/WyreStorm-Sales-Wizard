@@ -120,19 +120,32 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
 }
 
 const generateDiagramPrompt = (room: RoomData): string => `
-  You are an expert AV System Diagrammer. Based on the provided room data, including the equipment list, create a structured system diagram.
+  You are an expert AV System Diagrammer. Based on the provided room data, including the equipment list, create a structured system diagram representing the logical signal flow.
 
   Room Name: ${room.roomName}
   Equipment List:
   ${room.manuallyAddedEquipment.map(e => `- ${e.quantity}x ${e.name} (${e.sku}) - Category: ${e.category}`).join('\n')}
 
-  Instructions:
-  1.  Create a list of nodes. Each node needs an 'id' (use the product SKU), a 'label' (use the product name), and a 'type' (e.g., 'Source', 'Switcher', 'Display', 'Extender').
-  2.  Create a list of edges to connect the nodes. Each edge needs 'from' (source SKU), 'to' (destination SKU), a 'label' (e.g., 'HDMI', 'HDBaseT'), and a 'type' (e.g., 'video', 'control').
-  3.  Represent the signal flow logically from source to display.
-  4.  If extenders are used (e.g., HDBaseT), show the connection from switcher to the TX, and from the RX to the display. Do not connect TX and RX directly, as the category cable is implied.
+  **CRITICAL INSTRUCTIONS:**
 
-  Return only valid JSON. Do not include markdown formatting or explanations.
+  1.  **Node Creation**: Create a list of nodes. Each node needs an 'id' (use the product SKU), a 'label' (use the product name), and a 'type' (e.g., 'Source', 'Switcher', 'Display', 'Extender').
+
+  2.  **EXTENDER KIT HANDLING (MOST IMPORTANT RULE)**:
+      - Any product in the equipment list with the category 'Extender' OR with 'Extender Kit' or 'Extender Set' in its name represents **TWO** separate physical devices: a Transmitter (TX) and a Receiver (RX).
+      - For each of these extender products, you **MUST** create **TWO** distinct nodes in the diagram.
+      - **Example**: For a product with SKU 'EX-100-KVM', you MUST generate:
+          - One node with id: 'EX-100-KVM_TX', label: 'EX-100-KVM (TX)', type: 'Extender'.
+          - A second node with id: 'EX-100-KVM_RX', label: 'EX-100-KVM (RX)', type: 'Extender'.
+      - Do not create a single node for an extender kit.
+
+  3.  **Edge Creation & Signal Flow**:
+      - Create a list of edges to connect the nodes. Each edge needs 'from' (source node id), 'to' (destination node id), a 'label' (e.g., 'HDMI', 'HDBaseT', 'USB-C'), and a 'type' ('video', 'audio', 'control').
+      - The signal flow **MUST** be logical: from a source device, to a switcher/processor, then to the extender's **TRANSMITTER (TX)** node.
+      - The connection between the TX and RX is over a long category cable and is **IMPLIED**. Therefore, you **MUST NOT** create an edge directly between the TX node and the RX node.
+      - The signal flow continues from the extender's **RECEIVER (RX)** node to the final destination (e.g., a Display or Projector).
+      - **Correct Flow Example**: \`Source -> Switcher -> EXTENDER_SKU_TX ... (no edge here) ... EXTENDER_SKU_RX -> Display\`.
+
+  Return only valid JSON that conforms to the schema. Do not include markdown formatting or explanations.
 `;
 
 

@@ -13,7 +13,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             roomName: 'Terminal Signage System',
             roomType: 'Large Venue',
             designTier: 'Silver',
-            budget: 400000,
             dimensions: { length: 500, width: 200, height: 12 },
             maxParticipants: 5000,
             ioRequirements: [
@@ -42,7 +41,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1527492662722-dbaf97270863?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Platform 3 Displays', roomType: 'Other', designTier: 'Bronze',
-            budget: 30000,
             dimensions: { length: 200, width: 10, height: 6 }, maxParticipants: 500, 
             ioRequirements: [],
             displayType: 'single', displayCount: 8,
@@ -62,7 +60,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Central Bus Terminal', roomType: 'Large Venue', designTier: 'Silver',
-            budget: 80000,
             dimensions: { length: 100, width: 50, height: 7 }, maxParticipants: 1000, 
             ioRequirements: [],
             displayType: 'single', displayCount: 20,
@@ -82,7 +79,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1596726134331-b8271a096342?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Starlight Theater', roomType: 'Auditorium', designTier: 'Gold',
-            budget: 200000,
             dimensions: { length: 25, width: 20, height: 9 }, maxParticipants: 400, 
             ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
@@ -102,7 +98,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1588190956488-53b6f0e3cec9?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Terminal-Wide Audio', roomType: 'Other', designTier: 'Silver',
-            budget: 100000,
             dimensions: { length: 500, width: 200, height: 12 }, maxParticipants: 5000, 
             ioRequirements: [],
             displayType: 'single', displayCount: 0,

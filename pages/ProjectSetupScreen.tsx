@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 // FIX: Changed import to namespace to fix "no exported member 'useNavigate'" error.
 import * as ReactRouterDOM from 'react-router-dom';
@@ -14,8 +15,6 @@ import ProjectDetailsForm from '../components/projectSetup/ProjectDetailsForm.ts
 const ProjectSetupScreen: React.FC = () => {
     const [projectName, setProjectName] = useState('New Project');
     const [clientName, setClientName] = useState('New Client');
-    const [budget, setBudget] = useState<number | undefined>();
-    const [timeline, setTimeline] = useState('');
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const { handleProjectSetupSubmit } = useGenerationContext();
     const { userProfile } = useUserContext();
@@ -55,8 +54,7 @@ const ProjectSetupScreen: React.FC = () => {
             toast.error("Please add at least one room to the project.");
             return;
         }
-        // FIX: Added budget to setupData to match the updated ProjectSetupData type.
-        const setupData: ProjectSetupData = { projectName, clientName, rooms, budget, timeline };
+        const setupData: ProjectSetupData = { projectName, clientName, rooms };
         handleProjectSetupSubmit(setupData, navigate);
     };
 
@@ -76,10 +74,6 @@ const ProjectSetupScreen: React.FC = () => {
                         setProjectName={setProjectName}
                         clientName={clientName}
                         setClientName={setClientName}
-                        budget={budget}
-                        setBudget={setBudget}
-                        timeline={timeline}
-                        setTimeline={setTimeline}
                         userProfile={userProfile}
                     />
 
