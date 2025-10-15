@@ -5,7 +5,6 @@ import { useUserContext } from '../context/UserContext.tsx';
 
 import DefaultHeader from './layout/DefaultHeader.tsx';
 import Footer from './layout/Footer.tsx';
-import QuickQuestionFAB from './QuickQuestionFAB.tsx';
 import ComparisonTray from './ComparisonTray.tsx';
 import ProfileModal from './ProfileModal.tsx';
 import BackgroundCarousel from './BackgroundCarousel.tsx';
@@ -56,7 +55,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </div>
 
       {/* Floating UI Layer is outside the content layer to not be affected by its background */}
-      <QuickQuestionFAB />
       <ComparisonTray />
       <ProfileModal isOpen={isProfileModalOpen} onClose={closeProfileModal} />
       <FeedbackModal isOpen={isFeedbackModalOpen} onClose={() => setIsFeedbackModalOpen(false)} />

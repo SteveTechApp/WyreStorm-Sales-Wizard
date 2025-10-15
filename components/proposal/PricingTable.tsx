@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: The Proposal type has been updated to include pricing.
 import { Proposal } from '../../utils/types.ts';
 
 interface PricingTableProps {

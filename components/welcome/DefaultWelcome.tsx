@@ -1,6 +1,6 @@
 import React from 'react';
 import RecentProjects from '../RecentProjects.tsx';
-import { GridIcon, EducationIcon, PlusIcon, SparklesIcon } from '../Icons.tsx';
+import { GridIcon, EducationIcon, PlusIcon, SparklesIcon, QuestionMarkCircleIcon } from '../Icons.tsx';
 import Logo from '../Logo.tsx';
 import ActionButton from './ActionButton.tsx';
 
@@ -52,10 +52,10 @@ const DefaultWelcome: React.FC = () => {
                             description="Use a pre-configured room design for any vertical market."
                         />
                         <ActionButton 
-                            to="/training"
-                            icon={<EducationIcon />}
-                            title="Go to Training Academy"
-                            description="Complete modules on AV fundamentals and WyreStorm tech."
+                            to="/ask"
+                            icon={<QuestionMarkCircleIcon />}
+                            title="Ask a Quick Question"
+                            description="Get instant answers from the Wingman AI about products or AV tech."
                         />
                     </div>
                 </div>

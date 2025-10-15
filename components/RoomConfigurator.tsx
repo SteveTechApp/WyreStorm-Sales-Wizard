@@ -9,8 +9,8 @@ const RoomConfigurator: React.FC = () => {
         <div className="space-y-6">
             <RoomActionsPanel />
             <FunctionalityStatementPanel />
-            <EquipmentListPanel />
             <ValueEngineeringPanel />
+            <EquipmentListPanel />
         </div>
     );
 };

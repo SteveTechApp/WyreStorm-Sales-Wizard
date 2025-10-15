@@ -24,6 +24,7 @@ export const createChatSession = (
     const localizationInstructions = getLocalizationInstructions(userProfile);
 
     // Create a summarized version of the product DB for the prompt.
+    // FIX: Correctly destructure optional msrp and dealerPrice properties from Product.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const productSummary = PRODUCT_DATABASE.map(({ msrp, dealerPrice, ...rest }) => rest);
 

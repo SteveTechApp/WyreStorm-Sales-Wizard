@@ -13,9 +13,9 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             roomName: 'Operations Control Center',
             roomType: 'Command Center',
             designTier: 'Gold',
+            budget: 180000,
             dimensions: { length: 12, width: 8, height: 3 },
             maxParticipants: 8,
-            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
                 { id: uuidv4(), name: 'SCADA PCs', deviceType: 'Room PC', type: 'input', quantity: 8, connectionType: 'DisplayPort', distributionType: 'AVoIP', distance: 5, terminationType: 'Central Rack', control: { needed: false, types: [] } },
                 { id: uuidv4(), name: 'Video Wall', deviceType: 'Room Display', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -26,13 +26,12 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A mission-critical visualization system for an industrial process control room. The NetworkHD 600 series delivers pixel-perfect, zero-latency uncompressed video over a 10GbE network, ensuring operators see real-time data without any delay or compression artifacts. The 3x2 video wall can display multiple SCADA system outputs, camera feeds, and telemetry data in flexible layouts controlled by a simple touch interface.',
             manuallyAddedEquipment: [
-                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 14, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Encoder or Decoder.', msrp: 1800, dealerPrice: 1350, tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview'] },
-                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 14, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Encoder or Decoder.', tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', tags: ['NetworkHD', 'Control', 'Controller'] },
             ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['DisplayPort', 'HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: true },
-            budget: 150000,
         },
     },
     {
@@ -43,18 +42,18 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1587495932550-935b80a1332c?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Production Line 2 Station', roomType: 'Other', designTier: 'Bronze',
+            budget: 4000,
             dimensions: { length: 5, width: 5, height: 5 }, maxParticipants: 8, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
             features: [],
             functionalityStatement: 'A mobile AV cart for use on the factory floor. It includes a ruggedized commercial display and a simple SW-0201-4K switcher with wireless presentation. This allows teams to huddle and review production metrics, schematics, or safety information right where the work is happening. The cart is self-contained and only requires a power outlet.',
             manuallyAddedEquipment: [
-                { sku: 'SW-0201-4K', name: '2x1 USB-C & HDMI Wireless Switcher', quantity: 1, category: 'Presentation Switcher', description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs and wireless casting support.', msrp: 600, dealerPrice: 400, tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze', 'HDMI', 'Auto-switching', '2x1'] },
+                { sku: 'SW-0201-4K', name: '2x1 USB-C & HDMI Wireless Switcher', quantity: 1, category: 'Presentation Switcher', description: 'A compact 2x1 presentation switcher with HDMI and USB-C inputs and wireless casting support.', tags: ['Switcher', 'USB-C', 'Casting', '4K', 'Bronze', 'HDMI', 'Auto-switching', '2x1'] },
             ],
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'none', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 5000,
         },
     },
     {
@@ -62,9 +61,10 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Safety Briefing Room',
         description: 'A simple, reliable room for conducting safety training and daily briefings.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Daily Briefing Room', roomType: 'Conference Room', designTier: 'Silver',
+            budget: 10000,
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 25, 
             ioRequirements: [],
             displayType: 'projector', displayCount: 1,
@@ -74,7 +74,6 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'high_impedance', useCases: ['speech_reinforcement'], microphoneType: 'table_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 12000,
         },
     },
     {
@@ -85,41 +84,18 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a128?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Manager\'s Office', roomType: 'Other', designTier: 'Silver',
+            budget: 5000,
             dimensions: { length: 5, width: 4, height: 3 }, maxParticipants: 2, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
             features: [],
             functionalityStatement: 'A desktop display in a manager\'s office that can securely view feeds from the main process control room. A NHD-600-TRX AVoIP decoder is connected to the display, allowing the manager to select and view any of the SCADA system sources on the main network without needing to be physically in the control room.',
             manuallyAddedEquipment: [
-                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 1, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Decoder.', msrp: 1800, dealerPrice: 1350, tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview'] },
+                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 1, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Decoder.', tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'trunking', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
-            technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 4000,
-        },
-    },
-    {
-        templateId: uuidv4(),
-        templateName: 'Locker Room / Break Area Signage',
-        description: 'Displays for safety alerts, company announcements, and general information.',
-        vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1552664688-cf412ec27db2?w=400&h=300&fit=crop&q=80',
-        roomData: {
-            id: '', roomName: 'Break Room', roomType: 'Other', designTier: 'Bronze',
-            dimensions: { length: 12, width: 8, height: 3 }, maxParticipants: 30, 
-            ioRequirements: [],
-            displayType: 'single', displayCount: 2,
-            features: [],
-            functionalityStatement: 'Two displays located in high-traffic employee areas like break rooms or locker rooms. The displays show important safety reminders and company announcements. The system uses reliable NHD-120 AVoIP decoders fed from a central media player, ensuring messages are delivered consistently.',
-            manuallyAddedEquipment: [
-                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
-                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 2, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
-            ],
-            constructionDetails: { wallConstruction: 'concrete', cableContainment: 'trunking', furnitureType: 'multi_use' },
-            audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
-            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 6500,
+            technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: true },
         },
     }
 ];

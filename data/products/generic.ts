@@ -4,7 +4,7 @@ export const GENERIC_DEVICES: Product[] = [
     {
         sku: 'GEN-PC', name: 'Dedicated Room PC', category: 'Source',
         description: 'A dedicated in-room computer for running presentations and video conferencing software.',
-        msrp: 1000, dealerPrice: 800, tags: ['Source', 'PC'],
+        tags: ['Source', 'PC'],
         videoIO: {
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'DisplayPort', count: 1 }]
@@ -17,7 +17,7 @@ export const GENERIC_DEVICES: Product[] = [
     {
         sku: 'GEN-DOC-CAM', name: 'Document Camera', category: 'Source',
         description: 'A camera for displaying physical documents or objects to the main screen. Common in education.',
-        msrp: 500, dealerPrice: 350, tags: ['Source', 'Camera'],
+        tags: ['Source', 'Camera'],
         videoIO: {
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }]
@@ -31,7 +31,7 @@ export const GENERIC_DEVICES: Product[] = [
         name: 'Generic 4K USB Webcam',
         category: 'Camera',
         description: 'A high-quality 4K USB webcam with a wide-angle lens, suitable for huddle spaces and small to medium meeting rooms.',
-        msrp: 200, dealerPrice: 150, tags: ['Camera', 'USB', '4K', 'Webcam'],
+        tags: ['Camera', 'USB', '4K', 'Webcam'],
         usb: {
             ports: [{ type: 'USB-C', count: 1 }],
             bandwidth: '3.0'
@@ -42,7 +42,7 @@ export const GENERIC_DEVICES: Product[] = [
         name: 'Generic 4K PTZ Camera',
         category: 'Camera',
         description: 'A professional 4K pan-tilt-zoom camera with 12x optical zoom, USB, and IP streaming. Ideal for larger rooms and lecture halls.',
-        msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream', 'HDMI'],
+        tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream', 'HDMI'],
         videoIO: {
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }, { type: 'IP Stream', count: 1 }]

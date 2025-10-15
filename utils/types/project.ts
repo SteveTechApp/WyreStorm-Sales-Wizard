@@ -2,14 +2,6 @@ import { DesignTier } from './common.ts';
 import { Product } from './product.ts';
 import type { Proposal } from './proposal.ts';
 
-export interface AncillaryCosts {
-    cables: number;
-    connectors: number;
-    containment: number;
-    fixings: number;
-    materials: number;
-}
-
 export interface Dimensions {
   length: number;
   width: number;
@@ -42,6 +34,7 @@ export interface IOPoint {
   displayType?: DisplayType;
   projectorLensType?: ProjectorLensType;
   control?: IOControl;
+  role?: 'main' | 'repeater' | 'confidence';
 }
 
 export interface ConstructionDetails {
@@ -122,8 +115,8 @@ export interface RoomData {
     constructionDetails: ConstructionDetails;
     audioSystemDetails: AudioSystemDetails;
     technicalDetails: TechnicalDetails;
-    budget: number;
     valueEngineeringConstraints?: string[];
+    budget: number;
 }
 
 export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints'>;
@@ -132,6 +125,14 @@ export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;
     enableTouchAppPreview: boolean;
     cablingByOthers: boolean;
+}
+
+export interface AncillaryCosts {
+    cables: number;
+    connectors: number;
+    containment: number;
+    fixings: number;
+    materials: number;
 }
 
 export interface ProjectData {
@@ -144,16 +145,16 @@ export interface ProjectData {
     unitSystem: 'metric' | 'imperial';
     notes: string;
     productDatabase: Product[];
+    infrastructure: ProjectInfrastructure;
     ancillaryCosts: AncillaryCosts;
-    infrastructure?: ProjectInfrastructure;
-    budget?: number;
     timeline?: string;
+    budget?: number;
 }
 
 export interface ProjectSetupData {
   projectName: string;
   clientName: string;
   rooms: RoomData[];
-  budget?: number;
   timeline?: string;
+  budget?: number;
 }

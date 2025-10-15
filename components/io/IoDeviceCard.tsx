@@ -4,7 +4,8 @@ import DeviceAttributeSelector from './DeviceAttributeSelector.tsx';
 import AssignedInputs from './AssignedInputs.tsx';
 import { useProjectContext } from '../../context/ProjectContext.tsx';
 import { CONNECTION_TYPE_ICONS } from '../../data/constants.ts';
-import { CONNECTION_TYPES, DISTRIBUTION_TYPES } from '../../data/wizardOptions.ts';
+// FIX: Renamed DISTRIBUTION_TYPES to TRANSPORT_TYPES to match export from wizardOptions.
+import { CONNECTION_TYPES, TRANSPORT_TYPES } from '../../data/wizardOptions.ts';
 
 interface IoDeviceCardProps {
     point: IOPoint;
@@ -50,7 +51,8 @@ const IoDeviceCard: React.FC<IoDeviceCardProps> = ({ point }) => {
                     <DeviceAttributeSelector
                         label="Distribution"
                         value={point.distributionType}
-                        options={DISTRIBUTION_TYPES}
+                        // FIX: Renamed DISTRIBUTION_TYPES to TRANSPORT_TYPES.
+                        options={TRANSPORT_TYPES}
                         onChange={(newValue) => handlePointUpdate({ distributionType: newValue })}
                     />
                 </div>

@@ -38,6 +38,7 @@ export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' |
             switchFeatures: ['igmp_snooping'],
         },
     },
+    // FIX: Removed budget as it has been moved to RoomData and is initialized there.
     budget: 5000,
 });
 

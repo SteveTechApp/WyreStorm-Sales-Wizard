@@ -13,6 +13,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             roomName: 'City Council Chamber',
             roomType: 'Boardroom',
             designTier: 'Gold',
+            budget: 120000,
             dimensions: { length: 18, width: 12, height: 4 },
             maxParticipants: 50,
             ioRequirements: [],
@@ -44,7 +45,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
                 cameraCount: 4,
                 roomPc: true
             },
-            budget: 120000,
         },
     },
     {
@@ -55,8 +55,8 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'SCIF Conference Room', roomType: 'Conference Room', designTier: 'Gold',
+            budget: 35000,
             dimensions: { length: 8, width: 6, height: 3 }, maxParticipants: 10, 
-            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
                 { id: uuidv4(), name: 'Secure PC', deviceType: 'Room PC', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 10, terminationType: 'Desktop', control: { needed: false, types: [] } },
                 { id: uuidv4(), name: 'Secure Display', deviceType: 'Room Display', type: 'output', quantity: 1, connectionType: 'HDMI', distributionType: 'Fiber', distance: 2, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -68,7 +68,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'soundbar', systemType: 'low_impedance', useCases: ['speech_reinforcement'], microphoneType: 'soundbar_mic', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI', 'DisplayPort'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: true },
-            budget: 40000,
         },
     },
     {
@@ -76,9 +75,10 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         templateName: 'Courthouse',
         description: 'Evidence presentation, video arraignment, and voice lift for a modern courtroom.',
         vertical: 'gov',
-        imageUrl: 'https://images.unsplash.com/photo-1589994383619-354e227a94cf?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1605371385498-338275c98616?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Courtroom 3A', roomType: 'Other', designTier: 'Silver',
+            budget: 75000,
             dimensions: { length: 15, width: 12, height: 5 }, maxParticipants: 60, 
             ioRequirements: [],
             displayType: 'single', displayCount: 5,
@@ -88,7 +88,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'floor_boxes', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['speech_reinforcement', 'video_conferencing'], microphoneType: 'table_mic', ucCompatibility: true },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI', 'VGA'], controlSystem: 'Touch Panel', cameraType: 'hdmi_ptz', cameraCount: 3, roomPc: true },
-            budget: 90000,
         },
     },
     {
@@ -99,6 +98,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1628102490586-a334b02a64c4?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'DMV Lobby', roomType: 'Other', designTier: 'Bronze',
+            budget: 25000,
             dimensions: { length: 20, width: 15, height: 4 }, maxParticipants: 100, 
             ioRequirements: [],
             displayType: 'single', displayCount: 6,
@@ -108,7 +108,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 35000,
         },
     },
     {
@@ -119,6 +118,7 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1533729227191-3f1c1a2d5930?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Simulator Bay', roomType: 'Other', designTier: 'Gold',
+            budget: 90000,
             dimensions: { length: 12, width: 8, height: 4 }, maxParticipants: 10, 
             ioRequirements: [],
             displayType: 'projector', displayCount: 3,
@@ -128,7 +128,6 @@ export const GOVERNMENT_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['DisplayPort'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: true },
-            budget: 80000,
         },
     }
 ];

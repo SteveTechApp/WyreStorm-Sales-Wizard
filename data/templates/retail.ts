@@ -13,9 +13,9 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             roomName: 'Store-Wide Signage',
             roomType: 'Retail Space',
             designTier: 'Silver',
+            budget: 25000,
             dimensions: { length: 50, width: 30, height: 4 },
             maxParticipants: 200,
-            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
                  { id: uuidv4(), name: 'Media Player Source', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 30, terminationType: 'Central Rack', control: { needed: false, types: [] } },
                  { id: uuidv4(), name: 'Signage Displays', deviceType: 'Room Display', type: 'output', quantity: 6, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 20, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -25,14 +25,13 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A NetworkHD 120 series AVoIP system distributes content from a central media player to six displays throughout the store. The low-bandwidth H.264 solution is cost-effective and easy to scale as more displays are added. Content can be updated centrally and scheduled to change throughout the day.',
             manuallyAddedEquipment: [
-                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
-                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 6, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
-                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 1, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 6, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', tags: ['NetworkHD', 'Control', 'Controller'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 18000,
         },
     },
     {
@@ -43,8 +42,8 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Brand Experience Area', roomType: 'Retail Space', designTier: 'Gold',
+            budget: 30000,
             dimensions: { length: 10, width: 8, height: 3.5 }, maxParticipants: 15, 
-            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
                 { id: uuidv4(), name: '4K Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack', control: { needed: false, types: [] } },
                 { id: uuidv4(), name: 'Video Wall Displays', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -53,12 +52,11 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'An engaging brand experience zone designed to attract and immerse customers. It features a 2x2 video wall, driven by a SW-0204-VW processor, displaying high-impact brand content. An interactive touch overlay on one of the displays allows customers to explore product features. Directional speakers create a focused audio experience that doesn\'t bleed into the rest of the store. A high-performance media player provides 4K content.',
             manuallyAddedEquipment: [
-                { sku: 'SW-0204-VW', name: '4K 60Hz 4-Output Video Wall', quantity: 1, category: 'Video Processor', description: '1x4, 2x2 layout |Ultra-wide resolution support | WEB GUI and RS232 control.', msrp: 1000, dealerPrice: 750, tags: ['Video Wall', 'Processor', '4K60', '2x2', '1x4', 'RS232'] },
+                { sku: 'SW-0204-VW', name: '4K 60Hz 4-Output Video Wall', quantity: 1, category: 'Video Processor', description: '1x4, 2x2 layout |Ultra-wide resolution support | WEB GUI and RS232 control.', tags: ['Video Wall', 'Processor', '4K60', '2x2', '1x4', 'RS232'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/60Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 25000,
         },
     },
     {
@@ -69,6 +67,7 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1594938298603-c81411554a3a?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Fitting Room 3', roomType: 'Other', designTier: 'Bronze',
+            budget: 2000,
             dimensions: { length: 2, width: 2, height: 2.5 }, maxParticipants: 1, 
             ioRequirements: [],
             displayType: 'single', displayCount: 1,
@@ -78,7 +77,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 2500,
         },
     },
     {
@@ -89,8 +87,8 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1612817158739-a9a2a4b8f046?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Entrance Display', roomType: 'Retail Space', designTier: 'Silver',
+            budget: 15000,
             dimensions: { length: 5, width: 1, height: 4 }, maxParticipants: 0, 
-            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
                 { id: uuidv4(), name: 'Media Player', deviceType: 'Media Player', type: 'input', quantity: 1, connectionType: 'HDMI', distributionType: 'Direct', distance: 2, terminationType: 'Local Rack', control: { needed: false, types: [] } },
                 { id: uuidv4(), name: 'Video Wall Displays', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -100,12 +98,11 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A 2x2 video wall creating a high-impact visual at the store entrance. A dedicated SW-0204-VW video wall processor takes a single 4K media player source and splits it across the four displays. The processor handles bezel correction for a seamless look. This is a robust, cost-effective solution for a single-source video wall.',
             manuallyAddedEquipment: [
-                { sku: 'SW-0204-VW', name: '4K 60Hz 4-Output Video Wall', quantity: 1, category: 'Video Processor', description: '1x4, 2x2 layout |Ultra-wide resolution support | WEB GUI and RS232 control.', msrp: 1000, dealerPrice: 750, tags: ['Video Wall', 'Processor', '4K60', '2x2', '1x4', 'RS232'] },
+                { sku: 'SW-0204-VW', name: '4K 60Hz 4-Output Video Wall', quantity: 1, category: 'Video Processor', description: '1x4, 2x2 layout |Ultra-wide resolution support | WEB GUI and RS232 control.', tags: ['Video Wall', 'Processor', '4K60', '2x2', '1x4', 'RS232'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'low_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 15000,
         },
     },
     {
@@ -116,6 +113,7 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'In-Store Audio', roomType: 'Retail Space', designTier: 'Bronze',
+            budget: 6000,
             dimensions: { length: 20, width: 15, height: 3.5 }, maxParticipants: 50, 
             ioRequirements: [],
             displayType: 'single', displayCount: 0,
@@ -125,7 +123,6 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'Simple Keypad', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 10000,
         },
     }
 ];

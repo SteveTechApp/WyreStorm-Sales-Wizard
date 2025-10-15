@@ -24,12 +24,12 @@ export interface Proposal {
     scopeOfWork: string;
     systemDiagram?: StructuredSystemDiagram;
     equipmentList: { sku: string; name: string; quantity: number }[];
-    installationPlan: { phase: string; tasks: string[] }[];
     pricing: {
         hardwareTotal: number;
         ancillaryTotal: number;
         grandTotal: number;
     };
+    installationPlan: { phase: string; tasks: string[] }[];
     suggestedImprovements?: {
         roomName: string;
         improvement: string;

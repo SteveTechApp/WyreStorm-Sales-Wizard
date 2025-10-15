@@ -13,9 +13,9 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             roomName: 'Terminal Signage System',
             roomType: 'Large Venue',
             designTier: 'Silver',
+            budget: 400000,
             dimensions: { length: 500, width: 200, height: 12 },
             maxParticipants: 5000,
-            // FIX: Added missing deviceType and control properties to IOPoint objects.
             ioRequirements: [
                 { id: uuidv4(), name: 'FIDS Server', deviceType: 'Room PC', type: 'input', quantity: 4, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 100, terminationType: 'Central Rack', control: { needed: false, types: [] } },
                 { id: uuidv4(), name: 'Terminal Displays', deviceType: 'Room Display', type: 'output', quantity: 100, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 80, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
@@ -25,14 +25,13 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             features: [],
             functionalityStatement: 'A campus-wide NetworkHD 120 series AVoIP system for distributing flight information (FIDS), gate information, and advertising content to over 100 displays throughout the terminal. The system is designed for 24/7 reliability and can be centrally managed and monitored. The scalability of AVoIP is crucial, allowing the airport to easily add or change displays as the terminal evolves.',
             manuallyAddedEquipment: [
-                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 4, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
-                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 100, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', msrp: 600, dealerPrice: 450, tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
-                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', msrp: 1500, dealerPrice: 1100, tags: ['NetworkHD', 'Control', 'Controller'] },
+                { sku: 'NHD-120-TX', name: 'NetworkHD 120 Series 4K H.264/H.265 Encoder', quantity: 4, category: 'AVoIP Encoder', description: 'Cost-effective H.264/H.265 streaming for 4K30 video.', tags: ['NetworkHD', 'AVoIP', 'Encoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-120-RX', name: 'NetworkHD 120 Series 4K H.264/H.265 Decoder', quantity: 100, category: 'AVoIP Decoder', description: 'Decoder for the NetworkHD 120 series.', tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'H.264', 'H.265', '1GbE', '4K30'] },
+                { sku: 'NHD-CTL-PRO', name: 'NetworkHD Pro Controller', quantity: 1, category: 'Control', description: 'Centralized controller for NetworkHD systems.', tags: ['NetworkHD', 'Control', 'Controller'] },
             ],
             constructionDetails: { wallConstruction: 'glass', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 400000,
         },
     },
     {
@@ -43,6 +42,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1527492662722-dbaf97270863?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Platform 3 Displays', roomType: 'Other', designTier: 'Bronze',
+            budget: 30000,
             dimensions: { length: 200, width: 10, height: 6 }, maxParticipants: 500, 
             ioRequirements: [],
             displayType: 'single', displayCount: 8,
@@ -52,7 +52,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'none', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'None (Auto-switching)', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 45000,
         },
     },
     {
@@ -63,6 +62,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Central Bus Terminal', roomType: 'Large Venue', designTier: 'Silver',
+            budget: 80000,
             dimensions: { length: 100, width: 50, height: 7 }, maxParticipants: 1000, 
             ioRequirements: [],
             displayType: 'single', displayCount: 20,
@@ -72,7 +72,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: [], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: ['HDMI'], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 150000,
         },
     },
     {
@@ -83,6 +82,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1596726134331-b8271a096342?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Starlight Theater', roomType: 'Auditorium', designTier: 'Gold',
+            budget: 200000,
             dimensions: { length: 25, width: 20, height: 9 }, maxParticipants: 400, 
             ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
@@ -92,7 +92,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'surface_mount', systemType: 'low_impedance', useCases: ['speech_reinforcement', 'program_audio'], microphoneType: 'wireless_lav', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '4K/30Hz 4:4:4', videoSignalTypes: ['HDMI', 'SDI'], controlSystem: 'Third-Party Integration', cameraType: 'hdmi_ptz', cameraCount: 3, roomPc: false },
-            budget: 280000,
         },
     },
     {
@@ -103,6 +102,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
         imageUrl: 'https://images.unsplash.com/photo-1588190956488-53b6f0e3cec9?w=400&h=300&fit=crop&q=80',
         roomData: {
             id: '', roomName: 'Terminal-Wide Audio', roomType: 'Other', designTier: 'Silver',
+            budget: 100000,
             dimensions: { length: 500, width: 200, height: 12 }, maxParticipants: 5000, 
             ioRequirements: [],
             displayType: 'single', displayCount: 0,
@@ -112,7 +112,6 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             constructionDetails: { wallConstruction: 'concrete', cableContainment: 'conduit', furnitureType: 'fixed' },
             audioSystemDetails: { speakerLayout: 'in_ceiling', systemType: 'high_impedance', useCases: ['program_audio'], microphoneType: 'none', ucCompatibility: false },
             technicalDetails: { primaryVideoResolution: '1080p', videoSignalTypes: [], controlSystem: 'Third-Party Integration', cameraType: 'none', cameraCount: 0, roomPc: false },
-            budget: 180000,
         },
     }
 ];

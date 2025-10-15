@@ -6,13 +6,13 @@ export const ACCESSORIES: Product[] = [
         name: 'Short Range | 1 Gigabit | Multi Mode | SFP module',
         category: 'Accessory',
         description: 'Short Range | 1 Gigabit | Multi Mode | SFP module for fiber connections.',
-        msrp: 50, dealerPrice: 35, tags: ['SFP', 'Fiber', '1G'],
+        tags: ['SFP', 'Fiber', '1G'],
     },
     {
         sku: 'SR-10G-MM-SFPP',
         name: 'Short Range | 10 Gigabit | Multi Mode| SFP Plus module',
         category: 'Accessory',
         description: 'Short Range | 10 Gigabit | Multi Mode| SFP Plus module for high-speed fiber connections.',
-        msrp: 150, dealerPrice: 110, tags: ['SFP', 'Fiber', '10G'],
+        tags: ['SFP', 'Fiber', '10G'],
     },
 ];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { IOPoint } from '../../../utils/types.ts';
-import { SOURCE_DEVICE_TYPES, OUTPUT_DEVICE_TYPES } from '../../../data/wizardOptions.ts';
+import { SOURCE_DEVICE_TYPES, OUTPUT_DEVICE_TYPES, OUTPUT_ROLES } from '../../../data/wizardOptions.ts';
 
 interface BasicInfoInputsProps {
   point: IOPoint;
@@ -34,7 +34,7 @@ const BasicInfoInputs: React.FC<BasicInfoInputsProps> = ({ point, onUpdate }) =>
           {deviceTypeOptions.map(type => <option key={type} value={type}>{type}</option>)}
         </select>
       </div>
-      <div>
+       <div>
         <label htmlFor="io-point-quantity" className="block text-sm font-medium">Quantity</label>
         <input
           type="number"
@@ -45,6 +45,21 @@ const BasicInfoInputs: React.FC<BasicInfoInputsProps> = ({ point, onUpdate }) =>
           className="w-full p-2 border rounded-md bg-input-bg mt-1"
         />
       </div>
+       {point.type === 'output' && (
+        <div className="md:col-span-3">
+            <label htmlFor="io-point-role" className="block text-sm font-medium">Role</label>
+            <select
+                id="io-point-role"
+                value={point.role || 'main'}
+                onChange={(e) => onUpdate({ role: e.target.value as any })}
+                className="w-full p-2 border rounded-md bg-input-bg mt-1"
+            >
+                <option value="main">Main Display</option>
+                <option value="repeater">Repeater Display</option>
+                <option value="confidence">Confidence Monitor</option>
+            </select>
+        </div>
+      )}
     </div>
   );
 };

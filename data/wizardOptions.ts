@@ -18,6 +18,8 @@ export const OUTPUT_DEVICE_TYPES = [
     'Room Display', 'Projector', 'Confidence Monitor', 'Recording Feed', 'Assistive Listening'
 ];
 
+export const OUTPUT_ROLES = ['Main', 'Repeater', 'Confidence'];
+
 export const CONTROL_TYPES = ['IR', 'RS232', 'IP'];
 
 export const VIDEO_RESOLUTIONS = ['1080p', '4K/30Hz 4:4:4', '4K/60Hz 4:2:0', '4K/60Hz 4:4:4'];
@@ -93,7 +95,7 @@ export const CONNECTION_TYPES = [
     'USB-B',
     'Ethernet',
 ];
-export const DISTRIBUTION_TYPES = [
+export const TRANSPORT_TYPES = [
     'Direct', 
     'HDBaseT', 
     'AVoIP', 
@@ -104,7 +106,7 @@ export const DISTRIBUTION_TYPES = [
     'Wireless',
 ];
 export const MOUNTING_TYPES = ['Wall Mount', 'Ceiling Mount', 'Pole Mount', 'Rack Mount', 'Desktop'];
-export const TERMINATION_TYPES = [
+export const LOCATION_TYPES = [
     'Direct to Device',
     'Wall Plate',
     'Brush Plate',
@@ -117,6 +119,7 @@ export const TERMINATION_TYPES = [
     'Local Rack',
     'Central Rack',
     'Ceiling Box',
+    'Other'
 ];
 
 export const DISPLAY_TYPES = [

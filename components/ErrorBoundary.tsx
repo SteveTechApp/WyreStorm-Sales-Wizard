@@ -1,8 +1,16 @@
-import React, { ErrorInfo, ReactNode } from 'react';
-import ErrorDisplay from './ErrorDisplay.tsx';
 
-interface Props {
-  children?: ReactNode;
+
+// FIX: Reverted React import from namespace to default import to correctly resolve 'this.props' on the class component instance.
+import React from 'react';
+import ErrorDisplay from './ErrorDisplay.tsx';
+import { useProjectContext } from '../context/ProjectContext.tsx';
+
+// --- Internal Class Component for Error Handling Logic ---
+
+interface ErrorBoundaryInternalProps {
+  children?: React.ReactNode;
+  projectId?: string | null;
+  roomId?: string | null;
 }
 
 interface State {
@@ -10,21 +18,27 @@ interface State {
   error: Error | null;
 }
 
-class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
-  }
+class ErrorBoundaryInternal extends React.Component<ErrorBoundaryInternalProps, State> {
+  public state: State = {
+    hasError: false,
+    error: null,
+  };
 
   static getDerivedStateFromError(error: Error): State {
+    // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    const { projectId, roomId } = this.props;
+    console.error("Uncaught error:", {
+        message: error.message,
+        stack: errorInfo.componentStack,
+        context: {
+            projectId: projectId || 'N/A',
+            roomId: roomId || 'N/A',
+        }
+    });
   }
 
   render() {
@@ -35,5 +49,21 @@ class ErrorBoundary extends React.Component<Props, State> {
     return this.props.children;
   }
 }
+
+
+// --- Functional Wrapper to Inject Context ---
+
+const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { projectData, activeRoomId } = useProjectContext();
+
+  return (
+    <ErrorBoundaryInternal 
+      projectId={projectData?.projectId} 
+      roomId={activeRoomId}
+    >
+      {children}
+    </ErrorBoundaryInternal>
+  );
+};
 
 export default ErrorBoundary;

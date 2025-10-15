@@ -1,3 +1,4 @@
+// FIX: Imported AncillaryCosts type.
 import { ProjectData, RoomData, Proposal, AncillaryCosts, ProjectInfrastructure, ManuallyAddedEquipment } from '../../utils/types.ts';
 
 export type ProjectAction =

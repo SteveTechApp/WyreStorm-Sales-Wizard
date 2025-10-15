@@ -14,7 +14,11 @@ export const TECHNICAL_DATABASE = `
 ### Common Connection Types
 - **HDMI (High-Definition Multimedia Interface)**: The industry standard for AV. Carries video, audio, and sometimes control (CEC) and network data.
 - **DisplayPort (DP)**: Common on PCs and commercial displays. Often supports higher bandwidths and refresh rates than consumer HDMI of the same era.
-- **USB-C**: The most versatile connector. Can carry video (using DP Alt Mode), data (USB 3.x), network, and power (USB-PD). Enables single-cable docking solutions.
+- **USB-C**: The most versatile connector, capable of carrying multiple signal types simultaneously.
+  - **Video**: Uses **DisplayPort Alternate Mode (DP Alt Mode)** to send high-resolution video and audio directly over the USB-C cable.
+  - **Data**: Supports high-speed data transfer, typically USB 3.x speeds (5Gbps or higher).
+  - **Power**: Supports **USB Power Delivery (USB-PD)**, allowing it to charge a connected laptop with up to 100W of power.
+  This combination of video, data, and power enables single-cable docking solutions, a key feature in modern meeting rooms.
 - **SDI (Serial Digital Interface)**: A robust, locking connector used in broadcast and professional video. Excellent for long cable runs (up to 100m+).
 
 ### USB Standards & Distances
@@ -61,8 +65,8 @@ AVoIP is the technology of sending AV signals over a standard network. It uses *
 - **10GbE (10 Gigabit Ethernet)**: Offers much higher bandwidth, allowing for visually lossless or even fully uncompressed video transmission. Requires higher-spec switches and cabling (Cat6a minimum).
 
 ### AVoIP Codecs (Compression)
-- **H.264/H.265 (High Compression)**: Low bandwidth usage (~2-30Mbps). Higher latency (~200-500ms). Good for streaming and large-scale digital signage where bandwidth is a concern. Used in **WyreStorm NHD-120 Series**.
-- **JPEG-XS (Visually Lossless)**: Light, intra-frame compression. Excellent image quality and very low latency (<1 frame). A great all-rounder for high-quality distribution on 1GbE networks. Used in **WyreStorm NHD-500 Series**.
+- **H.264/H.265 (High Compression)**: Low bandwidth usage (typically 10-30Mbps). Higher latency (~200-500ms). Good for streaming and large-scale digital signage where bandwidth is a concern and budget is tight. Used in **WyreStorm NHD-120 Series**.
+- **JPEG-XS (Visually Lossless)**: Light, intra-frame compression. Excellent image quality and very low latency (<1 frame). Uses more bandwidth (typically 250-850Mbps) but is a great all-rounder for high-quality distribution on 1GbE networks. Used in **WyreStorm NHD-500 Series**.
 - **Uncompressed**: Pixel-perfect, zero-latency video. Requires a 10GbE network. The ultimate in quality for mission-critical applications like medical or command & control. Used in **WyreStorm NHD-600 Series**.
 
 ### Network Requirements for AVoIP
@@ -70,6 +74,10 @@ AVoIP is the technology of sending AV signals over a standard network. It uses *
 - **PoE+ (802.3at)**: Provides up to 30W of power per port, sufficient to power most encoders and decoders.
 - **IGMP Snooping**: **CRITICAL** for multicast traffic. It prevents AVoIP streams from flooding the entire network and only sends them to ports that have requested them.
 - **Jumbo Frames**: Allows for larger packet sizes, which can improve the efficiency of video transmission.
+
+### NetworkHD System Requirements
+- **Controller**: Every NetworkHD system, regardless of series, **requires one NHD-CTL-PRO v2** to act as the system controller for configuration and routing.
+- **Network Switch**: The system must be deployed on a **managed network switch** with the features outlined above (PoE+, IGMP Snooping). For best performance and support, a switch from the Netgear AV Line (or an equivalent AV-focused switch) is highly recommended. The switch speed (1GbE or 10GbE) must match the requirements of the chosen NetworkHD series.
 
 ## Part 4: Advanced AV Concepts
 

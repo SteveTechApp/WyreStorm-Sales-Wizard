@@ -6,7 +6,7 @@ export const CAMERAS: Product[] = [
         name: '4K Pro PTZ Camera',
         category: 'Camera',
         description: 'Professional 4K pan-tilt-zoom camera with 12x optical zoom, USB 3.0, and IP streaming. Ideal for larger rooms and lecture halls.',
-        msrp: 1300, dealerPrice: 950, tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'],
+        tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'USB3.0', 'IP Stream'],
         status: 'legacy',
         legacyReason: 'This model is being phased out. For new designs, please consider alternative camera solutions.',
         videoIO: {
@@ -23,13 +23,12 @@ export const CAMERAS: Product[] = [
         }
     },
     {
-        sku: 'CAM-300-PTZ',
-        name: 'Apollo 4K AI Tracking PTZ Camera',
+        sku: 'CAM-210-PTZ',
+        name: '4K AI Tracking PTZ Camera with NDI|HX3',
         category: 'Camera',
-        description: 'An advanced 4K PTZ camera with AI auto-tracking, 20x optical zoom, and multiple outputs including USB, HDMI, and IP streaming. Perfect for large conference rooms and lecture halls.',
-        msrp: 1800, dealerPrice: 1350, tags: ['Camera', 'PTZ', '4K', 'USB', '20x Zoom', 'AI Tracking', 'IP Stream', 'HDMI'],
+        description: 'A professional 4K60Hz PTZ camera with powerful AI tracking capabilities to automatically follow a presenter. Features 12x optical zoom and multiple simultaneous outputs including HDMI, USB 3.0, and IP streaming with NDI|HX3 support.',
+        tags: ['Camera', 'PTZ', '4K', 'USB', '12x Zoom', 'AI Tracking', 'IP Stream', 'HDMI', 'NDI'],
         status: 'active',
-        // FIX: Added missing 'inputs' property to satisfy the 'videoIO' type.
         videoIO: {
             inputs: [],
             outputs: [{ type: 'HDMI', count: 1 }, { type: 'USB', count: 1 }, { type: 'IP Stream', count: 1 }]
@@ -40,6 +39,22 @@ export const CAMERAS: Product[] = [
         poe: true,
         usb: {
             ports: [{ type: 'USB-B', count: 1 }],
+            bandwidth: '3.0'
+        }
+    },
+    {
+        sku: 'CAM-100-4K',
+        name: '4K USB ePTZ Camera',
+        category: 'Camera',
+        description: 'A compact 4K USB camera with a wide 120-degree field of view and electronic pan-tilt-zoom (ePTZ). Ideal for huddle spaces and small meeting rooms. Simple USB-C connection.',
+        tags: ['Camera', 'USB', '4K', 'Webcam', 'ePTZ', 'Wide-angle'],
+        status: 'active',
+        videoIO: {
+            inputs: [],
+            outputs: [{ type: 'USB', count: 1 }]
+        },
+        usb: {
+            ports: [{ type: 'USB-C', count: 1 }],
             bandwidth: '3.0'
         }
     }

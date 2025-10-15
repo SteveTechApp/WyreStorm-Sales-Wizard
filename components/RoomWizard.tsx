@@ -4,9 +4,10 @@ import { RoomData } from '../utils/types.ts';
 import InfoModal from './InfoModal.tsx';
 import WizardNavigation from './roomWizard/WizardNavigation.tsx';
 import StepBasicInfo from './roomWizard/StepBasicInfo.tsx';
-import StepDisplay from './roomWizard/StepDisplay.tsx';
-import StepSources from './roomWizard/StepSources.tsx';
+import StepOutputs from './roomWizard/StepOutputs.tsx';
+import StepInputs from './roomWizard/StepInputs.tsx';
 import StepAudio from './roomWizard/StepAudio.tsx';
+import StepFeatures from './roomWizard/StepFeatures.tsx';
 import StepEnvironment from './roomWizard/StepEnvironment.tsx';
 import StepAVoIPNetwork from './roomWizard/StepAVoIPNetwork.tsx';
 import StepBudget from './roomWizard/StepBudget.tsx';
@@ -20,8 +21,9 @@ interface RoomWizardProps {
 
 const stepComponents = [
   { title: 'Basic Info', component: StepBasicInfo },
-  { title: 'Display', component: StepDisplay },
-  { title: 'Sources', component: StepSources },
+  { title: 'Output Designer', component: StepOutputs },
+  { title: 'Source Designer', component: StepInputs },
+  { title: 'Features', component: StepFeatures },
   { title: 'Audio', component: StepAudio },
   { title: 'Environment & Control', component: StepEnvironment },
   { title: 'AVoIP Network', component: StepAVoIPNetwork },

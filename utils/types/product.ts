@@ -3,10 +3,11 @@ export interface Product {
     name: string;
     category: string;
     description: string;
-    msrp: number;
-    dealerPrice: number;
     tags: string[];
 
+    msrp?: number;
+    dealerPrice?: number;
+    
     // Detailed Specifications
     videoIO?: {
         inputs: { type: string; count: number }[];

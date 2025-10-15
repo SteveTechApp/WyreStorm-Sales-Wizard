@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 const createInitialAnswers = (initialData: RoomData | null): RoomWizardAnswers => {
     if (initialData) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, systemDiagram, manuallyAddedEquipment, ...rest } = initialData;
+        const { id, systemDiagram, manuallyAddedEquipment, valueEngineeringConstraints, ...rest } = initialData;
         return rest;
     }
     const newRoomBase = createNewRoom();

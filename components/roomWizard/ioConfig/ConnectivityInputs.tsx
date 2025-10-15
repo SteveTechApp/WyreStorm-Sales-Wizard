@@ -1,6 +1,6 @@
 import React from 'react';
 import { IOPoint } from '../../../utils/types.ts';
-import { CONNECTION_TYPES, DISTRIBUTION_TYPES, TERMINATION_TYPES } from '../../../data/wizardOptions.ts';
+import { CONNECTION_TYPES, TRANSPORT_TYPES, LOCATION_TYPES } from '../../../data/wizardOptions.ts';
 
 interface ConnectivityInputsProps {
   point: IOPoint;
@@ -18,15 +18,15 @@ const ConnectivityInputs: React.FC<ConnectivityInputsProps> = ({ point, onUpdate
         </select>
       </div>
       <div>
-        <label htmlFor="io-distribution" className="block text-sm font-medium">Distribution</label>
+        <label htmlFor="io-distribution" className="block text-sm font-medium">Transport Type</label>
         <select id="io-distribution" value={point.distributionType} onChange={e => onUpdate({ distributionType: e.target.value })} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
-          {DISTRIBUTION_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+          {TRANSPORT_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
       </div>
       <div>
-        <label htmlFor="io-termination" className="block text-sm font-medium">Termination</label>
+        <label htmlFor="io-termination" className="block text-sm font-medium">Location</label>
          <select id="io-termination" value={point.terminationType} onChange={e => onUpdate({ terminationType: e.target.value })} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
-          {TERMINATION_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+          {LOCATION_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
       </div>
       <div>

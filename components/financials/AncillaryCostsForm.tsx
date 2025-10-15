@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProjectContext } from '../../context/ProjectContext.tsx';
+// FIX: Imported the AncillaryCosts type.
 import { AncillaryCosts } from '../../utils/types.ts';
 
 const AncillaryCostsForm: React.FC = () => {

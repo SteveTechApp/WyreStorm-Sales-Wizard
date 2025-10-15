@@ -50,7 +50,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
         throw new Error('CSV is missing required headers: SKU, Description, Category.');
     }
 
-    return lines.map(line => {
+    return lines.map((line): Product | null => {
         const row: { [key: string]: string } = {};
         // Regex to split by comma but ignore commas inside double quotes
         const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
