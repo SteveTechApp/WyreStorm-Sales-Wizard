@@ -43,9 +43,9 @@ A technology for transmitting a bundle of signals (Video, Audio, USB, Control, E
 - **Cabling**: Requires a minimum of Cat6, but Cat6a is always recommended.
 
 #### HDBaseT 3.0
-- **Native Bandwidth**: ~18 Gbps. Supports **uncompressed** 4K60 4:4:4 video, audio, USB 2.0, control, and 1GbE Ethernet.
+- **Native Bandwidth**: ~18 Gbps. Supports **uncompressed** 4K60 4:4:4 video, audio, control, and 1GbE Ethernet.
+- **USB**: HDBaseT 3.0 significantly upgrades USB support, enabling **up to 5Gbps speeds (USB 3.x)**. This makes it suitable for high-bandwidth peripherals like high-quality cameras and external storage drives, not just basic KVM. Some product implementations may still use USB 2.0, so check the product datasheet.
 - **Distance**: Up to 100m.
-- **USB**: USB 2.0 is a standard part of the HDBaseT 3.0 specification.
 - **Cabling**: Requires a minimum of **Cat6a** or Cat7 cable.
 
 - **PoH (Power over HDBaseT)**: Allows one HDBaseT device to power the other over the category cable, simplifying installation.

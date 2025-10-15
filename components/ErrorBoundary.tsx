@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 import { useProjectContext } from '../context/ProjectContext.tsx';
@@ -15,7 +17,7 @@ interface State {
   error: Error | null;
 }
 
-// FIX: The ErrorBoundaryInternal class must extend React.Component to function as an error boundary and have access to `this.props` and `this.state`.
+// FIX: Extended the ErrorBoundaryInternal class from React.Component. This makes it a valid class component with `state` and `props`, resolving the TypeScript errors, and allows it to function as a React Error Boundary.
 class ErrorBoundaryInternal extends React.Component<ErrorBoundaryInternalProps, State> {
   constructor(props: ErrorBoundaryInternalProps) {
     super(props);

@@ -90,16 +90,20 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   
   **Signal Distribution & Extension Logic:**
   You must follow these rules when a signal needs to be extended beyond its passive cable limits (e.g., >10m for HDMI, >3m for USB 3.x).
-  1.  **Assess Requirements**: Determine the video bandwidth needed (e.g., 18Gbps for 4K/60Hz 4:4:4) and if USB extension (KVM) is required.
-  2.  **Select HDBaseT Standard**:
-      -   **For 18Gbps signals (4K60 4:4:4)**:
-          -   **HDBaseT 3.0**: This is the best, uncompressed solution. It's a 'Gold' tier choice. Look for products with 'HDBT3.0' in their tags. Requires Cat6a cabling.
-          -   **HDBaseT 2.0 with VLC**: A more cost-effective 'Silver' tier choice. These products use Visually Lossless Compression to handle the 18Gbps signal. Look for extenders that are 'HDBaseT' but explicitly mention '4K60', '4:4:4', or 'HDR' support at the required distance.
-      -   **For 10.2Gbps signals (e.g., 4K30 or 1080p)**: You must select a standard HDBaseT 2.0 extender based on the required distance from 'ioRequirements'.
-          -   **If distance is <= 40m for 4K (or <= 70m for 1080p)**: A **Class B** extender is sufficient and more cost-effective. Look for products with 'Class B' in their tags or description.
+  1.  **Assess Requirements**: Determine the video bandwidth needed (e.g., 18Gbps for 4K/60Hz 4:4:4) and if USB extension is required. Analyze the type of USB needed: basic KVM (keyboard/mouse/basic webcam, USB 2.0 ~480Mbps) or high-speed (conferencing cameras, storage drives, USB 3.x ~5Gbps).
+
+  2.  **Select HDBaseT Technology (Tier-Based Logic)**:
+      -   **For 'Gold' Tier, Uncompressed 4K60 4:4:4, or High-Speed USB requirements**: You **MUST** prioritize **HDBaseT 3.0**. It is the only technology that supports uncompressed 18Gbps video and high-speed USB 3.x. Look for products with 'HDBT3.0' in their tags. This is a premium choice.
+      -   **For 'Silver' Tier or compressed 4K60 4:4:4**: Use **HDBaseT 2.0 with VLC** (Visually Lossless Compression). This is a cost-effective way to handle 18Gbps signals. The USB support on these is limited to USB 2.0 (480Mbps), suitable only for KVM and basic webcams.
+      -   **For 10.2Gbps signals (e.g., 4K30 or 1080p) - 'Bronze' or 'Silver' Tiers**:
+          -   **Cost-Optimization is Key**: You MUST prioritize the most cost-effective extender that meets the distance requirement.
+          -   **If distance is <= 40m for 4K (or <= 70m for 1080p)**: You **MUST** select a **Class B** extender as it is sufficient and more economical. Look for products with 'Class B' in their tags or description.
           -   **If distance is > 40m for 4K (up to 70m) or > 70m for 1080p (up to 100m)**: A **Class A** extender is required. Look for products with 'Class A' in their tags or description.
-          -   Always prioritize the most cost-effective solution that meets the distance requirement. This is typically a 'Bronze' or 'Silver' tier choice.
-  3.  **Check for USB**: If USB extension is required for BYOM or KVM, you **MUST** select an extender product that explicitly supports USB (has 'USB', 'KVM', or 'USB2.0' in its tags or description).
+
+  3.  **Check for USB**:
+      -   If high-bandwidth USB is needed (for devices like high-quality cameras, video bars, or external storage), you **MUST** use a technology that supports it, like **HDBaseT 3.0**.
+      -   If only basic USB KVM (keyboard, mouse, simple webcam) is needed, a standard **HDBaseT 2.0 extender with USB 2.0 support** is sufficient. Look for products with 'USB', 'KVM', or 'USB2.0' in their tags.
+
   4.  **Add Equipment**: **CRITICAL INSTRUCTION**: When you select an HDBaseT extender, you **MUST** add the SKU for the complete **Extender Kit** to the \`manuallyAddedEquipment\` list. An extender kit contains both the Transmitter (TX) and Receiver (RX). Do not add individual TX or RX units unless the product is specifically sold that way. For example, \`EX-100-KVM\` is a kit. The quantity should be \`1\` for each required point-to-point link.
 
   **AVoIP System Design**:

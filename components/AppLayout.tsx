@@ -44,7 +44,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </div>
 
       {/* Content Layer */}
-      <div className="relative z-10 flex flex-col flex-grow bg-content-overlay backdrop-blur-sm">
+      <div className="relative z-10 flex flex-col flex-grow bg-content-overlay">
         <DefaultHeader />
         <main className="flex-grow flex flex-col relative overflow-y-auto">
           <div className="container mx-auto p-4 md:p-6 flex-grow flex flex-col relative">
