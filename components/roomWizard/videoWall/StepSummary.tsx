@@ -1,5 +1,5 @@
 import React from 'react';
-import { VideoWallConfig } from '../../../utils/types';
+import { VideoWallConfig } from '../../../utils/types.ts';
 import WallLayoutDisplay from '../../WallLayoutDisplay';
 
 interface StepSummaryProps {

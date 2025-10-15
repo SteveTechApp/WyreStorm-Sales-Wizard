@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { RoomWizardAnswers, IOPoint, DisplayType } from '../../utils/types.ts';
+import { RoomWizardAnswers, IOPoint, DisplayType, VideoWallConfig } from '../../utils/types.ts';
 import IOPointConfigModal from './IOPointConfigModal.tsx';
 import { v4 as uuidv4 } from 'uuid';
 import { CONNECTION_TYPE_ICONS } from '../../data/constants.ts';
 import { PlusIcon } from '../Icons.tsx';
+import VideoWallWizardModal from './VideoWallWizardModal.tsx';
 
 interface StepOutputsProps {
   answers: RoomWizardAnswers;
@@ -13,6 +14,7 @@ interface StepOutputsProps {
 const StepOutputs: React.FC<StepOutputsProps> = ({ answers, updateAnswers }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPoint, setEditingPoint] = useState<IOPoint | null>(null);
+    const [isVideoWallWizardOpen, setIsVideoWallWizardOpen] = useState(false);
 
     const mainDisplays = answers.ioRequirements.filter(p => p.type === 'output' && (p.role === 'main' || !p.role));
     const otherDisplays = answers.ioRequirements.filter(p => p.type === 'output' && (p.role === 'repeater' || p.role === 'confidence'));
@@ -28,11 +30,15 @@ const StepOutputs: React.FC<StepOutputsProps> = ({ answers, updateAnswers }) => 
             displayType = mainDisplays[0].displayType || 'single';
         }
         
+        if (displayType === 'lcd_video_wall' && !answers.videoWallConfig) {
+            setIsVideoWallWizardOpen(true);
+        }
+
         // Only update if there's a change to prevent re-render loops
         if (answers.displayCount !== mainDisplayCount || answers.displayType !== displayType) {
             updateAnswers({ displayCount: mainDisplayCount, displayType });
         }
-    }, [mainDisplays, answers.displayCount, answers.displayType, updateAnswers]);
+    }, [mainDisplays, answers.videoWallConfig, answers.displayCount, answers.displayType, updateAnswers]);
 
     const handleAddPoint = (role: 'main' | 'repeater') => {
         const newPoint: IOPoint = {
@@ -70,6 +76,11 @@ const StepOutputs: React.FC<StepOutputsProps> = ({ answers, updateAnswers }) => 
         }
         setIsModalOpen(false);
         setEditingPoint(null);
+    };
+    
+    const handleSaveVideoWallConfig = (config: VideoWallConfig) => {
+        updateAnswers({ videoWallConfig: config });
+        setIsVideoWallWizardOpen(false);
     };
 
     const renderPointList = (points: IOPoint[]) => (
@@ -131,6 +142,11 @@ const StepOutputs: React.FC<StepOutputsProps> = ({ answers, updateAnswers }) => 
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleSavePoint}
                 point={editingPoint}
+            />
+            <VideoWallWizardModal
+                isOpen={isVideoWallWizardOpen}
+                onClose={() => setIsVideoWallWizardOpen(false)}
+                onSave={handleSaveVideoWallConfig}
             />
         </div>
     );

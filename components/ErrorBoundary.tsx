@@ -1,7 +1,5 @@
-
-
-// FIX: Reverted React import from namespace to default import to correctly resolve 'this.props' on the class component instance.
-import React from 'react';
+// FIX: Changed React import to a namespace import to correctly resolve 'this.props' on the class component instance.
+import * as React from 'react';
 import ErrorDisplay from './ErrorDisplay.tsx';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 

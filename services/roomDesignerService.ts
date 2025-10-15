@@ -19,6 +19,19 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
     ? `You MUST analyze the 'ioRequirements' in detail. Use the specified 'distance' to determine if an extender is necessary (e.g., an HDMI signal over 15m, or a USB signal over 3m). If extension is needed, you MUST follow the **'Signal Distribution & Extension Logic'** section below to select the correct technology and product. The 'terminationType' (e.g., 'Table Box', 'Central Rack') indicates the physical location of the I/O point, which influences cable lengths and equipment placement.`
     : `The 'ioRequirements' list is empty. You MUST parse the 'Functionality Statement' and other room details to infer the required inputs (sources) and outputs (displays). For example, if the statement mentions 'dual 85-inch displays' and 'connections for a room PC and two guest laptops', you must infer 2 outputs and 3 inputs. Use this inferred I/O list as your primary guide for selecting equipment. Assume connections are direct and within 10m unless otherwise specified in the description.`;
 
+  const videoWallInstruction = room.displayType === 'lcd_video_wall' && room.videoWallConfig
+    ? `**LCD Video Wall Design**:
+      - The user has configured a ${room.videoWallConfig.layout.rows}x${room.videoWallConfig.layout.cols} LCD video wall.
+      - The required technology is '${room.videoWallConfig.technology}'. You MUST select equipment that matches this technology choice. For example, if 'avoip_500' is chosen, you must use NHD-500 series decoders (one per panel). If 'processor_sw0204vw' is chosen, you MUST include the SW-0204-VW.`
+    : room.displayType === 'led_video_wall'
+    ? `**LED Video Wall Design**:
+      - The room features a large LED video wall. Assume this wall has its own dedicated processor (like a Novastar) that accepts a single primary HDMI input. Your task is to design the system that FEEDS this single input.
+      - Follow the tier-based logic strictly:
+        - **Bronze Tier**: Provide a simple, single-source solution connected directly to the wall's processor.
+        - **Silver Tier**: Provide a multi-source solution using a 'NHD-0401-MV' multiview processor as the output to the wall. This implies a NetworkHD 400 or 500 series AVoIP system to feed the multiviewer.
+        - **Gold Tier**: Provide a flexible, multi-source solution using a NetworkHD 600 series AVoIP system. A NHD-600-TRX configured as a decoder will feed the wall processor.`
+    : '';
+
   return `
   You are an expert AV System Designer for WyreStorm. Your task is to select the appropriate equipment for the given room requirements from the provided product database, prioritizing stability and reliability. For each design tier (Bronze, Silver, Gold), you must provide a distinct technology solution that represents a clear increase in functionality and value, not just cost.
 
@@ -31,6 +44,7 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   - IO Points: ${JSON.stringify(room.ioRequirements, null, 2)}
   - Max Participants: ${room.maxParticipants}
   - Display Type: ${room.displayType}
+  ${room.videoWallConfig ? `- Video Wall Config: ${JSON.stringify(room.videoWallConfig)}` : ''}
   - AVoIP System Selected: ${room.technicalDetails.avoipSystem || 'None'}
   - AVoIP Network Details: ${JSON.stringify(room.technicalDetails.avoipNetworkDetails)}
 
@@ -39,6 +53,8 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   
   Technical Reference Material:
   ${TECHNICAL_DATABASE}
+
+  ${videoWallInstruction}
 
   **Core Design Principles:**
   1.  **Reliability First**: Prioritize proven, stable solutions.
