@@ -3,8 +3,11 @@ import RecentProjects from '../RecentProjects.tsx';
 import { GridIcon, EducationIcon, PlusIcon, SparklesIcon, QuestionMarkCircleIcon } from '../Icons.tsx';
 import Logo from '../Logo.tsx';
 import ActionButton from './ActionButton.tsx';
+import { useUserContext } from '../../context/UserContext.tsx';
 
 const DefaultWelcome: React.FC = () => {
+    const { userProfile } = useUserContext();
+
     return (
         <div className="flex flex-col items-center justify-center flex-grow animate-fade-in-fast h-full">
             
@@ -14,10 +17,10 @@ const DefaultWelcome: React.FC = () => {
                     <Logo />
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-text-primary">
-                    AI Co-Pilot for AV Systems
+                    Welcome back, {userProfile.name}!
                 </h1>
                 <p className="mt-1 max-w-2xl mx-auto text-lg text-text-secondary">
-                    From client brief to full proposal in minutes. Design flawless WyreStorm solutions with your AI Wingman.
+                    Ready to design the next generation of AV systems?
                 </p>
             </div>
 

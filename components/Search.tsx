@@ -38,7 +38,7 @@ const SearchIcon: React.FC<{className?: string}> = ({ className }) => (
 const Search: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<{ products: Product[]; training: typeof TRAINING_MODULES; pages: typeof NAV_LINKS }>({ products: [], training: [], pages: [] });
+    const [results, setResults] = useState<{ products: Product[]; training: typeof TRAINING_MODULES; pages: any[] }>({ products: [], training: [], pages: [] });
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const navigate = useNavigate();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -86,7 +86,10 @@ const Search: React.FC = () => {
                 m.contentPages.some(p => p.content.toLowerCase().includes(lowerCaseQuery))
             ).slice(0, 3);
 
-            const pageResults = NAV_LINKS.filter(l =>
+            // FIX: Add an explicit return type to the flatMap callback to resolve TypeScript's difficulty with inferring types from a union of arrays.
+            const pageResults = NAV_LINKS.flatMap(
+                (l): Array<{ path: string; label: string }> => ('path' in l ? [l] : l.children)
+            ).filter(l =>
                 l.label.toLowerCase().includes(lowerCaseQuery)
             ).slice(0, 3);
 
@@ -119,7 +122,7 @@ const Search: React.FC = () => {
 
     const handleCloseProductModal = () => {
         setSelectedProduct(null);
-        handleCloseModal();
+        // Do not close search modal, so user can continue searching
     }
 
     const hasResults = results.products.length > 0 || results.training.length > 0 || results.pages.length > 0;

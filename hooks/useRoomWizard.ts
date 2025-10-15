@@ -24,6 +24,9 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
     const [answers, setAnswers] = useState<RoomWizardAnswers>(() => createInitialAnswers(initialData));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // This useEffect was causing the wizard to reset to step 1 on re-renders.
+    // The component's mount/unmount lifecycle already handles resetting the state correctly
+    // when the wizard is opened for a new or different room.
     useEffect(() => {
         setAnswers(createInitialAnswers(initialData));
         setErrors({});

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useProjectContext } from '../context/ProjectContext.tsx';
+import { useUserContext } from '../context/UserContext.tsx';
 import { Product } from '../utils/types.ts';
 import { PRODUCT_CATEGORY_ICONS } from '../data/constants.ts';
 import InfoTooltip from './InfoTooltip.tsx';
@@ -12,8 +13,19 @@ const getCategoryIconComponent = (category: string): React.FC<{ className?: stri
 
 const VisualRoomPlanner: React.FC = () => {
   const { projectData, activeRoomId } = useProjectContext();
+  const { userProfile } = useUserContext();
   const room = projectData?.rooms.find(r => r.id === activeRoomId);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
+  const isImperial = userProfile.unitSystem === 'imperial';
+  const METER_TO_FEET = 3.28084;
+
+  const formatDistance = (meters: number) => {
+    if (isImperial) {
+        return `${(meters * METER_TO_FEET).toFixed(1)}ft`;
+    }
+    return `${meters.toFixed(1)}m`;
+  };
 
   if (!room) {
     return (
@@ -44,10 +56,10 @@ const VisualRoomPlanner: React.FC = () => {
           >
               {/* Dimensions Labels */}
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-sm font-semibold text-text-secondary bg-background px-1">
-                {length}m
+                {formatDistance(length)}
               </div>
               <div className="absolute -left-10 top-1/2 -translate-y-1/2 -rotate-90 text-sm font-semibold text-text-secondary bg-background px-1">
-                {width}m
+                {formatDistance(width)}
               </div>
 
               {/* Equipment Icons */}

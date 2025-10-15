@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { IOPoint } from '../../../utils/types.ts';
+import { useUserContext } from '../../../context/UserContext.tsx';
 import { CONNECTION_TYPES, TRANSPORT_TYPES, LOCATION_TYPES } from '../../../data/wizardOptions.ts';
 import InfoTooltip from '../../InfoTooltip.tsx';
 import { InformationCircleIcon } from '../../icons/UIIcons.tsx';
@@ -10,7 +11,30 @@ interface ConnectivityInputsProps {
   errors?: Record<string, string>;
 }
 
+const METER_TO_FEET = 3.28084;
+
 const ConnectivityInputs: React.FC<ConnectivityInputsProps> = ({ point, onUpdate, errors = {} }) => {
+  const { userProfile } = useUserContext();
+  const isImperial = userProfile.unitSystem === 'imperial';
+
+  const toDisplay = (meters: number) => (isImperial ? (meters * METER_TO_FEET).toFixed(1) : String(meters));
+  const fromDisplay = (value: string) => {
+    const num = parseFloat(value) || 0;
+    return isImperial ? num / METER_TO_FEET : num;
+  };
+
+  const [localDistance, setLocalDistance] = useState(() => toDisplay(point.distance));
+
+  useEffect(() => {
+    setLocalDistance(toDisplay(point.distance));
+  }, [point.distance, isImperial]);
+
+  const handleBlur = (value: string) => {
+    onUpdate({ distance: fromDisplay(value) });
+  };
+  
+  const unitLabel = isImperial ? 'ft' : 'm';
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div>
@@ -47,17 +71,19 @@ const ConnectivityInputs: React.FC<ConnectivityInputsProps> = ({ point, onUpdate
         </select>
       </div>
       <div>
-        <InfoTooltip text="The estimated cable length in meters from the connection point to the central equipment rack or the next device in the chain. This is critical for determining if signal extension is needed.">
+        <InfoTooltip text="The estimated cable length from the connection point to the central equipment rack or the next device in the chain. This is critical for determining if signal extension is needed.">
             <label htmlFor="io-distance" className="flex items-center gap-1 text-sm font-medium">
-              Distance (m)
+              Distance ({unitLabel})
               <InformationCircleIcon className="h-4 w-4 text-text-secondary" />
             </label>
         </InfoTooltip>
         <input
           type="number"
+          step="0.1"
           id="io-distance"
-          value={point.distance}
-          onChange={(e) => onUpdate({ distance: Number(e.target.value) })}
+          value={localDistance}
+          onChange={(e) => setLocalDistance(e.target.value)}
+          onBlur={(e) => handleBlur(e.target.value)}
           className={`w-full p-2 border rounded-md bg-input-bg mt-1 ${errors['distance'] ? 'border-destructive' : 'border-border-color'}`}
         />
         {errors['distance'] && <p className="text-destructive text-sm mt-1">{errors['distance']}</p>}

@@ -130,6 +130,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                       {SUPPORTED_LANGUAGES.map(lang => <option key={lang.code} value={lang.code}>{lang.name}</option>)}
                   </select>
               </div>
+              <div>
+                  <label htmlFor="profile-unit-system" className="block text-sm font-medium">Unit System</label>
+                  <select id="profile-unit-system" name="unitSystem" value={localProfile.unitSystem} onChange={handleChange} className="w-full p-2 border border-border-color rounded-md bg-input-bg mt-1">
+                      <option value="metric">Metric (meters)</option>
+                      <option value="imperial">Imperial (feet)</option>
+                  </select>
+              </div>
           </div>
           <div>
               <h3 className="text-lg font-semibold mb-2">Appearance</h3>

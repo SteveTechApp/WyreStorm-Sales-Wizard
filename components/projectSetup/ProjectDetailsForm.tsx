@@ -1,17 +1,12 @@
 
+
 import React from 'react';
-import { UserProfile } from '../../utils/types.ts';
 
 interface ProjectDetailsFormProps {
     projectName: string;
     setProjectName: (name: string) => void;
     clientName: string;
     setClientName: (name: string) => void;
-    budget?: number;
-    setBudget: (budget?: number) => void;
-    timeline: string;
-    setTimeline: (date: string) => void;
-    userProfile: UserProfile;
 }
 
 const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({
@@ -19,11 +14,6 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({
     setProjectName,
     clientName,
     setClientName,
-    budget,
-    setBudget,
-    timeline,
-    setTimeline,
-    userProfile,
 }) => {
     const inputStyle = "w-full p-2 border border-border-color rounded-md bg-input-bg mt-1 focus:border-accent outline-none";
 
@@ -38,14 +28,6 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({
                 <div>
                     <label htmlFor="client-name" className="block text-sm font-medium uppercase">Client</label>
                     <input type="text" id="client-name" value={clientName} onChange={e => setClientName(e.target.value)} className={inputStyle} />
-                </div>
-                <div>
-                    <label htmlFor="budget" className="block text-sm font-medium uppercase">Total Budget ({userProfile.currency})</label>
-                    <input type="number" id="budget" value={budget || ''} placeholder="e.g., 25000" onChange={e => setBudget(Number(e.target.value))} className={inputStyle} />
-                </div>
-                <div>
-                     <label htmlFor="timeline" className="block text-sm font-medium uppercase">Target Completion Date</label>
-                    <input type="date" id="timeline" value={timeline} onChange={e => setTimeline(e.target.value)} className={inputStyle} />
                 </div>
             </div>
         </div>

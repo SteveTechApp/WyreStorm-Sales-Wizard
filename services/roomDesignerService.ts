@@ -31,6 +31,27 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
         - **Silver Tier**: Provide a multi-source solution using a 'NHD-0401-MV' multiview processor as the output to the wall. This implies a NetworkHD 400 or 500 series AVoIP system to feed the multiviewer.
         - **Gold Tier**: Provide a flexible, multi-source solution using a NetworkHD 600 series AVoIP system. A NHD-600-TRX configured as a decoder will feed the wall processor.`
     : '';
+    
+  const hasConstraints = room.valueEngineeringConstraints && room.valueEngineeringConstraints.length > 0;
+  const hasSuggestions = room.valueEngineeringSuggestions && room.valueEngineeringSuggestions.length > 0;
+
+  let valueEngineeringInstruction = '';
+  if (hasConstraints || hasSuggestions) {
+      valueEngineeringInstruction = '\n**Value Engineering Directives:**\nThe user has requested to reduce the cost of this solution. You MUST adhere to the following directives:\n';
+      if (hasConstraints) {
+          valueEngineeringInstruction += `
+  **Feature Constraints**: Disable the following features to allow for cheaper product alternatives.
+  ${room.valueEngineeringConstraints.map(c => `- ${CONSTRAINT_MAP[c] || c}`).join('\n')}
+  `;
+      }
+      if (hasSuggestions) {
+          valueEngineeringInstruction += `
+  **Product Substitution Suggestions**: Prioritize using the 'suggestedSku' as a replacement for the 'originalSku' if it is a valid and appropriate substitution that meets the room's core requirements. If you make a substitution, you **MUST** justify it in the 'functionalityStatement' by explaining why the alternative product is a suitable and cost-effective choice that still fulfills the core requirements of the design.
+  ${room.valueEngineeringSuggestions.map(s => `- Replace ${s.originalSku} with ${s.suggestedSku}`).join('\n')}
+  `;
+      }
+  }
+
 
   return `
   You are an expert AV System Designer for WyreStorm. Your task is to select the appropriate equipment for the given room requirements from the provided product database, prioritizing stability and reliability. For each design tier (Bronze, Silver, Gold), you must provide a distinct technology solution that represents a clear increase in functionality and value, not just cost.
@@ -55,6 +76,7 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   ${TECHNICAL_DATABASE}
 
   ${videoWallInstruction}
+  ${valueEngineeringInstruction}
 
   **Core Design Principles:**
   1.  **Reliability First**: Prioritize proven, stable solutions.
@@ -73,7 +95,10 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
       -   **For 18Gbps signals (4K60 4:4:4)**:
           -   **HDBaseT 3.0**: This is the best, uncompressed solution. It's a 'Gold' tier choice. Look for products with 'HDBT3.0' in their tags. Requires Cat6a cabling.
           -   **HDBaseT 2.0 with VLC**: A more cost-effective 'Silver' tier choice. These products use Visually Lossless Compression to handle the 18Gbps signal. Look for extenders that are 'HDBaseT' but explicitly mention '4K60', '4:4:4', or 'HDR' support at the required distance.
-      -   **For 10.2Gbps signals (4K30 or 4K60 4:2:0)**: A standard HDBaseT 2.0 extender (Class A for up to 70m, Class B for up to 40m) is sufficient. This is a 'Bronze' or 'Silver' tier choice.
+      -   **For 10.2Gbps signals (e.g., 4K30 or 1080p)**: You must select a standard HDBaseT 2.0 extender based on the required distance from 'ioRequirements'.
+          -   **If distance is <= 40m for 4K (or <= 70m for 1080p)**: A **Class B** extender is sufficient and more cost-effective. Look for products with 'Class B' in their tags or description.
+          -   **If distance is > 40m for 4K (up to 70m) or > 70m for 1080p (up to 100m)**: A **Class A** extender is required. Look for products with 'Class A' in their tags or description.
+          -   Always prioritize the most cost-effective solution that meets the distance requirement. This is typically a 'Bronze' or 'Silver' tier choice.
   3.  **Check for USB**: If USB extension is required for BYOM or KVM, you **MUST** select an extender product that explicitly supports USB (has 'USB', 'KVM', or 'USB2.0' in its tags or description).
   4.  **Add Equipment**: **CRITICAL INSTRUCTION**: When you select an HDBaseT extender, you **MUST** add the SKU for the complete **Extender Kit** to the \`manuallyAddedEquipment\` list. An extender kit contains both the Transmitter (TX) and Receiver (RX). Do not add individual TX or RX units unless the product is specifically sold that way. For example, \`EX-100-KVM\` is a kit. The quantity should be \`1\` for each required point-to-point link.
 
@@ -100,13 +125,6 @@ const generateDesignPrompt = (room: RoomData, productDatabase: Product[]): strin
   **Specific Product Compatibility Rules:**
   // FIX: Replaced potentially problematic backticks with single quotes to avoid parsing errors.
   1.  **Apollo Dongles**: The 'APO-DG2' dongle is for wireless casting WITH USB data (BYOM). It is **ONLY** compatible with presentation switchers whose SKU ends in a '-W' (e.g., 'SW-640L-TX-W'). You MUST NOT pair the 'APO-DG2' with any other device, especially not the 'APO-VX20' or 'APO-210-UC'. If a user needs simple wireless casting (video/audio only, no USB data) for devices like the 'APO-210-UC', the correct dongle is the 'APO-DG1'.
-
-  ${room.valueEngineeringConstraints && room.valueEngineeringConstraints.length > 0 ? `
-  **Value Engineering Constraints:**
-  The user has requested to reduce the cost of this solution. You MUST adhere to the following constraints when selecting products, finding cheaper alternatives where possible:
-  ${room.valueEngineeringConstraints.map(c => `- ${CONSTRAINT_MAP[c] || c}`).join('\n')}
-  Your goal is to find the most cost-effective solution from the database that meets the original requirements MINUS the specified constraints.
-  ` : ''}
 
   Based on the room details and the available products, perform the following tasks:
   1. Write a concise, one-paragraph "functionalityStatement" describing how the chosen system will work for the end-user, reflecting the capabilities of the selected tier and any constraints.

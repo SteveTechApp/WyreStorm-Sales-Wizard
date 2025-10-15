@@ -1,10 +1,10 @@
 
 
+
 import React, { useState } from 'react';
 // FIX: Changed import to namespace to fix "no exported member 'useNavigate'" error.
 import * as ReactRouterDOM from 'react-router-dom';
 import { useGenerationContext } from '../context/GenerationContext.tsx';
-import { useUserContext } from '../context/UserContext.tsx';
 import { ProjectSetupData, RoomData } from '../utils/types.ts';
 import { PlusIcon } from '../components/Icons.tsx';
 import RoomWizard from '../components/RoomWizard.tsx';
@@ -17,7 +17,6 @@ const ProjectSetupScreen: React.FC = () => {
     const [clientName, setClientName] = useState('New Client');
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const { handleProjectSetupSubmit } = useGenerationContext();
-    const { userProfile } = useUserContext();
     const navigate = ReactRouterDOM.useNavigate();
 
     const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -74,7 +73,6 @@ const ProjectSetupScreen: React.FC = () => {
                         setProjectName={setProjectName}
                         clientName={clientName}
                         setClientName={setClientName}
-                        userProfile={userProfile}
                     />
 
                     <div className="p-6 bg-background-secondary border border-border-color rounded-xl shadow-xl">

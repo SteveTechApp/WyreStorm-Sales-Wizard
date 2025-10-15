@@ -96,6 +96,11 @@ export interface ManuallyAddedEquipment extends Product {
     quantity: number;
 }
 
+export interface ValueEngineeringSuggestion {
+    originalSku: string;
+    suggestedSku: string;
+}
+
 export interface RoomData {
     id: string;
     roomName: string;
@@ -116,9 +121,10 @@ export interface RoomData {
     audioSystemDetails: AudioSystemDetails;
     technicalDetails: TechnicalDetails;
     valueEngineeringConstraints?: string[];
+    valueEngineeringSuggestions?: ValueEngineeringSuggestion[];
 }
 
-export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints'>;
+export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints' | 'valueEngineeringSuggestions'>;
 
 export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;

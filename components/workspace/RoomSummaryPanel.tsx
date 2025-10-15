@@ -1,5 +1,6 @@
 import React from 'react';
 import { useProjectContext } from '../../context/ProjectContext.tsx';
+import { useUserContext } from '../../context/UserContext.tsx';
 import TierIcon from '../TierIcon.tsx';
 import RoomWizard from '../RoomWizard.tsx';
 import SaveTemplateModal from '../SaveTemplateModal.tsx';
@@ -7,6 +8,7 @@ import { useUserTemplates } from '../../hooks/useUserTemplates.ts';
 
 const RoomSummaryPanel: React.FC = () => {
     const { projectData, activeRoomId, dispatchProjectAction } = useProjectContext();
+    const { userProfile } = useUserContext();
     const { handleSaveTemplate } = useUserTemplates();
     const [isWizardOpen, setIsWizardOpen] = React.useState(false);
     const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false);
@@ -14,6 +16,16 @@ const RoomSummaryPanel: React.FC = () => {
     const room = projectData?.rooms.find(r => r.id === activeRoomId);
 
     if (!room) return null;
+
+    const METER_TO_FEET = 3.28084;
+    const isImperial = userProfile.unitSystem === 'imperial';
+
+    const formatDistance = (meters: number) => {
+        if (isImperial) {
+            return `${(meters * METER_TO_FEET).toFixed(1)}ft`;
+        }
+        return `${meters.toFixed(1)}m`;
+    };
 
     return (
         <>
@@ -26,7 +38,7 @@ const RoomSummaryPanel: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
                             <span><strong>Type:</strong> {room.roomType}</span>
-                            <span><strong>Dimensions:</strong> {room.dimensions.length}m x {room.dimensions.width}m x {room.dimensions.height}m</span>
+                            <span><strong>Dimensions:</strong> {formatDistance(room.dimensions.length)} x {formatDistance(room.dimensions.width)} x {formatDistance(room.dimensions.height)}</span>
                             <span><strong>Capacity:</strong> {room.maxParticipants} people</span>
                             <span><strong>Displays:</strong> {room.displayCount} ({room.displayType.replace(/_/g, ' ')})</span>
                         </div>

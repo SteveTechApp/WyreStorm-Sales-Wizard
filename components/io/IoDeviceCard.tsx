@@ -1,5 +1,6 @@
 import React from 'react';
 import { IOPoint } from '../../utils/types.ts';
+import { useUserContext } from '../../context/UserContext.tsx';
 import { CONNECTION_TYPE_ICONS } from '../../data/constants.ts';
 
 interface IoDeviceCardProps {
@@ -19,7 +20,18 @@ const DetailTag: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 const IoDeviceCard: React.FC<IoDeviceCardProps> = ({ point, onEdit, onRemove }) => {
+    const { userProfile } = useUserContext();
     const IconComponent = getIoIconComponent(point.connectionType);
+    
+    const isImperial = userProfile.unitSystem === 'imperial';
+    const METER_TO_FEET = 3.28084;
+    
+    const formatDistance = (meters: number) => {
+        if (isImperial) {
+            return `${(meters * METER_TO_FEET).toFixed(1)}ft`;
+        }
+        return `${meters}m`;
+    };
 
     return (
         <div className="bg-background p-3 rounded-lg border border-border-color space-y-3 transition-all hover:shadow-md hover:border-border-color">
@@ -42,7 +54,7 @@ const IoDeviceCard: React.FC<IoDeviceCardProps> = ({ point, onEdit, onRemove }) 
                 <DetailTag>{point.distributionType}</DetailTag>
                 <span className="text-text-secondary text-sm" title="Location">@</span>
                 <DetailTag>{point.terminationType}</DetailTag>
-                <DetailTag>{point.distance}m</DetailTag>
+                <DetailTag>{formatDistance(point.distance)}</DetailTag>
             </div>
         </div>
     );

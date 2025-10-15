@@ -1,10 +1,8 @@
-
-
 // FIX: Corrected typo 'react-outer-dom' to 'react-router-dom' to import the useNavigate hook type correctly.
 import { useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
-import { ProjectData, ProjectSetupData, RoomData, UserTemplate, ManuallyAddedEquipment, DesignTier } from '../utils/types.ts';
+import { ProjectData, ProjectSetupData, RoomData, UserTemplate, ManuallyAddedEquipment, DesignTier, ValueEngineeringSuggestion } from '../utils/types.ts';
 import { analyzeRequirements } from '../services/projectAnalysisService.ts';
 import { designRoom, generateDiagram } from '../services/roomDesignerService.ts';
 import { generateProposal } from '../services/proposalService.ts';
@@ -134,24 +132,28 @@ export const useProjectGeneration = () => {
         });
     };
 
-    const handleValueEngineerRoom = async (roomId: string, constraints: string[]) => {
+    const handleValueEngineerRoom = async (roomId: string, constraints: string[], suggestions: ValueEngineeringSuggestion[]) => {
         const project = getState().projectData;
         if (!project) return;
         const roomToEngineer = project.rooms.find(r => r.id === roomId);
         if (!roomToEngineer) return;
 
-        const roomWithConstraints = { ...roomToEngineer, valueEngineeringConstraints: constraints };
-        dispatchProjectAction({ type: 'UPDATE_ROOM', payload: roomWithConstraints });
+        const roomWithChanges = { 
+            ...roomToEngineer, 
+            valueEngineeringConstraints: constraints,
+            valueEngineeringSuggestions: suggestions,
+        };
+        dispatchProjectAction({ type: 'UPDATE_ROOM', payload: roomWithChanges });
 
         await withLoading('design', async () => {
-            const result = await designRoom(roomWithConstraints, project.productDatabase);
+            const result = await designRoom(roomWithChanges, project.productDatabase);
             const fullEquipment: ManuallyAddedEquipment[] = result.manuallyAddedEquipment.map(item => {
                 const product = project.productDatabase.find(p => p.sku === item.sku);
                 return { ...product!, quantity: item.quantity };
             });
 
             const updatedRoom: RoomData = {
-                ...roomWithConstraints,
+                ...roomWithChanges,
                 functionalityStatement: result.functionalityStatement,
                 manuallyAddedEquipment: fullEquipment,
                 systemDiagram: undefined
