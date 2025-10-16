@@ -41,6 +41,7 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onSave, initia
     handleNext,
     handlePrev,
     handleSave,
+    handleSaveProgress,
     isFirstStep,
     isLastStep,
   } = useRoomWizard(initialData, onSave, stepComponents.length);
@@ -63,7 +64,12 @@ const RoomWizard: React.FC<RoomWizardProps> = ({ isOpen, onClose, onSave, initia
     <WizardNavigation
       onNext={handleNext}
       onPrev={handlePrev}
-      onSave={handleSave}
+      onSave={() => {
+        if (handleSave()) {
+            onClose();
+        }
+      }}
+      onSaveProgress={handleSaveProgress}
       isFirstStep={isFirstStep}
       isLastStep={isLastStep}
       onClose={onClose}

@@ -1,4 +1,7 @@
 import { DesignTier } from '../utils/types.ts';
+import {
+    DisplayIcon, DualDisplayIcon, ProjectorIcon, VideoWallIcon, InteractiveDisplayIcon
+} from '../components/icons/AppIcons.tsx';
 
 export const COMMON_FEATURES = [
     { name: 'Video Conferencing', description: 'Integrate with platforms like Zoom or Teams.' },
@@ -15,7 +18,16 @@ export const SOURCE_DEVICE_TYPES = [
 ];
 
 export const OUTPUT_DEVICE_TYPES = [
-    'Room Display', 'Projector', 'Confidence Monitor', 'Recording Feed', 'Assistive Listening'
+    'Room Display', 'Projector', 'Confidence Monitor', 'Recording Feed'
+];
+
+export const MAIN_DISPLAY_OPTIONS = [
+    { id: 'single_lfd', label: 'Single Display', icon: DisplayIcon, description: 'A single TV or commercial display.' },
+    { id: 'dual_lfd', label: 'Dual Displays', icon: DualDisplayIcon, description: 'Two side-by-side TVs or displays.' },
+    { id: 'interactive_lfd', label: 'Interactive Display', icon: InteractiveDisplayIcon, description: 'A single touch-enabled display.' },
+    { id: 'projector', label: 'Single Projector', icon: ProjectorIcon, description: 'A single projector and screen setup.' },
+    { id: 'dual_projector', label: 'Dual Projectors', icon: DualDisplayIcon, description: 'Two projectors, often side-by-side.' },
+    { id: 'video_wall', label: 'Video Wall', icon: VideoWallIcon, description: 'A multi-screen, tiled video wall.' },
 ];
 
 export const OUTPUT_ROLES = ['Main', 'Repeater', 'Confidence'];

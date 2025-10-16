@@ -16,8 +16,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const [localProfile, setLocalProfile] = useState<UserProfile>(userProfile);
 
   useEffect(() => {
-    setLocalProfile(userProfile);
-  }, [userProfile, isOpen]);
+    // When the modal is opened, reset the local state to match the current user profile.
+    // This ensures that each time the modal is opened, it starts with fresh, up-to-date data.
+    // We intentionally omit `userProfile` from the dependency array because we *only* want
+    // this effect to run when the modal's `isOpen` state changes from false to true.
+    // If we included `userProfile`, any external update to the profile (like changing the resolution
+    // in the footer) would overwrite the user's edits inside the modal.
+    if (isOpen) {
+      setLocalProfile(userProfile);
+    }
+  }, [isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -33,7 +41,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const handleSave = () => {
     if (JSON.stringify(localProfile) !== JSON.stringify(userProfile)) {
         updateUserProfile(localProfile);
-        toast.success('Profile saved!');
+        const nameToDisplay = localProfile.name || "Profile";
+        toast.success(`${nameToDisplay} saved!`);
     }
     onClose();
   };
@@ -85,9 +94,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           const text = e.target?.result as string;
           try {
               const products = parseCsvToProducts(text);
-              const updatedProfile = { ...userProfile, customProductDatabase: products };
-              setLocalProfile(updatedProfile);
-              updateUserProfile(updatedProfile);
+              setLocalProfile(prev => ({ ...prev, customProductDatabase: products }));
               toast.success(`${products.length} products imported successfully!`);
           } catch (error) {
               toast.error(error instanceof Error ? error.message : 'Failed to parse CSV.');
@@ -99,9 +106,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleRemoveCustomDb = () => {
-    const { customProductDatabase, ...rest } = localProfile;
-    setLocalProfile(rest);
-    updateUserProfile(rest);
+    setLocalProfile(prev => {
+        const { customProductDatabase, ...rest } = prev;
+        return rest;
+    });
     toast.success('Custom product database removed.');
   };
 
@@ -145,6 +153,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                   <ToggleSwitch
                       checked={localProfile.showBackground}
                       onChange={(isChecked) => setLocalProfile(p => ({ ...p, showBackground: isChecked }))}
+                      offColor="bg-gray-400"
                   />
               </div>
           </div>

@@ -15,6 +15,16 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ definition, onNodeClick
       containerRef.current.innerHTML = '';
       
       try {
+        // Resolve CSS variables to actual color values
+        const styles = getComputedStyle(document.documentElement);
+        const themeVariables = {
+            background: styles.getPropertyValue('--background').trim(),
+            primaryColor: styles.getPropertyValue('--background-secondary').trim(),
+            primaryTextColor: styles.getPropertyValue('--text-primary').trim(),
+            lineColor: styles.getPropertyValue('--text-secondary').trim(),
+            textColor: styles.getPropertyValue('--text-primary').trim(),
+        };
+        
         mermaid.initialize({ 
             startOnLoad: false, 
             theme: 'neutral',
@@ -22,13 +32,7 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ definition, onNodeClick
             flowchart: {
               htmlLabels: true // Enable HTML in node labels
             },
-            themeVariables: {
-                background: 'var(--background)',
-                primaryColor: 'var(--background-secondary)',
-                primaryTextColor: 'var(--text-primary)',
-                lineColor: 'var(--text-secondary)',
-                textColor: 'var(--text-primary)',
-            }
+            themeVariables
         });
 
         const graphId = `mermaid-graph-${Math.random().toString(36).substring(2, 9)}`;

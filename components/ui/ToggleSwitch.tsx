@@ -3,9 +3,11 @@ import React from 'react';
 interface ToggleSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  onColor?: string;
+  offColor?: string;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange }) => {
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange, onColor = 'bg-accent', offColor = 'bg-border-color' }) => {
     return (
         <button
             type="button"
@@ -13,7 +15,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange }) => {
             aria-checked={checked}
             onClick={() => onChange(!checked)}
             className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
-                checked ? 'bg-accent' : 'bg-border-color'
+                checked ? onColor : offColor
             }`}
         >
             <span

@@ -7,7 +7,7 @@ import EditProjectDetailsModal from '../EditProjectDetailsModal.tsx';
 import ProjectNotesModal from '../ProjectNotesModal.tsx';
 import DesignReviewModal from '../DesignReviewModal.tsx';
 import { DesignFeedbackItem } from '../../utils/types.ts';
-import { reviewRoom } from '../../services/projectAnalysisService.ts';
+import { reviewRoom, analyzeProject } from '../../services/projectAnalysisService.ts';
 import { useUserContext } from '../../context/UserContext.tsx';
 import toast from 'react-hot-toast';
 
@@ -22,6 +22,7 @@ const WorkspaceHeader: React.FC = () => {
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [feedback, setFeedback] = useState<DesignFeedbackItem[]>([]);
     const [isLoadingReview, setIsLoadingReview] = useState(false);
+    const [reviewTitle, setReviewTitle] = useState('');
 
     const activeRoom = projectData?.rooms.find(r => r.id === activeRoomId);
 
@@ -31,11 +32,35 @@ const WorkspaceHeader: React.FC = () => {
         try {
             const result = await reviewRoom(activeRoom, projectData, userProfile);
             setFeedback(result);
+            setReviewTitle(`Design Review: ${activeRoom.roomName}`);
             setIsReviewModalOpen(true);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Failed to get AI review.");
         } finally {
             setIsLoadingReview(false);
+        }
+    };
+    
+    const handleReviewProject = async () => {
+        if (!projectData) return;
+        setIsLoadingReview(true);
+        try {
+            const result = await analyzeProject(projectData, userProfile);
+            setFeedback(result);
+            setReviewTitle(`Project Review: ${projectData.projectName}`);
+            setIsReviewModalOpen(true);
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to get project review.");
+        } finally {
+            setIsLoadingReview(false);
+        }
+    };
+
+    const handleSaveProject = () => {
+        // Project auto-saves via useEffect in useProjectManagement,
+        // so this button just provides explicit user feedback.
+        if (projectData) {
+            toast.success(`Project "${projectData.projectName}" saved successfully!`);
         }
     };
 
@@ -52,8 +77,12 @@ const WorkspaceHeader: React.FC = () => {
                     <RoomSelectorDropdown />
                     <button onClick={() => setIsDetailsModalOpen(true)} className="btn btn-secondary text-sm">Edit Details</button>
                     <button onClick={() => setIsNotesModalOpen(true)} className="btn btn-secondary text-sm">Notes</button>
+                    <button onClick={handleSaveProject} className="btn btn-secondary text-sm">Save Project</button>
+                    <button onClick={handleReviewProject} className="btn btn-secondary text-sm" disabled={isLoadingReview}>
+                        {isLoadingReview ? 'Analyzing...' : 'Review Project'}
+                    </button>
                     <button onClick={handleReviewRoom} className="btn btn-secondary text-sm" disabled={isLoadingReview}>
-                        {isLoadingReview ? 'Analyzing...' : 'AI Review'}
+                        {isLoadingReview ? 'Analyzing...' : 'Review Room'}
                     </button>
                     <button 
                         onClick={() => handleGenerateProposal(projectData, navigate)}
@@ -69,7 +98,7 @@ const WorkspaceHeader: React.FC = () => {
                 isOpen={isReviewModalOpen} 
                 onClose={() => setIsReviewModalOpen(false)} 
                 feedbackItems={feedback}
-                title={`Design Review: ${activeRoom?.roomName}`}
+                title={reviewTitle}
             />
         </>
     );

@@ -21,7 +21,8 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
             ],
             displayType: 'lcd_video_wall',
             displayCount: 6,
-            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 3 }, technology: 'avoip_600' },
+            // FIX: Corrected `technology` to be a valid enum value ('avoip' or 'processor'). The specific AVoIP series is determined by the equipment list.
+            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 3 }, technology: 'avoip', multiviewRequired: true },
             features: [],
             functionalityStatement: 'A mission-critical visualization system for an industrial process control room. The NetworkHD 600 series delivers pixel-perfect, zero-latency uncompressed video over a 10GbE network, ensuring operators see real-time data without any delay or compression artifacts. The 3x2 video wall can display multiple SCADA system outputs, camera feeds, and telemetry data in flexible layouts controlled by a simple touch interface.',
             manuallyAddedEquipment: [
@@ -78,7 +79,7 @@ export const INDUSTRIAL_TEMPLATES: UserTemplate[] = [
         templateName: 'Remote Monitoring Station',
         description: 'An AVoIP-based station allowing remote monitoring of control room screens.',
         vertical: 'ind',
-        imageUrl: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a128?w=400&h=300&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a128?w=800&q=80',
         roomData: {
             id: '', roomName: 'Manager\'s Office', roomType: 'Other', designTier: 'Silver',
             dimensions: { length: 5, width: 4, height: 3 }, maxParticipants: 2, 

@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState } from 'react';
 // FIX: Changed import to namespace to fix "no exported member 'useNavigate'" error.
 import * as ReactRouterDOM from 'react-router-dom';
@@ -32,15 +33,13 @@ const ProjectSetupScreen: React.FC = () => {
         setIsWizardOpen(true);
     };
 
-    const handleSaveFromWizard = (savedRoom: RoomData) => {
+    const handleSaveRoom = (savedRoom: RoomData) => {
         const existing = rooms.find(r => r.id === savedRoom.id);
         if (existing) {
             setRooms(rooms.map(r => (r.id === savedRoom.id ? savedRoom : r)));
         } else {
             setRooms([...rooms, savedRoom]);
         }
-        setIsWizardOpen(false);
-        setEditingRoom(null);
     };
 
     const handleRemoveRoom = (roomId: string) => {
@@ -110,8 +109,11 @@ const ProjectSetupScreen: React.FC = () => {
             
             <RoomWizard 
                 isOpen={isWizardOpen}
-                onClose={() => setIsWizardOpen(false)}
-                onSave={handleSaveFromWizard}
+                onClose={() => {
+                    setIsWizardOpen(false);
+                    setEditingRoom(null);
+                }}
+                onSave={handleSaveRoom}
                 initialData={editingRoom}
             />
         </div>

@@ -54,9 +54,7 @@ const BasicInfoInputs: React.FC<BasicInfoInputsProps> = ({ point, onUpdate }) =>
                 onChange={(e) => onUpdate({ role: e.target.value as any })}
                 className="w-full p-2 border rounded-md bg-input-bg mt-1"
             >
-                <option value="main">Main Display</option>
-                <option value="repeater">Repeater Display</option>
-                <option value="confidence">Confidence Monitor</option>
+                {OUTPUT_ROLES.map(role => <option key={role} value={role.toLowerCase()}>{role}</option>)}
             </select>
         </div>
       )}

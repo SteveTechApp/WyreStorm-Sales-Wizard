@@ -90,7 +90,8 @@ export const RETAIL_TEMPLATES: UserTemplate[] = [
                 { id: uuidv4(), name: 'Video Wall Displays', deviceType: 'Room Display', type: 'output', quantity: 4, connectionType: 'HDMI', distributionType: 'Direct', distance: 3, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
             displayType: 'lcd_video_wall', displayCount: 4,
-            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'processor_sw0204vw' },
+            // FIX: Corrected `technology` to be a valid enum value ('avoip' or 'processor'). The specific processor is defined in the equipment list.
+            videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'processor', multiviewRequired: false },
             features: [],
             functionalityStatement: 'A 2x2 video wall creating a high-impact visual at the store entrance. A dedicated SW-0204-VW video wall processor takes a single 4K media player source and splits it across the four displays. The processor handles bezel correction for a seamless look. This is a robust, cost-effective solution for a single-source video wall.',
             manuallyAddedEquipment: [

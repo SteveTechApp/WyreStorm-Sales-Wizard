@@ -89,7 +89,8 @@ export interface StructuredSystemDiagram {
 export interface VideoWallConfig {
     type: 'lcd' | 'led';
     layout: { rows: number; cols: number };
-    technology: 'processor_sw0204vw' | 'processor_sw0206vw' | 'avoip_150' | 'avoip_500' | 'avoip_600';
+    technology: 'avoip' | 'processor';
+    multiviewRequired: boolean;
 }
 
 export interface ManuallyAddedEquipment extends Product {

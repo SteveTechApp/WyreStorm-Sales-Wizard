@@ -100,8 +100,8 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
         setCurrentStep(prev => Math.max(prev - 1, 0));
     };
 
-    const handleSave = () => {
-        if (!validateStep(currentStep)) return; // Validate final step before saving
+    const handleSave = (): boolean => {
+        if (!validateStep(currentStep)) return false;
         const finalRoomData: RoomData = {
             ...answers,
             id: initialData?.id || uuidv4(),
@@ -109,6 +109,18 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
             manuallyAddedEquipment: initialData?.manuallyAddedEquipment || [],
         };
         onSave(finalRoomData);
+        return true;
+    };
+
+    const handleSaveProgress = () => {
+        const currentRoomData: RoomData = {
+            ...answers,
+            id: initialData?.id || uuidv4(),
+            systemDiagram: initialData?.systemDiagram,
+            manuallyAddedEquipment: initialData?.manuallyAddedEquipment || [],
+        };
+        onSave(currentRoomData);
+        toast.success('Progress saved!');
     };
 
     const isFirstStep = currentStep === 0;
@@ -122,6 +134,7 @@ export const useRoomWizard = (initialData: RoomData | null, onSave: (roomData: R
         handleNext,
         handlePrev,
         handleSave,
+        handleSaveProgress,
         isFirstStep,
         isLastStep,
     };
