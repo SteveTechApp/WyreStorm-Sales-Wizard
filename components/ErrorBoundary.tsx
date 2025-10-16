@@ -20,6 +20,10 @@ class ErrorBoundaryInternal extends React.Component<ErrorBoundaryInternalProps, 
   // The state must be declared as a class property before it can be assigned in the constructor.
   state: State;
 
+  // FIX: Explicitly declare props to work around a TypeScript/linting configuration issue
+  // where inherited properties from React.Component are not being recognized.
+  public readonly props: ErrorBoundaryInternalProps & { children?: React.ReactNode };
+
   constructor(props: ErrorBoundaryInternalProps) {
     super(props);
     this.state = {
