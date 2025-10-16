@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProjectContext } from '../context/ProjectContext.tsx';
 import { useUserContext } from '../context/UserContext.tsx';
 import { ProjectData, ProjectSetupData, RoomData, UserTemplate, ManuallyAddedEquipment, DesignTier, ValueEngineeringSuggestion } from '../utils/types.ts';
-import { analyzeRequirements } from '../services/projectAnalysisService.ts';
+import { analyzeRequirements, analyzeSurveyDocument } from '../services/projectAnalysisService.ts';
 import { designRoom, generateDiagram } from '../services/roomDesignerService.ts';
 import { generateProposal } from '../services/proposalService.ts';
 import { createNewRoom } from '../utils/utils.ts';
@@ -60,6 +60,39 @@ export const useProjectGeneration = () => {
             };
             dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
             toast.success('Project created from client brief!');
+            navigate(`/design/${newProject.projectId}`);
+        });
+    };
+    
+    const handleSurveyImport = async (imageData: string, imageMimeType: string, navigate: ReturnType<typeof useNavigate>) => {
+        await withLoading('template', async () => {
+            const parsedRoomData = await analyzeSurveyDocument(imageData, imageMimeType, userProfile);
+
+            // FIX: Add default values for roomType and designTier to satisfy the RoomData type.
+            // The analyzeSurveyDocument service returns a Partial<RoomData>, which may not include these required fields.
+            const newRoom: RoomData = {
+                ...createNewRoom(),
+                ...parsedRoomData,
+                id: uuidv4(),
+                roomName: parsedRoomData.roomName || 'Imported Room',
+                roomType: parsedRoomData.roomType || 'Other',
+                designTier: parsedRoomData.designTier || 'Silver',
+            };
+
+            const newProject: ProjectData = {
+                projectId: uuidv4(),
+                projectName: `${newRoom.roomName} Project`,
+                clientName: 'New Client',
+                lastSaved: new Date().toISOString(),
+                rooms: [newRoom],
+                proposals: [],
+                unitSystem: userProfile.unitSystem,
+                notes: `Generated from site survey scan.`,
+                infrastructure: { useDedicatedNetwork: false, enableTouchAppPreview: false, cablingByOthers: false },
+                productDatabase: getActiveProductDatabase(),
+            };
+            dispatchProjectAction({ type: 'SET_PROJECT', payload: newProject });
+            toast.success('Project created from site survey!');
             navigate(`/design/${newProject.projectId}`);
         });
     };
@@ -202,6 +235,7 @@ export const useProjectGeneration = () => {
     return {
         handleAgentSubmit,
         handleProjectSetupSubmit,
+        handleSurveyImport,
         handleStartFromTemplate,
         handleDesignRoom,
         handleGenerateDiagram,

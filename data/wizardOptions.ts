@@ -26,7 +26,7 @@ export const MAIN_DISPLAY_OPTIONS = [
     { id: 'dual_lfd', label: 'Dual Displays', icon: DualDisplayIcon, description: 'Two side-by-side TVs or displays.' },
     { id: 'interactive_lfd', label: 'Interactive Display', icon: InteractiveDisplayIcon, description: 'A single touch-enabled display.' },
     { id: 'projector', label: 'Single Projector', icon: ProjectorIcon, description: 'A single projector and screen setup.' },
-    { id: 'dual_projector', label: 'Dual Projectors', icon: DualDisplayIcon, description: 'Two projectors, often side-by-side.' },
+    { id: 'interactive_projector', label: 'Interactive Projector', icon: InteractiveDisplayIcon, description: 'A projector with interactivity features.' },
     { id: 'video_wall', label: 'Video Wall', icon: VideoWallIcon, description: 'A multi-screen, tiled video wall.' },
 ];
 

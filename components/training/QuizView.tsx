@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrainingModule, QuizAnswer } from '../../utils/types';
+import { TrainingModule, QuizAnswer } from '../../utils/types.ts';
 
 interface QuizViewProps {
   module: TrainingModule;
@@ -46,9 +46,9 @@ const QuizView: React.FC<QuizViewProps> = ({ module, onQuizComplete }) => {
                 <button
                   key={option}
                   onClick={() => setSelectedAnswer(option)}
-                  className={`w-full text-left p-3 border-2 rounded-md transition-colors text-text-primary ${
+                  className={`w-full text-left p-3 border-2 rounded-md transition-all duration-200 text-text-primary ${
                     selectedAnswer === option
-                      ? 'bg-accent-bg-subtle border-accent'
+                      ? 'bg-accent-bg-subtle border-accent shadow-lg shadow-accent/20 ring-1 ring-accent'
                       : 'bg-background hover:bg-border-color border-border-color'
                   }`}
                 >

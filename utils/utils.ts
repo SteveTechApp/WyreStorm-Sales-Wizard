@@ -1,5 +1,4 @@
 import { RoomData, Feature } from './types.ts';
-import { v4 as uuidv4 } from 'uuid';
 
 export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' | 'designTier'> => ({
     dimensions: { length: 8, width: 5, height: 2.7 },
@@ -11,7 +10,6 @@ export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' |
     features: [],
     functionalityStatement: 'A standard meeting space.',
     manuallyAddedEquipment: [],
-    valueEngineeringConstraints: [],
     constructionDetails: {
         wallConstruction: 'drywall',
         cableContainment: 'trunking',
@@ -41,12 +39,11 @@ export const createNewRoom = (): Omit<RoomData, 'id' | 'roomName' | 'roomType' |
 });
 
 /**
- * Strips markdown code fences and safely parses a JSON string.
- * @param text The raw text response from the AI.
+ * Strips markdown and safely parses a JSON string from an AI response.
+ * @param text The raw text response.
  * @returns The parsed JSON object.
- * @throws An error if the JSON is malformed.
  */
-export const cleanAndParseJson = (text: string): any => {
+export const safeParseJson = (text: string): any => {
   const cleaned = text.trim().replace(/^`{3}(?:json)?|`{3}$/g, '');
   try {
     return JSON.parse(cleaned);
@@ -57,32 +54,34 @@ export const cleanAndParseJson = (text: string): any => {
 };
 
 /**
- * Toggles the presence of a string in an array.
- * @param array The array to modify.
- * @param item The string item to add or remove.
+ * Adds an item to an array if it doesn't exist, or removes it if it does.
+ * @param array The source array.
+ * @param item The item to toggle.
  * @returns A new array with the item toggled.
  */
-export const toggleArrayItem = (array: string[], item: string): string[] => {
-    return array.includes(item) ? array.filter(i => i !== item) : [...array, item];
+export const toggleArrayItem = <T>(array: T[], item: T): T[] => {
+    const index = array.indexOf(item);
+    if (index === -1) {
+        return [...array, item];
+    } else {
+        const newArray = [...array];
+        newArray.splice(index, 1);
+        return newArray;
+    }
 };
 
 /**
- * Toggles a feature object in the features array based on its name.
- * @param features The current array of features.
+ * Adds or removes a feature from an array of Feature objects.
+ * @param features The array of features.
  * @param featureName The name of the feature to toggle.
- * @param isEnabled Whether the feature should be in the array.
- * @param priority The priority to assign if the feature is added.
+ * @param isEnabled If true, adds the feature; if false, removes it.
  * @returns A new array with the feature toggled.
  */
-export const toggleFeature = (
-    features: Feature[],
-    featureName: string,
-    isEnabled: boolean,
-    priority: 'must-have' | 'nice-to-have' = 'must-have'
-): Feature[] => {
+export const toggleFeature = (features: Feature[], featureName: string, isEnabled: boolean): Feature[] => {
     const featureExists = features.some(f => f.name === featureName);
     if (isEnabled && !featureExists) {
-        return [...features, { name: featureName, priority }];
+        // Defaults to 'nice-to-have' when toggled on, can be changed later.
+        return [...features, { name: featureName, priority: 'nice-to-have' }];
     }
     if (!isEnabled && featureExists) {
         return features.filter(f => f.name !== featureName);

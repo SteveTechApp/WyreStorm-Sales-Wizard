@@ -8,9 +8,11 @@ import { MODULE_5_DATASHEETS } from './training/module5_datasheets.ts';
 import { MODULE_6_VIDEOWALLS } from './training/module6_videowalls.ts';
 import { MODULE_7_FIELD_GUIDES } from './training/module7_field_guides.ts';
 import { MODULE_8_BANT } from './training/module8_bant.ts';
+import { MODULE_8B_SALES_INQUIRY } from './training/module8b_sales_inquiry.ts';
 import { MODULE_9_TROUBLESHOOTING } from './training/module9_troubleshooting.ts';
 import { MODULE_10_APIS } from './training/module10_apis.ts';
 import { MODULE_11_INSTALLATION } from './training/module11_installation.ts';
+import { MODULE_12_SITE_SURVEY } from './training/module12_site_survey.ts';
 
 export const TRAINING_MODULES: TrainingModule[] = [
     MODULE_0_TERMINOLOGY,
@@ -22,7 +24,9 @@ export const TRAINING_MODULES: TrainingModule[] = [
     MODULE_6_VIDEOWALLS,
     MODULE_7_FIELD_GUIDES,
     MODULE_8_BANT,
+    MODULE_8B_SALES_INQUIRY,
     MODULE_9_TROUBLESHOOTING,
     MODULE_10_APIS,
     MODULE_11_INSTALLATION,
+    MODULE_12_SITE_SURVEY,
 ];

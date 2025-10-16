@@ -1,7 +1,8 @@
 import { GoogleGenAI } from '@google/genai';
 import { Product, RelatedProductsPayload } from '../utils/types.ts';
 import { PRODUCT_FINDER_SCHEMA, RELATED_PRODUCTS_SCHEMA } from './schemas.ts';
-import { cleanAndParseJson } from '../utils/utils.ts';
+// FIX: Changed cleanAndParseJson to safeParseJson
+import { safeParseJson } from '../utils/utils.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -39,7 +40,7 @@ Return only valid JSON. Do not include markdown formatting or explanations.
     if (!text) {
         throw new Error("Empty AI response.");
     }
-    const result = cleanAndParseJson(text);
+    const result = safeParseJson(text);
     return result.skus || [];
   } catch (error) {
     console.error("Error finding products:", error);
@@ -81,7 +82,7 @@ Return only valid JSON. Do not include markdown formatting or explanations.
     if (!text) {
         throw new Error("Empty AI response.");
     }
-    return cleanAndParseJson(text);
+    return safeParseJson(text);
   } catch (error) {
     console.error("Error finding related products:", error);
     throw new Error("Failed to find related products due to an API or parsing error.");

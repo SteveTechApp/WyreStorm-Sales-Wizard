@@ -12,7 +12,7 @@ export const TRANSPORTATION_TEMPLATES: UserTemplate[] = [
             id: '',
             roomName: 'Terminal Signage System',
             roomType: 'Large Venue',
-            designTier: 'Silver',
+            designTier: 'Bronze',
             dimensions: { length: 500, width: 200, height: 12 },
             maxParticipants: 5000,
             ioRequirements: [

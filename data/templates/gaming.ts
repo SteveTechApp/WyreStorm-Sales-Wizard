@@ -45,6 +45,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             dimensions: { length: 30, width: 20, height: 7 }, maxParticipants: 200, 
             ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
+            videoWallConfig: { type: 'led', layout: { rows: 1, cols: 1 }, technology: 'processor', multiviewRequired: true },
             features: [{ name: 'Multi-Display Support', priority: 'must-have' }],
             functionalityStatement: 'The centerpiece of a modern sportsbook: a massive, seamless direct-view LED video wall. A powerful AVoIP system with multiview capabilities (NetworkHD 150) allows the wall to be configured in endless ways, showing multiple live games, odds boards, and promotional content simultaneously. Operators can instantly recall presets for different sports or times of day from a touch panel controller.',
             manuallyAddedEquipment: [
@@ -105,6 +106,7 @@ export const GAMING_TEMPLATES: UserTemplate[] = [
             dimensions: { length: 40, width: 30, height: 10 }, maxParticipants: 500, 
             ioRequirements: [],
             displayType: 'led_video_wall', displayCount: 1,
+            videoWallConfig: { type: 'led', layout: { rows: 1, cols: 1 }, technology: 'avoip', multiviewRequired: true },
             features: [],
             functionalityStatement: 'A state-of-the-art esports arena. Player stations feature high-refresh-rate monitors with zero-latency connections. A broadcast production booth switches between player cameras, gameplay feeds, and commentator analysis. The main spectator experience is a large LED wall showing the primary game feed. The entire system is built on a high-speed NetworkHD 600 series AVoIP backbone to ensure minimal latency, which is critical for competitive gaming.',
             manuallyAddedEquipment: [

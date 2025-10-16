@@ -12,6 +12,7 @@ const ProposalDisplay = lazy(() => import('./pages/ProposalDisplay.tsx'));
 const TrainingPage = lazy(() => import('./pages/TrainingPage.tsx'));
 const TemplateBrowserScreen = lazy(() => import('./pages/TemplateBrowserScreen.tsx'));
 const QuickQuestionPage = lazy(() => import('./components/QuickQuestionModal.tsx'));
+const SurveyImportPage = lazy(() => import('./pages/SurveyImportPage.tsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx'));
 
 const suspenseFallback = (
@@ -26,6 +27,7 @@ const AppRoutes = () => (
             <Route path="/" element={<WelcomeScreen />} />
             <Route path="/setup" element={<ProjectSetupScreen />} />
             <Route path="/agent" element={<AgentInputForm />} />
+            <Route path="/survey" element={<SurveyImportPage />} />
             <Route path="/design/:projectId" element={<DesignCoPilot />} />
             <Route path="/proposal/:projectId/:proposalId" element={<ProposalDisplay />} />
             <Route path="/training" element={<TrainingPage />} />

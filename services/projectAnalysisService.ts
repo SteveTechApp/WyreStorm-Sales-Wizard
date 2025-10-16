@@ -2,7 +2,8 @@ import { GoogleGenAI } from '@google/genai';
 import { ProjectData, RoomData, UserProfile, DesignFeedbackItem, ProjectSetupData } from '../utils/types.ts';
 import { REQUIREMENTS_ANALYSIS_SCHEMA, PROJECT_INSIGHTS_SCHEMA, ROOM_REVIEW_SCHEMA } from './schemas.ts';
 import { getLocalizationInstructions } from './localizationService.ts';
-import { cleanAndParseJson } from '../utils/utils.ts';
+import { safeParseJson } from '../utils/utils.ts';
+import { MODULE_12_SITE_SURVEY } from '../data/training/module12_site_survey.ts';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -41,12 +42,60 @@ export const analyzeRequirements = async (documentText: string, userProfile: Use
         if (!text) {
             throw new Error("Empty AI response.");
         }
-        return cleanAndParseJson(text);
+        return safeParseJson(text);
     } catch (error) {
         console.error("Error analyzing requirements:", error);
         throw new Error("Failed to analyze client brief due to an API or parsing error.");
     }
 };
+
+export const analyzeSurveyDocument = async (imageDataB64: string, imageMimeType: string, userProfile: UserProfile | null): Promise<Partial<RoomData>> => {
+    const formStructure = MODULE_12_SITE_SURVEY.contentPages[0].content;
+    const prompt = `
+You are an expert AI assistant specializing in Optical Character Recognition (OCR) and data extraction from documents.
+
+The user has provided an image of a filled-out 'Site Survey Checklist' document. Your task is to accurately analyze the image, extract all information from handwritten fields and checkboxes, and return it as a valid JSON object.
+
+This is the structure and content of the form you are analyzing:
+---
+${formStructure}
+---
+
+**CRITICAL INSTRUCTIONS:**
+1.  **Extract All Fields**: Parse every field on the form.
+2.  **Handle Units**: Dimensions might be in meters (m) or feet (ft). Your JSON output for dimensions (length, width, height) **MUST** be a number in **METERS**. If the form specifies feet, convert it (1 foot = 0.3048 meters).
+3.  **Map Checkboxes**: For checkboxes under "Construction Details", map the checked items to the corresponding JSON property (e.g., if "Drywall" is checked, output \`"wallConstruction": "drywall"\`). Infer the correct enum value.
+4.  **Format JSON**: The output must be a single JSON object. Do not include any other text, explanations, or markdown formatting.
+
+Return ONLY the valid JSON object.
+`;
+    try {
+        const imagePart = {
+            inlineData: {
+                mimeType: imageMimeType,
+                data: imageDataB64,
+            },
+        };
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: { parts: [imagePart, { text: prompt }] },
+            config: {
+                responseMimeType: 'application/json',
+            },
+        });
+        
+        const text = response.text;
+        if (!text) throw new Error("Empty AI response for survey analysis.");
+
+        return safeParseJson(text);
+
+    } catch (error) {
+        console.error("Error analyzing survey document:", error);
+        throw new Error("Failed to analyze survey due to an API or parsing error.");
+    }
+};
+
 
 export const analyzeProject = async (project: ProjectData, userProfile: UserProfile | null): Promise<DesignFeedbackItem[]> => {
     const localization = getLocalizationInstructions(userProfile);
@@ -82,7 +131,7 @@ export const analyzeProject = async (project: ProjectData, userProfile: UserProf
         if (!text) {
             throw new Error("Empty AI response.");
         }
-        const result = cleanAndParseJson(text);
+        const result = safeParseJson(text);
         return result.feedback;
     } catch (error) {
         console.error("Error analyzing project:", error);
@@ -126,7 +175,7 @@ export const reviewRoom = async (room: RoomData, project: ProjectData, userProfi
         if (!text) {
             throw new Error("Empty AI response.");
         }
-        const result = cleanAndParseJson(text);
+        const result = safeParseJson(text);
         return result.feedback;
     } catch (error) {
         console.error("Error reviewing room:", error);

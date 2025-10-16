@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RoomWizardAnswers } from '../../../utils/types.ts';
 import WizardToggleOption from '../common/WizardToggleOption.tsx';
 import { toggleFeature } from '../../../utils/utils.ts';
@@ -13,6 +13,11 @@ interface DisplayConfigProps {
 const DisplayConfig: React.FC<DisplayConfigProps> = ({ answers, updateAnswers, isProjector }) => {
     
     const [localSize, setLocalSize] = useState(answers.displaySize || 75);
+    
+    useEffect(() => {
+        setLocalSize(answers.displaySize || 75);
+    }, [answers.displaySize]);
+
 
     const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLocalSize(Number(e.target.value));
@@ -51,6 +56,7 @@ const DisplayConfig: React.FC<DisplayConfigProps> = ({ answers, updateAnswers, i
 
     return (
         <div className="space-y-6 mt-6 p-4 border-t border-border-color">
+             <h3 className="text-xl font-bold">Display Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label htmlFor="display-size" className="block text-sm font-medium text-text-secondary">{sizeLabel}</label>
@@ -77,7 +83,7 @@ const DisplayConfig: React.FC<DisplayConfigProps> = ({ answers, updateAnswers, i
                     </div>
                 )}
             </div>
-            {!isProjector &&
+            {!isProjector && answers.features.some(f => f.name === 'Interactive Display') &&
                 <WizardToggleOption
                     label="Enable Touch Interactivity"
                     description="The display will support touch input, for whiteboarding or interactive presentations."

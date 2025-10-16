@@ -13,7 +13,7 @@ const DisplayTypeCard: React.FC<DisplayTypeCardProps> = ({ icon: Icon, label, de
     <button
       onClick={onClick}
       className={`p-4 border-2 rounded-lg text-left w-full h-full flex flex-col justify-between transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${
-        isSelected ? 'border-accent bg-accent-bg-subtle' : 'border-border-color bg-background hover:border-accent-border-subtle'
+        isSelected ? 'border-accent bg-accent-bg-subtle shadow-lg shadow-accent/20 ring-1 ring-accent' : 'border-border-color bg-background hover:border-accent-border-subtle'
       }`}
     >
       <div>

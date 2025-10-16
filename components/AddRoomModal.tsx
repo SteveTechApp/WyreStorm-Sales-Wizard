@@ -71,7 +71,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({ isOpen, onClose, onAddRoom 
                   key={tier}
                   type="button"
                   onClick={() => setDesignTier(tier)}
-                  className={`p-3 border rounded-md text-left transition-colors ${designTier === tier ? 'border-accent bg-accent-bg-subtle' : 'border-border-color hover:border-accent-border-subtle'}`}
+                  className={`p-3 border rounded-md text-left transition-all duration-200 ${designTier === tier ? 'border-accent bg-accent-bg-subtle shadow-md shadow-accent/20 ring-1 ring-accent' : 'border-border-color hover:border-accent-border-subtle'}`}
                 >
                   <div className="flex items-center gap-2">
                       <TierIcon tier={tier} className="h-5 w-5" />

@@ -1,6 +1,6 @@
 import React from 'react';
 import RecentProjects from '../RecentProjects.tsx';
-import { GridIcon, EducationIcon, PlusIcon, SparklesIcon, QuestionMarkCircleIcon } from '../Icons.tsx';
+import { GridIcon, PlusIcon, SparklesIcon, DocumentScannerIcon } from '../Icons.tsx';
 import Logo from '../Logo.tsx';
 import ActionButton from './ActionButton.tsx';
 import { useUserContext } from '../../context/UserContext.tsx';
@@ -48,17 +48,17 @@ const DefaultWelcome: React.FC = () => {
                             title="Analyze Client Intel"
                             description="Let the AI parse a brief, email, or RFQ to build a project."
                         />
+                         <ActionButton 
+                            to="/survey"
+                            icon={<DocumentScannerIcon />}
+                            title="Import Site Survey"
+                            description="Upload or scan a completed site survey form to create a room."
+                        />
                         <ActionButton 
                             to="/templates"
                             icon={<GridIcon />}
                             title="Start From Template"
                             description="Use a pre-configured room design for any vertical market."
-                        />
-                        <ActionButton 
-                            to="/ask"
-                            icon={<QuestionMarkCircleIcon />}
-                            title="Ask a Quick Question"
-                            description="Get instant answers from the Wingman AI about products or AV tech."
                         />
                     </div>
                 </div>

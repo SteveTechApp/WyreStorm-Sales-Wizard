@@ -21,7 +21,6 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
             ],
             displayType: 'lcd_video_wall',
             displayCount: 4,
-            // FIX: Corrected `technology` to be a valid enum value ('avoip' or 'processor'). The specific AVoIP series is determined by the equipment list.
             videoWallConfig: { type: 'lcd', layout: { rows: 2, cols: 2 }, technology: 'avoip', multiviewRequired: true },
             features: [],
             functionalityStatement: 'A compact but powerful security operations center for 2-4 operators. A 2x2 video wall displays a flexible combination of security camera feeds and data sources. The system is driven by a NetworkHD 500 AVoIP system, allowing any source to be shown on any screen or across the entire wall. Operators can control layouts from their workstations.',
@@ -51,7 +50,6 @@ export const COMMAND_TEMPLATES: UserTemplate[] = [
             ],
             displayType: 'lcd_video_wall',
             displayCount: 16,
-            // FIX: Corrected `technology` to be a valid enum value ('avoip' or 'processor'). The specific AVoIP series is determined by the equipment list.
             videoWallConfig: { type: 'lcd', layout: { rows: 4, cols: 4 }, technology: 'avoip', multiviewRequired: true },
             features: [ { name: 'Video Conferencing', priority: 'must-have' } ],
             functionalityStatement: 'A mission-critical emergency operations center featuring a large 4x4 video wall. A zero-latency NetworkHD 600 Series AVoIP system distributes uncompressed 4K video from numerous sources (broadcast news, GIS mapping, IP cameras, PCs) to the main wall and individual operator desk displays. The system is designed for 24/7 reliability and allows for flexible, on-the-fly configuration of screen layouts via a touch panel controller.',

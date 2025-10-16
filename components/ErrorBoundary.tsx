@@ -16,8 +16,10 @@ interface State {
 }
 
 class ErrorBoundaryInternal extends React.Component<ErrorBoundaryInternalProps, State> {
-  // FIX: Re-added the constructor to explicitly pass props to React.Component,
-  // resolving the issue where 'this.props' was not recognized.
+  // FIX: Added explicit state property declaration to resolve "Property 'state' does not exist" error.
+  // The state must be declared as a class property before it can be assigned in the constructor.
+  state: State;
+
   constructor(props: ErrorBoundaryInternalProps) {
     super(props);
     this.state = {

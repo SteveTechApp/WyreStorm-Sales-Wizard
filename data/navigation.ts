@@ -1,6 +1,7 @@
 
+
 import React, { ReactElement } from 'react';
-import { SparklesIcon, PlusIcon, GridIcon, EducationIcon } from '../components/Icons.tsx';
+import { SparklesIcon, PlusIcon, GridIcon, DocumentScannerIcon } from '../components/Icons.tsx';
 
 export interface NavLinkItem {
   path: string;
@@ -32,11 +33,10 @@ export const NAV_LINKS: NavItem[] = [
         icon: React.createElement(SparklesIcon),
       },
       {
-        path: '/setup',
-        label: 'Plan New Project',
-        description: 'Manually define project parameters and configure rooms.',
-        // FIX: Replaced JSX with React.createElement to avoid parsing ambiguity in a .ts file.
-        icon: React.createElement(PlusIcon),
+        path: '/survey',
+        label: 'Import Site Survey',
+        description: 'Scan or upload a survey form to create a project.',
+        icon: React.createElement(DocumentScannerIcon),
       },
       {
         path: '/templates',

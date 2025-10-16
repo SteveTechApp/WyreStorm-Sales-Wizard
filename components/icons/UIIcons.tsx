@@ -95,3 +95,9 @@ export const InformationCircleIcon: React.FC<{className?: string}> = ({ classNam
       <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
     </svg>
 );
+
+export const DocumentScannerIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5 0V6.75A2.25 2.25 0 0111.25 4.5h3.75a2.25 2.25 0 012.25 2.25v3.75m-4.5 0h4.5m-4.5 0l-1.5-1.5m1.5 1.5l-1.5 1.5M6 12h3" />
+    </svg>
+);

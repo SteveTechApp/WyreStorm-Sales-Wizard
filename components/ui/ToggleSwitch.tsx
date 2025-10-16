@@ -14,8 +14,8 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange, onColor 
             role="switch"
             aria-checked={checked}
             onClick={() => onChange(!checked)}
-            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
-                checked ? onColor : offColor
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
+                checked ? `${onColor} shadow-md shadow-accent/20 ring-1 ring-accent` : offColor
             }`}
         >
             <span

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Product } from '../utils/types.ts';
 import { PRODUCT_DATABASE } from '../data/productDatabase.ts';
 import { TRAINING_MODULES } from '../data/trainingContent.ts';
-import { NAV_LINKS } from '../data/navigation.ts';
+import { NAV_LINKS, NavItem } from '../data/navigation.ts';
 import InfoModal from './InfoModal.tsx';
 import ProductInfoModal from './ProductInfoModal.tsx';
 
@@ -88,7 +88,7 @@ const Search: React.FC = () => {
 
             // FIX: Add an explicit return type to the flatMap callback to resolve TypeScript's difficulty with inferring types from a union of arrays.
             const pageResults = NAV_LINKS.flatMap(
-                (l): Array<{ path: string; label: string }> => ('path' in l ? [l] : l.children)
+                (l): Array<{ path: string; label: string }> => ('path' in l ? [l] : ('children' in l ? l.children : []))
             ).filter(l =>
                 l.label.toLowerCase().includes(lowerCaseQuery)
             ).slice(0, 3);
@@ -166,15 +166,15 @@ const Search: React.FC = () => {
                     
                     {results.training.length > 0 && (
                         <div className="mb-4">
-                            <h4 className="font-bold text-sm uppercase text-text-secondary px-3 mb-1">Training</h4>
-                            {results.training.map(t => <SearchResultItem key={t.id} title={t.title} category="Module" onClick={() => handlePageClick('/training')} />)}
+                            <h4 className="font-bold text-sm uppercase text-text-secondary px-3 mb-1">Training Modules</h4>
+                            {results.training.map(t => <SearchResultItem key={t.id} title={t.title} category="Training" onClick={() => handlePageClick('/training')} />)}
                         </div>
                     )}
 
                     {results.pages.length > 0 && (
                         <div>
-                            <h4 className="font-bold text-sm uppercase text-text-secondary px-3 mb-1">Navigation</h4>
-                            {results.pages.map(l => <SearchResultItem key={l.path} title={l.label} category="Page" onClick={() => handlePageClick(l.path)} />)}
+                            <h4 className="font-bold text-sm uppercase text-text-secondary px-3 mb-1">Pages</h4>
+                            {results.pages.map(p => <SearchResultItem key={p.path} title={p.label} category="Navigation" onClick={() => handlePageClick(p.path)} />)}
                         </div>
                     )}
                 </div>
@@ -191,4 +191,5 @@ const Search: React.FC = () => {
     );
 };
 
+// FIX: Add default export
 export default Search;

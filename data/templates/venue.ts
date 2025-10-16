@@ -69,16 +69,16 @@ export const VENUE_TEMPLATES: UserTemplate[] = [
         vertical: 'ven',
         imageUrl: 'https://images.unsplash.com/photo-1618221118491-39c8b4317801?w=400&h=300&fit=crop&q=80',
         roomData: {
-            id: '', roomName: 'Luxury Suite 212', roomType: 'Other', designTier: 'Silver',
+            id: '', roomName: 'Luxury Suite 212', roomType: 'Other', designTier: 'Gold',
             dimensions: { length: 10, width: 8, height: 3 }, maxParticipants: 20, 
             ioRequirements: [
                 { id: uuidv4(), name: 'Suite Displays', deviceType: 'Room Display', type: 'output', quantity: 3, connectionType: 'HDMI', distributionType: 'AVoIP', distance: 10, terminationType: 'Wall Mount', control: { needed: false, types: [] } },
             ],
-            displayType: 'dual_display', displayCount: 3,
+            displayType: 'single', displayCount: 3,
             features: [],
-            functionalityStatement: 'A high-end AV experience for a luxury suite. Three large 4K displays can show the main game feed, replay channels, or other broadcast sources. A NetworkHD 500 series decoder is used for each display, and a simple in-room touch panel allows guests to select which channel they want to watch on which screen. High-quality in-ceiling speakers provide immersive audio.',
+            functionalityStatement: 'A premium, Gold-tier AV experience for a luxury suite. Three large 4K displays can show the main game feed, replay channels, or other broadcast sources with zero latency. A NetworkHD 600 series transceiver is used for each display, providing pixel-perfect uncompressed video over a 10GbE network. A simple in-room touch panel allows guests to select which channel they want to watch on which screen. High-quality in-ceiling speakers provide immersive audio.',
             manuallyAddedEquipment: [
-                { sku: 'NHD-500-RX', name: 'NetworkHD 500 Series 4K60 JPEG-XS Decoder', quantity: 3, category: 'AVoIP Decoder', description: 'Decoder for the 500 series with USB 2.0 KVM support.', tags: ['NetworkHD', 'AVoIP', 'Decoder', '4K', 'JPEG-XS', 'Dante', '1GbE', '4K60', '4:4:4', 'USB', 'KVM'] },
+                { sku: 'NHD-600-TRX', name: 'NetworkHD 600 Series 4K60 10GbE Transceiver', quantity: 3, category: 'AVoIP Transceiver', description: 'Uncompressed 4K60 4:4:4 video over 10GbE. Configurable as Encoder or Decoder.', tags: ['NetworkHD', 'AVoIP', 'Transceiver', '4K', 'Uncompressed', '10GbE', '4K60', '4:4:4', 'Zero Latency', 'Multiview', 'Gold'] },
                 { sku: 'SYN-TOUCH10', name: 'Synergy™ 10.1” All-in-One Touchpad IP Controller', quantity: 1, category: 'Control', description: 'PoE+ | Table Top Stand & Wall-Mount (US/UK/EU Compatible)', tags: ['Control', 'Touchscreen', 'Synergy'] },
             ],
             constructionDetails: { wallConstruction: 'drywall', cableContainment: 'conduit', furnitureType: 'fixed' },

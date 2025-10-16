@@ -125,7 +125,8 @@ export interface RoomData {
     valueEngineeringSuggestions?: ValueEngineeringSuggestion[];
 }
 
-export type RoomWizardAnswers = Omit<RoomData, 'id' | 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints' | 'valueEngineeringSuggestions'>;
+// FIX: Removed 'id' from Omit to allow the wizard to manage it
+export type RoomWizardAnswers = Omit<RoomData, 'systemDiagram' | 'manuallyAddedEquipment' | 'valueEngineeringConstraints' | 'valueEngineeringSuggestions'>;
 
 export interface ProjectInfrastructure {
     useDedicatedNetwork: boolean;
